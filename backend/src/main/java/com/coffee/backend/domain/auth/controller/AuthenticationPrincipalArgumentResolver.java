@@ -33,12 +33,12 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
         String accessToken = AuthorizationExtractor.extract(request);
 
         jwtService.validateToken(accessToken);
-        Long id = jwtService.extractId(accessToken).orElseThrow(
+        Long userId = jwtService.extractId(accessToken).orElseThrow(
                 () -> {
                     throw new InvalidTokenException("토큰에 ID가 없습니다");
                 }
         );
 
-        return userService.getById(id);
+        return userService.getByUserId(userId);
     }
 }

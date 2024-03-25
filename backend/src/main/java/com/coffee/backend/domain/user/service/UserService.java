@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User getById(Long id) {
-        Optional<User> user = userRepository.findById(id);
+    public User getByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
 
         return user.orElseThrow(() -> {
-            log.info("id = {} 인 사용자가 존재하지 않습니다", id);
+            log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
             return new CustomException(ErrorCode.USER_NOT_FOUND);
         });
     }

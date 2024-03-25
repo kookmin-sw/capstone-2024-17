@@ -85,8 +85,6 @@ public class JwtService {
         }
     }
 
-    ;
-
     public Optional<Long> extractId(String accessToken) {
         validateToken(accessToken);
 

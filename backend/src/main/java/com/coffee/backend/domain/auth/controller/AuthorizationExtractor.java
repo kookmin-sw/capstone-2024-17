@@ -1,8 +1,8 @@
 package com.coffee.backend.domain.auth.controller;
 
-import com.teamkrews.auth.exception.InvalidTokenException;
-import com.teamkrews.global.exception.CustomException;
-import com.teamkrews.global.exception.ErrorCode;
+import com.coffee.backend.exception.CustomException;
+import com.coffee.backend.exception.ErrorCode;
+import com.coffee.backend.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import org.springframework.http.HttpHeaders;
