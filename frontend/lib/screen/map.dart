@@ -18,8 +18,8 @@ class _mapScreenState extends State<mapScreen> {
   Completer<GoogleMapController> _controller = Completer();
 
   CameraPosition _currentPosition = CameraPosition(
-    target: LatLng(13.0827, 80.2707), //사용자 지정 좌표
-    zoom: 12, //확대
+    target: LatLng(37.611108, 126.997340), //사용자 지정 좌표
+    zoom: 17, //확대
   );
 
   @override
