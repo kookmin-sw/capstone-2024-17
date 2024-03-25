@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/capstone-2024-17.iml" filepath="$PROJECT_DIR$/.idea/capstone-2024-17.iml" />
     </modules>
   </component>
