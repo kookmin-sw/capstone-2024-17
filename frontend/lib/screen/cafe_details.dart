@@ -23,21 +23,30 @@ class MyApp extends StatelessWidget {
           leading: const Icon(Icons.arrow_back_ios),
           leadingWidth: 70,
         ),
-        body: const Padding(
-          padding: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
           child: Column(
             children: [
-              UserItem(
-                nickname: "뽕순이",
-                company: "채연컴퍼니",
-                position: "집사",
-                introduction: "안녕하세요 뽕순이입니다 뽕",
+              Image.asset(
+                "assets/cafe.jpeg",
+                width: 450,
+                fit: BoxFit.fitWidth,
               ),
-              UserItem(
-                  nickname: "담",
-                  company: "네카라쿠배당토",
-                  position: "웹 프론트엔드",
-                  introduction: "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"),
+              const Column(
+                children: [
+                  UserItem(
+                    nickname: "뽕순이",
+                    company: "채연컴퍼니",
+                    position: "집사",
+                    introduction: "안녕하세요 뽕순이입니다 뽕",
+                  ),
+                  UserItem(
+                      nickname: "담",
+                      company: "네카라쿠배당토",
+                      position: "웹 프론트엔드",
+                      introduction: "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"),
+                ],
+              ),
             ],
           ),
         ),
