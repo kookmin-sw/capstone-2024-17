@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CheckLoginIdDto {
+public class LoginIdDto {
     private String loginId;
 }

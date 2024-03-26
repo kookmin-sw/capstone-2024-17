@@ -1,7 +1,7 @@
 package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.domain.auth.dto.AuthDto;
-import com.coffee.backend.domain.auth.dto.CheckLoginIdDto;
+import com.coffee.backend.domain.auth.dto.LoginIdDto;
 import com.coffee.backend.domain.auth.dto.SignInDto;
 import com.coffee.backend.domain.auth.dto.SignUpDto;
 import com.coffee.backend.domain.auth.service.AuthService;
@@ -26,9 +26,9 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/checkDuplicate")
-    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(@RequestBody CheckLoginIdDto checkLoginIdDto) {
-        Boolean duplicatedLoginId = userService.isDuplicatedLoginId(checkLoginIdDto.getLoginId());
-        return ResponseEntity.ok(ApiResponse.success(duplicatedLoginId));
+    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(@RequestBody LoginIdDto loginIdDto) {
+        Boolean isDuplicatedLoginId = userService.checkDuplicatedLoginId(loginIdDto.getLoginId());
+        return ResponseEntity.ok(ApiResponse.success(isDuplicatedLoginId));
     }
 
     @PostMapping("/signUp")
