@@ -25,20 +25,7 @@ public class UserService {
         });
     }
 
-    public Boolean isDuplicatedLoginId(String loginId) {
-        Optional<User> userOptional = userRepository.findByLoginId(loginId);
-
-        if (userOptional.isEmpty()) {
-            return Boolean.FALSE;
-        }
-
-        return Boolean.TRUE;
-    }
-
-    public UserDto convertToInfo(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setNickname(user.getNickname());
-
-        return userDto;
+    public Boolean checkDuplicatedLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId).isPresent();
     }
 }
