@@ -26,24 +26,24 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/checkDuplicate")
-    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(@RequestBody LoginIdDto loginIdDto) {
-        Boolean isDuplicatedLoginId = userService.checkDuplicatedLoginId(loginIdDto.getLoginId());
+    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(@RequestBody LoginIdDto dto) {
+        Boolean isDuplicatedLoginId = userService.checkDuplicatedLoginId(dto.getLoginId());
         return ResponseEntity.ok(ApiResponse.success(isDuplicatedLoginId));
     }
 
     @PostMapping("/signUp")
     public ResponseEntity<ApiResponse<UserDto>> signUp(
-            @Valid @RequestBody SignUpDto signUpDto
+            @Valid @RequestBody SignUpDto dto
     ) {
-        UserDto userDto = authService.signUp(signUpDto);
+        UserDto userDto = authService.signUp(dto);
         return ResponseEntity.ok(ApiResponse.success(userDto));
     }
 
     @PostMapping("/signIn")
     public ResponseEntity<ApiResponse<AuthDto>> signIn(
-            @Valid @RequestBody SignInDto signInDto
+            @Valid @RequestBody SignInDto dto
     ) {
-        AuthDto authDto = authService.signIn(signInDto);
+        AuthDto authDto = authService.signIn(dto);
         return ResponseEntity.ok(ApiResponse.success(authDto));
     }
 }
