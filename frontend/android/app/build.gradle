@@ -6,6 +6,12 @@ plugins {
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
+
+def flutterGoogleMapKey = localProperties.getProperty('flutter.GoogleMapKey')
+if (flutterGoogleMapKey ==null){
+    flutterGoogleMapKey=''
+}
+
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
         localProperties.load(reader)
@@ -49,6 +55,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue "string", "GOOGLE_MAP_KEY", flutterGoogleMapKey
     }
 
     buildTypes {
