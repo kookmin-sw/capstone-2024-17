@@ -1,4 +1,6 @@
+import 'package:frontend/user_model.dart';
+
 abstract class SocialLogin {
-  Future<bool> login();
+  Future<UserModel> login();
   Future<bool> logout();
 }
