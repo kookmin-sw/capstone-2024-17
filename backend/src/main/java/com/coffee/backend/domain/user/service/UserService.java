@@ -16,29 +16,16 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User getById(Long id) {
-        Optional<User> user = userRepository.findById(id);
+    public User getByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
 
         return user.orElseThrow(() -> {
-            log.info("id = {} 인 사용자가 존재하지 않습니다", id);
+            log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
             return new CustomException(ErrorCode.USER_NOT_FOUND);
         });
     }
 
-    public Boolean isDuplicatedLoginId(String loginId) {
-        Optional<User> userOptional = userRepository.findByLoginId(loginId);
-
-        if (userOptional.isEmpty()) {
-            return Boolean.FALSE;
-        }
-
-        return Boolean.TRUE;
-    }
-
-    public UserDto convertToInfo(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setNickname(user.getNickname());
-
-        return userDto;
+    public Boolean checkDuplicatedLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId).isPresent();
     }
 }
