@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 
 void main() {
@@ -52,40 +53,12 @@ class MyApp extends StatelessWidget {
                 const Expanded(
                   child: TabBarView(
                     children: [
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.location_on_outlined, size: 30),
-                              SizedBox(width: 15),
-                              Text(
-                                "위치: 서울특별시 성북구 정릉로 77",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.phone, size: 25),
-                              SizedBox(width: 20),
-                              Text(
-                                "전화번호: 02-1234-5678",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.schedule, size: 25),
-                              SizedBox(width: 20),
-                              Text("영업시간: 07:00 ~ 22:00",
-                                  style: TextStyle(fontSize: 20)),
-                            ],
-                          ),
-                        ],
+                      CafeInfo(
+                        location:
+                            "서울특별시 성북구 정릉로 77 1층 우편번호는 어쩌고저쩌곤데 너무 멀수도있어서 그냥 안오는게 나을듯",
+                        phoneNumber: "02-1234-5678",
+                        businessHours:
+                            "매일 09:00 ~ 22:00\n매일 휴게시간 14:00 ~ 15:00",
                       ),
                       Column(
                         children: [
