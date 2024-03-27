@@ -70,7 +70,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    TextButton(onPressed: () {}, child: const Text('로그인')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/signin');
+                        },
+                        child: const Text('로그인')),
                   ],
                 ),
               ),

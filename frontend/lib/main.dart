@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/screen/signup_screen.dart';
+import 'package:frontend/screen/test_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:frontend/screen/login_screen.dart';
@@ -22,6 +24,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(home: TestScreen(), routes: <String, WidgetBuilder>{
+      '/signup': (BuildContext context) => SignupScreen(),
+      '/signin': (BuildContext context) => LoginScreen(),
+    });
   }
 }
