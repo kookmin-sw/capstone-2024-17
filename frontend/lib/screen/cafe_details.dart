@@ -54,9 +54,37 @@ class MyApp extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          Text("위치: 서울특별시 성북구 정릉로 77"),
-                          Text("전화번호: 02-1234-5678"),
-                          Text("영업시간: 07:00 ~ 22:00"),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on_outlined, size: 30),
+                              SizedBox(width: 15),
+                              Text(
+                                "위치: 서울특별시 성북구 정릉로 77",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.phone, size: 25),
+                              SizedBox(width: 20),
+                              Text(
+                                "전화번호: 02-1234-5678",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.schedule, size: 25),
+                              SizedBox(width: 20),
+                              Text("영업시간: 07:00 ~ 22:00",
+                                  style: TextStyle(fontSize: 20)),
+                            ],
+                          ),
                         ],
                       ),
                       Column(
