@@ -16,9 +16,6 @@ class CafeInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: 20,
-        ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

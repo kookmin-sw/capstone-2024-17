@@ -26,31 +26,34 @@ class MyApp extends StatelessWidget {
             leading: const Icon(Icons.arrow_back_ios),
             leadingWidth: 70,
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-            child: Column(
-              children: [
-                Image.asset(
-                  "assets/cafe.jpeg",
-                  width: 450,
-                  fit: BoxFit.fitWidth,
+          body: Column(
+            children: [
+              Image.asset(
+                "assets/cafe.jpeg",
+                width: 450,
+                fit: BoxFit.fitWidth,
+              ),
+              const TabBar(
+                indicatorColor: Colors.black,
+                labelStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
                 ),
-                const TabBar(
-                    indicatorColor: Colors.black,
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                    ),
-                    indicatorWeight: 4,
-                    tabs: [
-                      Tab(
-                        text: "카페 상세정보",
-                      ),
-                      Tab(
-                        text: "사용자 보기",
-                      ),
-                    ]),
-                const Expanded(
+                indicatorWeight: 4,
+                tabs: [
+                  Tab(
+                    text: "카페 상세정보",
+                  ),
+                  Tab(
+                    text: "사용자 보기",
+                  ),
+                ],
+                padding: EdgeInsets.only(top: 10, bottom: 20),
+                overlayColor: MaterialStatePropertyAll(Colors.transparent),
+              ),
+              const Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
                   child: TabBarView(
                     children: [
                       CafeInfo(
@@ -79,8 +82,8 @@ class MyApp extends StatelessWidget {
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           bottomNavigationBar: const BottomAppBar(),
         ),
