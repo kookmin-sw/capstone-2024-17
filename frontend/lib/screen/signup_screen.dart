@@ -13,6 +13,9 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +58,21 @@ class _SignupScreenState extends State<SignupScreen> {
                       decoration: const InputDecoration(labelText: '비밀번호 확인'),
                       obscureText: true,
                     ),
+                    TextField(
+                      controller: _nicknameController,
+                      decoration: const InputDecoration(labelText: '사용할 닉네임'),
+                      obscureText: true,
+                    ),
+                    TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(labelText: '이메일'),
+                      obscureText: true,
+                    ),
+                    TextField(
+                      controller: _phoneController,
+                      decoration: const InputDecoration(labelText: '전화번호'),
+                      obscureText: true,
+                    ),
                   ])),
               Container(
                 margin: const EdgeInsets.all(50),
@@ -70,10 +88,21 @@ class _SignupScreenState extends State<SignupScreen> {
                             _confirmPasswordController.text) {
                           // 비밀번호 불일치
                           AlertDialog(content: Text('비밀번호가 일치하지 않습니다.'));
+                        } else if (_nicknameController.text == '') {
+                          AlertDialog(content: Text('사용할 닉네임을 입력해주세요.'));
+                        } else if (_emailController.text == '') {
+                          AlertDialog(content: Text('이메일을 입력해주세요.'));
+                        } else if (_phoneController.text == '') {
+                          AlertDialog(content: Text('전화번호를 입력해주세요.'));
                         } else {
                           try {
-                            signup(context, _loginIdController.text,
-                                _passwordController.text);
+                            signup(
+                                context,
+                                _loginIdController.text,
+                                _passwordController.text,
+                                _nicknameController.text,
+                                _emailController.text,
+                                _phoneController.text);
                           } catch (error) {
                             AlertDialog(content: Text('요청 실패: $error'));
                           }
@@ -103,15 +132,17 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void signup(BuildContext context, String loginId, String password) async {
+  void signup(BuildContext context, String loginId, String password,
+      String nickname, String email, String phone) async {
     final url = Uri.parse('http://localhost:8080/api/auth/signUp');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
+    print('$nickname $email $phone');
     final data = jsonEncode({
       'loginId': loginId,
       'password': password,
-      'nickname': '',
-      'email': '',
-      'phone': '',
+      'nickname': nickname,
+      'email': email,
+      'phone': phone,
     });
     try {
       http.Response res = await http.post(url,
