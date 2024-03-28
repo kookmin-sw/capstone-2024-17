@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _SignupScreenState extends State<SignupScreen> {
 */
               // 입력창 컨테이너
               Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 140), // 마진 추가
+                  margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -65,7 +66,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             // border: OutlineInputBorder(),
                             labelText: '아이디',
                           ),
-                          obscureText: true,
                         ),
                         const SizedBox(
                           height: 10,
@@ -96,7 +96,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: const InputDecoration(
                               // border: OutlineInputBorder(),
                               labelText: '사용할 닉네임'),
-                          obscureText: true,
                         ),
                         const SizedBox(
                           height: 10,
@@ -106,7 +105,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: const InputDecoration(
                               // border: OutlineInputBorder(),
                               labelText: '이메일'),
-                          obscureText: true,
                         ),
                         const SizedBox(
                           height: 10,
@@ -116,31 +114,31 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: const InputDecoration(
                               // border: OutlineInputBorder(),
                               labelText: '전화번호'),
-                          obscureText: true,
                         ),
                       ])),
               // 버튼 컨테이너
               Container(
                 margin: const EdgeInsets.symmetric(
-                    horizontal: 140, vertical: 80), // 마진 추가,
+                    horizontal: 100, vertical: 20), // 마진 추가,
                 child: Column(
                   children: <Widget>[
                     ElevatedButton(
                       onPressed: () {
                         if (_loginIdController.text == '') {
-                          AlertDialog(content: Text('아이디를 입력해주세요.'));
-                        } else if (_passwordController.text == '') {
-                          AlertDialog(content: Text('비밀번호를 입력해주세요.'));
+                          showAlertDialog(context, '아이디를 입력해주세요.');
+                        }
+                        else if (_passwordController.text == '') {
+                          showAlertDialog(context, '비밀번호를 입력해주세요.');
                         } else if (_passwordController.text !=
                             _confirmPasswordController.text) {
                           // 비밀번호 불일치
-                          AlertDialog(content: Text('비밀번호가 일치하지 않습니다.'));
+                          showAlertDialog(context, '비밀번호가 일치하지 않습니다.');
                         } else if (_nicknameController.text == '') {
-                          AlertDialog(content: Text('사용할 닉네임을 입력해주세요.'));
+                          showAlertDialog(context, '사용할 닉네임을 입력해주세요.');
                         } else if (_emailController.text == '') {
-                          AlertDialog(content: Text('이메일을 입력해주세요.'));
+                          showAlertDialog(context, '이메일을 입력해주세요.');
                         } else if (_phoneController.text == '') {
-                          AlertDialog(content: Text('전화번호를 입력해주세요.'));
+                          showAlertDialog(context, '전화번호를 입력해주세요.');
                         } else {
                           try {
                             signup(
@@ -151,14 +149,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                 _emailController.text,
                                 _phoneController.text);
                           } catch (error) {
-                            AlertDialog(content: Text('요청 실패: $error'));
+                            showAlertDialog(context, '요청 실패: $error');
                           }
                         }
                       },
                       child: Text('회원가입'),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     TextButton(
                         onPressed: () {
@@ -198,17 +196,16 @@ class _SignupScreenState extends State<SignupScreen> {
       Map<String, dynamic> jsonData = jsonDecode(res.body);
       if (res.statusCode == 200) {
         // 요청 성공
-        AlertDialog(content: Text('회원가입 성공! 로그인 페이지로 이동합니다.'));
+        showAlertDialog(context, '회원가입 성공! 로그인 페이지로 이동합니다.');
         if (!context.mounted) return;
         Navigator.of(context).pushNamed('/signin');
       } else {
         // 예외
-        AlertDialog(
-            content:
-                Text('회원가입 실패: ${jsonData["message"]}(${jsonData["code"]})'));
+        showAlertDialog(
+            context, '회원가입 실패: ${jsonData["message"]}(${jsonData["code"]})');
       }
     } catch (error) {
-      AlertDialog(content: Text('회원가입 실패: $error'));
+      showAlertDialog(context, '회원가입 실패: $error');
     }
   }
 }
