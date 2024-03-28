@@ -42,12 +42,8 @@ class MyApp extends StatelessWidget {
                 ),
                 indicatorWeight: 4,
                 tabs: [
-                  Tab(
-                    text: "카페 상세정보",
-                  ),
-                  Tab(
-                    text: "사용자 보기",
-                  ),
+                  Tab(text: "카페 상세정보"),
+                  Tab(text: "사용자 보기"),
                 ],
                 padding: EdgeInsets.only(top: 10, bottom: 20),
                 overlayColor: MaterialStatePropertyAll(Colors.transparent),
@@ -73,11 +69,12 @@ class MyApp extends StatelessWidget {
                             introduction: "안녕하세요 뽕순이입니다 뽕",
                           ),
                           UserItem(
-                              nickname: "담",
-                              company: "네카라쿠배당토",
-                              position: "웹 프론트엔드",
-                              introduction:
-                                  "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"),
+                            nickname: "담",
+                            company: "네카라쿠배당토",
+                            position: "웹 프론트엔드",
+                            introduction:
+                                "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
+                          ),
                         ],
                       ),
                     ],
