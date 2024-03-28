@@ -25,8 +25,10 @@ class _SignupScreenState extends State<SignupScreen> {
           automaticallyImplyLeading: false,
           title: const Text(
             '회원가입',
-            textAlign: TextAlign.center,
+            // textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 24),
           ),
+          toolbarHeight: 100,
           leading: GestureDetector(
             onTap: () {
               Navigator.of(context).pop();
@@ -39,22 +41,21 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
               // 제목
+              /*
               Container(
                   padding: const EdgeInsets.all(20),
                   child: const Text(
                     '회원가입',
-                    /*
+             
                       style: TextStyle(
                         fontSize: 35,
                         fontWeight: FontWeight.bold,)
                       )
-                    */
                   )),
-
+*/
               // 입력창 컨테이너
               Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 140, vertical: 20), // 마진 추가
+                  margin: const EdgeInsets.symmetric(horizontal: 140), // 마진 추가
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -121,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
               // 버튼 컨테이너
               Container(
                 margin: const EdgeInsets.symmetric(
-                    horizontal: 140, vertical: 20), // 마진 추가,
+                    horizontal: 140, vertical: 80), // 마진 추가,
                 child: Column(
                   children: <Widget>[
                     ElevatedButton(
@@ -157,7 +158,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: Text('회원가입'),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     TextButton(
                         onPressed: () {
