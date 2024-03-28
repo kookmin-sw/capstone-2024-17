@@ -6,8 +6,8 @@ plugins {
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
-
 def flutterGoogleMapKey = localProperties.getProperty('flutter.GoogleMapKey')
+
 if (flutterGoogleMapKey ==null){
     flutterGoogleMapKey=''
 }
