@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -40,17 +43,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   child: Column(children: <Widget>[
                     TextField(
                       controller: _loginIdController,
-                      decoration: const InputDecoration(labelText: 'Login ID'),
+                      decoration: const InputDecoration(labelText: '아이디'),
                     ),
                     TextField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(labelText: 'Password'),
+                      decoration: const InputDecoration(labelText: '비밀번호'),
                       obscureText: true,
                     ),
                     TextField(
                       controller: _confirmPasswordController,
-                      decoration:
-                          const InputDecoration(labelText: 'Confirm Password'),
+                      decoration: const InputDecoration(labelText: '비밀번호 확인'),
                       obscureText: true,
                     ),
                   ])),
@@ -60,10 +62,22 @@ class _SignupScreenState extends State<SignupScreen> {
                   children: <Widget>[
                     ElevatedButton(
                       onPressed: () {
-                        print('Login ID: ${_loginIdController.text}');
-                        print('Password: ${_passwordController.text}');
-                        print(
-                            'Confirm Password: ${_confirmPasswordController.text}');
+                        if (_loginIdController.text == '') {
+                          AlertDialog(content: Text('아이디를 입력해주세요.'));
+                        } else if (_passwordController.text == '') {
+                          AlertDialog(content: Text('비밀번호를 입력해주세요.'));
+                        } else if (_passwordController.text !=
+                            _confirmPasswordController.text) {
+                          // 비밀번호 불일치
+                          AlertDialog(content: Text('비밀번호가 일치하지 않습니다.'));
+                        } else {
+                          try {
+                            signup(context, _loginIdController.text,
+                                _passwordController.text);
+                          } catch (error) {
+                            AlertDialog(content: Text('요청 실패: $error'));
+                          }
+                        }
                       },
                       child: Text('회원가입'),
                     ),
@@ -87,5 +101,38 @@ class _SignupScreenState extends State<SignupScreen> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void signup(BuildContext context, String loginId, String password) async {
+    final url = Uri.parse('http://localhost:8080/api/auth/signUp');
+    // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
+    final data = jsonEncode({
+      'loginId': loginId,
+      'password': password,
+      'nickname': '',
+      'email': '',
+      'phone': '',
+    });
+    try {
+      http.Response res = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: data);
+      if (res.statusCode == 200) {
+        Map<String, dynamic> data = jsonDecode(res.body);
+        bool success = data["success"];
+        if (success) {
+          AlertDialog(content: Text('회원가입 성공! 로그인 페이지로 이동합니다.'));
+          if (!context.mounted) return;
+          Navigator.of(context).pushNamed('/signin');
+        } else {
+          // 예외
+          AlertDialog(
+              content: Text('회원가입 실패: ${data["message"]}(${data["code"]})'));
+        }
+      } else {
+        AlertDialog(content: Text('회원가입 실패: 처리되지 않은 상태코드 ${res.statusCode}'));
+      }
+    } catch (error) {
+      AlertDialog(content: Text('회원가입 실패: $error'));
+    }
   }
 }
