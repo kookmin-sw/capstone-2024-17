@@ -179,7 +179,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void signup(BuildContext context, String loginId, String password,
       String nickname, String email, String phone) async {
-    final url = Uri.parse('http://localhost:8080/api/auth/signUp');
+    print(password);
+    final url = Uri.parse('http://localhost:8080/auth/signUp');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
     final data = jsonEncode({
       'loginId': loginId,
@@ -191,20 +192,17 @@ class _SignupScreenState extends State<SignupScreen> {
     try {
       http.Response res = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: data);
+      Map<String, dynamic> jsonData = jsonDecode(res.body);
       if (res.statusCode == 200) {
-        Map<String, dynamic> data = jsonDecode(res.body);
-        bool success = data["success"];
-        if (success) {
-          AlertDialog(content: Text('회원가입 성공! 로그인 페이지로 이동합니다.'));
-          if (!context.mounted) return;
-          Navigator.of(context).pushNamed('/signin');
-        } else {
-          // 예외
-          AlertDialog(
-              content: Text('회원가입 실패: ${data["message"]}(${data["code"]})'));
-        }
+        // 요청 성공
+        AlertDialog(content: Text('회원가입 성공! 로그인 페이지로 이동합니다.'));
+        if (!context.mounted) return;
+        Navigator.of(context).pushNamed('/signin');
       } else {
-        AlertDialog(content: Text('회원가입 실패: 처리되지 않은 상태코드 ${res.statusCode}'));
+        // 예외
+        AlertDialog(
+            content:
+                Text('회원가입 실패: ${jsonData["message"]}(${jsonData["code"]})'));
       }
     } catch (error) {
       AlertDialog(content: Text('회원가입 실패: $error'));
