@@ -2,15 +2,17 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+
 }
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
-def flutterGoogleMapKey = localProperties.getProperty('flutter.GoogleMapKey')
+// def flutterGoogleMapKey = localProperties.getProperty('flutter.GoogleMapKey')
 
-if (flutterGoogleMapKey ==null){
-    flutterGoogleMapKey=''
-}
+//if (flutterGoogleMapKey ==null){
+//    flutterGoogleMapKey=''
+//}
 
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
@@ -55,7 +57,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        resValue "string", "GOOGLE_MAP_KEY", flutterGoogleMapKey
+//        resValue "string", "GOOGLE_MAP_KEY", flutterGoogleMapKey
     }
 
     buildTypes {
