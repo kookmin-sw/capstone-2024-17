@@ -22,6 +22,10 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          title: const Text(
+            '회원가입',
+            textAlign: TextAlign.center,
+          ),
           leading: GestureDetector(
             onTap: () {
               Navigator.of(context).pop();
@@ -33,49 +37,90 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+              // 제목
               Container(
                   padding: const EdgeInsets.all(20),
-                  child: const Text('회원가입',
+                  child: const Text(
+                    '회원가입',
+                    /*
                       style: TextStyle(
                         fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                      ))),
+                        fontWeight: FontWeight.bold,)
+                      )
+                    */
+                  )),
+
+              // 입력창 컨테이너
               Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 140), // 좌우 마진 추가
-                  child: Column(children: <Widget>[
-                    TextField(
-                      controller: _loginIdController,
-                      decoration: const InputDecoration(labelText: '아이디'),
-                    ),
-                    TextField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(labelText: '비밀번호'),
-                      obscureText: true,
-                    ),
-                    TextField(
-                      controller: _confirmPasswordController,
-                      decoration: const InputDecoration(labelText: '비밀번호 확인'),
-                      obscureText: true,
-                    ),
-                    TextField(
-                      controller: _nicknameController,
-                      decoration: const InputDecoration(labelText: '사용할 닉네임'),
-                      obscureText: true,
-                    ),
-                    TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(labelText: '이메일'),
-                      obscureText: true,
-                    ),
-                    TextField(
-                      controller: _phoneController,
-                      decoration: const InputDecoration(labelText: '전화번호'),
-                      obscureText: true,
-                    ),
-                  ])),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 140, vertical: 20), // 마진 추가
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextField(
+                          controller: _loginIdController,
+                          decoration: const InputDecoration(
+                            // border: OutlineInputBorder(),
+                            labelText: '아이디',
+                          ),
+                          obscureText: true,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          controller: _passwordController,
+                          decoration: const InputDecoration(
+                            // border: OutlineInputBorder(),
+                            labelText: '비밀번호 입력',
+                          ),
+                          obscureText: true,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          controller: _confirmPasswordController,
+                          decoration: const InputDecoration(
+                              // border: OutlineInputBorder(),
+                              labelText: '비밀번호 확인'),
+                          obscureText: true,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          controller: _nicknameController,
+                          decoration: const InputDecoration(
+                              // border: OutlineInputBorder(),
+                              labelText: '사용할 닉네임'),
+                          obscureText: true,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          controller: _emailController,
+                          decoration: const InputDecoration(
+                              // border: OutlineInputBorder(),
+                              labelText: '이메일'),
+                          obscureText: true,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          controller: _phoneController,
+                          decoration: const InputDecoration(
+                              // border: OutlineInputBorder(),
+                              labelText: '전화번호'),
+                          obscureText: true,
+                        ),
+                      ])),
+              // 버튼 컨테이너
               Container(
-                margin: const EdgeInsets.all(50),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: 140, vertical: 20), // 마진 추가,
                 child: Column(
                   children: <Widget>[
                     ElevatedButton(
@@ -136,7 +181,6 @@ class _SignupScreenState extends State<SignupScreen> {
       String nickname, String email, String phone) async {
     final url = Uri.parse('http://localhost:8080/api/auth/signUp');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
-    print('$nickname $email $phone');
     final data = jsonEncode({
       'loginId': loginId,
       'password': password,
