@@ -15,17 +15,20 @@ class MyApp extends StatelessWidget {
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              "스타벅스 국민대점",
-              style: TextStyle(fontSize: 24),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(70),
+            child: AppBar(
+              title: const Text(
+                "스타벅스 국민대점",
+                style: TextStyle(fontSize: 24),
+              ),
+              toolbarHeight: 100,
+              backgroundColor: Colors.white,
+              elevation: 1.0,
+              shadowColor: Colors.black,
+              leading: const Icon(Icons.arrow_back_ios),
+              leadingWidth: 70,
             ),
-            toolbarHeight: 100,
-            backgroundColor: Colors.white,
-            elevation: 1.0,
-            shadowColor: Colors.black,
-            leading: const Icon(Icons.arrow_back_ios),
-            leadingWidth: 70,
           ),
           body: Column(
             children: [
