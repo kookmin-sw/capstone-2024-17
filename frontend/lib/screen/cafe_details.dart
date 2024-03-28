@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
+import 'package:frontend/widgets/bottom_text_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -82,6 +83,10 @@ class MyApp extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+              BottomTextButton(
+                text: "이 카페를 내 위치로 설정하기",
+                handlePressed: () {},
               ),
             ],
           ),
