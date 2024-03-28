@@ -17,7 +17,9 @@ class BottomTextButton extends StatelessWidget {
       width: 370,
       height: 50,
       child: ElevatedButton(
-        onPressed: handlePressed(),
+        onPressed: () {
+          handlePressed();
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xff371d10),
           shape: RoundedRectangleBorder(
