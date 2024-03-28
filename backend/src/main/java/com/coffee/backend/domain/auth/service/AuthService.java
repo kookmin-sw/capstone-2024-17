@@ -53,6 +53,14 @@ public class AuthService {
         return new AuthDto(user.getUserUUID(), token);
     }
 
+    public boolean deleteUserByUserUUID(String userUUID) {
+        if (!userRepository.existsByUserUUID(userUUID)) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+        userRepository.deleteByUserUUID(userUUID);
+        return true;
+    }
+
     private void validateLoginIdNotDuplicated(String loginId) {
         userRepository.findByLoginId(loginId).ifPresent(u -> {
             throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
