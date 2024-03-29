@@ -23,6 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           automaticallyImplyLeading: false,
           title: const Text(
             '회원가입',
