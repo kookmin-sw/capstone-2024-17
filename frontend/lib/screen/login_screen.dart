@@ -151,4 +151,36 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
+
+  void login(
+    BuildContext context,
+    String loginId,
+    String password,
+  ) async {
+    final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+    // print(hashedPassword);
+    final url = Uri.parse('http://localhost:8080/auth/signIn');
+    // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
+    final data = jsonEncode({
+      'loginId': loginId,
+      'password': hashedPassword,
+    });
+    try {
+      http.Response res = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: data);
+      Map<String, dynamic> jsonData = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        // 요청 성공
+        // jsonData["data"]["userUUID"], jsonData["data"]["authToken"] 저장하는 코드
+        showAlertDialog(context, '로그인 성공!');
+        setState(() => {}); // 화면 갱신
+      } else {
+        // 예외
+        showAlertDialog(
+            context, '로그인 실패: ${jsonData["message"]}(${jsonData["code"]})');
+      }
+    } catch (error) {
+      showAlertDialog(context, '로그인 실패: $error');
+    }
+  }
 }
