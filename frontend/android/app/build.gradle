@@ -22,6 +22,8 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def kakaoNativeAppKey = localProperties.getProperty('flutter.kakao.native.appKey')
+
 android {
     namespace "com.example.frontend"
     compileSdk flutter.compileSdkVersion
@@ -45,10 +47,15 @@ android {
         applicationId "com.example.frontend"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        // minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders += [kakaoNativeAppKey : "${kakaoNativeAppKey}"]
+
+
     }
 
     buildTypes {
