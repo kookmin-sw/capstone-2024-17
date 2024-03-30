@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/docs/assets/logo.png" width="150">
+  <img src="https://github.com/kookmin-sw/capstone-2024-17/blob/pages/docs/assets/logo.png?raw=true" width="150">
 </p>
 <h1 align="center">커리어 한잔</h1>
 
@@ -104,7 +104,7 @@ jm3789)</b>
         </td>
     </tr>
 </table>
-</div>
+
 <!-- ### 4. 사용법
 
 소스코드제출시 설치법이나 사용법을 작성하세요. -->
