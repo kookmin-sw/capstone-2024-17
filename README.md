@@ -62,7 +62,7 @@ jm3789)</b>
         </td>
                 <td style="min-width: 150px;">
             <a href="https://github.com/hyeesw">
-              <img src="https://github.com/hyeesw.png" width="100">
+              <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/84231143/f326d94b-b3c4-49ca-a26f-508feda1ea5d" width="100">
               <br />
               <b>김혜은 (hyeesw)</b>
             </a> 
