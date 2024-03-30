@@ -1,76 +1,110 @@
-# Welcome to GitHub
+<p align="center">
+  <img src="https://github.com/kookmin-sw/capstone-2024-17/blob/pages/docs/assets/logo.png?raw=true" width="150">
+</p>
+<h1 align="center">커리어 한잔</h1>
 
-캡스톤 팀 생성을 축하합니다.
+주변 현직자와 실시간 커피챗이 가능한 커리어 대화 플랫폼
 
-## 팀소개 및 페이지를 꾸며주세요.
+[👉팀페이지 방문하기](https://kookmin-sw.github.io/capstone-2024-17)
 
-- 프로젝트 소개
-  - 프로젝트 설치방법 및 데모, 사용방법, 프리뷰등을 readme.md에 작성.
-  - Api나 사용방법등 내용이 많을경우 wiki에 꾸미고 링크 추가.
+## 📢 프로젝트 소개
 
-- 팀페이지 꾸미기
-  - 프로젝트 소개 및 팀원 소개
-  - index.md 예시보고 수정.
+커피챗(Coffee Chat)은 서구권에서는 이미 일상이 된 정보형 미팅으로 ‘궁금한 업계/회사/직무/학교’의 사람과 실제 만남을 통해 커피 한 잔 마시며 부담 없이 정보를 묻고 답하는 문화입니다.
 
-- GitHub Pages 리파지토리 Settings > Options > GitHub Pages 
-  - Source를 marster branch
-  - Theme Chooser에서 태마선택
-  - 수정후 팀페이지 확인하여 점검.
+커리어 한잔은 커피챗을 원하는 개발자 혹은 개발자를 희망하는 취업 준비생들에게 **대면 만남의 기회**를 원활하게 제공할 목적으로 만들어졌습니다.
 
-**팀페이지 주소** -> https://kookmin-sw.github.io/ '{{자신의 리파지토리 아이디}}'
+다른 플랫폼과는 달리 현재 나와 가까운 사용자를 확인할 수 있고, 실시간 커피챗 요청을 통해 높은 확률로 커피챗을 나눌 상대와 매칭이 가능합니다.
 
-**예시)** 2023년 0조  https://kookmin-sw.github.io/capstone-2023-00/
-
-
-## 내용에 아래와 같은 내용들을 추가하세요.
-
-### 1. 프로잭트 소개
-
-프로젝트
-
-### 2. 소개 영상
+## 🎞 소개 영상
 
 프로젝트 소개하는 영상을 추가하세요
 
-### 3. 팀 소개
+## 👩🏻‍💻 팀원 소개
 
-팀을 소개하세요.
+<table>
+    <tr align="center">
+        <td style="min-width: 150px;">
+            <a href="https://github.com/Gongchaeyeon">
+              <img src="https://github.com/Gongchaeyeon.png" width="100">
+              <br />
+              <b>공채연 (Gongchaeyeon)</b>
+            </a> 
+            <br/>
+              ****3025
+        </td>
+        <td style="min-width: 150px;">
+            <a href="https://github.com/godeka">
+              <img src="https://github.com/godeka.png" width="100">
+              <br />
+              <b>권해담 (godeka)</b>
+            </a>
+                       <br/>
+              ****3177
+        </td>
+        <td style="min-width: 150px;">
+            <a href="https://github.com/jm3789">
+              <img src="https://github.com/jm3789.png" width="100">
+              <br />
+              <b>홍지민 (
+jm3789)</b>
+            </a> 
+                       <br/>
+              ****3101
+        </td>
+        <td style="min-width: 150px;">
+            <a href="https://github.com/tmdtmdqorekf">
+              <img src="https://github.com/tmdtmdqorekf.png" width="100">
+              <br />
+              <b>김승언 (tmdtmdqorekf)</b>
+            </a> 
+                       <br/>
+              ****2677
+        </td>
+                <td style="min-width: 150px;">
+            <a href="https://github.com/hyeesw">
+              <img src="https://github.com/hyeesw.png" width="100">
+              <br />
+              <b>김혜은 (hyeesw)</b>
+            </a> 
+                       <br/>
+              ****3360
+        </td>
+        <td style="min-width: 150px;">
+            <a href="https://github.com/haram8009">
+              <img src="https://github.com/haram8009.png" width="100">
+              <br />
+              <b>이하람 (haram8009)</b>
+            </a> 
+                       <br/>
+              ****3066
+        </td>
+    </tr>
+    <tr align="center">
+        <td>
+            Frontend
+        </td>
+        <td>
+            Frontend
+        </td>
+        <td>
+            Frontend
+        </td>
+                <td>
+            Backend
+        </td>
+                <td>
+            Backend
+        </td>
+                <td>
+            Backend
+        </td>
+    </tr>
+</table>
 
-팀원정보 및 담당이나 사진 및 SNS를 이용하여 소개하세요.
+<!-- ### 4. 사용법
 
-### 4. 사용법
+소스코드제출시 설치법이나 사용법을 작성하세요. -->
 
-소스코드제출시 설치법이나 사용법을 작성하세요.
+<!-- ### 5. 기타
 
-### 5. 기타
-
-추가적인 내용은 자유롭게 작성하세요.
-
-
-## Markdown을 사용하여 내용꾸미기
-
-Markdown은 작문을 스타일링하기위한 가볍고 사용하기 쉬운 구문입니다. 여기에는 다음을위한 규칙이 포함됩니다.
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-자세한 내용은 [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Support or Contact
-
-readme 파일 생성에 추가적인 도움이 필요하면 [도움말](https://help.github.com/articles/about-readmes/) 이나 [contact support](https://github.com/contact) 을 이용하세요.
+추가적인 내용은 자유롭게 작성하세요. -->
