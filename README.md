@@ -17,7 +17,7 @@
 
 ## 🎞 소개 영상
 
-프로젝트 소개하는 영상을 추가하세요
+[![소개영상](http://img.youtube.com/vi/_zXQykNYMlw/0.jpg)](https://youtu.be/_zXQykNYMlw)
 
 ## 👩🏻‍💻 팀원 소개
 
