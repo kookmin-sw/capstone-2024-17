@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class UserDetails extends StatelessWidget {
   const UserDetails({
@@ -93,19 +92,23 @@ class UserDetails extends StatelessWidget {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff371d10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+              SizedBox(
+                width: 280,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff212121),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "커피챗 요청하기",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+                  child: const Text(
+                    "커피챗 요청하기",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),

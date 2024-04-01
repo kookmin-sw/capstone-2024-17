@@ -21,9 +21,9 @@ class BottomTextButton extends StatelessWidget {
           handlePressed();
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xff371d10),
+          backgroundColor: const Color(0xff212121),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         child: Text(
