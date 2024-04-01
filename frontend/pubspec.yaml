@@ -56,9 +56,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  assets:
-    - assets/
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -66,6 +63,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/
     - .env
     - assets/kakao_login_medium_narrow.png
   # An image asset can refer to one or more resolution-specific "variants", see
