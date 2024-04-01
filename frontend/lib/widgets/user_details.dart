@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/profile_img.dart';
 
 class UserDetails extends StatelessWidget {
   const UserDetails({
@@ -36,20 +37,7 @@ class UserDetails extends StatelessWidget {
                   const SizedBox(
                     width: 25,
                   ),
-                  Container(
-                    width: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.white,
-                      backgroundImage: AssetImage(
-                        "assets/coffee_bean.png",
-                      ),
-                    ),
-                  ),
+                  const ProfileImg(logo: "assets/coffee_bean.png"),
                   const SizedBox(
                     width: 30,
                   ),
