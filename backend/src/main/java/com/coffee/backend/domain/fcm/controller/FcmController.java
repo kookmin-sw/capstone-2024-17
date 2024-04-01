@@ -1,6 +1,6 @@
 package com.coffee.backend.domain.fcm.controller;
 
-import com.coffee.backend.domain.fcm.dto.FcmMessageDto;
+import com.coffee.backend.domain.fcm.dto.FcmRequestDto;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,9 @@ public class FcmController {
     private final FcmService fcmService;
 
     @PostMapping()
-    public ResponseEntity<String> sendNotification(@RequestBody FcmMessageDto dto) {
+    public ResponseEntity<String> sendNotification(@RequestBody FcmRequestDto dto) {
         try {
-            fcmService.sendMessageTo(dto);
+            fcmService.sendNotificationTo(dto);
             return ResponseEntity.ok().body("알림 전송 성공");
         } catch (IOException e) {
             e.printStackTrace();

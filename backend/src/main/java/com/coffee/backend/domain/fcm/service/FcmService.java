@@ -1,6 +1,6 @@
 package com.coffee.backend.domain.fcm.service;
 
-import com.coffee.backend.domain.fcm.dto.FcmMessageDto;
+import com.coffee.backend.domain.fcm.dto.FcmRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
@@ -17,46 +17,36 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class FcmService {
+    private static final String API_URL = "https://fcm.googleapis.com/v1/projects/capstone-coffeechat/messages:send"; //fcm 엔드포인트
     private static final String FIREBASE_CONFIG_PATH = "firebase/firebase_service_key.json";
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private final OkHttpClient httpClient = new OkHttpClient();
     private final ObjectMapper objectMapper;
 
-    public void sendMessageTo(FcmMessageDto dto) throws IOException {
-        String messagePayload = createMessagePayload(
-                dto.getMessage().getTargetToken(),
-                dto.getMessage().getNotification().getTitle(),
-                dto.getMessage().getNotification().getBody(),
-                dto.getMessage().getNotification().getImage());
+    // fcm으로 알림 전송
+    public void sendNotificationTo(FcmRequestDto dto) throws IOException {
+        String messagePayload = objectMapper.writeValueAsString(dto);
         Request request = createPostRequest(messagePayload);
         executeRequest(request);
     }
 
-    private String createMessagePayload(String targetToken, String title, String body, String image) throws IOException {
-        FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
-                .validateOnly(false)
-                .message(FcmMessageDto.Message.builder()
-                        .targetToken(targetToken)
-                        .notification(FcmMessageDto.Notification.builder()
-                                .title(title)
-                                .body(body)
-                                .image(image)
-                                .build())
-                        .build())
-                .build();
-
-        return objectMapper.writeValueAsString(fcmMessageDto);
-    }
-
     private Request createPostRequest(String messagePayload) throws IOException {
-        RequestBody requestBody = RequestBody.Companion.create(messagePayload, JSON);
-        String API_URL = "https://fcm.googleapis.com/v1/projects/capstone-coffeechat/messages:send";
+        RequestBody requestBody = RequestBody.create(messagePayload, JSON);
         return new Request.Builder()
                 .url(API_URL)
                 .post(requestBody)
                 .addHeader("Authorization", "Bearer " + getAccessToken())
                 .build();
+    }
+
+    private String getAccessToken() throws IOException {
+        GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream())
+                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+        googleCredentials.refreshIfExpired();
+        return googleCredentials.getAccessToken().getTokenValue();
     }
 
     private void executeRequest(Request request) throws IOException {
@@ -67,14 +57,5 @@ public class FcmService {
                 throw new IOException("executeRequest 에러 " + response.code());
             }
         }
-    }
-
-    private String getAccessToken() throws IOException {
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream())
-                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
-
-        googleCredentials.refreshIfExpired();
-        return googleCredentials.getAccessToken().getTokenValue();
     }
 }

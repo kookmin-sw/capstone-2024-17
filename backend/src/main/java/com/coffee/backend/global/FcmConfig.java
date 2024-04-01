@@ -15,11 +15,11 @@ public class FcmConfig {
 
     @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
-        FirebaseApp firebaseApp = initializerFirebaseApp();
+        FirebaseApp firebaseApp = initFirebaseApp();
         return FirebaseMessaging.getInstance(firebaseApp);
         }
 
-    private FirebaseApp initializerFirebaseApp() throws IOException {
+    private FirebaseApp initFirebaseApp() throws IOException {
         FirebaseApp existingApp = findExistingFirebaseApp();
         return (existingApp != null) ? existingApp : createNewFirebaseApp();
     }
