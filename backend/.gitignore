@@ -39,3 +39,4 @@ out/
 ### 환경설정 파일 ###
 src/main/resources/application.yml
 src/main/resources/application-jwt.yml
+src/main/resources/firebase/firebase_service_key.json
