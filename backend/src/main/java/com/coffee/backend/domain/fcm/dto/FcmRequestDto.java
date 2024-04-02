@@ -1,29 +1,15 @@
 package com.coffee.backend.domain.fcm.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Builder
-@AllArgsConstructor
 @Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FcmRequestDto {
-    private Message message;
-
-    @Builder
-    @AllArgsConstructor
-    @Getter
-    public static class Message {
-        private String targetToken;
-        private Notification notification;
-    }
-
-    @Builder
-    @AllArgsConstructor
-    @Getter
-    public static class Notification {
+        private String token;
         private String title;
         private String body;
-        private String image;
-    }
 }
