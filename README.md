@@ -30,10 +30,10 @@
 <table>
     <tr align="center">
         <td style="min-width: 150px;">
-            <a href="https://github.com/Gongchaeyeon">
-              <img src="https://github.com/Gongchaeyeon.png" width="100">
+            <a href="https://github.com/chaeyeonkong">
+              <img src="https://github.com/chaeyeonkong.png" width="100">
               <br />
-              <b>공채연 (Gongchaeyeon)</b>
+              <b>공채연 (chaeyeonkong)</b>
             </a> 
             <br/>
               ****3025
