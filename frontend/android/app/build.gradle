@@ -26,7 +26,7 @@ def kakaoNativeAppKey = localProperties.getProperty('flutter.kakao.native.appKey
 
 android {
     namespace "com.example.frontend"
-    compileSdk flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
