@@ -3,7 +3,7 @@ package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.domain.auth.service.JwtService;
 import com.coffee.backend.domain.user.service.UserService;
-import com.coffee.backend.exception.InvalidTokenException;
+import com.coffee.backend.domain.auth.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -34,9 +34,7 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
 
         jwtService.validateToken(accessToken);
         Long userId = jwtService.extractId(accessToken).orElseThrow(
-                () -> {
-                    throw new InvalidTokenException("토큰에 ID가 없습니다");
-                }
+                () -> new InvalidTokenException("유효하지 않은 토큰입니다.")
         );
 
         return userService.getByUserId(userId);

@@ -1,8 +1,8 @@
 package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.exception.ErrorCode;
-import com.coffee.backend.exception.InvalidTokenException;
+import com.coffee.backend.domain.auth.exception.ErrorCode;
+import com.coffee.backend.domain.auth.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +24,7 @@ public class AuthorizationExtractor {
 
     private static void validateAuthorizationFormat(final String authorizationHeader) {
         if (!authorizationHeader.toLowerCase().startsWith(BEARER_TYPE.toLowerCase())) {
-            throw new InvalidTokenException("token 형식이 잘못 되었습니다.");
+            throw new InvalidTokenException("토큰 형식이 잘못 되었습니다.");
         }
     }
 }

@@ -10,7 +10,7 @@ import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.service.UserService;
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.exception.ErrorCode;
+import com.coffee.backend.domain.auth.exception.ErrorCode;
 import com.coffee.backend.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,9 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/checkDuplicate")
-    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(@RequestBody LoginIdDto dto) {
+    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(
+            @Valid @RequestBody LoginIdDto dto
+    ) {
         Boolean isDuplicatedLoginId = userService.checkDuplicatedLoginId(dto.getLoginId());
         return ResponseEntity.ok(ApiResponse.success(isDuplicatedLoginId));
     }
@@ -53,8 +55,10 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<Boolean>> deleteAccount(@AuthenticationPrincipal User user,
-                                                              @RequestBody DeleteUserDto dto) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteAccount(
+            @AuthenticationPrincipal User user,
+            @RequestBody DeleteUserDto dto
+    ) {
         boolean isDeleted = authService.deleteUserByUserUUID(dto.getUserUUID());
         if (isDeleted) {
             return ResponseEntity.ok(ApiResponse.success(true));
