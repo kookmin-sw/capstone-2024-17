@@ -2,13 +2,11 @@ package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.domain.auth.dto.AuthDto;
 import com.coffee.backend.domain.auth.dto.DeleteUserDto;
-import com.coffee.backend.domain.auth.dto.LoginIdDto;
 import com.coffee.backend.domain.auth.dto.SignInDto;
 import com.coffee.backend.domain.auth.dto.SignUpDto;
 import com.coffee.backend.domain.auth.service.AuthService;
 import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
-import com.coffee.backend.domain.user.service.UserService;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.domain.auth.exception.ErrorCode;
 import com.coffee.backend.utils.ApiResponse;
