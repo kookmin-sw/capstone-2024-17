@@ -132,7 +132,7 @@ jm3789)</b>
 <br>
 
 ## 📑 서비스 아키텍처
-<img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/727bbdf9-e841-4eb8-a38c-f8af9c106436" width=900px>
+<img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/7a3d9dc9-83f8-4b1b-a0b6-8ea9f8624a75" width=900px>
 
 <br>
 
