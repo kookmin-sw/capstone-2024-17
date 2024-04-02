@@ -1,7 +1,7 @@
 package com.coffee.backend.domain.auth.service;
 
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.domain.auth.exception.ErrorCode;
+import com.coffee.backend.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

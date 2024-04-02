@@ -8,7 +8,7 @@ import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.domain.auth.exception.ErrorCode;
+import com.coffee.backend.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

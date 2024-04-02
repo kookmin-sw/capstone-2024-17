@@ -1,7 +1,5 @@
 package com.coffee.backend.exception;
 
-import com.coffee.backend.domain.auth.exception.ErrorCode;
-
 public class CustomException extends RuntimeException {
 
     private final ErrorCode code;

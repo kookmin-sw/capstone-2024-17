@@ -8,7 +8,7 @@ import com.coffee.backend.domain.auth.service.AuthService;
 import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.domain.auth.exception.ErrorCode;
+import com.coffee.backend.exception.ErrorCode;
 import com.coffee.backend.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

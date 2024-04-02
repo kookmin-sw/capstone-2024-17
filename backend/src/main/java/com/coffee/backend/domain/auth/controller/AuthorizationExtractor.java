@@ -1,7 +1,7 @@
 package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.domain.auth.exception.ErrorCode;
+import com.coffee.backend.exception.ErrorCode;
 import com.coffee.backend.domain.auth.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;

@@ -3,7 +3,7 @@ package com.coffee.backend.domain.user.service;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.domain.auth.exception.ErrorCode;
+import com.coffee.backend.exception.ErrorCode;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
