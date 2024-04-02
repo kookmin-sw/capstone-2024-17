@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -15,18 +17,18 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _loginIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final storage = new FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel _loginViewModel = Provider.of<LoginViewModel>(context);
-
+    LoginViewModel _loginViewModel =
+        Provider.of<LoginViewModel>(context, listen: false);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: const Text(
             '로그인',
-            // textAlign: TextAlign.center,
             style: TextStyle(fontSize: 24),
           ),
           toolbarHeight: 100,
@@ -41,23 +43,25 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-              // 제목
-              /*
-              Container(
-                  padding: const EdgeInsets.all(20),
-                  child: const Text('로그인',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                      ))),
-             */
+              // 소셜 로그인: 로그인 정보 표시
               Text('로그인 상태: ${_loginViewModel.isLogined}'), // 로그인되었는지 상태 출력
               Text(
-                '이름: ${_loginViewModel.name}',
+                '이름(아이디): ${_loginViewModel.name}',
               ),
               Text(
                 '로그인 타입: ${_loginViewModel.loginType}',
               ),
+
+              // storage 정보 표시
+              ElevatedButton(
+                  onPressed: () async {
+                    final storageData = await storage.readAll();
+                    print(storageData.toString());
+                  },
+                  child: const Text(
+                    "스토리지 콘솔에 출력",
+                    style: TextStyle(fontSize: 14),
+                  )),
 
               // 일반 로그인 컨테이너
               Container(
@@ -88,14 +92,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 10,
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_loginIdController.text == '') {
                               showAlertDialog(context, '아이디를 입력해주세요.');
                             } else if (_passwordController.text == '') {
                               showAlertDialog(context, '비밀번호를 입력해주세요.');
                             } else {
                               try {
-                                login(
+                                await login(
                                   context,
                                   _loginIdController.text,
                                   _passwordController.text,
@@ -103,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               } catch (error) {
                                 showAlertDialog(context, '요청 실패: $error');
                               }
+                              setState(() {}); // 화면 갱신
                             }
                           },
                           child: Text('로그인'),
@@ -127,8 +132,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       // 로그아웃 버튼
                       ElevatedButton(
                         onPressed: () async {
-                          await _loginViewModel.logout();
-                          // setState(() {}); // 화면 갱신
+                          await logout(context);
+                          setState(() {}); // 화면 갱신
                         },
                         child: const Text('로그아웃'),
                       ),
@@ -152,26 +157,37 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void login(
+  Future<void> login(
     BuildContext context,
     String loginId,
     String password,
   ) async {
+    LoginViewModel _loginViewModel =
+        Provider.of<LoginViewModel>(context, listen: false);
     final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-    // print(hashedPassword);
+    // 임시코드
+    // await storage.write(key: 'loginId', value: loginId);
     final url = Uri.parse('http://localhost:8080/auth/signIn');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
     final data = jsonEncode({
       'loginId': loginId,
       'password': hashedPassword,
     });
+    // setState(() {});
     try {
       http.Response res = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: data);
       Map<String, dynamic> jsonData = jsonDecode(res.body);
       if (res.statusCode == 200) {
         // 요청 성공
-        // jsonData["data"]["userUUID"], jsonData["data"]["authToken"] 저장하는 코드
+        // storage에는 userUUID와 토큰 저장
+        await storage.write(
+            key: 'userUUID', value: jsonData["data"]["userUUID"]);
+        await storage.write(
+            key: 'authToken', value: jsonData["data"]["authToken"]);
+        // provider에는 아이디와 로그인타입으로 UserModel 만들어서 저장
+        UserModel user = UserModel(loginId, 'none');
+        _loginViewModel.login(user.name ?? '', 'none');
         showAlertDialog(context, '로그인 성공!');
         setState(() => {}); // 화면 갱신
       } else {
@@ -182,5 +198,13 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (error) {
       showAlertDialog(context, '로그인 실패: $error');
     }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    LoginViewModel _loginViewModel =
+        Provider.of<LoginViewModel>(context, listen: false);
+    await storage.deleteAll();
+    await _loginViewModel.logout();
+    setState(() {});
   }
 }
