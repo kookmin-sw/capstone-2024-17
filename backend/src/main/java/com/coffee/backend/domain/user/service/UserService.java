@@ -23,8 +23,4 @@ public class UserService {
             return new CustomException(ErrorCode.USER_NOT_FOUND);
         });
     }
-
-    public Boolean checkDuplicatedLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId).isPresent();
-    }
 }

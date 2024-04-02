@@ -28,15 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
     private final AuthService authService;
-    private final UserService userService;
-
-    @PostMapping("/checkDuplicate")
-    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(
-            @Valid @RequestBody LoginIdDto dto
-    ) {
-        Boolean isDuplicatedLoginId = userService.checkDuplicatedLoginId(dto.getLoginId());
-        return ResponseEntity.ok(ApiResponse.success(isDuplicatedLoginId));
-    }
 
     @PostMapping("/signUp")
     public ResponseEntity<ApiResponse<UserDto>> signUp(
