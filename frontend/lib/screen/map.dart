@@ -99,7 +99,9 @@ class _map_widgetState extends State<map_widget> {
       child: Stack(
         children: [
           GoogleMap(
-            initialCameraPosition: CameraPosition(
+        mapType: MapType.terrain,
+
+initialCameraPosition: CameraPosition(
               target: LatLng(37.5925683, 127.0164784), //성신여대 입구
               zoom: 18,
             ),
@@ -134,44 +136,44 @@ class _map_widgetState extends State<map_widget> {
               ),
             ),
           ),
-          Positioned(
-            top: 54,
-            child: CupertinoButton(
-              onPressed: () {
-                Navigator.push( //상단바의 위치검색 클릭 시 이동
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) => MarkerDetailScreen()));
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width - 21,
-                height: 44,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Text(
-                        '위치 검색',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 13.0),
-                    ),
-                  ],
-                ),
-                decoration: BoxDecoration( // 위치 검색 버튼 꾸미는 곳
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: 54,
+          //   child: CupertinoButton(
+          //     onPressed: () {
+          //       Navigator.push( //상단바의 위치검색 클릭 시 이동
+          //           context,
+          //           CupertinoPageRoute(
+          //               builder: (context) => MarkerDetailScreen()));
+          //     },
+          //     child: Container(
+          //       width: MediaQuery.of(context).size.width - 21,
+          //       height: 44,
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           Padding(
+          //             padding: const EdgeInsets.only(left: 16.0),
+          //             child: Text(
+          //               '위치 검색',
+          //               style: const TextStyle(
+          //                 fontSize: 18,
+          //                 fontWeight: FontWeight.w600,
+          //                 color: Colors.grey,
+          //               ),
+          //             ),
+          //           ),
+          //           const Spacer(),
+          //           Padding(
+          //             padding: const EdgeInsets.only(right: 13.0),
+          //           ),
+          //         ],
+          //       ),
+          //       decoration: BoxDecoration( // 위치 검색 버튼 꾸미는 곳
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.all(Radius.circular(8))),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
