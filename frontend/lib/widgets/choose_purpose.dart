@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/modal_button.dart';
 
 class ChoosePurpose extends StatelessWidget {
   const ChoosePurpose({
@@ -17,27 +18,33 @@ class ChoosePurpose extends StatelessWidget {
         border: Border.all(color: Colors.white),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Text(
+          const Text(
             "커피챗 목적 선택",
             style: TextStyle(fontSize: 24),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
-          PurposeButton(
-            purpose: "당신의 회사가 궁금해요",
-          ),
-          PurposeButton(
-            purpose: "당신의 업무가 궁금해요",
-          ),
-          PurposeButton(
-            purpose: "같이 개발 이야기 나눠요",
-          ),
-          PurposeButton(
-            purpose: "점심시간 함께 산책해요",
-          ),
+          const Expanded(
+              child: Column(
+            children: [
+              PurposeButton(
+                purpose: "당신의 회사가 궁금해요",
+              ),
+              PurposeButton(
+                purpose: "당신의 업무가 궁금해요",
+              ),
+              PurposeButton(
+                purpose: "같이 개발 이야기 나눠요",
+              ),
+              PurposeButton(
+                purpose: "점심시간 함께 산책해요",
+              ),
+            ],
+          )),
+          ModalButton(text: "요청 보내기", handlePressed: () {})
         ],
       ),
     ));
