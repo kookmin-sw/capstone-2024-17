@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/profile_img.dart';
+import 'package:frontend/widgets/choose_purpose.dart';
 
 class UserDetails extends StatelessWidget {
   const UserDetails({
@@ -82,7 +83,14 @@ class UserDetails extends StatelessWidget {
               ),
               ModalButton(
                 text: "커피챗 요청하기",
-                handlePressed: () {},
+                handlePressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const ChoosePurpose();
+                    },
+                  );
+                },
               ),
             ],
           ),
