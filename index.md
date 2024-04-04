@@ -57,13 +57,28 @@ jm3789)</b>
                        <br/>
               ****3101
         </td>
-        <td style="min-width: 150px;">
-            <a href="https://github.com/tmdtmdqorekf">
-              <img src="https://github.com/tmdtmdqorekf.png" width="100">
-              <br />
-              <b>김승언 (tmdtmdqorekf)</b>
-            </a> 
-                       <br/>
+    </tr>
+    <tr align="center">
+        <td>
+            Frontend
+        </td>
+        <td>
+            Frontend
+        </td>
+        <td>
+            Frontend
+        </td>
+    </tr>
+  </table>  
+  <table>
+    <tr align="center">
+      <td style="min-width: 150px;">
+        <a href="https://github.com/tmdtmdqorekf">
+          <img src="https://github.com/tmdtmdqorekf.png" width="100">
+          <br />
+          <b>김승언 (tmdtmdqorekf)</b>
+        </a> 
+        <br/>
               ****2677
         </td>
                 <td style="min-width: 150px;">
@@ -87,15 +102,6 @@ jm3789)</b>
     </tr>
     <tr align="center">
         <td>
-            Frontend
-        </td>
-        <td>
-            Frontend
-        </td>
-        <td>
-            Frontend
-        </td>
-                <td>
             Backend
         </td>
                 <td>
@@ -114,3 +120,6 @@ jm3789)</b>
 ## 💾 자료실
 
 [중간보고서-커리어한잔](https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true)
+
+<br>
+<br>
