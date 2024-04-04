@@ -51,8 +51,7 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
             <a href="https://github.com/jm3789">
               <img src="https://github.com/jm3789.png" width="100">
               <br />
-              <b>홍지민 (
-jm3789)</b>
+              <b>홍지민 (jm3789)</b>
             </a> 
                        <br/>
               ****3101
