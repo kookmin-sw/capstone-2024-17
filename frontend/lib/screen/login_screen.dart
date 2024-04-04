@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/screen/user_screen.dart';
 import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
@@ -28,8 +27,10 @@ class _LoginScreenState extends State<LoginScreen> {
         Provider.of<LoginViewModel>(context, listen: false);
     if (_loginViewModel.user != null) {
       // 현재 페이지를 대신해 유저 페이지로 navigate
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => UserScreen()));
+      // push나 pop이 중복으로 호출되는 걸 방지
+      Future.delayed(Duration.zero, () {
+        Navigator.of(context).pushReplacementNamed('/user');
+      });
     }
     return Scaffold(
         appBar: AppBar(
@@ -192,8 +193,9 @@ class _LoginScreenState extends State<LoginScreen> {
         _loginViewModel.login(user);
         showAlertDialog(context, '로그인 성공!');
         // 현재 페이지를 대신해 유저 페이지로 navigate
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => UserScreen()));
+        Future.delayed(Duration.zero, () {
+          Navigator.of(context).pushReplacementNamed('/user');
+        });
       } else {
         // 로그인 예외처리
         showAlertDialog(
