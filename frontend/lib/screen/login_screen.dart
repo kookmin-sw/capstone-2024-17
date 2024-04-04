@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screen/user_screen.dart';
 import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:provider/provider.dart';
@@ -97,8 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        ElevatedButton(
-                          onPressed: () async {
+                        BottomTextButton(
+                          text: '로그인',
+                          handlePressed: () async {
                             if (_loginIdController.text == '') {
                               showAlertDialog(context, '아이디를 입력해주세요.');
                             } else if (_passwordController.text == '') {
@@ -116,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               setState(() {}); // 화면 갱신
                             }
                           },
-                          child: Text('로그인'),
                         ),
                       ])),
 
@@ -135,22 +137,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      // 로그아웃 버튼
-                      ElevatedButton(
-                        onPressed: () async {
-                          await logout(context);
-                          setState(() {}); // 화면 갱신
-                        },
-                        child: const Text('로그아웃'),
-                      ),
+
                       const SizedBox(
                         height: 10,
                       ),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/signup');
-                          },
-                          child: const Text('회원가입')),
+                      // 회원가입 버튼
+                      BottomTextSecondaryButton(
+                        text: '회원가입',
+                        handlePressed: () {
+                          Navigator.of(context).pushNamed('/signup');
+                        },
+                      )
                     ],
                   ))
             ])));
