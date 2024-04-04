@@ -25,6 +25,7 @@ public class ChatroomService {
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreationDto dto) {
 //      TODO?  채팅방 이미 있는지 확인
+//      TODO Exception 수정
         User sender = userRepository.findByUserUUID(dto.getSenderUUID())
                 .orElseThrow(NoSuchElementException::new);
         User receiver = userRepository.findById(dto.getReceiverId())
@@ -46,12 +47,12 @@ public class ChatroomService {
 
     @Transactional
     public ChatroomResponses getChatrooms(User user) {
-
-        List<ChatroomResponse> responses = userChatroomRepository.findAllByUser(user)
+        List<ChatroomResponse> responses = (userChatroomRepository.findAllByUser(user)).stream()
                 .filter(o -> o.getUser().equals(user))
                 .map(UserChatroom::getChatroom)
-                .stream().map(m -> new ChatroomResponse(m.getChatroomId())).toList();
-        
+                .map(m -> new ChatroomResponse(m.getChatroomId()))
+                .toList();
+
         return new ChatroomResponses(responses);
     }
 }
