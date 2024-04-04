@@ -17,13 +17,13 @@ class KakaoLogin implements SocialLogin {
         await UserApi.instance.loginWithKakaoAccount();
       }
     } catch (error) {
-      return UserModel('', '');
+      return UserModel('', '', '');
     }
 
     final User user = await UserApi.instance.me();
     final String? nickname = user.kakaoAccount?.profile?.nickname;
 
-    return UserModel(nickname, 'kakao');
+    return UserModel('', nickname ?? '', 'kakao');
   }
 
   @override

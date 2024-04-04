@@ -13,7 +13,7 @@ class KakaoLoginWidget extends StatelessWidget {
     return InkWell(
       onTap: () async {
         UserModel user = await KakaoLogin().login();
-        _loginViewModel.login(user.name ?? '', 'kakao');
+        _loginViewModel.login(user);
         // print('KakaoLogin() 완료! 이름: ${_loginViewModel.name}');
       },
       child: Image.asset('assets/kakao_login_medium_narrow.png'),

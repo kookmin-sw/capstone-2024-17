@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/user_screen.dart';
 import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
@@ -23,6 +24,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     LoginViewModel _loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
+    if (_loginViewModel.user != null) {
+      // 현재 페이지를 대신해 유저 페이지로 navigate
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => UserScreen()));
+    }
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -43,20 +49,20 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-              // 소셜 로그인: 로그인 정보 표시
-              Text('로그인 상태: ${_loginViewModel.isLogined}'), // 로그인되었는지 상태 출력
+              // 로그인 정보 표시
+              Text('로그인 상태: ${_loginViewModel.user?.loginId}'),
               Text(
-                '이름(아이디): ${_loginViewModel.name}',
+                '닉네임: ${_loginViewModel.user?.nickname}',
               ),
               Text(
-                '로그인 타입: ${_loginViewModel.loginType}',
+                '로그인 타입: ${_loginViewModel.user?.loginType}',
               ),
 
               // storage 정보 표시
               ElevatedButton(
                   onPressed: () async {
                     final storageData = await storage.readAll();
-                    print(storageData.toString());
+                    print('스토리지: ${storageData.toString()}');
                   },
                   child: const Text(
                     "스토리지 콘솔에 출력",
@@ -165,8 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
     LoginViewModel _loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
     final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-    // 임시코드
-    // await storage.write(key: 'loginId', value: loginId);
+
     final url = Uri.parse('http://localhost:8080/auth/signIn');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
     final data = jsonEncode({
@@ -185,26 +190,21 @@ class _LoginScreenState extends State<LoginScreen> {
             key: 'userUUID', value: jsonData["data"]["userUUID"]);
         await storage.write(
             key: 'authToken', value: jsonData["data"]["authToken"]);
-        // provider에는 아이디와 로그인타입으로 UserModel 만들어서 저장
-        UserModel user = UserModel(loginId, 'none');
-        _loginViewModel.login(user.name ?? '', 'none');
+        // 아이디와 닉네임, 로그인타입으로 UserModel 만들어서 provider에 로그인
+        UserModel user = UserModel(loginId, 'none', 'none');
+        _loginViewModel.login(user);
         showAlertDialog(context, '로그인 성공!');
-        setState(() => {}); // 화면 갱신
+        // 현재 페이지를 대신해 유저 페이지로 navigate
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => UserScreen()));
       } else {
-        // 예외
+        // 로그인 예외처리
         showAlertDialog(
             context, '로그인 실패: ${jsonData["message"]}(${jsonData["code"]})');
       }
+      // 에러
     } catch (error) {
       showAlertDialog(context, '로그인 실패: $error');
     }
-  }
-
-  Future<void> logout(BuildContext context) async {
-    LoginViewModel _loginViewModel =
-        Provider.of<LoginViewModel>(context, listen: false);
-    await storage.deleteAll();
-    await _loginViewModel.logout();
-    setState(() {});
   }
 }
