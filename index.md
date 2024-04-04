@@ -5,7 +5,7 @@
 
 주변 현직자와 실시간 커피챗이 가능한 커리어 대화 플랫폼
 
-## [Git Hub 링크](https://kookmin-sw.github.io/capstone-2024-17)
+## [Git Hub 링크](https://github.com/kookmin-sw/capstone-2024-17)
 
 ## 📢 프로젝트 소개
 
@@ -17,7 +17,9 @@
 
 ## Abstract
 
-Our service created with the purpose of facilitating face-to-face opportunities for developers or aspiring developers who seek Coffee-Chats. we aimed to allows users to see nearby individuals and facilitates real-time matching for Coffee Chats through requests, increasing the likelihood of successful connections.
+Our service created with the purpose of facilitating face-to-face opportunities for developers or aspiring developers who seek Coffee Chat.
+
+We aimed to allows users to see nearby individuals and facilitates real-time matching for Coffee Chat through requests, increasing the likelihood of successful connections.
 
 ## 🎞 소개 영상
 
@@ -109,6 +111,6 @@ jm3789)</b>
 
 소스코드제출시 설치법이나 사용법을 작성하세요. -->
 
-<!-- ### 5. 기타
+## 💾 자료실
 
-추가적인 내용은 자유롭게 작성하세요. -->
+[중간보고서-커리어한잔](https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true)
