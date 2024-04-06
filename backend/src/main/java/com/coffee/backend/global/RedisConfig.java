@@ -1,12 +1,12 @@
 package com.coffee.backend.global;
 
-import com.coffee.backend.domain.redis.service.RedisService;
+import com.coffee.backend.domain.redis.service.RedisMessageService;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -33,20 +33,21 @@ public class RedisConfig {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(cafeChoiceListenerAdapter, new PatternTopic("cafeChoice"));
-        container.addMessageListener(matchRequestListenerAdapter, new PatternTopic("matchRequest"));
+        container.addMessageListener(cafeChoiceListenerAdapter,
+                new ChannelTopic("cafeChoice")); // PatternTopic 대신 ChannelTopic 사용
+        container.addMessageListener(matchRequestListenerAdapter, new ChannelTopic("matchRequest"));
         return container;
     }
 
     // cafeChoice 토픽 메시지 수신/처리
     @Bean
-    MessageListenerAdapter cafeChoiceListenerAdapter(RedisService redisService) {
-        return new MessageListenerAdapter(redisService, "handleCafeChoice");
+    MessageListenerAdapter cafeChoiceListenerAdapter(RedisMessageService redisMessageService) {
+        return new MessageListenerAdapter(redisMessageService, "handleCafeChoice");
     }
 
     // matchRequest 토픽 메시지 수신/처리
     @Bean
-    MessageListenerAdapter matchRequestListenerAdapter(RedisService redisService) {
-        return new MessageListenerAdapter(redisService, "handleMatchRequest");
+    MessageListenerAdapter matchRequestListenerAdapter(RedisMessageService redisMessageService) {
+        return new MessageListenerAdapter(redisMessageService, "handleMatchRequest");
     }
 }
