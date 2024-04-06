@@ -16,7 +16,18 @@ class KakaoLoginWidget extends StatelessWidget {
         _loginViewModel.login(user);
         // print('KakaoLogin() 완료! 이름: ${_loginViewModel.name}');
       },
-      child: Image.asset('assets/kakao_login_medium_narrow.png'),
+      child: Container(
+        width: 170,
+        height: 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+
+          image: const DecorationImage(
+            fit: BoxFit.fitWidth,
+            image: AssetImage('assets/kakao_login_medium_narrow.png'),
+          ),
+        ),
+      ),
     );
     ;
   }

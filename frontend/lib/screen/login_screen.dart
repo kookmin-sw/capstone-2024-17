@@ -3,6 +3,7 @@ import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 import 'package:frontend/widgets/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
@@ -27,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Provider.of<LoginViewModel>(context, listen: false);
     if (_loginViewModel.user != null) {
       // 현재 페이지를 대신해 유저 페이지로 navigate
-      // push나 pop이 중복으로 호출되는 걸 방지
+      // push나 pop의 재진입 현상 방지
       Future.delayed(Duration.zero, () {
         Navigator.of(context).pushReplacementNamed('/user');
       });
@@ -48,109 +49,109 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-              // 로그인 정보 표시
-              Text('로그인 상태: ${_loginViewModel.user?.loginId}'),
-              Text(
-                '닉네임: ${_loginViewModel.user?.nickname}',
+        body: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 40,
+            ),
+            child: Column(children: <Widget>[
+              // 로고
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 20,
+                ),
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 100,
+                  height: 100,
+                ),
               ),
-              Text(
-                '로그인 타입: ${_loginViewModel.user?.loginType}',
-              ),
-
-              // storage 정보 표시
-              ElevatedButton(
-                  onPressed: () async {
-                    final storageData = await storage.readAll();
-                    print('스토리지: ${storageData.toString()}');
-                  },
-                  child: const Text(
-                    "스토리지 콘솔에 출력",
-                    style: TextStyle(fontSize: 14),
-                  )),
 
               // 일반 로그인 컨테이너
               Container(
                   margin: const EdgeInsets.symmetric(
-                      horizontal: 100, vertical: 20), // 마진 추가
-                  child: Column(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        TextField(
-                          controller: _loginIdController,
-                          decoration: const InputDecoration(
-                            // border: OutlineInputBorder(),
-                            labelText: '아이디',
-                          ),
+                    vertical: 20,
+                  ),
+                  child: Column(children: <Widget>[
+                    // 입력창
+                    Container(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 20,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: _passwordController,
-                          decoration: const InputDecoration(
-                            // border: OutlineInputBorder(),
-                            labelText: '비밀번호',
-                          ),
-                          obscureText: true,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        BottomTextButton(
-                          text: '로그인',
-                          handlePressed: () async {
-                            if (_loginIdController.text == '') {
-                              showAlertDialog(context, '아이디를 입력해주세요.');
-                            } else if (_passwordController.text == '') {
-                              showAlertDialog(context, '비밀번호를 입력해주세요.');
-                            } else {
-                              try {
-                                await login(
-                                  context,
-                                  _loginIdController.text,
-                                  _passwordController.text,
-                                );
-                              } catch (error) {
-                                showAlertDialog(context, '요청 실패: $error');
-                              }
-                              setState(() {}); // 화면 갱신
-                            }
-                          },
-                        ),
-                      ])),
+                        child: Column(
+                          children: <Widget>[
+                            IconedTextfield(
+                              icon: const Icon(Icons.person_outline),
+                              hintText: '아이디',
+                              controller: _loginIdController,
+                              isSecret: false,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            IconedTextfield(
+                              icon: const Icon(Icons.lock_outline),
+                              hintText: '비밀번호',
+                              controller: _passwordController,
+                              isSecret: true,
+                            ),
+                          ],
+                        )),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    BottomTextButton(
+                      text: '로그인',
+                      handlePressed: () async {
+                        if (_loginIdController.text == '') {
+                          showAlertDialog(context, '아이디를 입력해주세요.');
+                        } else if (_passwordController.text == '') {
+                          showAlertDialog(context, '비밀번호를 입력해주세요.');
+                        } else {
+                          try {
+                            await login(
+                              context,
+                              _loginIdController.text,
+                              _passwordController.text,
+                            );
+                          } catch (error) {
+                            showAlertDialog(context, '요청 실패: $error');
+                          }
+                          setState(() {}); // 화면 갱신
+                        }
+                      },
+                    ),
+                    BottomTextSecondaryButton(
+                      text: '회원가입',
+                      handlePressed: () {
+                        Navigator.of(context).pushNamed('/signup');
+                      },
+                    )
+                  ])),
+              // 구분선
+              const Row(children: <Widget>[
+                Expanded(child: Divider()),
+                Text("또는"),
+                Expanded(child: Divider()),
+              ]),
 
-              // 버튼 컨테이너
+              // 소셜 로그인 컨테이너
               Container(
-                  margin: const EdgeInsets.all(35),
-                  child: Column(
-                    children: <Widget>[
-                      // 카카오톡 로그인 버튼
-                      InkWell(
-                        onTap: () async {
-                          // setState(() => {});  // 화면 갱신
-                        },
-                        child: KakaoLoginWidget(),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      // 회원가입 버튼
-                      BottomTextSecondaryButton(
-                        text: '회원가입',
-                        handlePressed: () {
-                          Navigator.of(context).pushNamed('/signup');
-                        },
-                      )
-                    ],
-                  ))
+                margin: const EdgeInsets.symmetric(
+                  vertical: 30,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    // 카카오톡 로그인 버튼
+                    GestureDetector(
+                      onTap: () {
+                        // setState(() {}); // 왜 안되징
+                      },
+                      child: KakaoLoginWidget(),
+                    ),
+                  ],
+                ),
+              )
             ])));
   }
 

@@ -29,7 +29,7 @@ class BottomTextSecondaryButton extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            color: Colors.black,
+            color: Color(0xff371d10),
             fontSize: 20,
           ),
         ),
