@@ -24,7 +24,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         switch (type) {
             case "cafeChoice" -> redisService.handleCafeChoice(jsonNode);
             case "matchRequest" -> redisService.handleMatchRequest(jsonNode);
-            default -> System.out.println("Unknown message type");
+            default -> throw new IllegalArgumentException("웹소켓 message type을 알 수 없습니다." + type);
         }
     }
 }
