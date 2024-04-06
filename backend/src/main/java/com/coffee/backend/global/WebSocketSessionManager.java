@@ -23,8 +23,12 @@ public class WebSocketSessionManager {
             try {
                 session.sendMessage(new TextMessage(message));
             } catch (IOException e) {
-                throw new RuntimeException("Response 전송 실패 to 사용자: " + userId, e);
+                throw new RuntimeException("Response 전송을 실패했습니다. To: " + userId, e);
             }
         }
+    }
+
+    public void removeSession(String userId) {
+        sessions.remove(userId);
     }
 }

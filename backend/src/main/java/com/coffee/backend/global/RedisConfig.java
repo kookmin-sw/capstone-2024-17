@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 @Configuration
 public class RedisConfig {
-    // Redis에 데이터 저장/검색하는데 사용
+    // Redis 데이터 저장/검색에 사용
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -33,10 +33,15 @@ public class RedisConfig {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
+
+        // 선택한 카페 정보에 대한 토픽
         container.addMessageListener(cafeChoiceListenerAdapter,
                 new ChannelTopic("cafeChoice")); // PatternTopic 대신 ChannelTopic 사용
+
+        // 요청 정보에 대한 토픽
         container.addMessageListener(matchRequestListenerAdapter,
                 new ChannelTopic("matchRequest"));
+
         return container;
     }
 
