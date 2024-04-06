@@ -22,6 +22,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final storage = new FlutterSecureStorage();
 
+  // 카카오 로그인 버튼을 누르면 돌아오는 콜백함수
+  void _handleKakaoLoginPressed() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     LoginViewModel _loginViewModel =
@@ -143,12 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: <Widget>[
                     // 카카오톡 로그인 버튼
-                    GestureDetector(
-                      onTap: () {
-                        // setState(() {}); // 왜 안되징
-                      },
-                      child: KakaoLoginWidget(),
-                    ),
+                    KakaoLoginWidget(_handleKakaoLoginPressed),
                   ],
                 ),
               )
