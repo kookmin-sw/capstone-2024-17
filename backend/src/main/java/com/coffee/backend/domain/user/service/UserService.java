@@ -1,6 +1,5 @@
 package com.coffee.backend.domain.user.service;
 
-import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
@@ -23,9 +22,5 @@ public class UserService {
             log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
             return new CustomException(ErrorCode.USER_NOT_FOUND);
         });
-    }
-
-    public Boolean checkDuplicatedLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId).isPresent();
     }
 }

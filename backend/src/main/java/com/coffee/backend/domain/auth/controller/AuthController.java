@@ -2,13 +2,11 @@ package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.domain.auth.dto.AuthDto;
 import com.coffee.backend.domain.auth.dto.DeleteUserDto;
-import com.coffee.backend.domain.auth.dto.LoginIdDto;
 import com.coffee.backend.domain.auth.dto.SignInDto;
 import com.coffee.backend.domain.auth.dto.SignUpDto;
 import com.coffee.backend.domain.auth.service.AuthService;
 import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
-import com.coffee.backend.domain.user.service.UserService;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
 import com.coffee.backend.utils.ApiResponse;
@@ -28,13 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
     private final AuthService authService;
-    private final UserService userService;
-
-    @PostMapping("/checkDuplicate")
-    public ResponseEntity<ApiResponse<Boolean>> checkLoginId(@RequestBody LoginIdDto dto) {
-        Boolean isDuplicatedLoginId = userService.checkDuplicatedLoginId(dto.getLoginId());
-        return ResponseEntity.ok(ApiResponse.success(isDuplicatedLoginId));
-    }
 
     @PostMapping("/signUp")
     public ResponseEntity<ApiResponse<UserDto>> signUp(
@@ -53,8 +44,10 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<Boolean>> deleteAccount(@AuthenticationPrincipal User user,
-                                                              @RequestBody DeleteUserDto dto) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteAccount(
+            @AuthenticationPrincipal User user,
+            @RequestBody DeleteUserDto dto
+    ) {
         boolean isDeleted = authService.deleteUserByUserUUID(dto.getUserUUID());
         if (isDeleted) {
             return ResponseEntity.ok(ApiResponse.success(true));

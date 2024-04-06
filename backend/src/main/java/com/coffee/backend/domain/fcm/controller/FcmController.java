@@ -2,6 +2,7 @@ package com.coffee.backend.domain.fcm.controller;
 
 import com.coffee.backend.domain.fcm.dto.FcmRequestDto;
 import com.coffee.backend.domain.fcm.service.FcmService;
+import com.coffee.backend.utils.ApiResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,8 @@ public class FcmController {
     private final FcmService fcmService;
 
     @PostMapping()
-    public ResponseEntity<String> sendPushMessage(@RequestBody @Valid FcmRequestDto dto) {
-        try {
-            fcmService.sendPushMessageTo(dto);
-            return ResponseEntity.ok().body("알림 전송 성공");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("알림 전송 실패");
-        }
+    public ResponseEntity<ApiResponse<String>> sendPushMessage(@Valid @RequestBody FcmRequestDto dto) {
+        fcmService.sendPushMessageTo(dto);
+        return ResponseEntity.ok(ApiResponse.success("알림 전송 성공"));
     }
 }
