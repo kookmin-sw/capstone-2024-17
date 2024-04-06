@@ -3,12 +3,14 @@ package com.coffee.backend.domain.auth.service;
 import com.coffee.backend.domain.auth.dto.AuthDto;
 import com.coffee.backend.domain.auth.dto.SignInDto;
 import com.coffee.backend.domain.auth.dto.SignUpDto;
+import com.coffee.backend.domain.redis.exception.RedisOperationException;
 import com.coffee.backend.domain.redis.service.TokenStorageService;
 import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
+import io.lettuce.core.RedisException;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +50,11 @@ public class AuthService {
         String token = jwtService.createAccessToken(user.getUserId());
 
         // redis에 토큰 저장
-        tokenStorageService.storeToken(user.getUserUUID(), token);
+        try {
+            tokenStorageService.storeToken(user.getUserUUID(), token);
+        } catch (RedisException e) {
+            throw new RedisOperationException(e.getMessage(), e);
+        }
 
         return new AuthDto(user.getUserUUID(), token);
     }
