@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/user_details.dart';
+import 'package:frontend/widgets/choose_purpose.dart';
 
 class UserItem extends StatelessWidget {
   final String nickname;
@@ -23,7 +24,7 @@ class UserItem extends StatelessWidget {
         showDialog(
           context: context,
           builder: (context) {
-            return UserDetails(
+            return ReqDialog(
               nickname: nickname,
               company: company,
               position: position,
@@ -69,6 +70,49 @@ class UserItem extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ReqDialog extends StatefulWidget {
+  final String nickname;
+  final String company;
+  final String position;
+  final String introduction;
+
+  const ReqDialog({
+    super.key,
+    required this.nickname,
+    required this.company,
+    required this.position,
+    required this.introduction,
+  });
+
+  @override
+  State<ReqDialog> createState() => _ReqDialogState();
+}
+
+class _ReqDialogState extends State<ReqDialog> {
+  bool isNext = false;
+
+  handleChangeDialog() {
+    setState(() {
+      isNext = !isNext;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: isNext
+          ? const ChoosePurpose()
+          : UserDetails(
+              nickname: widget.nickname,
+              company: widget.company,
+              position: widget.position,
+              introduction: widget.introduction,
+              handleChangeDialog: handleChangeDialog,
+            ),
     );
   }
 }

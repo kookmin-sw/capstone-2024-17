@@ -8,8 +8,7 @@ class ChoosePurpose extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-        child: Container(
+    return Container(
       padding: const EdgeInsets.all(25),
       width: 350,
       height: 500,
@@ -47,7 +46,7 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(text: "요청 보내기", handlePressed: () {})
         ],
       ),
-    ));
+    );
   }
 }
 
