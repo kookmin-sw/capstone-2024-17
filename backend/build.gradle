@@ -30,6 +30,9 @@ dependencies {
 
     // websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.1.2' // sockjs
+    implementation 'org.webjars:stomp-websocket:2.3.4' // stomp
+
 
     // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
