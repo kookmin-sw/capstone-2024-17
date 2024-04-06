@@ -1,6 +1,6 @@
 package com.coffee.backend.global;
 
-import com.coffee.backend.domain.redis.service.RedisMessageService;
+import com.coffee.backend.domain.redis.service.RedisService;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,19 +35,20 @@ public class RedisConfig {
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(cafeChoiceListenerAdapter,
                 new ChannelTopic("cafeChoice")); // PatternTopic 대신 ChannelTopic 사용
-        container.addMessageListener(matchRequestListenerAdapter, new ChannelTopic("matchRequest"));
+        container.addMessageListener(matchRequestListenerAdapter,
+                new ChannelTopic("matchRequest"));
         return container;
     }
 
     // cafeChoice 토픽 메시지 수신/처리
     @Bean
-    MessageListenerAdapter cafeChoiceListenerAdapter(RedisMessageService redisMessageService) {
-        return new MessageListenerAdapter(redisMessageService, "handleCafeChoice");
+    MessageListenerAdapter cafeChoiceListenerAdapter(RedisService redisService) {
+        return new MessageListenerAdapter(redisService, "handleCafeChoice");
     }
 
     // matchRequest 토픽 메시지 수신/처리
     @Bean
-    MessageListenerAdapter matchRequestListenerAdapter(RedisMessageService redisMessageService) {
-        return new MessageListenerAdapter(redisMessageService, "handleMatchRequest");
+    MessageListenerAdapter matchRequestListenerAdapter(RedisService redisService) {
+        return new MessageListenerAdapter(redisService, "handleMatchRequest");
     }
 }

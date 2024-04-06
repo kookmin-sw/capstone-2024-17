@@ -9,6 +9,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+// 1. 카페 선택 / 매칭 요청 웹소켓 서버로 전송
 @Component // @Bean 따로 등록 없이 사용 가능
 @RequiredArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
