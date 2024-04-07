@@ -1,10 +1,11 @@
 package com.coffee.backend.global;
 
 import com.coffee.backend.domain.redis.service.RedisService;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -12,48 +13,53 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@EnableCaching
 @Configuration
 public class RedisConfig {
-    // Redis 데이터 저장/검색에 사용
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
+    public RedisConnectionFactory connectionFactory() {
+        return new LettuceConnectionFactory();
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplate() {
+        final RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory());
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
         return template;
     }
 
-    // 특정 토픽 구독해서 메시지 수신/처리할 수 있도록 설정
+    // Redis 의 channel 로부터 메시지를 수신받아 해당 MessageListenerAdapter 에게 디스패치
     @Bean
-    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                            MessageListenerAdapter cafeChoiceListenerAdapter,
-                                            MessageListenerAdapter matchRequestListenerAdapter) {
+    public RedisMessageListenerContainer container(MessageListenerAdapter cafeChoiceListenerAdapter,
+                                                   MessageListenerAdapter matchRequestListenerAdapter
+    ) {
+        final RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-
-        // 선택한 카페 정보에 대한 토픽
-        container.addMessageListener(cafeChoiceListenerAdapter,
-                new ChannelTopic("cafeChoice")); // PatternTopic 대신 ChannelTopic 사용
-
-        // 요청 정보에 대한 토픽
-        container.addMessageListener(matchRequestListenerAdapter,
-                new ChannelTopic("matchRequest"));
+        container.setConnectionFactory(connectionFactory());
+        container.addMessageListener(cafeChoiceListenerAdapter, cafeChoiceTopic());
+        container.addMessageListener(matchRequestListenerAdapter, matchRequestTopic());
 
         return container;
     }
 
-    // cafeChoice 토픽 메시지 수신/처리
     @Bean
-    MessageListenerAdapter cafeChoiceListenerAdapter(RedisService redisService) {
+    public MessageListenerAdapter cafeChoiceListenerAdapter(RedisService redisService) {
         return new MessageListenerAdapter(redisService, "handleCafeChoice");
     }
 
-    // matchRequest 토픽 메시지 수신/처리
     @Bean
-    MessageListenerAdapter matchRequestListenerAdapter(RedisService redisService) {
+    public MessageListenerAdapter matchRequestListenerAdapter(RedisService redisService) {
         return new MessageListenerAdapter(redisService, "handleMatchRequest");
+    }
+
+    @Bean
+    public ChannelTopic cafeChoiceTopic() {
+        return new ChannelTopic("cafeChoice");
+    }
+
+    @Bean
+    public ChannelTopic matchRequestTopic() {
+        return new ChannelTopic("matchRequest");
     }
 }
