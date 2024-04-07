@@ -1,6 +1,7 @@
 class UserModel {
-  final String? name;
-  final String? loginType; // kakao: 1
+  final String loginId;
+  final String nickname;
+  final String loginType; // none, kakao, ...
 
-  UserModel(this.name, this.loginType);
+  UserModel(this.loginId, this.nickname, this.loginType);
 }

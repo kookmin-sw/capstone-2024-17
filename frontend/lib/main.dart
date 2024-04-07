@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/signup_screen.dart';
+import 'package:frontend/screen/user_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:frontend/screen/login_screen.dart';
@@ -14,7 +15,9 @@ void main() async {
     javaScriptAppKey: dotenv.env['JAVA_SCRIPT_APP_KEY'],
   );
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => LoginViewModel()),
+    ChangeNotifierProvider(
+        create: (_) =>
+            LoginViewModel(user: null)), // provider로 감싸고 유저의 초기값 넣어주기
   ], child: const MyApp()));
 }
 
@@ -28,6 +31,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/signup': (BuildContext context) => SignupScreen(),
         '/signin': (BuildContext context) => LoginScreen(),
+        '/user': (BuildContext context) => UserScreen(),
       },
     );
   }
