@@ -17,6 +17,21 @@ class MyApp extends StatelessWidget {
   }
 }
 
+const List<Map<String, dynamic>> sampleUserList = [
+  {
+    "nickname": "뽕순이",
+    "companyName": "채연컴퍼니",
+    "positionName": "집사",
+    "introduction": "안녕하세요 뽕순이입니다 뽕",
+  },
+  {
+    "nickname": "담",
+    "companyName": "네카라쿠배당토",
+    "positionName": "웹 프론트엔드",
+    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"
+  },
+];
+
 class CafeDetails extends StatefulWidget {
   const CafeDetails({
     super.key,
@@ -82,8 +97,8 @@ class _CafeDetailsState extends State<CafeDetails>
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: TabBarView(
                 controller: tabController,
-                children: const [
-                  CafeInfo(
+                children: [
+                  const CafeInfo(
                     location:
                         "서울특별시 성북구 정릉로 77 1층 우편번호는 어쩌고저쩌곤데 너무 멀수도있어서 그냥 안오는게 나을듯",
                     phoneNumber: "02-1234-5678",
@@ -91,18 +106,13 @@ class _CafeDetailsState extends State<CafeDetails>
                   ),
                   Column(
                     children: [
-                      UserItem(
-                        nickname: "뽕순이",
-                        company: "채연컴퍼니",
-                        position: "집사",
-                        introduction: "안녕하세요 뽕순이입니다 뽕",
-                      ),
-                      UserItem(
-                        nickname: "담",
-                        company: "네카라쿠배당토",
-                        position: "웹 프론트엔드",
-                        introduction: "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
-                      ),
+                      for (var user in sampleUserList)
+                        UserItem(
+                          nickname: user["nickname"],
+                          company: user["companyName"],
+                          position: user["positionName"],
+                          introduction: user["introduction"],
+                        ),
                     ],
                   ),
                 ],
