@@ -46,6 +46,9 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     // fcm
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
