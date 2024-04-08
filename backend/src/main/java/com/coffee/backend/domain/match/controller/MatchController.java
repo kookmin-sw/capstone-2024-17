@@ -26,4 +26,10 @@ public class MatchController {
         matchPublisher.sendMatchRequest(dto);
         matchPublisher.saveMatchRequest(dto);
     }
+
+    @MessageMapping("/match/accept")
+    public void acceptMatchRequest(@AuthenticationPrincipal User user, @Payload String matchRequestId) {
+        log.info("Accept Message Catch!!");
+        matchPublisher.acceptMatchRequest(matchRequestId);
+    }
 }

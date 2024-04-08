@@ -2,7 +2,9 @@ package com.coffee.backend.domain.match.service;
 
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -24,9 +26,16 @@ public class MatchSubscriber implements MessageListener {
             log.info(message.toString());
             MatchDto matchDto = objectMapper.readValue(message.getBody(), MatchDto.class);
 
-            // sub/user/{userId}/match/request
-            // 여기서 userId는 loginId로 사용
-            messagingTemplate.convertAndSendToUser(matchDto.getToLoginId(), "/match/request", matchDto);
+            String channelName = new String(pattern);
+            log.info("채널 이름: {}", channelName);
+
+            if (channelName.contains("matchRequest")) {
+                // sub/user/{userId}/match/request
+                // 여기서 userId는 loginId로 사용
+                messagingTemplate.convertAndSendToUser(matchDto.getToLoginId(), "/match/request", matchDto); // User 수정 필요
+            } else if (channelName.contains("matchAccept")) {
+                messagingTemplate.convertAndSendToUser(matchDto.getFromLoginId(), "/match/accept", matchDto);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
