@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/chatlist_screen.dart';
+import 'package:frontend/screen/chatroom_screen.dart';
 import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/signin': (BuildContext context) => LoginScreen(),
         '/user': (BuildContext context) => UserScreen(),
         '/chatlist': (BuildContext context) => ChatlistScreen(),
+        '/chatroom': (BuildContext context) => ChatroomScreen(),
       },
     );
   }
