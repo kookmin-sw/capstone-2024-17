@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  was:
+    container_name: server
+    image: hyeesw/img3-0.0.2 # 허브에서 pull 받을 이미지 명
+    ports:
+      - 8080:8080
+    env_file:
+      - "./.env"
+    depends_on:
+      - mysql
+      - redis
+    links:
+      - mysql
+      - redis
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    #    volumes:
+    #      - /home/ec2-user/docker/mysql/conf:/etc/mysql/conf.d
+    #      - /home/ec2-user/docker/mysql/lib:/var/lib/mysql
+    #      - /home/ec2-user/docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - 3307:3306
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
