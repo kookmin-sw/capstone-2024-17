@@ -1,16 +1,16 @@
 package com.coffee.backend.global;
 
-import com.coffee.backend.domain.redis.service.RedisService;
+import com.coffee.backend.domain.cafe.service.CafeSubscriber;
+import com.coffee.backend.domain.match.service.MatchSubscriber;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -21,45 +21,44 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate() {
-        final RedisTemplate<String, String> template = new RedisTemplate<>();
+    public RedisTemplate<String, Object> redisTemplate() {
+        final RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory());
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
 
-    // Redis 의 channel 로부터 메시지를 수신받아 해당 MessageListenerAdapter 에게 디스패치
+    // Redis의 channel로부터 메시지를 수신받아 해당 MessageListenerAdapter에게 dispatch
     @Bean
-    public RedisMessageListenerContainer container(MessageListenerAdapter cafeChoiceListenerAdapter,
-                                                   MessageListenerAdapter matchRequestListenerAdapter
-    ) {
+    public RedisMessageListenerContainer container(MessageListenerAdapter matchListenerAdapter,
+                                                   MessageListenerAdapter cafeListenerAdapter) {
         final RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 
         container.setConnectionFactory(connectionFactory());
-        container.addMessageListener(cafeChoiceListenerAdapter, cafeChoiceTopic());
-        container.addMessageListener(matchRequestListenerAdapter, matchRequestTopic());
+        container.addMessageListener(matchListenerAdapter, topic01());
+        container.addMessageListener(cafeListenerAdapter, topic02());
 
         return container;
     }
 
     @Bean
-    public MessageListenerAdapter cafeChoiceListenerAdapter(RedisService redisService) {
-        return new MessageListenerAdapter(redisService, "handleCafeChoice");
+    public MessageListenerAdapter matchListenerAdapter(MatchSubscriber matchSubscriber) {
+        return new MessageListenerAdapter(matchSubscriber, "onMessage");
     }
 
     @Bean
-    public MessageListenerAdapter matchRequestListenerAdapter(RedisService redisService) {
-        return new MessageListenerAdapter(redisService, "handleMatchRequest");
+    public MessageListenerAdapter cafeListenerAdapter(CafeSubscriber cafeSubscriber) {
+        return new MessageListenerAdapter(cafeSubscriber, "onMessage");
     }
 
     @Bean
-    public ChannelTopic cafeChoiceTopic() {
-        return new ChannelTopic("cafeChoice");
+    public ChannelTopic topic01() {
+        return new ChannelTopic("ch01");
     }
 
     @Bean
-    public ChannelTopic matchRequestTopic() {
-        return new ChannelTopic("matchRequest");
+    public ChannelTopic topic02() {
+        return new ChannelTopic("ch02");
     }
 }
