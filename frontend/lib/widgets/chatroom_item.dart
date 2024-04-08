@@ -26,7 +26,7 @@ class ChatroomItem extends StatelessWidget {
               child: CircleAvatar(
                 radius: 40,
                 backgroundImage: (logoImage == null)
-                    ? const AssetImage('logo.png')
+                    ? const AssetImage('assets/logo.png')
                     : logoImage as ImageProvider<Object>,
               ),
             ),
@@ -38,7 +38,7 @@ class ChatroomItem extends StatelessWidget {
                     nickname,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -52,7 +52,7 @@ class ChatroomItem extends StatelessWidget {
                           message,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 13,
                           ),
                         ),
                       ),
@@ -69,7 +69,7 @@ class ChatroomItem extends StatelessWidget {
                             (count < 100) ? count.toString() : '99+',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
