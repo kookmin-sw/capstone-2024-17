@@ -30,6 +30,18 @@ const List<Map<String, dynamic>> sampleUserList = [
     "positionName": "웹 프론트엔드",
     "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"
   },
+  {
+    "nickname": "잠온다",
+    "companyName": "구글",
+    "positionName": "데이터 엔지니어",
+    "introduction": "잠오니까 요청하지 마세요. 감사합니다."
+  },
+  {
+    "nickname": "내가제일잘나가",
+    "companyName": "꿈의직장",
+    "positionName": "풀스택",
+    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<"
+  },
 ];
 
 class CafeDetails extends StatefulWidget {
@@ -104,16 +116,16 @@ class _CafeDetailsState extends State<CafeDetails>
                     phoneNumber: "02-1234-5678",
                     businessHours: "매일 09:00 ~ 22:00\n매일 휴게시간 14:00 ~ 15:00",
                   ),
-                  Column(
-                    children: [
-                      for (var user in sampleUserList)
-                        UserItem(
-                          nickname: user["nickname"],
-                          company: user["companyName"],
-                          position: user["positionName"],
-                          introduction: user["introduction"],
-                        ),
-                    ],
+                  ListView.builder(
+                    itemCount: sampleUserList.length,
+                    itemBuilder: (context, index) {
+                      return UserItem(
+                        nickname: sampleUserList[index]["nickname"],
+                        company: sampleUserList[index]["companyName"],
+                        position: sampleUserList[index]["positionName"],
+                        introduction: sampleUserList[index]["introduction"],
+                      );
+                    },
                   ),
                 ],
               ),
