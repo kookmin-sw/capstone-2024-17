@@ -8,4 +8,5 @@ import lombok.Setter;
 public class MatchDto {
     private String fromLoginId;
     private String toLoginId;
+    private String status;
 }
