@@ -3,10 +3,11 @@ package com.coffee.backend.domain.cafe.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.cafe.dto.CafeDto;
+import com.coffee.backend.domain.cafe.dto.CafeUserProfileDto;
 import com.coffee.backend.domain.cafe.service.CafePublisher;
 import com.coffee.backend.domain.cafe.service.CafeService;
 import com.coffee.backend.domain.user.entity.User;
-import java.util.Set;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CafeController {
 
     //TODO : cafeId를 입력으로 받아서 특정 카페에 속한 모든 유저들을 redis에서 찾아 프론트로 넘긴다.
     @GetMapping("/cafe/{cafeId}") //http://localhost:8080/cafe/1
-    public ResponseEntity<Set<Object>> getCafeUsers(@PathVariable String cafeId) {
+    public ResponseEntity<List<CafeUserProfileDto>> getCafeUsers(@PathVariable String cafeId) {
         System.out.println("cafeId = " + cafeId);
         return ResponseEntity.ok(cafeService.getUsersByCafeId(cafeId));
     }

@@ -6,11 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CafeUserDto {
-    // userId, nickname, introduction
-    // TODO : email을 introduction으로 교체
     private Long userId;
     private String nickname;
-    private String email;
+    private String email; // TODO : email을 introduction으로 교체
 
     public CafeUserDto(Long userId, String nickname, String email) {
         this.userId = userId;
