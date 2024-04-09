@@ -6,6 +6,7 @@ import com.coffee.backend.domain.message.dto.MessageResponse;
 import com.coffee.backend.domain.message.dto.MessageResponses;
 import com.coffee.backend.domain.message.entity.Message;
 import com.coffee.backend.domain.message.repository.MessageRepository;
+import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.service.UserService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -24,19 +25,27 @@ public class MessageService {
     }
 
     public MessageResponse convertMessageResponse(Message message, Long userId) {
+        UserDto userInfo = new UserDto();
+        userInfo.setNickname(userService.getByUserId(userId).getNickname());
+
         return new MessageResponse(userId,
                 message.getContent(),
                 message.getCreatedAt().format(formatter),
-                userService.getByUserId(userId).getNickname());
+                userInfo);
     }
 
     public MessageResponses convertMessageResponses(List<Message> messages) {
-        return new MessageResponses(messages.stream().map(m -> new MessageResponse(
-                m.getSenderId(),
-                m.getContent(),
-                m.getCreatedAt().format(formatter),
-                userService.getByUserId(m.getSenderId()).getNickname()
-        )).toList());
+        return new MessageResponses(messages.stream().map(m -> {
+                    UserDto userInfo = new UserDto();
+                    userInfo.setNickname(userService.getByUserId(m.getSenderId()).getNickname());
+
+                    return new MessageResponse(
+                            m.getSenderId(),
+                            m.getContent(),
+                            m.getCreatedAt().format(formatter),
+                            userInfo);
+                }
+        ).toList());
     }
 
     public Message saveMessage(Chatroom chatroom, MessageDto messageDto) {
