@@ -37,8 +37,9 @@ public class CafeController {
     }
 
     // 특정 카페에 속한 모든 유저들을 redis에서 찾아 각 유저 정보를 조회해 프론트로 보낸다.
-    @GetMapping("/cafe/{cafeId}") //http://localhost:8080/cafe/1
-    public ResponseEntity<List<CafeUserProfileDto>> getCafeUsers(@PathVariable String cafeId) {
+    @GetMapping("/cafe/{cafeId}") //http://localhost:8080/cafe/starbucks
+    public ResponseEntity<List<CafeUserProfileDto>> getCafeUsers(@AuthenticationPrincipal User user,
+                                                                 @PathVariable String cafeId) {
         return ResponseEntity.ok(cafeService.getUserProfilesFromRedisAndDB(cafeId));
     }
 }
