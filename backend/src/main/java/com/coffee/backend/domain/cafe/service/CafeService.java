@@ -1,5 +1,8 @@
 package com.coffee.backend.domain.cafe.service;
 
+import com.coffee.backend.domain.cafe.dto.CafeUserDto;
+import com.coffee.backend.domain.user.service.UserService;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CafeService {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UserService userService;
 
     //TODO : CafeController.java 의 sendMatchRequest() 에서 호출됨 테스트용 데이터가 잘 조회되는지? 어떻게 조회되는지?
     public String getCafeByUserId(String userId) {
@@ -49,14 +53,16 @@ public class CafeService {
     public Set<Object> getUsersByCafeId(String cafeId) {
         String cafeChoiceKey = "cafe:" + cafeId;
         Set<Object> userSet = redisTemplate.opsForSet().members(cafeChoiceKey); // 카페 ID에 해당하는 세트의 모든 사용자 ID 조회
-        System.out.println("cafeId = " + cafeId + " userSet = " + userSet); // 출력
+//        System.out.println("cafeId = " + cafeId + " userSet = " + userSet); // 출력
+        for (Object userId : Objects.requireNonNull(userSet)) {
+            getUserInfoFromDB((String) userId);
+        }
         return userSet;
     }
 
-//    //
-//    // userId로 User entity, Company entity, Position entity 조회
-//    public void getUserInfoFromDB(String userId) {
-//        User user = userRepository.findById(userId);
-//        Company company = companyRepository.findById(user.getCompanyId()); //아직 company entity 없음
-//    }
+    // userId로 User entity, Company entity, Position entity 조회
+    public void getUserInfoFromDB(String userId) {
+        CafeUserDto cafeUserDto = userService.getCafeUserInfoByLoginId(userId); // userId로 User entity 조회
+        // TODO : Company entity, Position entity 조회해서 cafeUserDto에 추가
+    }
 }
