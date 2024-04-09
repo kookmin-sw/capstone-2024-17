@@ -7,6 +7,7 @@ import com.coffee.backend.domain.cafe.dto.CafeUserProfileDto;
 import com.coffee.backend.domain.cafe.service.CafePublisher;
 import com.coffee.backend.domain.cafe.service.CafeService;
 import com.coffee.backend.domain.user.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,8 @@ public class CafeController {
     /pub/cafe/update로 메시지 발행
     */
     @MessageMapping("/cafe/update")
-    public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload CafeDto dto) {
+    public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload CafeDto dto)
+            throws JsonProcessingException {
         log.info("Message Catch!!");
         cafePublisher.updateCafeChoice(dto);
     }
