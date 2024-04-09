@@ -34,11 +34,9 @@ public class CafeController {
         cafePublisher.updateCafeChoice(dto);
     }
 
-    //TODO : cafeId를 입력으로 받아서 특정 카페에 속한 모든 유저들을 redis에서 찾아 프론트로 넘긴다.
+    // 특정 카페에 속한 모든 유저들을 redis에서 찾아 각 유저 정보를 조회해 프론트로 보낸다.
     @GetMapping("/cafe/{cafeId}") //http://localhost:8080/cafe/1
     public ResponseEntity<List<CafeUserProfileDto>> getCafeUsers(@PathVariable String cafeId) {
-        System.out.println("cafeId = " + cafeId);
-        return ResponseEntity.ok(cafeService.getUsersByCafeId(cafeId));
+        return ResponseEntity.ok(cafeService.getUserProfilesFromRedisAndDB(cafeId));
     }
-
 }

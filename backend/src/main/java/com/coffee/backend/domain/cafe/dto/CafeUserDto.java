@@ -8,11 +8,11 @@ import lombok.Setter;
 public class CafeUserDto {
     private Long userId;
     private String nickname;
-    private String email; // TODO : email을 introduction으로 교체
+    private String introduction;
 
-    public CafeUserDto(Long userId, String nickname, String email) {
+    public CafeUserDto(Long userId, String nickname, String introduction) {
         this.userId = userId;
         this.nickname = nickname;
-        this.email = email;
+        this.introduction = introduction;
     }
 }

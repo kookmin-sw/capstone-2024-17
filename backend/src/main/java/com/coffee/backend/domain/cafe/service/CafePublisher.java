@@ -23,8 +23,6 @@ public class CafePublisher {
          */
         String cafeChoiceKey = "cafe:" + cafeId;
         redisTemplate.opsForSet().add(cafeChoiceKey, loginId); // 카페 ID에 해당하는 세트에 사용자 ID 추가
-
-        cafeService.getCafeByUserId(loginId); // 테스트!
         redisTemplate.convertAndSend("ch02", dto); // ch02 채널로 dto 발행
     }
 

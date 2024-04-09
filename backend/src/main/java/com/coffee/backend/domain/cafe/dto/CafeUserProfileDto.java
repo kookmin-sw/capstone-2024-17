@@ -6,12 +6,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CafeUserProfileDto {
-    private final CafeUserDto cafeUserDto;
+    private Long userId;
+    private String nickname;
+    private String introduction;
     private String companyName;
     private String positionName;
 
     public CafeUserProfileDto(CafeUserDto cafeUserDto, String companyName, String positionName) {
-        this.cafeUserDto = cafeUserDto;
+        this.userId = cafeUserDto.getUserId();
+        this.nickname = cafeUserDto.getNickname();
+        this.introduction = cafeUserDto.getIntroduction();
         this.companyName = companyName;
         this.positionName = positionName;
     }
