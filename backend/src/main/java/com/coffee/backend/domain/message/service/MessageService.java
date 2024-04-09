@@ -55,4 +55,16 @@ public class MessageService {
         message.setChatroom(chatroom);
         return messageRepository.save(message);
     }
+
+    /**
+     * 채팅방의 가장 최근 메시지의 String content를 반환함
+     */
+    public String getRecentMessageContent(Chatroom chatroom) {
+        List<Message> messages = messageRepository.findAllByChatroom(chatroom);
+        if (!messages.isEmpty()) {
+            return messages.get(messages.size() - 1).getContent();
+        } else {
+            return "";
+        }
+    }
 }
