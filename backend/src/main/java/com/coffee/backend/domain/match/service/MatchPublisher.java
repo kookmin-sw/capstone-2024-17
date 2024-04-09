@@ -8,18 +8,22 @@ import java.util.Map;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class MatchPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    // matchRequest 채널로 매칭 요청
+    // 매칭 요청
     public void sendMatchRequest(MatchDto dto) {
-        redisTemplate.convertAndSend("matchRequest", dto); // dto를 통해 fromLoginId & toLoginId 전달
+        dto.setRequestId(UUID.randomUUID().toString());
+        log.info("send match request with requestId: {}", dto.getRequestId());
+        redisTemplate.convertAndSend("matchRequest", dto);
     }
 
     // 매칭 요청 저장
@@ -37,16 +41,21 @@ public class MatchPublisher {
     }
 
     // 매칭 요청 수락
-    public void acceptMatchRequest(String matchRequestId) {
-        Map<Object, Object> request = redisTemplate.opsForHash().entries("matchRequest:" + matchRequestId);
+    public void acceptMatchRequest(String requestId) {
+        Map<Object, Object> request = redisTemplate.opsForHash().entries("matchRequest:" + requestId);
         if ("pending".equals(request.get("status"))) {
-            redisTemplate.opsForHash().put("matchRequest:" + matchRequestId, "status", "accepted");
+            redisTemplate.opsForHash().put("matchRequest:" + requestId, "status", "accepted");
+
+            String fromLoginId = (String) request.get("fromLoginId");
+            String toLoginId = (String) request.get("toLoginId");
 
             Map<String, String> response = new HashMap<>();
-            response.put("matchRequestId", matchRequestId);
+            response.put("matchRequestId", requestId);
+            response.put("fromLoginId", fromLoginId);
+            response.put("toLoginId", toLoginId);
             response.put("status", "accepted");
 
-            redisTemplate.convertAndSend("matchAccept", response);
+            redisTemplate.convertAndSend("matchRequest", response);
         }
     }
 

@@ -23,19 +23,9 @@ public class MatchSubscriber implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            log.info(message.toString());
+            log.info("onMessage");
             MatchDto matchDto = objectMapper.readValue(message.getBody(), MatchDto.class);
-
-            String channelName = new String(pattern);
-            log.info("채널 이름: {}", channelName);
-
-            if (channelName.contains("matchRequest")) {
-                // sub/user/{userId}/match/request
-                // 여기서 userId는 loginId로 사용
-                messagingTemplate.convertAndSendToUser(matchDto.getToLoginId(), "/match/request", matchDto); // User 수정 필요
-            } else if (channelName.contains("matchAccept")) {
-                messagingTemplate.convertAndSendToUser(matchDto.getFromLoginId(), "/match/accept", matchDto);
-            }
+            messagingTemplate.convertAndSend("/match/request/" + matchDto.getRequestId(), matchDto);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

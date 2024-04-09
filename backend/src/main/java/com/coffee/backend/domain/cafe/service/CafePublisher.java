@@ -16,6 +16,6 @@ public class CafePublisher {
 
         // redis update
         redisTemplate.opsForValue().set(loginId, cafeId);
-        redisTemplate.convertAndSend("ch02", dto);
+        redisTemplate.convertAndSend("cafeChoice", dto);
     }
 }
