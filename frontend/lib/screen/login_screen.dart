@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:bcrypt/bcrypt.dart';
+// import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -169,13 +169,13 @@ class _LoginScreenState extends State<LoginScreen> {
   ) async {
     LoginViewModel _loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
-    final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+    // final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
     final url = Uri.parse('http://localhost:8080/auth/signIn');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
     final data = jsonEncode({
       'loginId': loginId,
-      'password': hashedPassword,
+      'password': password,
     });
     // setState(() {});
     try {
