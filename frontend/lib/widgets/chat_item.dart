@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 class ChatItem extends StatelessWidget {
   final String sender;
   final String message;
+  final String date;
   final String time;
 
   const ChatItem({
-    Key? key,
+    super.key,
     required this.sender,
     required this.message,
+    required this.date,
     required this.time,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

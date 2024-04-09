@@ -30,7 +30,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   @override
   void initState() {
     super.initState();
-    getChatroomlist();
+    // getChatroomlist();
   }
 
   @override
@@ -58,7 +58,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
                 id: 1,
                 nickname: 'goodnavers',
                 logoImage: null,
-                message: '네 거기서 봬요!',
+                recentMessage: '네 거기서 봬요!',
                 count: 1,
                 chatroomTapCallback: handleChatroomTap(1, 'goodnavers', null)),
           ]
@@ -70,16 +70,17 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   List<Widget> _buildChatroomItems() {
     // 받아온 각 chatroom의 정보를 ChatroomItem으로 만들어 반환
     return chatrooms.map((chatroom) {
-      int id = chatroom['id'];
+      int id = chatroom['chatroomId'];
       String nickname = chatroom['userInfo']['nickname'];
-      Image logoImage = chatroom['userInfo']['logo'];
+      // Image logoImage = chatroom['userInfo']['logoImage'];
+      String? recentMessage = chatroom['recentMessage'];
       return ChatroomItem(
         id: id,
         nickname: nickname,
-        logoImage: logoImage,
-        message: chatroom['recentMessage'],
-        count: 1, // 일단 1로 설정
-        chatroomTapCallback: handleChatroomTap(id, nickname, logoImage),
+        logoImage: null, // 일단 null로 설정
+        recentMessage: recentMessage,
+        count: 0, // 일단 0으로 설정
+        chatroomTapCallback: handleChatroomTap(id, nickname, null),
       );
     }).toList();
   }
@@ -97,13 +98,14 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
       if (jsonData['success']) {
         // 요청 성공
         setState(() {
-          chatrooms = List<Map<String, dynamic>>.from(jsonData['data']);
+          chatrooms =
+              List<Map<String, dynamic>>.from(jsonData['data']['chatrooms']);
         });
       } else {
         // 예외처리
         showAlertDialog(
           context,
-          '채팅방 목록 불러오기 실패: ${jsonData["message"]}(${jsonData["code"]})',
+          '채팅방 목록 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
         );
       }
     } catch (error) {

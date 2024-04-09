@@ -4,7 +4,7 @@ class ChatroomItem extends StatelessWidget {
   final int id;
   final String nickname;
   final Image? logoImage;
-  final String? message;
+  final String? recentMessage;
   final int count;
   final Function(int id, String nickname, Image? logoImage) chatroomTapCallback;
 
@@ -13,7 +13,7 @@ class ChatroomItem extends StatelessWidget {
     required this.id,
     required this.nickname,
     required this.logoImage,
-    required this.message,
+    required this.recentMessage,
     required this.count,
     required this.chatroomTapCallback,
   });
@@ -58,32 +58,36 @@ class ChatroomItem extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            message ?? '',
+                            recentMessage ?? '',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 13,
                             ),
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.all(12),
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Center(
-                            child: Text(
-                              (count < 100) ? count.toString() : '99+',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                        // count 뱃지: 1 이상일 시에만 보이도록 설정
+                        Visibility(
+                          visible: count > 0,
+                          child: Container(
+                            margin: const EdgeInsets.all(12),
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Center(
+                              child: Text(
+                                (count < 100) ? count.toString() : '99+',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ],

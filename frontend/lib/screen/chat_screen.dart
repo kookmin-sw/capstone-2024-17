@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    getChatList();
+    // getChatList();
   }
 
   @override
@@ -67,10 +67,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   // 날짜표시
                   ChatDate(date: '2024년 04월 08일'),
                   // 채팅
-                  ChatItem(sender: 'me', message: '마라탕', time: '11:48'),
                   ChatItem(
-                      sender: 'other', message: '네 거기서 봬요!', time: '11:48'),
+                      sender: 'me',
+                      message: '마라탕',
+                      date: '2024년 04월 08일',
+                      time: '11:48'),
+                  ChatItem(
+                      sender: 'other',
+                      message: '네 거기서 봬요!',
+                      date: '2024년 04월 08일',
+                      time: '11:48'),
                 ],
+                //_buildChatroomItems(),
               ),
             ),
 
@@ -117,6 +125,22 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  List<Widget> _buildChatItems() {
+    // 받아온 각 chat들의 정보를 ChatItem으로 만들어 반환
+    return chats.map((chat) {
+      String sender = chat['senderId'];
+      String message = chat['content'];
+      String date = chat['datetime'].substring(0, 13);
+      String time = chat['datetime'].substring(14, 19);
+      return ChatItem(
+        sender: sender,
+        message: message,
+        date: date,
+        time: time,
+      );
+    }).toList();
+  }
+
   // 채팅 list를 가져오는 메소드
   Future<void> getChatList() async {
     final url =
@@ -133,13 +157,14 @@ class _ChatScreenState extends State<ChatScreen> {
       if (jsonData['success']) {
         // 요청 성공
         setState(() {
-          chats = List<Map<String, dynamic>>.from(jsonData['data']);
+          chats = List<Map<String, dynamic>>.from(
+              jsonData['data']['messageResponses']);
         });
       } else {
         // 예외처리
         showAlertDialog(
           context,
-          '채팅 불러오기 실패: ${jsonData["message"]}(${jsonData["code"]})',
+          '채팅 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
         );
       }
     } catch (error) {
