@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class BottomTextButton extends StatelessWidget {
+class ModalButton extends StatelessWidget {
   final String text;
   final Function handlePressed;
 
-  const BottomTextButton({
+  const ModalButton({
     super.key,
     required this.text,
     required this.handlePressed,
@@ -12,9 +12,8 @@ class BottomTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 30),
-      width: 370,
+    return SizedBox(
+      width: 280,
       height: 50,
       child: ElevatedButton(
         onPressed: () {
@@ -30,7 +29,7 @@ class BottomTextButton extends StatelessWidget {
           text,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: 18,
           ),
         ),
       ),
