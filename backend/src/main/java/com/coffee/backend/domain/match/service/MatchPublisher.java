@@ -29,15 +29,15 @@ public class MatchPublisher {
     // 매칭 요청 저장
     @Transactional
     public void saveMatchRequest(MatchDto dto) {
-        String matchRequestId = UUID.randomUUID().toString();
+        String requestId = UUID.randomUUID().toString();
         Map<String, String> response = Map.of(
-                "fromLoginId", dto.getFromLoginId(),
-                "toLoginId", dto.getToLoginId(),
+                "senderId", dto.getSenderId(),
+                "receiverId", dto.getReceiverId(),
                 "status", "pending"
         );
 
-        redisTemplate.opsForHash().putAll("matchRequest:" + matchRequestId, response);
-        redisTemplate.expire("matchRequest:" + matchRequestId, Duration.ofMinutes(10));
+        redisTemplate.opsForHash().putAll("matchRequest:" + requestId, response);
+        redisTemplate.expire("matchRequest:" + requestId, Duration.ofMinutes(10));
     }
 
     // 매칭 요청 수락
@@ -46,16 +46,16 @@ public class MatchPublisher {
         if ("pending".equals(request.get("status"))) {
             redisTemplate.opsForHash().put("matchRequest:" + requestId, "status", "accepted");
 
-            String fromLoginId = (String) request.get("fromLoginId");
-            String toLoginId = (String) request.get("toLoginId");
+            String senderId = (String) request.get("senderId");
+            String receiverId = (String) request.get("receiverId");
 
             Map<String, String> response = new HashMap<>();
             response.put("matchRequestId", requestId);
-            response.put("fromLoginId", fromLoginId);
-            response.put("toLoginId", toLoginId);
+            response.put("senderId", senderId);
+            response.put("receiverId", receiverId);
             response.put("status", "accepted");
 
-            redisTemplate.convertAndSend("matchRequest", response);
+            redisTemplate.convertAndSend("matchAccept", response);
         }
     }
 

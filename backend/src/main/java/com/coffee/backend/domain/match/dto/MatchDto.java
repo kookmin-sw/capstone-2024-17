@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class MatchDto {
     private String requestId;
-    private String fromLoginId;
-    private String toLoginId;
+    private String senderId;
+    private String receiverId;
     private String status;
 }

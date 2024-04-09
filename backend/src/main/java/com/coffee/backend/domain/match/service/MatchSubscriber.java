@@ -2,9 +2,7 @@ package com.coffee.backend.domain.match.service;
 
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -19,13 +17,22 @@ public class MatchSubscriber implements MessageListener {
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate messagingTemplate;
 
-    // redis에서 수신한 메시지를 websocket 구독자에게 전달
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
             log.info("onMessage");
+
             MatchDto matchDto = objectMapper.readValue(message.getBody(), MatchDto.class);
-            messagingTemplate.convertAndSend("/match/request/" + matchDto.getRequestId(), matchDto);
+            String channel = new String(message.getChannel());
+
+            // 매칭 요청
+            if (channel.equals("matchRequest")) {
+                messagingTemplate.convertAndSend("/user/" + matchDto.getReceiverId(), matchDto);
+            }
+            // 매칭 수락
+            else if (channel.equals("matchAccept")) {
+                messagingTemplate.convertAndSend("/user/" + matchDto.getSenderId(), matchDto);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
