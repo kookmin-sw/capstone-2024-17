@@ -24,5 +24,6 @@ public class MatchController {
     public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
         log.info("Message Catch!!");
         matchPublisher.sendMatchRequest(dto);
+        matchPublisher.saveMatchRequest(dto);
     }
 }
