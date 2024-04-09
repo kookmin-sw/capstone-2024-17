@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class MessageService {
     private final MessageRepository messageRepository;
     private final UserService userService;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일/HH:mm");
 
     public List<Message> getMessages(Chatroom chatRoom) {
         return messageRepository.findAllByChatroom(chatRoom).stream().toList();
@@ -34,7 +34,7 @@ public class MessageService {
         return new MessageResponses(messages.stream().map(m -> new MessageResponse(
                 m.getSenderId(),
                 m.getContent(),
-                m.getCreatedAt().toString(),
+                m.getCreatedAt().format(formatter),
                 userService.getByUserId(m.getSenderId()).getNickname()
         )).toList());
     }
