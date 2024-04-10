@@ -176,12 +176,17 @@ class _ChatScreenState extends State<ChatScreen> {
   // 채팅 list를 가져오는 메소드
   Future<void> getChatList() async {
     final url =
-        Uri.parse('http://localhost:8080/chatroom/${widget.chatroomId}');
-    final token = storage.read(key: 'authToken').toString();
+        Uri.parse('http://localhost:8080/message/list/${widget.chatroomId}');
+
+    final token = (await storage.read(key: 'authToken')) ?? '';
     try {
       http.Response res = await http.get(
         url,
-        headers: {"Content-Type": "application/json", "authToken": token},
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
       Map<String, dynamic> jsonData = jsonDecode(res.body);
       if (jsonData['success']) {

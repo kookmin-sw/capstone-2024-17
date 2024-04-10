@@ -84,11 +84,16 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   // 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
   Future<void> getChatroomlist() async {
     final url = Uri.parse('http://localhost:8080/chatroom/list');
-    final token = storage.read(key: 'authToken').toString();
+
+    final token = (await storage.read(key: 'authToken')) ?? '';
     try {
       http.Response res = await http.get(
         url,
-        headers: {"Content-Type": "application/json", "authToken": token},
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
       Map<String, dynamic> jsonData = jsonDecode(res.body);
       if (jsonData['success']) {
