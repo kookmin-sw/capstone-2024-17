@@ -8,11 +8,6 @@ plugins {
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
-// def flutterGoogleMapKey = localProperties.getProperty('flutter.GoogleMapKey')
-
-//if (flutterGoogleMapKey ==null){
-//    flutterGoogleMapKey=''
-//}
 
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
@@ -29,6 +24,8 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+
+def googleMapApiKey = localProperties.getProperty('GOOGLE_MAP_KEY')
 
 android {
     namespace "com.example.frontend"
@@ -58,6 +55,10 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 //        resValue "string", "GOOGLE_MAP_KEY", flutterGoogleMapKey
+//        manifestPlaceholders["GOOGLE_MAP_KEY"] = googleMapApiKey
+//        manifestPlaceholders += [GOOGLE_MAP_KEY : "${googleMapApiKey}"]
+
+
     }
 
     buildTypes {

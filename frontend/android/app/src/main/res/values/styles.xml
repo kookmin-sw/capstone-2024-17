@@ -15,6 +15,6 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
-    <string name="GOOGLE_MAP_KEY">AIzaSyCvaJdXd5BC5ZgXW9E0z5K9rFVavVukCUo</string>
+    <string name="GOOGLE_MAP_KEY">GOOGLE_MAP_KEY=AIzaSyCvaJdXd5BC5ZgXW9E0z5K9rFVavVukCUo</string>
 
 </resources>
