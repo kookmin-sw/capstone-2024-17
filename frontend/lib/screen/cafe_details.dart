@@ -1,7 +1,11 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/model/user_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +16,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: CafeDetails(),
+      home: CafeDetails(
+          cafeId: "cafe-1", cafeName: "스타벅스 국민대점"), // 임시로 cafeId, cafeName 지정
     );
   }
 }
@@ -44,9 +49,32 @@ const List<Map<String, dynamic>> sampleUserList = [
   },
 ];
 
+Future<List<UserModel>> getUserList(String cafeId) async {
+  List<UserModel> userList = [];
+  final url = Uri.parse("https://localhost:8080/cafe/$cafeId");
+
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    List<dynamic> users = jsonDecode(response.body);
+
+    for (var user in users) {
+      final userModel = UserModel.fromJson(user);
+      userList.add(userModel);
+    }
+    return userList;
+  }
+  throw Error();
+}
+
 class CafeDetails extends StatefulWidget {
+  final String cafeId;
+  final String cafeName;
+
   const CafeDetails({
     super.key,
+    required this.cafeId,
+    required this.cafeName,
   });
 
   @override
@@ -56,12 +84,25 @@ class CafeDetails extends StatefulWidget {
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
   TabController? tabController;
+  List<UserModel> userList = [];
+
+  void waitForUserList(String cafeId) async {
+    userList = await getUserList(cafeId);
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
 
     tabController = TabController(length: 2, vsync: this);
+
+    tabController!.addListener(() {
+      // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
+      if (tabController!.index == 1) {
+        waitForUserList(widget.cafeId);
+      }
+    });
   }
 
   @override
@@ -70,9 +111,9 @@ class _CafeDetailsState extends State<CafeDetails>
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
-          title: const Text(
-            "스타벅스 국민대점",
-            style: TextStyle(fontSize: 24),
+          title: Text(
+            widget.cafeName,
+            style: const TextStyle(fontSize: 24),
           ),
           toolbarHeight: 100,
           backgroundColor: Colors.white,
@@ -119,12 +160,20 @@ class _CafeDetailsState extends State<CafeDetails>
                   ListView.builder(
                     itemCount: sampleUserList.length,
                     itemBuilder: (context, index) {
-                      return UserItem(
-                        nickname: sampleUserList[index]["nickname"],
-                        company: sampleUserList[index]["companyName"],
-                        position: sampleUserList[index]["positionName"],
-                        introduction: sampleUserList[index]["introduction"],
-                      );
+                      return userList.isEmpty
+                          ? UserItem(
+                              nickname: sampleUserList[index]["nickname"],
+                              company: sampleUserList[index]["companyName"],
+                              position: sampleUserList[index]["positionName"],
+                              introduction: sampleUserList[index]
+                                  ["introduction"],
+                            )
+                          : UserItem(
+                              nickname: userList[index].nickname,
+                              company: userList[index].companyName,
+                              position: userList[index].positionName,
+                              introduction: userList[index].introduction,
+                            );
                     },
                   ),
                 ],
