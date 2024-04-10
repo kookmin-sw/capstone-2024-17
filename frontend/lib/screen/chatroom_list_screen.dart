@@ -17,16 +17,6 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   final storage = const FlutterSecureStorage();
   List<Map<String, dynamic>> chatrooms = [];
 
-  handleChatroomTap(int id, String nickname, Image? logoImage) {
-    print('채팅방 탭됨: $id');
-    // 해당 id를 가진 채팅방 url로 이동: id, nickname, logoImage 전달
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ChatScreen(
-                chatroomId: id, nickname: nickname, logoImage: logoImage)));
-  }
-
   @override
   void initState() {
     super.initState();
@@ -54,13 +44,20 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
       body: ListView(
           padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
           children: <Widget>[
+            const ChatroomItem(
+              id: 1,
+              nickname: 'goodnavers',
+              logoImage: null,
+              recentMessage: '네 거기서 봬요!',
+              count: 100,
+            ),
             ChatroomItem(
-                id: 1,
-                nickname: 'goodnavers',
-                logoImage: null,
-                recentMessage: '네 거기서 봬요!',
-                count: 1,
-                chatroomTapCallback: handleChatroomTap(1, 'goodnavers', null)),
+              id: 2,
+              nickname: '블랙빈',
+              logoImage: Image.asset("assets/coffee_bean.png"),
+              recentMessage: '네 거기서 봬요!',
+              count: 0,
+            ),
           ]
           //_buildChatroomItems(),
           ),
@@ -80,7 +77,6 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
         logoImage: null, // 일단 null로 설정
         recentMessage: recentMessage,
         count: 0, // 일단 0으로 설정
-        chatroomTapCallback: handleChatroomTap(id, nickname, null),
       );
     }).toList();
   }

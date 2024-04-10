@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/chat_screen.dart';
 
 class ChatroomItem extends StatelessWidget {
   final int id;
@@ -6,7 +7,6 @@ class ChatroomItem extends StatelessWidget {
   final Image? logoImage;
   final String? recentMessage;
   final int count;
-  final Function(int id, String nickname, Image? logoImage) chatroomTapCallback;
 
   const ChatroomItem({
     super.key,
@@ -15,15 +15,23 @@ class ChatroomItem extends StatelessWidget {
     required this.logoImage,
     required this.recentMessage,
     required this.count,
-    required this.chatroomTapCallback,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // chatlist screen에서 chat screen으로 이동할 때 사용할 정보를 돌려주는 콜백함수
-        chatroomTapCallback(id, nickname, logoImage);
+        print('탭됨: $id');
+        Future.delayed(Duration.zero, () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                        chatroomId: id,
+                        nickname: nickname,
+                        logoImage: logoImage ?? Image.asset('assets/logo.png'),
+                      )));
+        });
       },
       child: Card(
         child: Container(
