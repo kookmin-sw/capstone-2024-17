@@ -1,11 +1,9 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/service/api_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,24 +46,6 @@ const List<Map<String, dynamic>> sampleUserList = [
     "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<"
   },
 ];
-
-Future<List<UserModel>> getUserList(String cafeId) async {
-  List<UserModel> userList = [];
-  final url = Uri.parse("https://localhost:8080/cafe/$cafeId");
-
-  final response = await http.get(url);
-
-  if (response.statusCode == 200) {
-    List<dynamic> users = jsonDecode(response.body);
-
-    for (var user in users) {
-      final userModel = UserModel.fromJson(user);
-      userList.add(userModel);
-    }
-    return userList;
-  }
-  throw Error();
-}
 
 class CafeDetails extends StatefulWidget {
   final String cafeId;
