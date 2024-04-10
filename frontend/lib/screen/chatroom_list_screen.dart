@@ -1,6 +1,6 @@
 import 'dart:convert';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/widgets/chatroom_item.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -20,7 +20,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   @override
   void initState() {
     super.initState();
-    // getChatroomlist();
+    getChatroomlist();
   }
 
   @override
@@ -42,8 +42,9 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
         ),
       ),
       body: ListView(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          children: <Widget>[
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        children:
+            /* <Widget>[
             const ChatroomItem(
               id: 1,
               nickname: 'goodnavers',
@@ -59,15 +60,16 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
               count: 0,
             ),
           ]
-          //_buildChatroomItems(),
-          ),
+          */
+            _buildChatroomItems(),
+      ),
     );
   }
 
   List<Widget> _buildChatroomItems() {
     // 받아온 각 chatroom의 정보를 ChatroomItem으로 만들어 반환
     return chatrooms.map((chatroom) {
-      int id = chatroom['chatroomId'];
+      int id = chatroom['chatrooId'];
       String nickname = chatroom['userInfo']['nickname'];
       // Image logoImage = chatroom['userInfo']['logoImage'];
       String? recentMessage = chatroom['recentMessage'];
@@ -84,8 +86,11 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   // 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
   Future<void> getChatroomlist() async {
     final url = Uri.parse('http://localhost:8080/chatroom/list');
+    // final url = Uri.parse('http://${dotenv.env['MY_IP']}:8080/chatroom/list');
 
     final token = (await storage.read(key: 'authToken')) ?? '';
+
+    print("토큰은: $token");
     try {
       http.Response res = await http.get(
         url,
@@ -96,6 +101,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
         },
       );
       Map<String, dynamic> jsonData = jsonDecode(res.body);
+      print(jsonData);
       if (jsonData['success']) {
         // 요청 성공
         setState(() {
@@ -104,12 +110,15 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
         });
       } else {
         // 예외처리
+        print(
+            '채팅방 목록 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})');
         showAlertDialog(
           context,
           '채팅방 목록 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
         );
       }
     } catch (error) {
+      print('채팅방 목록 불러오기 실패: $error');
       showAlertDialog(context, '채팅방 목록 불러오기 실패: $error');
     }
   }

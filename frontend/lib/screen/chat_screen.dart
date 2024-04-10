@@ -1,8 +1,9 @@
 import 'dart:convert';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/chat_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/widgets/chat_date.dart';
 import 'package:frontend/widgets/chat_item.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,20 +23,28 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-// 할일
-// get한 채팅 표시
-// 해당 id 채팅방에 연결
-// pub할때마다 setstate할 것?
-
 class _ChatScreenState extends State<ChatScreen> {
   final storage = const FlutterSecureStorage();
   List<dynamic> chats = [];
   final TextEditingController _sendingMsgController = TextEditingController();
+  final ChatService _chatService = ChatService();
 
   @override
   void initState() {
     super.initState();
-    // getChatList();
+    // stompClient가 activate되고 나면(onActivated가 호출되고 나면) chatroom을 sub한다
+    _chatService.activateStompClient(() {
+      _connectToChat();
+      getChatList();
+    });
+  }
+
+  void _connectToChat() async {
+    _chatService.subscribeToChatroom(widget.chatroomId.toString(), (p0) {
+      setState(() {
+        chats.add(p0.body);
+      });
+    });
   }
 
   @override
@@ -95,7 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // 채팅방
             Expanded(
               child: ListView(
-                children: const <Widget>[
+                children: /*const <Widget>[
                   // 날짜표시
                   ChatDate(date: '2024년 04월 08일'),
                   // 채팅
@@ -109,8 +118,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       message: '네 거기서 봬요!',
                       date: '2024년 04월 08일',
                       time: '11:48'),
-                ],
-                //_buildChatroomItems(),
+                ],*/
+                    _buildChatItems(),
               ),
             ),
 
@@ -145,7 +154,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   IconButton(
                     icon: const Icon(Icons.send, color: Color(0xffff6c3e)),
                     onPressed: () {
-                      // 메시지 전송 로직 작성하기
+                      _sendMessage();
                     },
                   ),
                 ],
@@ -155,6 +164,14 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  void _sendMessage() {
+    final message = _sendingMsgController.text;
+    if (message != '') {
+      _chatService.sendMessage(widget.chatroomId.toString(), message);
+      _sendingMsgController.clear();
+    }
   }
 
   List<Widget> _buildChatItems() {
@@ -177,6 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> getChatList() async {
     final url =
         Uri.parse('http://localhost:8080/message/list/${widget.chatroomId}');
+    // final url = Uri.parse('http://${dotenv.env['MY_IP']}:8080/message/list/${widget.chatroomId}')
 
     final token = (await storage.read(key: 'authToken')) ?? '';
     try {
@@ -189,6 +207,7 @@ class _ChatScreenState extends State<ChatScreen> {
         },
       );
       Map<String, dynamic> jsonData = jsonDecode(res.body);
+      print(jsonData);
       if (jsonData['success']) {
         // 요청 성공
         setState(() {
@@ -197,13 +216,22 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       } else {
         // 예외처리
+        print('채팅 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})');
         showAlertDialog(
           context,
           '채팅 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
         );
       }
     } catch (error) {
+      print('채팅 불러오기 실패: $error');
       showAlertDialog(context, '채팅 불러오기 실패: $error');
     }
+  }
+
+  @override
+  void dispose() {
+    _chatService.disconnect();
+    _sendingMsgController.clear();
+    super.dispose();
   }
 }
