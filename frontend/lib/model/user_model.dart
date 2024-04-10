@@ -1,9 +1,9 @@
 class UserModel {
   final int userId;
-  final String nickname;
-  final String companyName;
-  final String positionName;
-  final String introduction;
+  String nickname;
+  String companyName;
+  String positionName;
+  String introduction;
 
   UserModel.fromJson(Map<String, dynamic> json)
       : userId = json['userId'],
