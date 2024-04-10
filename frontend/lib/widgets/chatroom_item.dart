@@ -42,9 +42,8 @@ class ChatroomItem extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: CircleAvatar(
                   radius: 40,
-                  backgroundImage: (logoImage == null)
-                      ? const AssetImage('assets/logo.png')
-                      : logoImage as ImageProvider<Object>,
+                  backgroundImage:
+                      (logoImage ?? Image.asset('assets/logo.png')).image,
                 ),
               ),
               Expanded(

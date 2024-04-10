@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class ChatScreen extends StatefulWidget {
   final int chatroomId;
   final String nickname;
-  final Image? logoImage;
+  final Image logoImage;
 
   const ChatScreen({
     super.key,
@@ -23,7 +23,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 // 할일
-// get한 채팅 표시, 앱바 표시
+// get한 채팅 표시
 // 해당 id 채팅방에 연결
 // pub할때마다 setstate할 것?
 
@@ -44,16 +44,48 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
-        title: const Text(
-          '그냥채팅방',
-          style: TextStyle(fontSize: 24),
-        ),
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          Container(
+            margin: const EdgeInsets.all(10),
+            child: CircleAvatar(
+              radius: 35,
+              backgroundImage: widget.logoImage.image,
+            ),
+          ),
+          Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  widget.nickname,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.mode_standby,
+                        color: Colors.lightGreen,
+                        size: 15,
+                      ),
+                      Text(' 온라인', style: TextStyle(fontSize: 14)),
+                    ]),
+              ]),
+        ]),
         toolbarHeight: 100,
         leading: GestureDetector(
           onTap: () {
             Navigator.of(context).pop();
           },
           child: const Icon(Icons.arrow_back),
+        ),
+        shape: const Border(
+          bottom: BorderSide(
+            color: Colors.grey,
+            width: 1,
+          ),
         ),
       ),
       body: Container(
