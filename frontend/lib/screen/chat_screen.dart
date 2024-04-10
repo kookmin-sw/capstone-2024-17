@@ -146,12 +146,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final url =
         Uri.parse('http://localhost:8080/chatroom/${widget.chatroomId}');
     final token = storage.read(key: 'authToken').toString();
-    final data = jsonEncode({"id": widget.chatroomId});
     try {
-      http.Response res = await http.post(
+      http.Response res = await http.get(
         url,
         headers: {"Content-Type": "application/json", "authToken": token},
-        body: data,
       );
       Map<String, dynamic> jsonData = jsonDecode(res.body);
       if (jsonData['success']) {
