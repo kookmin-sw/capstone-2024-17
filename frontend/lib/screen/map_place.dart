@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
 }
 
 class Google_Map extends StatefulWidget {
-  // const GoogleMapWidget({Key? key}) : super(key: key);
 
   @override
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
@@ -40,7 +39,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     super.initState();
     requestLocationPermission(); // 위치 권한 여부
     _searchcafes(const LatLng(37.5925683, 127.0164784)); // 초기 위치에 대한 카페 검색
-
+    _setCircle(LatLng(37.5925683, 127.0164784));
   }
 
   late GoogleMapController _controller;
@@ -69,24 +68,23 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     print("현재 위치로 이동");
     final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     _searchcafes(LatLng(position.latitude, position.longitude));
-
+    _setCircle(LatLng(position.latitude, position.longitude));
     final cameraPosition = CameraPosition(
       target: LatLng(position.latitude, position.longitude),
       zoom: 15,
     );
     // print("포지션 설졍 완료");
-    _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     // print("카메라 이동 완료");
     setState(() {
       _myLocationEnabled = true;
     });
+    _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
   }
 
   Set<Marker> _markers = {};
+  Set<Circle> _circles = {};
 
-  void _onCameraMove(CameraPosition position) async {
-    await _searchcafes(position.target); // 카메라 이동 시 카페 검색
-  }
 
   Future<void> _searchcafes(LatLng position) async {
     // try{
@@ -123,6 +121,22 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
   }
 
+  void _setCircle(LatLng position){
+    Set<Circle> localcircles = {};
+
+    localcircles = Set.from([Circle(
+    circleId: CircleId('currentCircle'),
+    center: LatLng(position.latitude, position.longitude), // (위도, 경도)
+    radius: 500, // 반경
+    fillColor: Colors.deepOrange.shade100.withOpacity(0.5), // 채우기 색상
+    strokeColor: Colors.deepOrange.shade100.withOpacity(0.1), // 테두리 색상
+
+    )]);
+    setState(() {
+      _circles = localcircles;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -135,22 +149,26 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               target: LatLng(37.5925683, 127.0164784), // 성신여대 입구
               zoom: 15,
             ),
+            // onCameraMove: _onCameraMove,
             myLocationEnabled: _myLocationEnabled,
             myLocationButtonEnabled: false,
             markers: _markers,
-            circles: Set.from([Circle( circleId: CircleId('currentCircle'),
-              center: LatLng(37.5925683, 127.0164784), //원의 중심 위치
-              radius: 500, //미터 단위 반경
-              fillColor: Colors.deepOrange.shade100.withOpacity(0.5), //숫자가 높아질수록 색상 진해짐
-              strokeColor:  Colors.deepOrange.shade100.withOpacity(0.1), //테두리
-            ),],),
+            // circles: Set.from([Circle( circleId: CircleId('currentCircle'),
+            //   center: LatLng(37.5925683, 127.0164784), //원의 중심 위치
+            //   radius: 500, //미터 단위 반경
+            //   fillColor: Colors.deepOrange.shade100.withOpacity(0.5), //숫자가 높아질수록 색상 진해짐
+            //   strokeColor:  Colors.deepOrange.shade100.withOpacity(0.1), //테두리
+            // ),],),
+            circles: _circles,
             onMapCreated: (controller) => _controller = controller,
           ),
           Positioned(
             bottom: 25,
             left: 16,
             child: FloatingActionButton(
-              onPressed: _getCurrentLocation,
+              onPressed: () {
+                _getCurrentLocation();
+              },
               foregroundColor: Colors.black,
               backgroundColor: Colors.white,
               elevation: 8,
