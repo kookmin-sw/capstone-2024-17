@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -20,19 +21,17 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate() {
         final RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
+        template.setConnectionFactory(connectionFactory());
 
-        // 직렬화 설정
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(new StringRedisSerializer());
 
         return template;
     }
-
 
     // Redis의 channel로부터 메시지를 수신받아 해당 MessageListenerAdapter에게 dispatch
     @Bean
@@ -42,7 +41,8 @@ public class RedisConfig {
 
         container.setConnectionFactory(connectionFactory());
         container.addMessageListener(matchListenerAdapter, topic01());
-        container.addMessageListener(cafeListenerAdapter, topic02());
+        container.addMessageListener(matchListenerAdapter, topic02());
+        container.addMessageListener(cafeListenerAdapter, topic03());
 
         return container;
     }
@@ -59,11 +59,16 @@ public class RedisConfig {
 
     @Bean
     public ChannelTopic topic01() {
-        return new ChannelTopic("ch01");
+        return new ChannelTopic("matchRequest");
     }
 
     @Bean
     public ChannelTopic topic02() {
-        return new ChannelTopic("ch02");
+        return new ChannelTopic("matchAccept");
+    }
+
+    @Bean
+    public ChannelTopic topic03() {
+        return new ChannelTopic("cafeChoice");
     }
 }

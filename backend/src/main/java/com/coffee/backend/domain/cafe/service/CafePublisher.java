@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CafePublisher {
     private final RedisTemplate<String, Object> redisTemplate;
-    private final CafeService cafeService;
 
     public void updateCafeChoice(CafeDto dto) throws JsonProcessingException {
         String loginId = dto.getLoginId();
@@ -29,7 +28,6 @@ public class CafePublisher {
         // dto를 json으로 변환 (redisTemplate 직렬화 문제)
         ObjectMapper objectMapper = new ObjectMapper();
         String cafeDtoJson = objectMapper.writeValueAsString(dto);
-        redisTemplate.convertAndSend("ch02", cafeDtoJson); // ch02 채널로 dto 발행
-
+        redisTemplate.convertAndSend("cafeChoice", cafeDtoJson); // cafeChoice 채널로 dto 발행
     }
 }
