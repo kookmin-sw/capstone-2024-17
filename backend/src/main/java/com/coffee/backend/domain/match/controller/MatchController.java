@@ -24,10 +24,10 @@ public class MatchController {
         matchPublisher.saveMatchRequest(dto);
     }
 
-    // pub/match/accept
+    // pub/match/accept -> 채팅방 개설
     @MessageMapping("/match/accept")
-    public void acceptMatchRequest(@AuthenticationPrincipal User user, @Payload String requestId) {
+    public void acceptMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
         log.info("Accept Message Catch!!");
-        matchPublisher.acceptMatchRequest(requestId);
+        matchPublisher.acceptMatchRequest(dto);
     }
 }
