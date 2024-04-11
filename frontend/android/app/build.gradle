@@ -6,7 +6,7 @@ plugins {
 
 }
 
-def localProperties = new Properties()
+//def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 
 if (localPropertiesFile.exists()) {
@@ -26,10 +26,11 @@ if (flutterVersionName == null) {
 }
 
 def googleMapApiKey = localProperties.getProperty('GOOGLE_MAP_KEY')
+def kakaoNativeAppKey = localProperties.getProperty('flutter.kakao.native.appKey')
 
 android {
     namespace "com.example.frontend"
-    compileSdk flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -53,10 +54,8 @@ android {
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-//        resValue "string", "GOOGLE_MAP_KEY", flutterGoogleMapKey
-//        manifestPlaceholders["GOOGLE_MAP_KEY"] = googleMapApiKey
-//        manifestPlaceholders += [GOOGLE_MAP_KEY : "${googleMapApiKey}"]
+        versionName flutterVersionName     
+        manifestPlaceholders += [kakaoNativeAppKey : "${kakaoNativeAppKey}"]
 
 
     }
