@@ -125,6 +125,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   @override
   Widget build(BuildContext context) {
+
     return CupertinoPageScaffold(
       child: Stack(
         children: [
@@ -137,6 +138,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             myLocationEnabled: _myLocationEnabled,
             myLocationButtonEnabled: false,
             markers: _markers,
+            circles: Set.from([Circle( circleId: CircleId('currentCircle'),
+              center: LatLng(37.5925683, 127.0164784), //원의 중심 위치
+              radius: 500, //미터 단위 반경
+              fillColor: Colors.deepOrange.shade100.withOpacity(0.5), //숫자가 높아질수록 색상 진해짐
+              strokeColor:  Colors.deepOrange.shade100.withOpacity(0.1), //테두리
+            ),],),
             onMapCreated: (controller) => _controller = controller,
           ),
           Positioned(

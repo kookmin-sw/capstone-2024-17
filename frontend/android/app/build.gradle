@@ -6,7 +6,7 @@ plugins {
 
 }
 
-//def localProperties = new Properties()
+def localProperties = new Properties() // localProperties 변수를 정의합니다.
 def localPropertiesFile = rootProject.file('local.properties')
 
 if (localPropertiesFile.exists()) {
@@ -54,7 +54,7 @@ android {
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName     
+        versionName flutterVersionName
         manifestPlaceholders += [kakaoNativeAppKey : "${kakaoNativeAppKey}"]
 
 
