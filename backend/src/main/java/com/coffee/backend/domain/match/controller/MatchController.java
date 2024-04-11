@@ -16,14 +16,18 @@ import org.springframework.stereotype.Controller;
 public class MatchController {
     private final MatchPublisher matchPublisher;
 
-    /*
-    클라이언트에서 서버로 메시지 전송
-    /pub/match/request로 메시지 발행
-    */
+    // pub/match/request
     @MessageMapping("/match/request")
     public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
-        log.info("Message Catch!!");
+        log.info("Request Message Catch!!");
         matchPublisher.sendMatchRequest(dto);
         matchPublisher.saveMatchRequest(dto);
+    }
+
+    // pub/match/accept -> 채팅방 개설
+    @MessageMapping("/match/accept")
+    public void acceptMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+        log.info("Accept Message Catch!!");
+        matchPublisher.acceptMatchRequest(dto);
     }
 }

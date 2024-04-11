@@ -17,16 +17,22 @@ public class MatchSubscriber implements MessageListener {
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate messagingTemplate;
 
-    // redis에서 수신한 메시지를 websocket 구독자에게 전달
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            log.info(message.toString());
-            MatchDto matchDto = objectMapper.readValue(message.getBody(), MatchDto.class);
+            log.info("onMessage");
 
-            // sub/user/{userId}/match/request
-            // 여기서 userId는 loginId로 사용
-            messagingTemplate.convertAndSendToUser(matchDto.getToLoginId(), "/match/request", matchDto);
+            MatchDto matchDto = objectMapper.readValue(message.getBody(), MatchDto.class); // 이 로직 필요한지 확인 필요
+            String channel = new String(message.getChannel());
+
+            // 매칭 요청
+            if (channel.equals("matchRequest")) {
+                messagingTemplate.convertAndSend("/user/" + matchDto.getReceiverId(), matchDto);
+            }
+            // 매칭 수락 -> 채팅방 개설
+            else if (channel.equals("matchAccept")) {
+                messagingTemplate.convertAndSend("/user/" + matchDto.getReceiverId(), matchDto);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
