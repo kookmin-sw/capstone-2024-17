@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bcrypt/bcrypt.dart';
+// import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:http/http.dart' as http;
@@ -180,13 +180,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void signup(BuildContext context, String loginId, String password,
       String nickname, String email, String phone) async {
-    final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+    // final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     // print(hashedPassword);
     final url = Uri.parse('http://localhost:8080/auth/signUp');
     // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
     final data = jsonEncode({
       'loginId': loginId,
-      'password': hashedPassword,
+      'password': password,
       'nickname': nickname,
       'email': email,
       'phone': phone,
