@@ -7,14 +7,16 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class MatchPublisher {
+public class MatchService {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // 매칭 요청
     @Transactional
@@ -32,7 +34,7 @@ public class MatchPublisher {
         redisTemplate.opsForHash().putAll("requestId:" + requestId, matchDetails);
         redisTemplate.expire("requestId" + requestId, Duration.ofMinutes(10));
 
-        redisTemplate.convertAndSend("matchRequest", dto);
+        messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
     }
 
     // 매칭 요청 수락
@@ -42,13 +44,13 @@ public class MatchPublisher {
         } else {
             dto.setStatus("failed");
         }
-        redisTemplate.convertAndSend("matchAccept", dto);
+        messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
     }
 
     // 매칭 요청 수동 취소
     public void cancelMatchRequest(MatchDto dto) {
         dto.setStatus("canceled");
-        redisTemplate.convertAndSend("matchCancel", dto);
+        messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
     }
 
     // 매칭 요청 검증
