@@ -21,7 +21,6 @@ public class MatchController {
     public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
         log.info("Request Message Catch!!");
         matchPublisher.sendMatchRequest(dto);
-        matchPublisher.saveMatchRequest(dto);
     }
 
     // pub/match/accept -> 채팅방 개설
