@@ -47,6 +47,16 @@ public class MatchService {
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
     }
 
+    // 매칭 요청 거절
+    public void declineMatchRequest(MatchDto dto) {
+        if (verifyMatchRequest(dto)) {
+            dto.setStatus("declined");
+        } else {
+            dto.setStatus("failed");
+        }
+        messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+    }
+
     // 매칭 요청 수동 취소
     public void cancelMatchRequest(MatchDto dto) {
         dto.setStatus("canceled");

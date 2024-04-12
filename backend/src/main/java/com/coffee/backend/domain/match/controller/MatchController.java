@@ -30,6 +30,13 @@ public class MatchController {
         matchService.acceptMatchRequest(dto);
     }
 
+    // pub/match/decline
+    @MessageMapping("/match/decline")
+    public void declineMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+        log.info("Decline Message Catch!!");
+        matchService.declineMatchRequest(dto);
+    }
+
     // pub/match/cancel
     @MessageMapping("/match/cancel")
     public void cancelMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
