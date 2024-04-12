@@ -79,9 +79,9 @@ class _CafeDetailsState extends State<CafeDetails>
 
     tabController!.addListener(() {
       // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
-      if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId);
-      }
+      // if (tabController!.index == 1) {
+      //   waitForUserList(widget.cafeId);
+      // }
     });
   }
 
