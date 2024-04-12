@@ -6,6 +6,8 @@ import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
@@ -57,7 +59,8 @@ class _SignupScreenState extends State<SignupScreen> {
 */
               // 입력창 컨테이너
               Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 100, vertical: 20), // 마진 추가
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -127,8 +130,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onPressed: () {
                         if (_loginIdController.text == '') {
                           showAlertDialog(context, '아이디를 입력해주세요.');
-                        }
-                        else if (_passwordController.text == '') {
+                        } else if (_passwordController.text == '') {
                           showAlertDialog(context, '비밀번호를 입력해주세요.');
                         } else if (_passwordController.text !=
                             _confirmPasswordController.text) {
@@ -154,7 +156,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           }
                         }
                       },
-                      child: Text('회원가입'),
+                      child: const Text('회원가입'),
                     ),
                     const SizedBox(
                       height: 10,

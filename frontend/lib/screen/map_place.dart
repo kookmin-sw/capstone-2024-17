@@ -16,33 +16,34 @@ void main() async {
   if (status == LocationPermission.denied) {
     await Geolocator.requestPermission();
   }
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return const CupertinoApp(
       home: Google_Map(),
     );
   }
 }
 
 class Google_Map extends StatefulWidget {
+  const Google_Map({super.key});
 
   @override
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
-
-
   @override
   void initState() {
     super.initState();
     requestLocationPermission(); // 위치 권한 여부
     _searchcafes(const LatLng(37.5925683, 127.0164784)); // 초기 위치에 대한 카페 검색
-    _setCircle(LatLng(37.5925683, 127.0164784));
+    _setCircle(const LatLng(37.5925683, 127.0164784));
   }
 
   late GoogleMapController _controller;
@@ -53,7 +54,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     _controller.dispose();
     super.dispose();
   }
-
 
   // 위치 권한 부여
   Future<void> requestLocationPermission() async {
@@ -69,7 +69,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   Future<void> _getCurrentLocation() async {
     print("현재 위치로 이동");
-    final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     _searchcafes(LatLng(position.latitude, position.longitude));
     _setCircle(LatLng(position.latitude, position.longitude));
     final cameraPosition = CameraPosition(
@@ -82,48 +83,50 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       _myLocationEnabled = true;
     });
     _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
   }
 
   Set<Marker> _markers = {};
   Set<Circle> _circles = {};
 
-
   Future<void> _searchcafes(LatLng position) async {
     // try{
-      final response = await http.get(Uri.parse(
-          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(coffee||카페||커피숍||커피 전문점||cafe)&location=${position.latitude},${position.longitude}&radius=1500&key=${dotenv.env['googleApiKey']}'));
+    final response = await http.get(Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(coffee||카페||커피숍||커피 전문점||cafe)&location=${position.latitude},${position.longitude}&radius=1500&key=${dotenv.env['googleApiKey']}'));
 
-      if (response.statusCode == 200) {
-        print("성공");
-        print("Response Body: ${response.body}");
-        final data = json.decode(response.body);
-        _setMarkers(data['results']);
-
+    if (response.statusCode == 200) {
+      print("성공");
+      print("Response Body: ${response.body}");
+      final data = json.decode(response.body);
+      _setMarkers(data['results']);
     } else {
-        print("실패");
-        throw Exception('Failed to load cafe');
-      }
-
+      print("실패");
+      throw Exception('Failed to load cafe');
+    }
   }
-
 
   Future<Uint8List> _createMarkerImage(String label) async {
     final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder, Rect.fromPoints(Offset(0.0, 0.0), Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
+    final canvas = Canvas(
+        recorder,
+        Rect.fromPoints(const Offset(0.0, 0.0),
+            const Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
 
     // 마커 아이콘을 그리는 코드
-    final paint = Paint()..color = Color.fromRGBO(246, 82, 16, 1); //red, green, blue, opacity
-    canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
+    final paint = Paint()
+      ..color =
+          const Color.fromRGBO(246, 82, 16, 1); //red, green, blue, opacity
+    canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
-    final textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
+    const textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
     final textSpan = TextSpan(text: label, style: textStyle); // 마진
-    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+    final textPainter =
+        TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     textPainter.layout();
 
     // 텍스트 중앙 배치
-    final textOffset = Offset(80 - textPainter.width / 2, 80 - textPainter.height / 2); // 텍스트의 시작 위치 계산
+    final textOffset = Offset(80 - textPainter.width / 2,
+        80 - textPainter.height / 2); // 텍스트의 시작 위치 계산
     textPainter.paint(canvas, textOffset); // 텍스트 뿌림
 
     final picture = recorder.endRecording();
@@ -132,13 +135,13 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     return byteData!.buffer.asUint8List();
   }
 
-
   // cafe 마커표시하고 누르면 cafe 이름보여줌
   void _setMarkers(List<dynamic> places) async {
     final Set<Marker> localMarkers = {};
     for (var place in places) {
       // 여기서 라벨에 텍스트 명 변경가능
-      final markerIcon = await _createMarkerImage(place['name']); // 여기서 라벨에 텍스트 명 변경가능
+      final markerIcon =
+          await _createMarkerImage(place['name']); // 여기서 라벨에 텍스트 명 변경가능
 
       localMarkers.add(Marker(
         markerId: MarkerId(place['place_id']),
@@ -158,18 +161,18 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
   }
 
-
-  void _setCircle(LatLng position){
+  void _setCircle(LatLng position) {
     Set<Circle> localcircles = {};
 
-    localcircles = Set.from([Circle(
-    circleId: CircleId('currentCircle'),
-    center: LatLng(position.latitude, position.longitude), // (위도, 경도)
-    radius: 500, // 반경
-    fillColor: Colors.deepOrange.shade100.withOpacity(0.5), // 채우기 색상
-    strokeColor: Colors.deepOrange.shade100.withOpacity(0.1), // 테두리 색상
-
-    )]);
+    localcircles = {
+      Circle(
+        circleId: const CircleId('currentCircle'),
+        center: LatLng(position.latitude, position.longitude), // (위도, 경도)
+        radius: 500, // 반경
+        fillColor: Colors.deepOrange.shade100.withOpacity(0.5), // 채우기 색상
+        strokeColor: Colors.deepOrange.shade100.withOpacity(0.1), // 테두리 색상
+      )
+    };
     setState(() {
       _circles = localcircles;
     });
@@ -177,13 +180,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   @override
   Widget build(BuildContext context) {
-
     return CupertinoPageScaffold(
       child: Stack(
         children: [
           GoogleMap(
             mapType: MapType.terrain,
-            initialCameraPosition: CameraPosition(
+            initialCameraPosition: const CameraPosition(
               target: LatLng(37.5925683, 127.0164784), // 성신여대 입구
               zoom: 15,
             ),
@@ -210,10 +212,10 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               foregroundColor: Colors.black,
               backgroundColor: Colors.white,
               elevation: 8,
-              child: Icon(Icons.my_location),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
               ),
+              child: const Icon(Icons.my_location),
             ),
           ),
         ],

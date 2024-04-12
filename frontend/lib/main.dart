@@ -27,11 +27,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Placeholder(), // 첫 화면으로 띄우고 싶은 스크린 넣기
+      home: const Placeholder(), // 첫 화면으로 띄우고 싶은 스크린 넣기
       routes: <String, WidgetBuilder>{
-        '/signup': (BuildContext context) => SignupScreen(),
-        '/signin': (BuildContext context) => LoginScreen(),
-        '/user': (BuildContext context) => UserScreen(),
+        '/signup': (BuildContext context) => const SignupScreen(),
+        '/signin': (BuildContext context) => const LoginScreen(),
+        '/user': (BuildContext context) => const UserScreen(),
       },
     );
   }

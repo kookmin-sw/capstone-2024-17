@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -20,7 +22,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _loginIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final storage = new FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   // 카카오 로그인 버튼을 누르면 돌아오는 콜백함수
   void _handleKakaoLoginPressed() {
@@ -29,9 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel _loginViewModel =
+    LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
-    if (_loginViewModel.user != null) {
+    if (loginViewModel.user != null) {
       // 현재 페이지를 대신해 유저 페이지로 navigate
       // push나 pop의 재진입 현상 방지
       Future.delayed(Duration.zero, () {
@@ -167,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String loginId,
     String password,
   ) async {
-    LoginViewModel _loginViewModel =
+    LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
     // final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
@@ -191,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
             key: 'authToken', value: jsonData["data"]["authToken"]);
         // 아이디와 닉네임, 로그인타입으로 UserModel 만들어서 provider에 로그인
         UserModel user = UserModel(loginId, 'none', 'none');
-        _loginViewModel.login(user);
+        loginViewModel.login(user);
         showAlertDialog(context, '로그인 성공!');
         // 현재 페이지를 대신해 유저 페이지로 navigate
         Future.delayed(Duration.zero, () {
