@@ -33,6 +33,10 @@ public class MatchSubscriber implements MessageListener {
             else if (channel.equals("matchAccept")) {
                 messagingTemplate.convertAndSend("/user/" + matchDto.getReceiverId(), matchDto);
             }
+            // 매칭 취소
+            else if (channel.equals("matchCancel")) {
+                messagingTemplate.convertAndSend("/user/" + matchDto.getReceiverId(), matchDto);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

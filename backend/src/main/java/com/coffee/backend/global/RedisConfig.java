@@ -42,7 +42,8 @@ public class RedisConfig {
         container.setConnectionFactory(connectionFactory());
         container.addMessageListener(matchListenerAdapter, topic01());
         container.addMessageListener(matchListenerAdapter, topic02());
-        container.addMessageListener(cafeListenerAdapter, topic03());
+        container.addMessageListener(matchListenerAdapter, topic03());
+        container.addMessageListener(cafeListenerAdapter, topic04());
 
         return container;
     }
@@ -69,6 +70,11 @@ public class RedisConfig {
 
     @Bean
     public ChannelTopic topic03() {
+        return new ChannelTopic("matchCancel");
+    }
+
+    @Bean
+    public ChannelTopic topic04() {
         return new ChannelTopic("cafeChoice");
     }
 }

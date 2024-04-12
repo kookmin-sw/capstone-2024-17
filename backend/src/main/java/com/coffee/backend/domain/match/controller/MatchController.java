@@ -21,7 +21,6 @@ public class MatchController {
     public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
         log.info("Request Message Catch!!");
         matchPublisher.sendMatchRequest(dto);
-        matchPublisher.saveMatchRequest(dto);
     }
 
     // pub/match/accept -> 채팅방 개설
@@ -29,5 +28,12 @@ public class MatchController {
     public void acceptMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
         log.info("Accept Message Catch!!");
         matchPublisher.acceptMatchRequest(dto);
+    }
+
+    // pub/match/cancel
+    @MessageMapping("/match/cancel")
+    public void cancelMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+        log.info("Cancel Message Catch!!");
+        matchPublisher.cancelMatchRequest(dto);
     }
 }
