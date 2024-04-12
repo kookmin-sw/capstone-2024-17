@@ -30,4 +30,11 @@ public class MatchController {
         log.info("Accept Message Catch!!");
         matchPublisher.acceptMatchRequest(dto);
     }
+
+    // pub/match/cancel
+    @MessageMapping("/match/cancel")
+    public void cancelMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+        log.info("Cancel Message Catch!!");
+        matchPublisher.cancelMatchRequest(dto);
+    }
 }

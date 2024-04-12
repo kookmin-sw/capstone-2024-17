@@ -44,7 +44,13 @@ public class MatchPublisher {
         redisTemplate.convertAndSend("matchAccept", dto);
     }
 
-    // 매칭 요청 취소
+    // 매칭 요청 수동 취소
+    public void cancelMatchRequest(MatchDto dto) {
+        dto.setStatus("canceled");
+        redisTemplate.convertAndSend("matchCancel", dto);
+    }
+
+    // 매칭 요청 자동 취소
 
     // 매칭 동시 요청 제한
 }
