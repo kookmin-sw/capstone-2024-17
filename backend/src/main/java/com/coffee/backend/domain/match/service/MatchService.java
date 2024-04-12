@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import java.time.Duration;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+    private final FcmService fcmService;
 
     // 매칭 요청
     @Transactional
@@ -35,6 +37,9 @@ public class MatchService {
         redisTemplate.expire("requestId" + requestId, Duration.ofMinutes(10));
 
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+
+        // 알림
+        fcmService.sendPushMessageTo(dto.getTargetToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
     }
 
     // 매칭 요청 수락
@@ -45,6 +50,9 @@ public class MatchService {
             dto.setStatus("failed");
         }
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+
+        // 알림
+        fcmService.sendPushMessageTo(dto.getTargetToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
     }
 
     // 매칭 요청 거절
@@ -55,6 +63,9 @@ public class MatchService {
             dto.setStatus("failed");
         }
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+
+        // 알림
+        fcmService.sendPushMessageTo(dto.getTargetToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
     }
 
     // 매칭 요청 수동 취소
