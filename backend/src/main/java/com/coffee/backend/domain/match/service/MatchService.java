@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import java.time.Duration;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+    private final FcmService fcmService;
 
     private static final String LOCK_KEY_PREFIX = "lock:matchRequest:";
 
@@ -44,6 +46,9 @@ public class MatchService {
         redisTemplate.opsForHash().putAll("requestId:" + requestId, matchDetails);
         redisTemplate.expire("requestId" + requestId, Duration.ofMinutes(10));
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+      
+        // 알림
+        fcmService.sendPushMessageTo(dto.getTargetToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
 
         // 10분동안 락 설정
         redisTemplate.opsForValue().set(lockKey, true, Duration.ofMinutes(10));
@@ -57,6 +62,9 @@ public class MatchService {
             dto.setStatus("failed");
         }
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+
+        // 알림
+        fcmService.sendPushMessageTo(dto.getTargetToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
     }
 
     // 매칭 요청 거절
@@ -67,6 +75,9 @@ public class MatchService {
             dto.setStatus("failed");
         }
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
+      
+        // 알림
+        fcmService.sendPushMessageTo(dto.getTargetToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
 
         // 락 해제
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
