@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:frontend/screen/verify_company_screen.dart';
+// import 'package:frontend/screen/verify_company_screen.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/company_item.dart';
 import 'package:frontend/widgets/search_textfield.dart';
@@ -14,6 +17,7 @@ class SearchCompanyScreen extends StatefulWidget {
 class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   final TextEditingController _companyNameController = TextEditingController();
   List<Map<String, dynamic>> companyList = [];
+  final storage = const FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +104,15 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   }
 
   List<Widget> _buildCompanyItems() {
+    /*
+    if (companyList.isEmpty) {
+      return [
+        const CompanyItem(
+          companyName: '없어요',
+        )
+      ];
+    }
+    */
     return companyList.map((company) {
       // int companyId = company['companyId'];
       String companyName = company['companyName'];
@@ -112,8 +125,47 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
     }).toList();
   }
 
-  // 입력된 값에 따른 회사정보 목록 get
+  // 입력된 값에 따른 회사정보 목록 받아오기
   Future<void> getCompanyList() async {
+    /*
+    final url = Uri.parse('http://localhost:8080/company/list');
+    // final url = Uri.parse('http://${dotenv.env['MY_IP']}:8080/company/list');
+    final token = (await storage.read(key: 'authToken')) ?? '';
+    final data = jsonEncode({
+      'companyName': companyName, // companyName 컨트롤러에서 가져와야함
+    });
+    try {
+      http.Response res = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data,
+      );
+      Map<String, dynamic> jsonData = jsonDecode(res.body);
+      print(jsonData);
+      if (jsonData['success']) {
+        // 요청 성공
+        setState(() {
+          companyList =
+              List<Map<String, dynamic>>.from(jsonData['data']['company']);
+        });
+      } else {
+        // 예외처리
+        print('회사정보 검색 실패: ${jsonData["message"]}(${jsonData["statusCode"]})');
+        showAlertDialog(
+          context,
+          '회사정보 검색 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
+        );
+      }
+    } catch (error) {
+      print('회사정보 검색 실패: $error');
+      showAlertDialog(context, '회사정보 검색 실패: $error');
+    }
+    */
+
     // 임시값
     companyList = [
       {'companyName': 'NAVER'},
