@@ -22,7 +22,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   final TextEditingController _verifyCodeController = TextEditingController();
   String domain = '';
   bool _timerVisible = false;
-  int timeLimit = 10;
+  int timeLimit = 180;
   int _secondsLeft = 0;
   late Timer _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     setState(() {});
