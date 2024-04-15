@@ -3,12 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/model/user_model.dart';
 
-// 임의로 baseUrl 지정 (추후 서버 주소로 변경 필요)
-const baseUrl = "https://localhost:8080";
+const baseUrl = "http://43.203.218.27:8080";
 
 // 주변 카페에 있는 유저 목록 POST 요청으로 받아오기
 Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
-  final url = Uri.parse("$baseUrl/cafe");
+  final url = Uri.parse("$baseUrl/cafe/get-users");
   final response = await http.post(
     url,
     headers: {"Content-Type": "application/json"},
