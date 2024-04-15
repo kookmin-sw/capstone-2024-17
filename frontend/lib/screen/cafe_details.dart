@@ -4,23 +4,6 @@ import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CafeDetails(
-        cafeName: "스타벅스 국민대점",
-        userList: [],
-      ),
-    );
-  }
-}
-
 const List<Map<String, dynamic>> sampleUserList = [
   {
     "nickname": "뽕순이",
