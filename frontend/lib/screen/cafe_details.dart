@@ -48,14 +48,19 @@ const List<Map<String, dynamic>> sampleUserList = [
   },
 ];
 
-class CafeDetails extends StatefulWidget {
+class CafeDetailsArguments {
   final String cafeName;
   final List<UserModel> userList;
 
-  const CafeDetails({
-    super.key,
+  const CafeDetailsArguments({
     required this.cafeName,
     required this.userList,
+  });
+}
+
+class CafeDetails extends StatefulWidget {
+  const CafeDetails({
+    super.key,
   });
 
   @override
@@ -75,12 +80,15 @@ class _CafeDetailsState extends State<CafeDetails>
 
   @override
   Widget build(BuildContext context) {
+    final CafeDetailsArguments args =
+        ModalRoute.of(context)!.settings.arguments as CafeDetailsArguments;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
           title: Text(
-            widget.cafeName,
+            args.cafeName,
             style: const TextStyle(fontSize: 24),
           ),
           toolbarHeight: 100,
@@ -128,7 +136,7 @@ class _CafeDetailsState extends State<CafeDetails>
                   ListView.builder(
                     itemCount: sampleUserList.length,
                     itemBuilder: (context, index) {
-                      return widget.userList.isEmpty
+                      return args.userList.isEmpty
                           ? UserItem(
                               nickname: sampleUserList[index]["nickname"],
                               company: sampleUserList[index]["companyName"],
@@ -137,10 +145,10 @@ class _CafeDetailsState extends State<CafeDetails>
                                   ["introduction"],
                             )
                           : UserItem(
-                              nickname: widget.userList[index].nickname,
-                              company: widget.userList[index].companyName,
-                              position: widget.userList[index].positionName,
-                              introduction: widget.userList[index].introduction,
+                              nickname: args.userList[index].nickname,
+                              company: args.userList[index].companyName,
+                              position: args.userList[index].positionName,
+                              introduction: args.userList[index].introduction,
                             );
                     },
                   ),
