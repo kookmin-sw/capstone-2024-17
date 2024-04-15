@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.message.dto;
 
+import com.coffee.backend.domain.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,5 +12,5 @@ public class MessageResponse {
     private Long senderId;
     private String content;
     private String datetime;
-    private String nickname;
+    private UserDto userInfo;
 }
