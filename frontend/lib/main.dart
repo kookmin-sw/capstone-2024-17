@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:frontend/screen/cafe_details.dart';
 
 const List<String> sampleCafeList = [
   "cafe-1",
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         '/signup': (BuildContext context) => const SignupScreen(),
         '/signin': (BuildContext context) => const LoginScreen(),
         '/user': (BuildContext context) => const UserScreen(),
+        '/cafe': (BuildContext context) => const CafeDetails(),
       },
     );
   }
