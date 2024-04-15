@@ -53,8 +53,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     _controller.dispose();
     super.dispose();
   }
-
-
+  
   // 위치 권한 부여
   Future<void> requestLocationPermission() async {
     PermissionStatus status = await Permission.location.request();
