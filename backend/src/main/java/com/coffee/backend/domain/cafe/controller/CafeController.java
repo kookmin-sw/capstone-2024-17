@@ -3,20 +3,23 @@ package com.coffee.backend.domain.cafe.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.cafe.dto.CafeDto;
+import com.coffee.backend.domain.cafe.dto.CafeListDto;
 import com.coffee.backend.domain.cafe.dto.CafeUserProfileDto;
 import com.coffee.backend.domain.cafe.service.CafePublisher;
 import com.coffee.backend.domain.cafe.service.CafeService;
 import com.coffee.backend.domain.user.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,10 +39,18 @@ public class CafeController {
         cafePublisher.updateCafeChoice(dto);
     }
 
-    // 특정 카페에 속한 모든 유저들을 redis에서 찾아 각 유저 정보를 조회해 프론트로 보낸다.
-    @GetMapping("/cafe/{cafeId}") //http://localhost:8080/cafe/starbucks
-    public ResponseEntity<List<CafeUserProfileDto>> getCafeUsers(@AuthenticationPrincipal User user,
-                                                                 @PathVariable String cafeId) {
-        return ResponseEntity.ok(cafeService.getUserProfilesFromRedisAndDB(cafeId));
+    // (지도 페이지) 특정 카페에 속한 모든 유저들을 redis에서 찾아 각 유저 정보를 조회해 프론트로 보낸다.
+    @PostMapping("/cafe/get-users")
+    public ResponseEntity<Map<String, List<CafeUserProfileDto>>> getCafeUsers(@AuthenticationPrincipal User user,
+                                                                              @RequestBody CafeListDto dto) {
+        List<String> cafeList = dto.getCafeList();
+        Map<String, List<CafeUserProfileDto>> cafeUsersMap = new HashMap<>(); //반환값
+
+        for (String cafeId : cafeList) {
+            List<CafeUserProfileDto> userProfileDtoList = cafeService.getUserProfilesFromRedisAndDB(cafeId);
+            cafeUsersMap.put(cafeId, userProfileDtoList);
+        }
+        return ResponseEntity.ok(cafeUsersMap);
     }
+
 }
