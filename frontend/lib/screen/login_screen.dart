@@ -24,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _loginIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-
   // 카카오 로그인 버튼을 누르면 돌아오는 콜백함수
   void _handleKakaoLoginPressed() {
     setState(() {});

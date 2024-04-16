@@ -43,7 +43,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: <Widget>[
               // 입력창 컨테이너
               Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 100, vertical: 20), // 마진 추가
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -113,8 +114,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onPressed: () {
                         if (_loginIdController.text == '') {
                           showAlertDialog(context, '아이디를 입력해주세요.');
-                        }
-                        else if (_passwordController.text == '') {
+                        } else if (_passwordController.text == '') {
                           showAlertDialog(context, '비밀번호를 입력해주세요.');
                         } else if (_passwordController.text !=
                             _confirmPasswordController.text) {

@@ -15,7 +15,6 @@ class KakaoLoginWidget extends StatelessWidget {
     LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context);
     return InkWell(
       onTap: () async {
-        UserModel2 user = await KakaoLogin().login();
         loginViewModel.login(user);
         await storage.write(key: 'userUUID', value: '카톡');
         await storage.write(key: 'authToken', value: '카톡토큰');
