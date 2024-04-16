@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: backend
+
+  datasource:
+    url: ${SPRING_LOCAL_DATASOURCE_URL}
+    username: ${SPRING_LOCAL_DATASOURCE_USERNAME}
+    password: ${SPRING_LOCAL_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 60000 # 60초 타임아웃
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000 # 5분
+      max-lifetime: 2000000 # 33분
+      initialization-fail-timeout: 60000 # 초기화 실패 타임아웃
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show-sql: true
+        format_sql: true
+
+  profiles:
+    include: jwt,db
+
+  cache:
+    type: redis
+
+  data:
+    redis:
+      host: redis
+      port: 6379
