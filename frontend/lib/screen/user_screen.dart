@@ -4,19 +4,21 @@ import 'package:frontend/login_view_model.dart';
 import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
+  const UserScreen({super.key});
+
   @override
   _UserScreenState createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final storage = new FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   bool isLogined = false;
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel _loginViewModel =
+    LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
-    if (_loginViewModel.user != null) {
+    if (loginViewModel.user != null) {
       isLogined = true;
     } else {
       isLogined = false;
@@ -42,12 +44,12 @@ class _UserScreenState extends State<UserScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // 로그인 정보 표시
-            Text('로그인 id: ${_loginViewModel.user?.loginId}'),
+            Text('로그인 id: ${loginViewModel.user?.loginId}'),
             Text(
-              '닉네임: ${_loginViewModel.user?.nickname}',
+              '닉네임: ${loginViewModel.user?.nickname}',
             ),
             Text(
-              '로그인 타입: ${_loginViewModel.user?.loginType}',
+              '로그인 타입: ${loginViewModel.user?.loginType}',
             ),
 
             // storage 정보 표시
@@ -102,10 +104,10 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Future<void> logout(BuildContext context) async {
-    LoginViewModel _loginViewModel =
+    LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
     await storage.deleteAll();
-    _loginViewModel.logout();
+    loginViewModel.logout();
     setState(() {}); // context.mount ?  바로 적용이 안됨
   }
 }
