@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/user_model.dart';
+import 'package:frontend/model/user_model2.dart';
 
 // provider: 여기에 user가 있는지 없는지로 상태관리
 
 class LoginViewModel extends ChangeNotifier {
-  UserModel? _user;
+  UserModel2? _user;
   /*
   String _name = " - ";
   String _loginType = " - ";
@@ -12,10 +12,10 @@ class LoginViewModel extends ChangeNotifier {
   */
 
   // 생성자
-  LoginViewModel({required UserModel? user}) : _user = user;
+  LoginViewModel({required UserModel2? user}) : _user = user;
 
   // get 메소드
-  UserModel? get user => _user;
+  UserModel2? get user => _user;
   /*
   String get name => _name;
   String get loginType => _loginType;
@@ -40,7 +40,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 */
 
-  void login(UserModel user) {
+  void login(UserModel2 user) {
     _user = user;
     notifyListeners();
     /*

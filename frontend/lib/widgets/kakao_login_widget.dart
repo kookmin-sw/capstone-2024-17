@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/kakao_login.dart';
 import 'package:frontend/login_view_model.dart';
-import 'package:frontend/user_model.dart';
+import 'package:frontend/model/user_model2.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class KakaoLoginWidget extends StatelessWidget {
-  KakaoLoginWidget(this.onPressed, {super.key});
+  const KakaoLoginWidget(this.onPressed, {super.key});
   final VoidCallback onPressed; // 상위 위젯에게 자신이 press됐음을 알리기 위한 콜백함수
-  final storage = new FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel _loginViewModel = Provider.of<LoginViewModel>(context);
+    LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context);
     return InkWell(
       onTap: () async {
-        UserModel user = await KakaoLogin().login();
-        _loginViewModel.login(user);
+        UserModel2 user = await KakaoLogin().login();
+        loginViewModel.login(user);
         await storage.write(key: 'userUUID', value: '카톡');
         await storage.write(key: 'authToken', value: '카톡토큰');
         onPressed(); // await이 끝나면 콜백함수를 돌려준다
@@ -33,6 +33,5 @@ class KakaoLoginWidget extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
