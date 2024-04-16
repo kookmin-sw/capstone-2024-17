@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class CafePublisher {
     private final RedisTemplate<String, Object> redisTemplate;
     private final CafeService cafeService;
+    private final SimpMessageSendingOperations sendingOperations;
 
     public void updateCafeChoice(CafeDto dto) throws JsonProcessingException, IllegalArgumentException {
         String type = dto.getType();
@@ -29,9 +31,7 @@ public class CafePublisher {
                 throw new IllegalArgumentException(
                         "updateCafeChoice : request type 형식을 (add/delete) 중 하나로 작성해주세요. 입력 type: '" + type + "'");
         }
-        // dto를 json으로 변환 (redisTemplate 직렬화)
-        ObjectMapper objectMapper = new ObjectMapper();
-        String cafeDtoJson = objectMapper.writeValueAsString(dto);
-        redisTemplate.convertAndSend("cafeChoice", cafeDtoJson); // cafeChoice 채널로 dto 발행
+        String cafeDtoJson = new ObjectMapper().writeValueAsString(dto);
+        sendingOperations.convertAndSend("/sub/cafe/" + cafeId, cafeDtoJson);
     }
 }
