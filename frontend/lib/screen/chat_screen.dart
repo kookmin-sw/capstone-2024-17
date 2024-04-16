@@ -1,5 +1,4 @@
 import 'dart:convert';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/chat_service.dart';
@@ -192,9 +191,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // 채팅 list를 가져오는 메소드
   Future<void> getChatList() async {
+    final queryParameters = {
+      'chatroomId': widget.chatroomId,
+    };
     final url =
-        Uri.parse('http://localhost:8080/message/list/${widget.chatroomId}');
-    // final url = Uri.parse('http://${dotenv.env['MY_IP']}:8080/message/list/${widget.chatroomId}')
+        Uri.https('http://localhost:8080', '/message/list', queryParameters);
 
     final token = (await storage.read(key: 'authToken')) ?? '';
     try {
