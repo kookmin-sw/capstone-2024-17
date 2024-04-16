@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/kakao_login.dart';
 import 'package:frontend/login_view_model.dart';
-import 'package:frontend/user_model.dart';
+import 'package:frontend/model/user_model2.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -15,7 +15,6 @@ class KakaoLoginWidget extends StatelessWidget {
     LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context);
     return InkWell(
       onTap: () async {
-        UserModel user = await KakaoLogin().login();
         loginViewModel.login(user);
         await storage.write(key: 'userUUID', value: '카톡');
         await storage.write(key: 'authToken', value: '카톡토큰');

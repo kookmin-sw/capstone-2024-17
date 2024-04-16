@@ -5,6 +5,8 @@ import com.coffee.backend.domain.chatroom.dto.ChatroomResponse;
 import com.coffee.backend.domain.chatroom.dto.ChatroomResponses;
 import com.coffee.backend.domain.chatroom.entity.Chatroom;
 import com.coffee.backend.domain.chatroom.repository.ChatroomRepository;
+import com.coffee.backend.domain.message.service.MessageService;
+import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.domain.userChatroom.entity.UserChatroom;
@@ -21,6 +23,7 @@ public class ChatroomService {
     private final UserRepository userRepository;
     private final ChatroomRepository chatroomRepository;
     private final UserChatroomRepository userChatroomRepository;
+    private final MessageService messageService;
 
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreationDto dto) {
@@ -42,7 +45,9 @@ public class ChatroomService {
         uc2.setUser(receiver);
         userChatroomRepository.save(uc2);
 
-        return new ChatroomResponse(room.getChatroomId());
+        UserDto userInfo = new UserDto();
+        userInfo.setNickname(sender.getNickname());
+        return new ChatroomResponse(room.getChatroomId(), userInfo, "");
     }
 
     @Transactional
@@ -50,7 +55,15 @@ public class ChatroomService {
         List<ChatroomResponse> responses = (userChatroomRepository.findAllByUser(user)).stream()
                 .filter(o -> o.getUser().equals(user))
                 .map(UserChatroom::getChatroom)
-                .map(m -> new ChatroomResponse(m.getChatroomId()))
+                .map(cr -> {
+                    User other = userChatroomRepository.findOtherUserChatroomByChatroomAndUser(cr, user).orElseThrow()
+                            .getUser();
+                    UserDto otherInfo = new UserDto();
+                    otherInfo.setNickname(other.getNickname());
+
+                    return new ChatroomResponse(cr.getChatroomId(), otherInfo,
+                            messageService.getRecentMessageContent(cr));
+                })
                 .toList();
 
         return new ChatroomResponses(responses);

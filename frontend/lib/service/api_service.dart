@@ -27,3 +27,47 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
   }
   throw Error();
 }
+
+// 회원가입
+Future<Map<String, dynamic>> signup(String loginId, String password,
+    String nickname, String email, String phone) async {
+  final url = Uri.parse('$baseUrl/auth/signUp');
+  final data = jsonEncode({
+    'loginId': loginId,
+    'password': password,
+    'nickname': nickname,
+    'email': email,
+    'phone': phone,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: data);
+    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 로그인
+Future<Map<String, dynamic>> login(
+    String loginId,
+    String password,
+  ) async {
+    final url = Uri.parse('$baseUrl/auth/signIn');
+    final data = jsonEncode({
+      'loginId': loginId,
+      'password': password,
+    });
+    try {
+      http.Response res = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: data);
+      Map<String, dynamic> jsonData = jsonDecode(res.body);
+      return jsonData;
+    } catch (error) {
+      print('error: $error');
+      throw Error();
+    }
+  }
+

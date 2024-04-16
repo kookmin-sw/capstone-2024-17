@@ -1,9 +1,6 @@
-import 'dart:convert';
-
-// import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:http/http.dart' as http;
+import 'package:frontend/service/api_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -44,19 +41,6 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-              // 제목
-              /*
-              Container(
-                  padding: const EdgeInsets.all(20),
-                  child: const Text(
-                    '회원가입',
-             
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,)
-                      )
-                  )),
-*/
               // 입력창 컨테이너
               Container(
                   margin: const EdgeInsets.symmetric(
@@ -144,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           showAlertDialog(context, '전화번호를 입력해주세요.');
                         } else {
                           try {
-                            signup(
+                            waitSignup(
                                 context,
                                 _loginIdController.text,
                                 _passwordController.text,
@@ -180,35 +164,16 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void signup(BuildContext context, String loginId, String password,
+  void waitSignup(BuildContext context, String loginId, String password,
       String nickname, String email, String phone) async {
-    // final String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-    // print(hashedPassword);
-    final url = Uri.parse('http://localhost:8080/auth/signUp');
-    // final url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
-    final data = jsonEncode({
-      'loginId': loginId,
-      'password': password,
-      'nickname': nickname,
-      'email': email,
-      'phone': phone,
-    });
-    try {
-      http.Response res = await http.post(url,
-          headers: {"Content-Type": "application/json"}, body: data);
-      Map<String, dynamic> jsonData = jsonDecode(res.body);
-      if (res.statusCode == 200) {
-        // 요청 성공
-        showAlertDialog(context, '회원가입 성공! 로그인 페이지로 이동합니다.');
-        if (!context.mounted) return;
-        Navigator.of(context).pushNamed('/signin');
-      } else {
-        // 예외
-        showAlertDialog(
-            context, '회원가입 실패: ${jsonData["message"]}(${jsonData["code"]})');
+        Map<String, dynamic> res = await signup(loginId, password, nickname, email, phone);
+        if (res['success'] == true) {
+            // 요청 성공
+            showAlertDialog(context, res['message']);
+            Navigator.of(context).pushNamed('/signin');
+        } else {
+          // 회원가입 실패
+          showAlertDialog(context, '회원가입 실패: ${res['message']}(${res['statusCode']})');
+        }
       }
-    } catch (error) {
-      showAlertDialog(context, '회원가입 실패: $error');
-    }
   }
-}

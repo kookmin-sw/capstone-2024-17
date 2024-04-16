@@ -1,10 +1,10 @@
 import 'package:frontend/social_login.dart';
-import 'package:frontend/user_model.dart';
+import 'package:frontend/model/user_model2.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 class KakaoLogin implements SocialLogin {
   @override
-  Future<UserModel> login() async {
+  Future<UserModel2> login() async {
     try {
       bool isInstalled = await isKakaoTalkInstalled();
       if (isInstalled) {
@@ -17,13 +17,13 @@ class KakaoLogin implements SocialLogin {
         await UserApi.instance.loginWithKakaoAccount();
       }
     } catch (error) {
-      return UserModel('', '', '');
+      return UserModel2('', '', '');
     }
 
     final User user = await UserApi.instance.me();
     final String? nickname = user.kakaoAccount?.profile?.nickname;
 
-    return UserModel('', nickname ?? '', 'kakao');
+    return UserModel2('', nickname ?? '', 'kakao');
   }
 
   @override
