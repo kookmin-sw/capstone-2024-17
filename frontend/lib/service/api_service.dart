@@ -11,7 +11,7 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
   final response = await http.post(
     url,
     headers: {"Content-Type": "application/json"},
-    body: jsonEncode({cafeList: cafeList}),
+    body: jsonEncode({"cafeList": cafeList}),
   );
 
   if (response.statusCode == 200) {
