@@ -29,8 +29,8 @@ public class CafeController {
     클라이언트에서 서버로 메시지 전송
     /pub/cafe/update로 메시지 발행
     */
-    @MessageMapping("/cafe/update")
-    public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload CafeDto dto)
+    @MessageMapping("/cafe/update") // pub/cafe/update
+    public void publishCafeUpdate(@AuthenticationPrincipal User user, @Payload CafeDto dto)
             throws JsonProcessingException {
         log.info("Message Catch!!");
         cafePublisher.updateCafeChoice(dto);
