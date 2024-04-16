@@ -91,7 +91,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   Future<void> _searchcafes(LatLng position) async {
     // try{
       final response = await http.get(Uri.parse(
-          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(coffee||카페||커피숍||커피 전문점||cafe)&location=${position.latitude},${position.longitude}&radius=1500&key=${dotenv.env['googleApiKey']}'));
+          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(카페||커피숍||커피 전문점||cafe||coffee)&location=${position.latitude},${position.longitude}&radius=500&key=${dotenv.env['googleApiKey']}'));
 
       if (response.statusCode == 200) {
         print("성공");
@@ -106,7 +106,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   }
 
-
+  // 마커 그리기 함수
   Future<Uint8List> _createMarkerImage(String label) async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder, Rect.fromPoints(Offset(0.0, 0.0), Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
@@ -157,7 +157,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
   }
 
-
+  // 반경 원 그리기
   void _setCircle(LatLng position){
     Set<Circle> localcircles = {};
 
