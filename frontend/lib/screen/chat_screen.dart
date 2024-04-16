@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/chat_service.dart';
+import 'package:frontend/service/chat_service.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/chat_item.dart';
-import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
   final int chatroomId;
@@ -34,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // stompClient가 activate되고 나면(onActivated가 호출되고 나면) chatroom을 sub한다
     _chatService.activateStompClient(() {
       _connectToChat();
-      getChatList();
+      waitGetChatList(widget.chatroomId);
     });
   }
 
@@ -189,43 +188,21 @@ class _ChatScreenState extends State<ChatScreen> {
     }).toList();
   }
 
-  // 채팅 list를 가져오는 메소드
-  Future<void> getChatList() async {
-    final queryParameters = {
-      'chatroomId': widget.chatroomId,
-    };
-    final url =
-        Uri.https('http://localhost:8080', '/message/list', queryParameters);
-
-    final token = (await storage.read(key: 'authToken')) ?? '';
-    try {
-      http.Response res = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
+  Future<void> waitGetChatList(int chatroomId) async {
+    Map<String, dynamic> res = await getChatList(chatroomId);
+    if (res['success']) {
+      // 요청 성공
+      setState(() {
+        chats = List<Map<String, dynamic>>.from(
+            res['data']['messageResponses']);
+      });
+    } else {
+      // 실패: 예외처리
+      print('채팅 불러오기 실패: ${res["message"]}(${res["statusCode"]})');
+      showAlertDialog(
+        context,
+        '채팅 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
       );
-      Map<String, dynamic> jsonData = jsonDecode(res.body);
-      print(jsonData);
-      if (jsonData['success']) {
-        // 요청 성공
-        setState(() {
-          chats = List<Map<String, dynamic>>.from(
-              jsonData['data']['messageResponses']);
-        });
-      } else {
-        // 예외처리
-        print('채팅 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})');
-        showAlertDialog(
-          context,
-          '채팅 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
-        );
-      }
-    } catch (error) {
-      print('채팅 불러오기 실패: $error');
-      showAlertDialog(context, '채팅 불러오기 실패: $error');
     }
   }
 

@@ -1,8 +1,6 @@
-import 'dart:convert';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/chatroom_item.dart';
-import 'package:http/http.dart' as http;
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -20,7 +18,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   @override
   void initState() {
     super.initState();
-    getChatroomlist();
+    waitGetChatroomlist();
   }
 
   @override
@@ -83,43 +81,22 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
     }).toList();
   }
 
-  // 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
-  Future<void> getChatroomlist() async {
-    final url = Uri.parse('http://localhost:8080/chatroom/list');
-    // final url = Uri.parse('http://${dotenv.env['MY_IP']}:8080/chatroom/list');
-
-    final token = (await storage.read(key: 'authToken')) ?? '';
-
-    print("토큰은: $token");
-    try {
-      http.Response res = await http.get(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
+  Future<void> waitGetChatroomlist() async {
+    Map<String, dynamic> res = await getChatroomlist();
+    if (res['success']) {
+      // 요청 성공
+      setState(() {
+        chatrooms =
+          List<Map<String, dynamic>>.from(res['data']['chatrooms']);
+      });
+    } else {
+      // 실패: 예외처리
+      print(
+          '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})');
+      showAlertDialog(
+        context,
+        '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
       );
-      Map<String, dynamic> jsonData = jsonDecode(res.body);
-      print(jsonData);
-      if (jsonData['success']) {
-        // 요청 성공
-        setState(() {
-          chatrooms =
-              List<Map<String, dynamic>>.from(jsonData['data']['chatrooms']);
-        });
-      } else {
-        // 예외처리
-        print(
-            '채팅방 목록 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})');
-        showAlertDialog(
-          context,
-          '채팅방 목록 불러오기 실패: ${jsonData["message"]}(${jsonData["statusCode"]})',
-        );
-      }
-    } catch (error) {
-      print('채팅방 목록 불러오기 실패: $error');
-      showAlertDialog(context, '채팅방 목록 불러오기 실패: $error');
     }
   }
 }

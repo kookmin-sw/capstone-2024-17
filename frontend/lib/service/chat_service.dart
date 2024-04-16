@@ -6,11 +6,14 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 class ChatService {
   final StompClient stompClient;
 
+  // static const String baseUrl = "https://localhost:8080";
+  static const String baseUrl = "https://43.203.218.27:8080";
+
+
   ChatService()
       : stompClient = StompClient(
             config: StompConfig.sockJS(
-          url: 'http://localhost:8080/ws-chat',
-          // url: 'http://${dotenv.env['MY_IP']}:8080/ws-chat',
+          url: '$baseUrl/ws-chat',
           onConnect: onConnectCallback,
           onWebSocketError: (dynamic error) => print(error.toString()),
           onDisconnect: (_) => print('연결됨'),
