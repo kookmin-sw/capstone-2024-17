@@ -53,8 +53,8 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
 
     //좌표 고정 버전 ------------------------
     LocationPermission();
-    _setCircle(LatLng(37.5925683, 127.0164784));
-    _searchcafes(LatLng(37.5925683, 127.0164784));
+    _setCircle(LatLng(37.611035490773, 126.99457310622));
+    _searchcafes(LatLng(37.611035490773, 126.99457310622));
     // -------------------------------------------------
   }
 
@@ -248,7 +248,7 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
           GoogleMap(
             mapType: MapType.terrain,
             initialCameraPosition: CameraPosition(
-              target: LatLng(37.5925683, 127.0164784), // 성신여대 입구
+              target: LatLng(37.611035490773, 126.99457310622), // 국민대
               zoom: 15,
             ),
             myLocationEnabled: _myLocationEnabled,
