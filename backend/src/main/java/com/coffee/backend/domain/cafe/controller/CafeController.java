@@ -12,8 +12,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CafeController {
     private final CafePublisher cafePublisher;
     private final CafeService cafeService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /*
     클라이언트에서 서버로 메시지 전송
@@ -53,4 +56,15 @@ public class CafeController {
         return ResponseEntity.ok(cafeUsersMap);
     }
 
+    //EC2 redis 연결 오류 테스트용
+    @PostMapping("/redis-test")
+    public void redisTest(@RequestBody String key) {
+        String cafeId = "starbucks";
+        cafeService.addCafeChoice(cafeId, key); // add Test
+        Set<Object> addUser = cafeService.getUserListFromRedis(cafeId); // get Test
+        cafeService.deleteCafeChoice(cafeId, key); // delete Test
+        Set<Object> deleteUser = cafeService.getUserListFromRedis(cafeId); // get Test
+        System.out.println("!!! addUser : " + addUser); //adduser 요소 모두 출력하게
+        System.out.println("!!! deleteUser : " + deleteUser);
+    }
 }
