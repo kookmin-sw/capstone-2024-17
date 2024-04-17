@@ -6,10 +6,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:math';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,8 +71,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   Future<void> _getCurrentLocation() async {
     print("현재 위치로 이동");
     final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    _searchcafes(LatLng(position.latitude, position.longitude));
-    _setCircle(LatLng(position.latitude, position.longitude));
     final cameraPosition = CameraPosition(
       target: LatLng(position.latitude, position.longitude),
       zoom: 15,
@@ -81,7 +79,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       _myLocationEnabled = true;
     });
     _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
+    _searchcafes(LatLng(position.latitude, position.longitude));
+    _setCircle(LatLng(position.latitude, position.longitude));
   }
 
   Set<Marker> _markers = {};
@@ -99,7 +98,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       if (response.statusCode == 200) {
         print("Response Body: ${response.body}");
         final data = json.decode(response.body);
-        _setMarkers(data['results']);
+        _setMarkers(data['results'],position.latitude , position.longitude);
 
     } else {
         print("실패");
@@ -107,43 +106,21 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       }
   }
 
-  // 마커 그리기 함수
-  Future<Uint8List> _createMarkerImage(String label) async {
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder, Rect.fromPoints(Offset(0.0, 0.0), Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
-
-    // 마커 아이콘을 그리는 코드
-    final paint = Paint()..color = Color.fromRGBO(246, 82, 16, 1); //red, green, blue, opacity
-    canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
-
-    // 텍스트 크기 계산 (중앙배치 하기 위함)
-    final textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
-    final textSpan = TextSpan(text: label, style: textStyle); // 마진
-    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
-    textPainter.layout();
-
-    // 텍스트 중앙 배치
-    final textOffset = Offset(80 - textPainter.width / 2, 80 - textPainter.height / 2); // 텍스트의 시작 위치 계산
-    textPainter.paint(canvas, textOffset); // 텍스트 뿌림
-
-    final picture = recorder.endRecording();
-    final img = await picture.toImage(160, 160); // 이미지 크기 = 원의 크기
-    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
-  }
-
-
   // cafe 마커표시하고 누르면 cafe 이름보여줌
-  void _setMarkers(List<dynamic> places) async {
+  void _setMarkers(List<dynamic> places,latitude,longitude) async {
     final Set<Marker> localMarkers = {};
     for (var place in places) {
+
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon = await _createMarkerImage(place['name']); // 여기서 라벨에 텍스트 명 변경가능
 
       var place_lat = place['geometry']['location']['lat'];
       var place_lng = place['geometry']['location']['lng'];
-
-      print("lat=${place_lat}, lng${place_lng}");
+      final latlong2.Distance distance = latlong2.Distance(); //이름 지정 안 하면 geo머시기랑 충돌남
+      final double km = distance.as(latlong2.LengthUnit.Meter,latlong2.LatLng(latitude, longitude), latlong2.LatLng(place_lat, place_lng));
+      print("두 좌표간 거리 = $km");
+      // print("lat=${place_lat}, lng${place_lng}");
+      // print(calculateDistance(, ));
       
       localMarkers.add(Marker(
         markerId: MarkerId(place['place_id']),
@@ -180,14 +157,30 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
   }
 
-  //거리 계산 함수
-  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const p = 0.017453292519943295;
-    const c = cos;
-    final a = 0.5 - c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) *
-            (1 - c((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
+
+  // 마커 그리기 함수
+  Future<Uint8List> _createMarkerImage(String label) async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder, Rect.fromPoints(Offset(0.0, 0.0), Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
+
+    // 마커 아이콘을 그리는 코드
+    final paint = Paint()..color = Color.fromRGBO(246, 82, 16, 1); //red, green, blue, opacity
+    canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
+
+    // 텍스트 크기 계산 (중앙배치 하기 위함)
+    final textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
+    final textSpan = TextSpan(text: label, style: textStyle); // 마진
+    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+    textPainter.layout();
+
+    // 텍스트 중앙 배치
+    final textOffset = Offset(80 - textPainter.width / 2, 80 - textPainter.height / 2); // 텍스트의 시작 위치 계산
+    textPainter.paint(canvas, textOffset); // 텍스트 뿌림
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage(160, 160); // 이미지 크기 = 원의 크기
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    return byteData!.buffer.asUint8List();
   }
 
   @override
