@@ -49,3 +49,4 @@ app.*.map.json
 #추가 
 *.env
 /lib/cafe_filtering_test.dart
+/lib/screen/map_test.dart
