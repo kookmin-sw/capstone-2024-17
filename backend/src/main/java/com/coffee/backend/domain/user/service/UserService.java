@@ -35,4 +35,18 @@ public class UserService {
                     return new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
     }
+
+    public void checkDuplicatedEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            log.debug("userService.checkDuplicatedEmail exception occur email: {}", email);
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
+        }
+    }
+
+    public void setUserEmail(User user, String email) {
+//        this.checkDuplicatedEmail(email);
+        user.setEmail(email);
+        userRepository.save(user);
+    }
 }

@@ -17,7 +17,9 @@ public enum ErrorCode {
     FCM_MESSAGE_FORMAT_ERROR(HttpStatus.BAD_REQUEST, "5400", "FCM 메시지 포맷이 잘못되었습니다."),
     FCM_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "5501", "FCM 메시지 전송 중 오류가 발생했습니다."),
 
-    UNABLE_TO_SEND_EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "6500", "이메일 발송 중 에러가 발생했습니다.");
+    UNABLE_TO_SEND_EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "6500", "이메일 발송 중 에러가 발생했습니다."),
+    EMAIL_DUPLICATED(HttpStatus.CONFLICT, "6409", "EMAIL이 중복됩니다"),
+    NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "6501", "인증코드 생성 중 오류가 발생했습니다.");
 
     private final HttpStatus status;
     private final String code;
