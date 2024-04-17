@@ -30,18 +30,16 @@ class MyApp extends StatelessWidget {
 }
 
 class Google_Map extends StatefulWidget {
-
   @override
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
 
-
   @override
   void initState() {
     super.initState();
-    requestLocationPermission(); // 위치 권한 여부
+    LocationPermission(); // 위치 권한 여부
   }
 
   late GoogleMapController _controller;
@@ -54,7 +52,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   }
   
   // 위치 권한 부여
-  Future<void> requestLocationPermission() async {
+  Future<void> LocationPermission() async {
     PermissionStatus status = await Permission.location.request();
     if (status.isDenied) {
       print('사용자가 위치 권한을 거부했습니다.');
