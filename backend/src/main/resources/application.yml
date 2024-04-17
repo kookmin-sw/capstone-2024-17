@@ -34,3 +34,6 @@ spring:
     redis:
       host: redis
       port: 6379
+
+  kakao:
+    user_info_uri: https://kapi.kakao.com/v2/user/me
