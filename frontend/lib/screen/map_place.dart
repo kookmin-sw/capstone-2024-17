@@ -38,10 +38,21 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
   @override
   void initState() {
     super.initState();
+    // 휴대폰 test 버전 -------
+    // LocationPermission().then((_) {
+    //   Geolocator.getCurrentPosition(
+    //     desiredAccuracy: LocationAccuracy.high,
+    //   ).then((position) {
+    //     _getCurrentLocation();
+    //   });
+    // });
+    // ----------------------------
+
+    //좌표 고정 버전 ------------------------
     LocationPermission();
-    // _getCurrentLocation(); // 이거 주석 해제하면 현재 위치에 대한 마커 검색으로 바로 감
     _setCircle(LatLng(37.5925683, 127.0164784));
     _searchcafes(LatLng(37.5925683, 127.0164784));
+    // -------------------------------------------------
   }
 
   late GoogleMapController _controller;
@@ -66,15 +77,6 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
   // 지도가 생성된 후에 호출되는 콜백
   void _onMapCreated(GoogleMapController controller) {
     _controller = controller;
-    // _getCurrentLocation(); // 지도가 생성된 후에 현재 위치로 이동하고 카페 검색
-    // _setCircle(LatLng(37.5925683, 127.0164784));
-    // LocationPermission().then((_) {
-    //   Geolocator.getCurrentPosition(
-    //     desiredAccuracy: LocationAccuracy.high,
-    //   ).then((position) {
-    //     _setMarkers(_searchcafes(LatLng(37.5925683, 127.0164784)) as List,37.5925683, 127.0164784);
-    //   });
-    // });
   }
 
   // 현재 위치로 이동
@@ -91,6 +93,7 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
     });
     _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     _setCircle(LatLng(position.latitude, position.longitude));
+    _searchcafes(LatLng(position.latitude, position.longitude));
   }
 
   Set<Marker> _markers = {};
@@ -130,7 +133,7 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
           latlong2.LengthUnit.Meter,
           latlong2.LatLng(latitude, longitude),
           latlong2.LatLng(place_lat, place_lng));
-      print("두 좌표간 거리 = $meter");
+      // print("두 좌표간 거리 = $meter");
 
       if (meter <= 500) {
         localMarkers.add(
