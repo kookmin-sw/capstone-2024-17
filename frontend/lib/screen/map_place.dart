@@ -98,8 +98,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       if (response.statusCode == 200) {
         print("Response Body: ${response.body}");
         final data = json.decode(response.body);
-        _setMarkers(data['results'],position.latitude , position.longitude);
-
+        _setMarkers(data['results'],position.latitude,position.longitude);
     } else {
         print("실패");
         throw Exception('Failed to load cafe');
@@ -117,22 +116,24 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       var place_lat = place['geometry']['location']['lat'];
       var place_lng = place['geometry']['location']['lng'];
       final latlong2.Distance distance = latlong2.Distance(); //이름 지정 안 하면 geo머시기랑 충돌남
-      final double km = distance.as(latlong2.LengthUnit.Meter,latlong2.LatLng(latitude, longitude), latlong2.LatLng(place_lat, place_lng));
-      print("두 좌표간 거리 = $km");
+      final double meter = distance.as(latlong2.LengthUnit.Meter,latlong2.LatLng(latitude, longitude), latlong2.LatLng(place_lat, place_lng));
+      print("두 좌표간 거리 = $meter");
       // print("lat=${place_lat}, lng${place_lng}");
       // print(calculateDistance(, ));
-      
-      localMarkers.add(Marker(
-        markerId: MarkerId(place['place_id']),
-        position: LatLng(
-          place['geometry']['location']['lat'],
-          place['geometry']['location']['lng'],
-        ),
-        icon: BitmapDescriptor.fromBytes(markerIcon), // 라벨을 포함한 마커 아이콘 설정
-        infoWindow: InfoWindow(
-          title: place['name'],
-        ),
-      ));
+
+      if(meter <= 500){
+        localMarkers.add(Marker(
+          markerId: MarkerId(place['place_id']),
+          position: LatLng(
+            place['geometry']['location']['lat'],
+            place['geometry']['location']['lng'],
+          ),
+          icon: BitmapDescriptor.fromBytes(markerIcon), // 라벨을 포함한 마커 아이콘 설정
+          infoWindow: InfoWindow(
+            title: place['name'],
+          ),
+        ));
+      }
     }
 
     setState(() {
