@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/map_request_dto.dart';
+// import 'package:/screen/map_place.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,16 +103,30 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
   Set<Circle> _circles = {};
 
   Future<void> _searchcafes(LatLng position) async {
-    final response = await http.get(Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(카페||커피숍||커피 전문점||cafe||coffee)'
-            '&location=${position.latitude},${position.longitude}'
-            '&radius=500'
-            '&key=${dotenv.env['googleApiKey']}'));
+    //Map<String, String> header = new Map<String, String>();
+    final header = {"Content-Type":"application/json","X-Goog-Api-Key": "${dotenv.env['googleApiKey']}","Accept-Language": "ko",
+      "X-Goog-FieldMask":"places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating"};
+    MapDTO map = MapDTO();
+    List<String> inc = ["cafe"];
 
+    int max_c = 5; //카페 개수 제한 //근데 사실상 최소 개수인듯?
+    double radius = 500;
+    double lat = position.latitude;
+    double log = position.longitude;
+    Map<String, dynamic> body = map.request(inc, max_c, lat, log, radius);
+    final response = await http.post(Uri.parse('https://places.googleapis.com/v1/places:searchNearby'),headers: header, body: json.encode(body) );
+    // debugPrint(response.body);
+      // 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(카페||커피숍||커피 전문점||cafe||coffee)'
+        //     '&location=${position.latitude},${position.longitude}'
+        //     '&radius=500'
+        //     '&language=kr'
+        //     '&'
+        //     '&key=${dotenv.env['googleApiKey']}'));
+        // .timeout(const Duration(seconds: 5), onTimeout: (){throw TimeoutException('connection Timeout');});
     if (response.statusCode == 200) {
-      print("Response Body: ${response.body}");
+      // debugPrint("Response Body: ${response.body}");
       final data = json.decode(response.body);
-      _setMarkers(data['results'],position.latitude,position.longitude);
+      _setMarkers(data['places'],position.latitude,position.longitude);
     } else {
       print("실패");
       throw Exception('Failed to load cafe');
@@ -119,13 +136,16 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
   // cafe 마커표시하고 누르면 cafe 이름보여줌
   void _setMarkers(List<dynamic> places, latitude, longitude) async {
     final Set<Marker> localMarkers = {};
+    // print("debug print");
+    // print(places);
+
     for (var place in places) {
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon =
-      await _createMarkerImage(place['name']); // 여기서 라벨에 텍스트 명 변경가능
+      await _createMarkerImage(place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
 
-      var place_lat = place['geometry']['location']['lat'];
-      var place_lng = place['geometry']['location']['lng'];
+      var place_lat = place['location']['latitude'];
+      var place_lng = place['location']['longitude'];
 
       final latlong2.Distance distance =
       latlong2.Distance(); //이름 지정 안 하면 geo머시기랑 충돌남
@@ -138,17 +158,28 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
       if (meter <= 500) {
         localMarkers.add(
           Marker(
-            markerId: MarkerId(place['place_id']),
+            markerId: MarkerId(place['id']),
             position: LatLng(
-              place['geometry']['location']['lat'],
-              place['geometry']['location']['lng'],
+              place['location']['latitude'],
+              place['location']['longitude'],
             ),
             icon: BitmapDescriptor.fromBytes(markerIcon),
             infoWindow: InfoWindow(
-              title: place['name'],
+              title: place['displayName']['text'],
             ),
             onTap: () {
-              print('마커를 탭했습니다. ID: ${place['place_id']}');
+              // debugPrint("place: ${place}");
+              print(place['displayName']['text']);
+              print(place['formattedAddress']);
+              print(place['regularOpeningHours']['openNow']);
+              print(place['internationalPhoneNumber']);
+              print(place['takeout']);
+              print(place['delivery']);
+              print(place['dineIn']);
+              // print("가게 이름=$place['name']");
+
+
+
             },
           ),
         );
