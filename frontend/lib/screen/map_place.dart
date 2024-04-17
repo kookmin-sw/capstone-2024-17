@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
@@ -9,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:math';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +42,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   void initState() {
     super.initState();
     requestLocationPermission(); // 위치 권한 여부
-    _searchcafes(const LatLng(37.5925683, 127.0164784)); // 초기 위치에 대한 카페 검색
-    _setCircle(LatLng(37.5925683, 127.0164784));
   }
 
   late GoogleMapController _controller;
@@ -64,8 +63,13 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     }
   }
 
-  // 현재 위치로 이동
+  // 지도가 생성된 후에 호출되는 콜백
+  void _onMapCreated(GoogleMapController controller) {
+    _controller = controller;
+    _getCurrentLocation(); // 지도가 생성된 후에 현재 위치로 이동하고 카페 검색
+  }
 
+  // 현재 위치로 이동
   Future<void> _getCurrentLocation() async {
     print("현재 위치로 이동");
     final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -75,8 +79,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       target: LatLng(position.latitude, position.longitude),
       zoom: 15,
     );
-    // print("포지션 설졍 완료");
-    // print("카메라 이동 완료");
     setState(() {
       _myLocationEnabled = true;
     });
@@ -91,10 +93,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   Future<void> _searchcafes(LatLng position) async {
     // try{
       final response = await http.get(Uri.parse(
-          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(카페||커피숍||커피 전문점||cafe||coffee)&location=${position.latitude},${position.longitude}&radius=500&key=${dotenv.env['googleApiKey']}'));
+          'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(카페||커피숍||커피 전문점||cafe||coffee)'
+              '&location=${position.latitude},${position.longitude}'
+              '&radius=500'
+              '&key=${dotenv.env['googleApiKey']}'));
 
       if (response.statusCode == 200) {
-        print("성공");
         print("Response Body: ${response.body}");
         final data = json.decode(response.body);
         _setMarkers(data['results']);
@@ -103,7 +107,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         print("실패");
         throw Exception('Failed to load cafe');
       }
-
   }
 
   // 마커 그리기 함수
@@ -139,6 +142,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon = await _createMarkerImage(place['name']); // 여기서 라벨에 텍스트 명 변경가능
 
+      var place_lat = place['geometry']['location']['lat'];
+      var place_lng = place['geometry']['location']['lng'];
+
+      print("lat=${place_lat}, lng${place_lng}");
+      
       localMarkers.add(Marker(
         markerId: MarkerId(place['place_id']),
         position: LatLng(
@@ -174,6 +182,16 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
   }
 
+  //거리 계산 함수
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    const p = 0.017453292519943295;
+    const c = cos;
+    final a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+            (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -190,14 +208,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             myLocationEnabled: _myLocationEnabled,
             myLocationButtonEnabled: false,
             markers: _markers,
-            // circles: Set.from([Circle( circleId: CircleId('currentCircle'),
-            //   center: LatLng(37.5925683, 127.0164784), //원의 중심 위치
-            //   radius: 500, //미터 단위 반경
-            //   fillColor: Colors.deepOrange.shade100.withOpacity(0.5), //숫자가 높아질수록 색상 진해짐
-            //   strokeColor:  Colors.deepOrange.shade100.withOpacity(0.1), //테두리
-            // ),],),
             circles: _circles,
-            onMapCreated: (controller) => _controller = controller,
+            onMapCreated: _onMapCreated, // 지도가 생성된 후에 호출되는 콜백
           ),
           Positioned(
             bottom: 25,
