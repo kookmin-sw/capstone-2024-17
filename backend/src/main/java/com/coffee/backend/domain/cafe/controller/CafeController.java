@@ -69,12 +69,12 @@ public class CafeController {
 //    }
 
     @PostMapping("/redis-test")
-    public void redisTest(@RequestBody String key) {
+    public ResponseEntity<String> redisTest(@RequestBody String key) {
         System.out.println("테스트 !!! : 저장 시도");
         ValueOperations<String, Object> ops = redisTemplate.opsForValue();
         ops.set("testKey", key); // 값 저장
         System.out.println("테스트 !!! : 조회 시도");
         String value = (String) ops.get("testKey"); // 값 조회
-        System.out.println("테스트 !!! 조회된 값: " + value);
+        return ResponseEntity.ok("조회된 값: " + key);
     }
 }
