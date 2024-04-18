@@ -55,26 +55,23 @@ public class CafeController {
         return ResponseEntity.ok(cafeUsersMap);
     }
 
-    //EC2 redis 연결 오류 테스트용 (add, delete) 잘 되는지 확인
-    @PostMapping("/redis-test")
-    public ResponseEntity<String> redisTest(@RequestBody String key) {
-        String cafeId = "starbucks";
-        // add Test
-        cafeService.addCafeChoice(cafeId, key);
-        System.out.println("!!! 저장 시도 : " + cafeService.getUserListFromRedis(cafeId));
-        // delete Test
-        cafeService.deleteCafeChoice(cafeId, key);
-        System.out.println("!!! 삭제 시도 : " + cafeService.getUserListFromRedis(cafeId));
-        return ResponseEntity.ok("출력을 확인");
+    // POSTMAN 테스트 용 (카페 선택)
+    @PostMapping("test/cafe/update") // pcafe/update
+    public void publishCafeUpdate(@RequestBody CafeDto dto) throws JsonProcessingException {
+        log.info("Message Catch!!");
+        cafePublisher.updateCafeChoice(dto);
     }
 
-//    @PostMapping("/redis-test")
-//    public ResponseEntity<String> redisTest(@RequestBody String key) {
-//        System.out.println("테스트 !!! : 저장 시도");
-//        ValueOperations<String, Object> ops = redisTemplate.opsForValue();
-//        ops.set("testKey", key); // 값 저장
-//        System.out.println("테스트 !!! : 조회 시도");
-//        String value = (String) ops.get("testKey"); // 값 조회
-//        return ResponseEntity.ok("조회된 값: " + key);
-//    }
+    // POSTMAN 테스트 용 (get-users)
+    @PostMapping("test/cafe/get-users")
+    public ResponseEntity<Map<String, List<CafeUserProfileDto>>> redisTest(@RequestBody CafeListDto dto) {
+        List<String> cafeList = dto.getCafeList();
+        Map<String, List<CafeUserProfileDto>> cafeUsersMap = new HashMap<>(); //반환값
+
+        for (String cafeId : cafeList) {
+            List<CafeUserProfileDto> userProfileDtoList = cafeService.getUserProfilesFromRedisAndDB(cafeId);
+            cafeUsersMap.put(cafeId, userProfileDtoList);
+        }
+        return ResponseEntity.ok(cafeUsersMap);
+    }
 }
