@@ -12,7 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
-    // application.yml 에서 값 가져오기
+    // application.yml 에서 host, port 값 가져오기
     @Value("${spring.data.redis.host}")
     private String redisHost;
     @Value("${spring.data.redis.port}")
