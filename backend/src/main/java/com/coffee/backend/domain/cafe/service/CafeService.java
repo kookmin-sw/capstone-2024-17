@@ -23,7 +23,7 @@ public class CafeService {
 
     //redis에 add 하는 메소드
     public void addCafeChoice(String cafeId, String loginId) {
-        System.out.println("addCafeChoice : 여기 오긴 했는데");
+        System.out.println("addCafeChoice() 진입");
         /*
         Redis에 아래 형식으로 저장됨
             namespace = cafe
@@ -36,7 +36,7 @@ public class CafeService {
 
     //redis에서 delete 하는 메소드
     public void deleteCafeChoice(String cafeId, String loginId) {
-        System.out.println("deleteCafeChoice : 여기 오긴 했는데");
+        System.out.println("deleteCafeChoice() 진입");
         final String cafeChoiceKey = "cafe:" + cafeId;
 
         // 카페 ID에 해당하는 세트에서 사용자 ID 찾기
@@ -61,7 +61,7 @@ public class CafeService {
     }
 
     public Set<Object> getUserListFromRedis(String cafeId) {
-        System.out.println("getUserListFromRedis : 여기 오긴 했는데");
+        System.out.println("getUserListFromRedis() 진입");
         String cafeChoiceKey = "cafe:" + cafeId;
         return redisTemplate.opsForSet().members(cafeChoiceKey);
     }
