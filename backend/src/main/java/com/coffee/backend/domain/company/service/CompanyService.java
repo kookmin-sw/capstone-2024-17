@@ -1,15 +1,21 @@
 package com.coffee.backend.domain.company.service;
 
+import com.coffee.backend.domain.Storage.service.StorageService;
+import com.coffee.backend.domain.company.dto.CompanyDto;
 import com.coffee.backend.domain.company.dto.EmailVerificationResponse;
+import com.coffee.backend.domain.company.entity.Company;
+import com.coffee.backend.domain.company.repository.CompanyRepository;
 import com.coffee.backend.domain.mail.service.MailService;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.service.UserService;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +29,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CompanyService {
     private final UserService userService;
+    private final CompanyRepository companyRepository;
+    private final StorageService storageService;
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
     private static final String AUTH_CODE_PREFIX = "EmailAuthCode:";
     private final MailService mailService;
     private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
+
 
     public void sendCodeToEmail(String loginId, String toEmail) {
         userService.checkDuplicatedEmail(toEmail);
@@ -73,5 +83,15 @@ public class CompanyService {
             userService.setUserEmail(user, email); // 인증 성공 시 이메일 변경
         }
         return new EmailVerificationResponse(authResult);
+    }
+
+    public List<CompanyDto> searchCompany(String searchKeyword) {
+        List<Company> companyList = companyRepository.findAllByNameContaining(searchKeyword);
+        return companyList.stream().map(company -> {
+            CompanyDto companyDto = new CompanyDto();
+            companyDto.setName(company.getName());
+            companyDto.setLogoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename()));
+            return companyDto;
+        }).toList();
     }
 }
