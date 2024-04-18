@@ -8,12 +8,12 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       mysql:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       - backend-network
 
@@ -30,15 +30,20 @@ services:
       MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
-      - 3306:3306
+      - "3306:3306"
     networks:
       - backend-network
 
   redis:
     container_name: redis
     image: redis:latest
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
-      - 6379:6379
+      - "6379:6379"
     networks:
       - backend-network
 
