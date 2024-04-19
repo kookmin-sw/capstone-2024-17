@@ -10,6 +10,8 @@ import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:frontend/screen/cafe_details.dart';
 
+Map<String, List<UserModel>>? allUsers;
+
 const List<String> sampleCafeList = [
   "cafe-1",
   "cafe-2",
@@ -19,7 +21,7 @@ const List<String> sampleCafeList = [
 ];
 
 void main() async {
-  Map<String, List<UserModel>>? allUsers = await getAllUsers(sampleCafeList);
+  allUsers = await getAllUsers(sampleCafeList);
 
   await dotenv.load();
   KakaoSdk.init(
@@ -28,8 +30,15 @@ void main() async {
     javaScriptAppKey: dotenv.env['JAVA_SCRIPT_APP_KEY'],
   );
 
-  runApp(
-    MultiProvider(
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (_) => LoginViewModel(user: null),
@@ -38,24 +47,15 @@ void main() async {
           create: (context) => allUsers,
         ),
       ],
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const Placeholder(), // 첫 화면으로 띄우고 싶은 스크린 넣기
-      routes: <String, WidgetBuilder>{
-        '/signup': (BuildContext context) => const SignupScreen(),
-        '/signin': (BuildContext context) => const LoginScreen(),
-        '/user': (BuildContext context) => const UserScreen(),
-        '/cafe': (BuildContext context) => const CafeDetails(),
-      },
+      child: MaterialApp(
+        home: const Placeholder(), // 첫 화면으로 띄우고 싶은 스크린 넣기
+        routes: <String, WidgetBuilder>{
+          '/signup': (BuildContext context) => const SignupScreen(),
+          '/signin': (BuildContext context) => const LoginScreen(),
+          '/user': (BuildContext context) => const UserScreen(),
+          '/cafe': (BuildContext context) => const CafeDetails(),
+        },
+      ),
     );
   }
 }
