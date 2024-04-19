@@ -167,7 +167,7 @@ class _SignupScreen2State extends State<SignupScreen2> {
       Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SignupScreen3(),
+              builder: (context) => SignupScreen3(loginId: _loginIdController.text, password: _passwordController.text),
             ),
           );
         }
