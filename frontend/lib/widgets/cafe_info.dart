@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/places.dart';
 
 class CafeInfo extends StatelessWidget {
+
   final String address;
   final String cafeTelephone;
   final String businessHours;
@@ -19,7 +22,6 @@ class CafeInfo extends StatelessWidget {
     required this.cafeTakeout,
     required this.cafeDelivery,
     required this.cafeDineIn,
-
   });
 
   @override
@@ -90,7 +92,7 @@ class CafeInfo extends StatelessWidget {
               width: 300,
               child: Text(
                 address,
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 15),
                 overflow: TextOverflow.clip,
               ),
             ),
@@ -107,7 +109,7 @@ class CafeInfo extends StatelessWidget {
             Text(
               cafeTelephone,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -126,7 +128,7 @@ class CafeInfo extends StatelessWidget {
             Text(
               isOpen? '영업중':'영업종료',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 color: isOpen ? Colors.green : Colors.red, // cafeOpen이 true이면 초록색, 그렇지 않으면 검은색으로 설정
               ),
             ),
@@ -142,7 +144,7 @@ class CafeInfo extends StatelessWidget {
             const SizedBox(width: 20),
             Text(
               businessHours,
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 15),
             ),
           ],
         ),

@@ -1,12 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 
 void main() {
@@ -51,10 +52,10 @@ const List<Map<String, dynamic>> sampleUserList = [
 ];
 
 class CafeDetails extends StatefulWidget {
+
   final String cafeId;
   final String cafeName;
   final List<String> cafeDetailsArguments;
-  // final int cafeNo;
 
   const CafeDetails({
     super.key,
@@ -69,8 +70,10 @@ class CafeDetails extends StatefulWidget {
 
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
-
   Timer? _timer;
+  final String ImageId = "";
+  final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
+  String photoUrl = '';
 
   void _startTimer() {
     print("타이머 시작");
@@ -93,8 +96,24 @@ class _CafeDetailsState extends State<CafeDetails>
       print("두 좌표간 거리 = $meter");
     });
   }
+
   void _stopTimer() {
     _timer?.cancel();
+  }
+
+  Future<void> getPlacePhotoUri() async {
+    try {
+      PlacesDetailsResponse place = await places.getDetailsByPlaceId(widget.cafeDetailsArguments[9]);
+      if (place.isOkay && place.result.photos.isNotEmpty) {
+        String photoReference = place.result.photos[0].photoReference;
+        photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
+        setState(() {});
+      } else {
+        throw Exception('No photo found for this place.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   TabController? tabController;
@@ -108,9 +127,8 @@ class _CafeDetailsState extends State<CafeDetails>
   @override
   void initState() {
     super.initState();
-
+    getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
-
     tabController!.addListener(() {
       // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
       if (tabController!.index == 1) {
@@ -145,10 +163,19 @@ class _CafeDetailsState extends State<CafeDetails>
       ),
       body: Column(
         children: [
-          Image.asset(
-            "assets/cafe.jpeg",
-            width: 450,
-            fit: BoxFit.fitWidth,
+          Center(
+            child: photoUrl.isNotEmpty
+                ? Image.network(
+              photoUrl,
+              width: 450,
+              height: 250,
+              fit: BoxFit.cover,
+            )
+                : Image.asset(
+              "assets/cafe.jpeg",
+              width: 450,
+              fit: BoxFit.fitWidth,
+            ),
           ),
           TabBar(
             controller: tabController,
@@ -182,6 +209,8 @@ class _CafeDetailsState extends State<CafeDetails>
                     //   cafeLatitude, 6
                     //   cafeLongitude, 7
                     //   openingHours, 8
+                    //   cafeid, 9
+                    //   photourl, 10
                     // ];
                     address: widget.cafeDetailsArguments[0],
                     cafeOpen: widget.cafeDetailsArguments[1],

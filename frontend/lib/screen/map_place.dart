@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -104,13 +105,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   Set<Circle> _circles = {};
 
   Future<void> _searchcafes(LatLng position) async {
-    //Map<String, String> header = new Map<String, String>();
     final header = {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": "${dotenv.env['googleApiKey']}",
       "Accept-Language": "ko",
       "X-Goog-FieldMask":
-          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating"
+          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating,places.photos"
     };
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
@@ -124,6 +124,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         Uri.parse('https://places.googleapis.com/v1/places:searchNearby'),
         headers: header,
         body: json.encode(body));
+
     if (response.statusCode == 200) {
       debugPrint("Response Body: ${response.body}");
       final data = json.decode(response.body);
@@ -137,8 +138,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   // cafe 마커표시하고 누르면 cafe 이름보여줌
   void _setMarkers(List<dynamic> places, latitude, longitude) async {
     final Set<Marker> localMarkers = {};
-    // print("debug print");
-    // print(places);
+    print("debug print");
+    print(places);
 
     for (var place in places) {
       // 여기서 라벨에 텍스트 명 변경가능
@@ -152,12 +153,13 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               place['location']['latitude'],
               place['location']['longitude'],
             ),
+
             icon: BitmapDescriptor.fromBytes(markerIcon),
             infoWindow: InfoWindow(
               title: place['displayName']['text'],
             ),
-            onTap: () {
 
+            onTap: () {
               String cafeLatitude = place['location']['latitude'] != null ? place['location']['latitude'].toString() : '정보 없음';
               String cafeLongitude = place['location']['longitude'] != null ? place['location']['longitude'].toString() : '정보 없음';
 
@@ -182,6 +184,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
               String cafeDineIn = place['dineIn'] != null ? place['dineIn'].toString() : '정보 없음';
 
+
               DateTime now = DateTime.now();
               int currentWeekday = (now.weekday)-1;
 
@@ -198,6 +201,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 cafeLatitude,
                 cafeLongitude,
                 businessHours,
+                cafeId,
               ];
 
               Navigator.push(context, MaterialPageRoute(builder: (context) => CafeDetails(cafeId: cafeId, cafeName: cafeName,cafeDetailsArguments: detailsArguments)),
@@ -305,3 +309,4 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     );
   }
 }
+

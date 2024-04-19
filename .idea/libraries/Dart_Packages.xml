@@ -296,6 +296,13 @@
             </list>
           </value>
         </entry>
+        <entry key="google_maps_webservice">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/google_maps_webservice-0.0.20-nullsafety.5/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="google_place">
           <value>
             <list>
@@ -821,6 +828,7 @@
       <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/google_maps_flutter_ios-2.5.2/lib" />
       <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/google_maps_flutter_platform_interface-2.6.0/lib" />
       <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/google_maps_flutter_web-0.5.6+2/lib" />
+      <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/google_maps_webservice-0.0.20-nullsafety.5/lib" />
       <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/google_place-0.4.7/lib" />
       <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/html-0.15.4/lib" />
       <root url="file://$PROJECT_DIR$/../AppData/Local/Pub/Cache/hosted/pub.dev/http-0.13.6/lib" />
