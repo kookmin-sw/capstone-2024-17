@@ -24,9 +24,6 @@ public class KakaoLoginService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    @Value("${kakao.user_info_uri}")
-    private String userInfoURI;
-
     public KakaoUserInfoDto getUserInfo(String accessToken) {
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -35,6 +32,7 @@ public class KakaoLoginService {
             headers.setBearerAuth(accessToken);
 
             HttpEntity<String> request = new HttpEntity<>(headers);
+            String userInfoURI = "https://kapi.kakao.com/v2/user/me";
             ResponseEntity<String> response = restTemplate.exchange(
                     userInfoURI, HttpMethod.GET, request, String.class);
 
