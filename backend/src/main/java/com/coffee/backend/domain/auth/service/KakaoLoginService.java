@@ -6,7 +6,6 @@ import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -48,16 +47,16 @@ public class KakaoLoginService {
 
     @Transactional
     public AuthDto signIn(KakaoUserInfoDto dto) {
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findByKakaoId(dto.getKakaoId())
                 .orElseGet(User::new);
 
         // DB에 정보 없으면 회원가입 처리
-        if (user.getUserId() == null) {
-            user.setUserId(dto.getUserId());
+        if (user.getKakaoId() == null) {
+            user.setKakaoId(dto.getKakaoId());
             userRepository.save(user);
         }
 
-        String token = jwtService.createAccessToken(user.getUserId());
+        String token = jwtService.createAccessToken(user.getKakaoId());
 
         return new AuthDto(user.getUserUUID(), token);
     }
