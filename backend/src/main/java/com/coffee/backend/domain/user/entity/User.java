@@ -16,6 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+    private Long kakaoId;
     private String loginId;
     private String password;
     private String nickname;

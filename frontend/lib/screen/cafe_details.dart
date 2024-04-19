@@ -1,24 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_model.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
-import 'package:frontend/model/user_model.dart';
-import 'package:frontend/service/api_service.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CafeDetails(
-          cafeId: "cafe-1", cafeName: "스타벅스 국민대점"), // 임시로 cafeId, cafeName 지정
-    );
-  }
-}
 
 const List<Map<String, dynamic>> sampleUserList = [
   {
@@ -47,14 +31,19 @@ const List<Map<String, dynamic>> sampleUserList = [
   },
 ];
 
-class CafeDetails extends StatefulWidget {
-  final String cafeId;
+class CafeDetailsArguments {
   final String cafeName;
+  final List<UserModel> userList;
 
+  const CafeDetailsArguments({
+    required this.cafeName,
+    required this.userList,
+  });
+}
+
+class CafeDetails extends StatefulWidget {
   const CafeDetails({
     super.key,
-    required this.cafeId,
-    required this.cafeName,
   });
 
   @override
@@ -64,35 +53,25 @@ class CafeDetails extends StatefulWidget {
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
   TabController? tabController;
-  List<UserModel> userList = [];
-
-  void waitForUserList(String cafeId) async {
-    userList = await getUserList(cafeId);
-    setState(() {});
-  }
 
   @override
   void initState() {
     super.initState();
 
     tabController = TabController(length: 2, vsync: this);
-
-    tabController!.addListener(() {
-      // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
-      if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId);
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final CafeDetailsArguments args =
+        ModalRoute.of(context)!.settings.arguments as CafeDetailsArguments;
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
           title: Text(
-            widget.cafeName,
+            args.cafeName,
             style: const TextStyle(fontSize: 24),
           ),
           toolbarHeight: 100,
@@ -140,7 +119,7 @@ class _CafeDetailsState extends State<CafeDetails>
                   ListView.builder(
                     itemCount: sampleUserList.length,
                     itemBuilder: (context, index) {
-                      return userList.isEmpty
+                      return args.userList.isEmpty
                           ? UserItem(
                               nickname: sampleUserList[index]["nickname"],
                               company: sampleUserList[index]["companyName"],
@@ -149,10 +128,10 @@ class _CafeDetailsState extends State<CafeDetails>
                                   ["introduction"],
                             )
                           : UserItem(
-                              nickname: userList[index].nickname,
-                              company: userList[index].companyName,
-                              position: userList[index].positionName,
-                              introduction: userList[index].introduction,
+                              nickname: args.userList[index].nickname,
+                              company: args.userList[index].companyName,
+                              position: args.userList[index].positionName,
+                              introduction: args.userList[index].introduction,
                             );
                     },
                   ),
