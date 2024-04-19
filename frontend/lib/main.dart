@@ -1,3 +1,7 @@
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:frontend/service/stomp_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/model/user_model.dart';
@@ -9,6 +13,9 @@ import 'package:frontend/login_view_model.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:frontend/screen/cafe_details.dart';
+
+StompClient? stompClient;
+const socketUrl = "http://43.203.218.27:8080/ws";
 
 Map<String, List<UserModel>>? allUsers;
 
@@ -22,6 +29,23 @@ const List<String> sampleCafeList = [
 
 void main() async {
   allUsers = await getAllUsers(sampleCafeList);
+
+  // 웹소켓(stomp) 연결
+  stompClient = StompClient(
+    config: StompConfig.sockJS(
+      url: socketUrl,
+      onConnect: (_) {
+        print("websocket connected !!");
+        subCafeList(
+            stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
+      },
+      beforeConnect: () async {
+        print('waiting to connect websocket...');
+      },
+      onWebSocketError: (dynamic error) => print(error.toString()),
+    ),
+  );
+  stompClient!.activate();
 
   await dotenv.load();
   KakaoSdk.init(
@@ -45,6 +69,9 @@ class MyApp extends StatelessWidget {
         ), // provider로 감싸고 유저의 초기값 넣어주기
         Provider(
           create: (context) => allUsers,
+        ),
+        Provider(
+          create: (_) => stompClient,
         ),
       ],
       child: MaterialApp(
