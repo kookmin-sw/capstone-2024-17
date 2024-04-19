@@ -57,9 +57,6 @@ public class CompanyController {
                 user,
                 emailVerificationRequest.getEmail(),
                 emailVerificationRequest.getAuthCode());
-
-//        userService.setUserEmail()
-
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
