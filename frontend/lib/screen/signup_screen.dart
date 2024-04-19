@@ -1,22 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:frontend/screen/signup_screen2.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/bottom_text_button.dart';
+
+class ExpansionLabeledCheckbox extends StatelessWidget {
+  const ExpansionLabeledCheckbox({
+    super.key,
+    required this.label,
+    required this.labelFontSize,
+    required this.expansionLabel,
+    required this.expansionLabelSize,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final double labelFontSize;
+  final String expansionLabel;
+  final double expansionLabelSize;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onChanged(value);
+      },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 50,
+              child: Checkbox(
+              value: value,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              activeColor: const Color(0xffff6c3e),
+              onChanged: (bool? newValue) {
+                onChanged(newValue!);
+              },
+            ),),
+            
+            Expanded(
+              child: ExpansionTile(
+                title: Text(label, style: TextStyle(fontSize: labelFontSize)),
+                // subtitle: Text(subLabel),
+                children: <Widget>[
+                  ListTile(title: Text(expansionLabel, style: TextStyle(fontSize: expansionLabelSize))),
+                ],
+                ),
+              ),   
+          ],
+        ),
+      );
+  }
+}
+
+class LabeledCheckbox extends StatelessWidget {
+  const LabeledCheckbox({
+    super.key,
+    required this.label,
+    required this.labelSize,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final double labelSize;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onChanged(!value);
+      },
+        child: Row(
+          children: <Widget>[
+            Checkbox(
+              value: value,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              activeColor: const Color(0xffff6c3e),
+              onChanged: (bool? newValue) {
+                onChanged(newValue!);
+              },
+            ),
+            Expanded(
+              child: ListTile(title: Text(label, style: TextStyle(fontSize: labelSize),)),
+            ),
+              ],
+            ),
+        );
+  }
+}
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  State<SignupScreen> createState() =>
+  _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController _loginIdController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  final TextEditingController _nicknameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  bool checkboxValue1 = false;
+  bool checkboxValue2 = false;
+  bool checkboxValue3 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,143 +128,98 @@ class _SignupScreenState extends State<SignupScreen> {
             child: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Center(
+        body: Container(
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(top: 20, bottom: 40, left: 40, right: 40),
             child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-              // 입력창 컨테이너
-              Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        TextField(
-                          controller: _loginIdController,
-                          decoration: const InputDecoration(
-                            // border: OutlineInputBorder(),
-                            labelText: '아이디',
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: _passwordController,
-                          decoration: const InputDecoration(
-                            // border: OutlineInputBorder(),
-                            labelText: '비밀번호 입력',
-                          ),
-                          obscureText: true,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: _confirmPasswordController,
-                          decoration: const InputDecoration(
-                              // border: OutlineInputBorder(),
-                              labelText: '비밀번호 확인'),
-                          obscureText: true,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: _nicknameController,
-                          decoration: const InputDecoration(
-                              // border: OutlineInputBorder(),
-                              labelText: '사용할 닉네임'),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: _emailController,
-                          decoration: const InputDecoration(
-                              // border: OutlineInputBorder(),
-                              labelText: '이메일'),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller: _phoneController,
-                          decoration: const InputDecoration(
-                              // border: OutlineInputBorder(),
-                              labelText: '전화번호'),
-                        ),
-                      ])),
-              // 버튼 컨테이너
-              Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 100, vertical: 20), // 마진 추가,
-                child: Column(
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_loginIdController.text == '') {
-                          showAlertDialog(context, '아이디를 입력해주세요.');
-                        }
-                        else if (_passwordController.text == '') {
-                          showAlertDialog(context, '비밀번호를 입력해주세요.');
-                        } else if (_passwordController.text !=
-                            _confirmPasswordController.text) {
-                          // 비밀번호 불일치
-                          showAlertDialog(context, '비밀번호가 일치하지 않습니다.');
-                        } else if (_nicknameController.text == '') {
-                          showAlertDialog(context, '사용할 닉네임을 입력해주세요.');
-                        } else if (_emailController.text == '') {
-                          showAlertDialog(context, '이메일을 입력해주세요.');
-                        } else if (_phoneController.text == '') {
-                          showAlertDialog(context, '전화번호를 입력해주세요.');
-                        } else {
-                          try {
-                            waitSignup(
-                                context,
-                                _loginIdController.text,
-                                _passwordController.text,
-                                _nicknameController.text,
-                                _emailController.text,
-                                _phoneController.text);
-                          } catch (error) {
-                            showAlertDialog(context, '요청 실패: $error');
-                          }
-                        }
-                      },
-                      child: const Text('회원가입'),
+                  // 안내
+                  const Row(children: <Widget>[
+                    Text("아래의 서비스 이용약관을 읽고 동의해주세요.",
+                        style: TextStyle(
+                          fontSize: 20,
+                        )),
+                  ]),
+                  // 약관 체크박스 컨테이너
+                  Container(
+                      // margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
+                      child: Column(
+                          children: <Widget>[
+                            ExpansionLabeledCheckbox(
+                              label: '(필수) 이용약관 동의',
+                              labelFontSize: 16,
+                              expansionLabel: '롸?',
+                              expansionLabelSize: 14,
+                              value: checkboxValue1,
+                              onChanged: (bool newValue) {
+                                setState(() {
+                                  checkboxValue1 = newValue;
+                                  if (checkboxValue1 && checkboxValue2) {
+                                    checkboxValue3 = true;
+                                  } else {
+                                    checkboxValue3 = false;
+                                  }
+                                });
+                              },
+                            ),
+                            const Divider(height: 0),
+                            ExpansionLabeledCheckbox(
+                              label: '(필수) 개인정보 수집 및 이용 동의',
+                              labelFontSize: 16,
+                              expansionLabel: '정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?정말용?',
+                              expansionLabelSize: 14,
+                              value: checkboxValue2,
+                              onChanged: (bool newValue) {
+                                setState(() {
+                                  checkboxValue2 = newValue;
+                                  if (checkboxValue1 && checkboxValue2) {
+                                    checkboxValue3 = true;
+                                  } else {
+                                    checkboxValue3 = false;
+                                  }
+                                });
+                              },
+                            ),
+                            const Divider(height: 0),
+                            LabeledCheckbox(
+                              label: '약관 전체 동의',
+                              labelSize: 20,
+                              value: checkboxValue3,
+                              onChanged: (bool newValue) {
+                                setState(() {
+                                  checkboxValue3 = newValue;
+                                  checkboxValue1 = checkboxValue3;
+                                  checkboxValue2 = checkboxValue3;
+                                });
+                              },
+                            ),
+
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          
+                          ])),
+
+                // 다음으로 넘어가는 버튼
+                BottomTextButton(text: '다음', handlePressed: nextPressed,),
+                          
+                      ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/signin');
-                        },
-                        child: const Text('로그인')),
-                  ],
-                ),
-              ),
-            ])));
+                  ));
   }
 
-  @override
-  void dispose() {
-    _loginIdController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
+  void nextPressed() {
+    // 체크하지 않으면 넘어갈 수 없음
+    if (!checkboxValue1 || !checkboxValue2) {
+        showAlertDialog(context, '약관 동의를 해주세요.');
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignupScreen2(),
+      ),
+    );
   }
-
-  void waitSignup(BuildContext context, String loginId, String password,
-      String nickname, String email, String phone) async {
-        Map<String, dynamic> res = await signup(loginId, password, nickname, email, phone);
-        if (res['success'] == true) {
-            // 요청 성공
-            showAlertDialog(context, res['message']);
-            Navigator.of(context).pushNamed('/signin');
-        } else {
-          // 회원가입 실패
-          showAlertDialog(context, '회원가입 실패: ${res['message']}(${res['statusCode']})');
-        }
-      }
-  }
+}
