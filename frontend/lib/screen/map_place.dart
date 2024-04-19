@@ -91,7 +91,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         desiredAccuracy: LocationAccuracy.high);
     final cameraPosition = CameraPosition(
       target: LatLng(position.latitude, position.longitude),
-      zoom: 15,
+      zoom: 15.5,
     );
     setState(() {
       _myLocationEnabled = true;
@@ -219,15 +219,16 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   void _setCircle(LatLng position) {
     Set<Circle> localcircles = {};
 
-    localcircles = Set.from([
+    localcircles = {
       Circle(
         circleId: CircleId('currentCircle'),
         center: LatLng(position.latitude, position.longitude), // (위도, 경도)
         radius: 500, // 반경
-        fillColor: Colors.deepOrange.shade100.withOpacity(0.5), // 채우기 색상
-        strokeColor: Colors.deepOrange.shade100.withOpacity(0.1), // 테두리 색상
+        fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
+        strokeColor: Color.fromRGBO(246, 82, 16, 1), // 테두리 색상
+        strokeWidth: 3, // 테두리 두께
       )
-    ]);
+    };
     setState(() {
       _circles = localcircles;
     });
@@ -243,7 +244,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
     // 마커 아이콘을 그리는 코드
     final paint = Paint()
-      ..color = Color.fromRGBO(246, 82, 16, 1); //red, green, blue, opacity
+      ..color = Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
     canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
