@@ -7,12 +7,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
-// import 'package:/screen/map_place.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,23 +36,26 @@ class Google_Map extends StatefulWidget {
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
+
   @override
   void initState() {
     super.initState();
+
     // 휴대폰 test 버전 -------
-    // LocationPermission().then((_) {
-    //   Geolocator.getCurrentPosition(
-    //     desiredAccuracy: LocationAccuracy.high,
-    //   ).then((position) {
-    //     _getCurrentLocation();
-    //   });
-    // });
+    LocationPermission().then((_) {
+      Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      ).then((position) {
+        _getCurrentLocation();
+      });
+    });
+
     // ----------------------------
 
     //좌표 고정 버전 ------------------------
-    LocationPermission();
-    _setCircle(LatLng(37.611035490773, 126.99457310622));
-    _searchcafes(LatLng(37.611035490773, 126.99457310622));
+    // LocationPermission();
+    // _setCircle(LatLng(37.611035490773, 126.99457310622));
+    // _searchcafes(LatLng(37.611035490773, 126.99457310622));
     // -------------------------------------------------
   }
 
@@ -144,18 +145,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       final markerIcon = await _createMarkerImage(
           place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
 
-      var place_lat = place['location']['latitude'];
-      var place_lng = place['location']['longitude'];
-
-      final latlong2.Distance distance =
-          latlong2.Distance(); //이름 지정 안 하면 geo머시기랑 충돌남
-      final double meter = distance.as(
-          latlong2.LengthUnit.Meter,
-          latlong2.LatLng(latitude, longitude),
-          latlong2.LatLng(place_lat, place_lng));
-      // print("두 좌표간 거리 = $meter");
-
-      if (meter <= 500) {
         localMarkers.add(
           Marker(
             markerId: MarkerId(place['id']),
@@ -173,19 +162,19 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               String cafeLongitude = place['location']['longitude'] != null ? place['location']['longitude'].toString() : '정보 없음';
 
               String cafeName = place['displayName'] != null && place['displayName']['text'] != null
-              ? place['displayName']['text'] : '정보 없음';
+                  ? place['displayName']['text'] : '정보 없음';
 
               String cafeId = place['id'] != null ? place['id'] : '정보 없음';
 
               String cafeAddress = place['formattedAddress'] != null
-              ? place['formattedAddress'] : '정보 없음';
+                  ? place['formattedAddress'] : '정보 없음';
 
               String cafeOpen = place['regularOpeningHours'] != null &&
-              place['regularOpeningHours']['openNow'] != null
-              ? place['regularOpeningHours']['openNow'].toString() : '정보 없음';
+                  place['regularOpeningHours']['openNow'] != null
+                  ? place['regularOpeningHours']['openNow'].toString() : '정보 없음';
 
               String cafeTelephone = place['internationalPhoneNumber'] != null
-              ? place['internationalPhoneNumber'] : '정보 없음';
+                  ? place['internationalPhoneNumber'] : '정보 없음';
 
               String cafeTakeout = place['takeout'] != null ? place['takeout'].toString() : '정보 없음';
 
@@ -211,14 +200,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 businessHours,
               ];
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CafeDetails(cafeId: cafeId, cafeName: cafeName,cafeDetailsArguments: detailsArguments)),
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CafeDetails(cafeId: cafeId, cafeName: cafeName,cafeDetailsArguments: detailsArguments)),
               );
             },
           ),
         );
-      }
     }
     setState(() {
       _markers = localMarkers;
@@ -319,25 +305,3 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     );
   }
 }
-
-// class MarkerDetailScreen extends StatefulWidget {
-//   final String markerId;
-//   MarkerDetailScreen(this.markerId);
-//   @override
-//   _MarkerDetailScreenState createState() => _MarkerDetailScreenState();
-// }
-//
-// class _MarkerDetailScreenState extends State<MarkerDetailScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Marker Detail'),
-//       ),
-//       body: Center(
-//         // child: Text('Marker detail screen'),
-//         child: Text('Marker ID: ${widget.markerId}'), // 마커 ID 표시
-//       ),
-//     );
-//   }
-// }

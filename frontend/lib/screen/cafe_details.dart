@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart' as latlong2;
 
 void main() {
   runApp(const MyApp());
@@ -65,6 +69,34 @@ class CafeDetails extends StatefulWidget {
 
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
+
+  Timer? _timer;
+
+  void _startTimer() {
+    print("타이머 시작");
+    _timer = Timer.periodic(Duration(minutes: 20), (Timer timer) async {
+      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      double cafeLat = double.parse(widget.cafeDetailsArguments[6]); // 카페 위도
+      double cafeLong = double.parse(widget.cafeDetailsArguments[7]); // 카페 경도
+
+      final latlong2.Distance distance = latlong2.Distance();
+      final double meter = distance.as(
+          latlong2.LengthUnit.Meter,
+          latlong2.LatLng(position.latitude, position.longitude),
+          latlong2.LatLng(cafeLat, cafeLong));
+
+      if (meter > 500){
+        _stopTimer();
+        print("어플의 지원 범위인 500m를 벗어났습니다.");
+      }
+      print("두 좌표간 거리 = $meter");
+    });
+  }
+  void _stopTimer() {
+    _timer?.cancel();
+  }
+
   TabController? tabController;
   List<UserModel> userList = [];
 
@@ -85,6 +117,12 @@ class _CafeDetailsState extends State<CafeDetails>
         waitForUserList(widget.cafeId as String); //위도 경도로 사용자 요청?
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -178,7 +216,9 @@ class _CafeDetailsState extends State<CafeDetails>
           ),
           BottomTextButton(
             text: "이 카페를 내 위치로 설정하기",
-            handlePressed: () {},
+            handlePressed: () {
+              _startTimer();
+            },
           ),
         ],
       ),
