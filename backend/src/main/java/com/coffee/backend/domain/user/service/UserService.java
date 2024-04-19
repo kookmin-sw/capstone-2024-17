@@ -26,12 +26,12 @@ public class UserService {
     }
 
     // 특정 카페에 접속한 사용자 list에 보일 User 데이터 조회
-    public CafeUserDto getCafeUserInfoByLoginId(String userId) {
-        return userRepository.findByLoginId(userId)
-                .map(user -> new CafeUserDto(user.getUserId(), user.getNickname(),
+    public CafeUserDto getCafeUserInfoByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId)
+                .map(user -> new CafeUserDto(user.getLoginId(), user.getNickname(),
                         user.getEmail())) // TODO : email을 introduction으로 교체
                 .orElseThrow(() -> {
-                    log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", loginId);
                     return new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
     }

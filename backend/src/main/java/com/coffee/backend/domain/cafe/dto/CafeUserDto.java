@@ -6,12 +6,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CafeUserDto {
-    private Long userId;
+    private String loginId;
     private String nickname;
     private String introduction;
 
-    public CafeUserDto(Long userId, String nickname, String introduction) {
-        this.userId = userId;
+    public CafeUserDto(String loginId, String nickname, String introduction) {
+        this.loginId = loginId;
         this.nickname = nickname;
         this.introduction = introduction;
     }
