@@ -1,6 +1,7 @@
 package com.coffee.backend.global;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,7 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final HandlerMethodArgumentResolver authenticationPrincipalArgumentResolver;
 
-    public WebConfig(HandlerMethodArgumentResolver authenticationPrincipalArgumentResolver) {
+    public WebConfig(
+            @Qualifier("authenticationPrincipalArgumentResolver") HandlerMethodArgumentResolver authenticationPrincipalArgumentResolver) {
         this.authenticationPrincipalArgumentResolver = authenticationPrincipalArgumentResolver;
     }
 

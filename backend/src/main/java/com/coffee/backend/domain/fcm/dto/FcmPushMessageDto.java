@@ -14,7 +14,7 @@ public class FcmPushMessageDto {
     @Getter
     public static class Message {
         private Notification notification;
-        private String token;
+        private String targetToken;
     }
 
     @Builder
@@ -23,6 +23,5 @@ public class FcmPushMessageDto {
     public static class Notification {
         private String title;
         private String body;
-        private String image;
     }
 }

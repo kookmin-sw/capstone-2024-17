@@ -3,6 +3,7 @@
 </p>
 <h1 align="center">커리어 한잔</h1>
 
+
 주변 현직자와 대면 만남이 가능한 실시간 커피챗 매칭 플랫폼
 
 [👉팀페이지 방문하기](https://kookmin-sw.github.io/capstone-2024-17)
@@ -30,6 +31,7 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
 [![시연영상](http://img.youtube.com/vi/_zXQykNYMlw/0.jpg)](https://youtu.be/_zXQykNYMlw)
 
 <br>
+
 
 ## 👩🏻‍💻 팀원 소개
 
@@ -112,7 +114,6 @@ jm3789)</b>
         </td>
     </tr>
 </table>
-
 <br>
 
 ## 🛠️ 기술 스택
@@ -135,7 +136,6 @@ jm3789)</b>
 <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/7a3d9dc9-83f8-4b1b-a0b6-8ea9f8624a75" width=900px>
 
 <br>
-
 <!-- ### 4. 사용법
 
 소스코드제출시 설치법이나 사용법을 작성하세요. -->
