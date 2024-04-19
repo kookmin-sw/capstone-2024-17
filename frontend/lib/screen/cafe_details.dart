@@ -15,11 +15,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: CafeDetails(
-          cafeId: "cafe-1", cafeName: "스타벅스 국민대점"), // 임시로 cafeId, cafeName 지정
+          cafeId:"1", cafeName: "스타벅스 국민대점", cafeDetailsArguments: ['정보 없음'],), // 임시로 cafeId, cafeName 지정
     );
   }
 }
-
 const List<Map<String, dynamic>> sampleUserList = [
   {
     "nickname": "뽕순이",
@@ -50,11 +49,14 @@ const List<Map<String, dynamic>> sampleUserList = [
 class CafeDetails extends StatefulWidget {
   final String cafeId;
   final String cafeName;
+  final List<String> cafeDetailsArguments;
+  // final int cafeNo;
 
   const CafeDetails({
     super.key,
     required this.cafeId,
     required this.cafeName,
+    required this.cafeDetailsArguments,
   });
 
   @override
@@ -80,7 +82,7 @@ class _CafeDetailsState extends State<CafeDetails>
     tabController!.addListener(() {
       // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
       if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId);
+        waitForUserList(widget.cafeId as String); //위도 경도로 사용자 요청?
       }
     });
   }
@@ -131,11 +133,25 @@ class _CafeDetailsState extends State<CafeDetails>
               child: TabBarView(
                 controller: tabController,
                 children: [
-                  const CafeInfo(
-                    location:
-                        "서울특별시 성북구 정릉로 77 1층 우편번호는 어쩌고저쩌곤데 너무 멀수도있어서 그냥 안오는게 나을듯",
-                    phoneNumber: "02-1234-5678",
-                    businessHours: "매일 09:00 ~ 22:00\n매일 휴게시간 14:00 ~ 15:00",
+                  CafeInfo(
+                    // List<String> detailsArguments = [
+                    //   cafeAddress, 0
+                    //   cafeOpen, 1
+                    //   cafeTelephone, 2
+                    //   cafeTakeout, 3
+                    //   cafeDelivery, 4
+                    //   cafeDineIn, 5
+                    //   cafeLatitude, 6
+                    //   cafeLongitude, 7
+                    //   openingHours, 8
+                    // ];
+                    address: widget.cafeDetailsArguments[0],
+                    cafeOpen: widget.cafeDetailsArguments[1],
+                    cafeTelephone: widget.cafeDetailsArguments[2],
+                    cafeTakeout: widget.cafeDetailsArguments[3],
+                    cafeDelivery: widget.cafeDetailsArguments[4],
+                    cafeDineIn: widget.cafeDetailsArguments[5],
+                    businessHours: widget.cafeDetailsArguments[8],
                   ),
                   ListView.builder(
                     itemCount: sampleUserList.length,

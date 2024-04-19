@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/model/map_request_dto.dart';
+import 'cafe_details.dart';
 // import 'package:/screen/map_place.dart';
 
 void main() async {
@@ -36,8 +37,7 @@ class Google_Map extends StatefulWidget {
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
 }
 
-class _GoogleMapWidgetState extends State<Google_Map>  {
-
+class _GoogleMapWidgetState extends State<Google_Map> {
   @override
   void initState() {
     super.initState();
@@ -104,29 +104,29 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
 
   Future<void> _searchcafes(LatLng position) async {
     //Map<String, String> header = new Map<String, String>();
-    final header = {"Content-Type":"application/json","X-Goog-Api-Key": "${dotenv.env['googleApiKey']}","Accept-Language": "ko",
-      "X-Goog-FieldMask":"places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating"};
+    final header = {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": "${dotenv.env['googleApiKey']}",
+      "Accept-Language": "ko",
+      "X-Goog-FieldMask":
+          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating"
+    };
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
 
-    int max_c = 5; //카페 개수 제한 //근데 사실상 최소 개수인듯?
+    int max_c = 5; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
     double radius = 500;
     double lat = position.latitude;
     double log = position.longitude;
     Map<String, dynamic> body = map.request(inc, max_c, lat, log, radius);
-    final response = await http.post(Uri.parse('https://places.googleapis.com/v1/places:searchNearby'),headers: header, body: json.encode(body) );
-    // debugPrint(response.body);
-      // 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=(카페||커피숍||커피 전문점||cafe||coffee)'
-        //     '&location=${position.latitude},${position.longitude}'
-        //     '&radius=500'
-        //     '&language=kr'
-        //     '&'
-        //     '&key=${dotenv.env['googleApiKey']}'));
-        // .timeout(const Duration(seconds: 5), onTimeout: (){throw TimeoutException('connection Timeout');});
+    final response = await http.post(
+        Uri.parse('https://places.googleapis.com/v1/places:searchNearby'),
+        headers: header,
+        body: json.encode(body));
     if (response.statusCode == 200) {
-      // debugPrint("Response Body: ${response.body}");
+      debugPrint("Response Body: ${response.body}");
       final data = json.decode(response.body);
-      _setMarkers(data['places'],position.latitude,position.longitude);
+      _setMarkers(data['places'], position.latitude, position.longitude);
     } else {
       print("실패");
       throw Exception('Failed to load cafe');
@@ -141,14 +141,14 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
 
     for (var place in places) {
       // 여기서 라벨에 텍스트 명 변경가능
-      final markerIcon =
-      await _createMarkerImage(place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
+      final markerIcon = await _createMarkerImage(
+          place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
 
       var place_lat = place['location']['latitude'];
       var place_lng = place['location']['longitude'];
 
       final latlong2.Distance distance =
-      latlong2.Distance(); //이름 지정 안 하면 geo머시기랑 충돌남
+          latlong2.Distance(); //이름 지정 안 하면 geo머시기랑 충돌남
       final double meter = distance.as(
           latlong2.LengthUnit.Meter,
           latlong2.LatLng(latitude, longitude),
@@ -168,18 +168,53 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
               title: place['displayName']['text'],
             ),
             onTap: () {
-              // debugPrint("place: ${place}");
-              print(place['displayName']['text']);
-              print(place['formattedAddress']);
-              print(place['regularOpeningHours']['openNow']);
-              print(place['internationalPhoneNumber']);
-              print(place['takeout']);
-              print(place['delivery']);
-              print(place['dineIn']);
-              // print("가게 이름=$place['name']");
 
+              String cafeLatitude = place['location']['latitude'] != null ? place['location']['latitude'].toString() : '정보 없음';
+              String cafeLongitude = place['location']['longitude'] != null ? place['location']['longitude'].toString() : '정보 없음';
 
+              String cafeName = place['displayName'] != null && place['displayName']['text'] != null
+              ? place['displayName']['text'] : '정보 없음';
 
+              String cafeId = place['id'] != null ? place['id'] : '정보 없음';
+
+              String cafeAddress = place['formattedAddress'] != null
+              ? place['formattedAddress'] : '정보 없음';
+
+              String cafeOpen = place['regularOpeningHours'] != null &&
+              place['regularOpeningHours']['openNow'] != null
+              ? place['regularOpeningHours']['openNow'].toString() : '정보 없음';
+
+              String cafeTelephone = place['internationalPhoneNumber'] != null
+              ? place['internationalPhoneNumber'] : '정보 없음';
+
+              String cafeTakeout = place['takeout'] != null ? place['takeout'].toString() : '정보 없음';
+
+              String cafeDelivery = place['delivery'] != null ? place['delivery'].toString() : '정보 없음';
+
+              String cafeDineIn = place['dineIn'] != null ? place['dineIn'].toString() : '정보 없음';
+
+              DateTime now = DateTime.now();
+              int currentWeekday = (now.weekday)-1;
+
+              String businessHours = place['regularOpeningHours'] != null && place['regularOpeningHours']['weekdayDescriptions'] != null
+                  ? place['regularOpeningHours']['weekdayDescriptions'][currentWeekday].toString() : '정보 없음' ;
+
+              List<String> detailsArguments = [
+                cafeAddress,
+                cafeOpen,
+                cafeTelephone,
+                cafeTakeout,
+                cafeDelivery,
+                cafeDineIn,
+                cafeLatitude,
+                cafeLongitude,
+                businessHours,
+              ];
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CafeDetails(cafeId: cafeId, cafeName: cafeName,cafeDetailsArguments: detailsArguments)),
+              );
             },
           ),
         );
@@ -189,7 +224,6 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
       _markers = localMarkers;
     });
   }
-
 
   // 반경 원 그리기
   void _setCircle(LatLng position) {
@@ -256,7 +290,6 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
             markers: _markers,
             circles: _circles,
             onMapCreated: _onMapCreated, // 지도가 생성된 후에 호출되는 콜백
-
           ),
           Positioned(
             bottom: 25,
@@ -265,11 +298,11 @@ class _GoogleMapWidgetState extends State<Google_Map>  {
               onPressed: () {
                 _getCurrentLocation();
                 LocationPermission().then((_) {
-                Geolocator.getCurrentPosition(
-                desiredAccuracy: LocationAccuracy.high,
-                ).then((position) {
-                _searchcafes(LatLng(position.latitude, position.longitude));
-                });
+                  Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high,
+                  ).then((position) {
+                    _searchcafes(LatLng(position.latitude, position.longitude));
+                  });
                 });
               },
               foregroundColor: Colors.black,
