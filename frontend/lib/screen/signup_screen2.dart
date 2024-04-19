@@ -76,54 +76,64 @@ class _SignupScreen2State extends State<SignupScreen2> {
             child: Column(
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  // 안내
-                  const Row(children: <Widget>[
-                    Text("사용할 아이디와 비밀번호를 입력해주세요.",
-                        style: TextStyle(
-                          fontSize: 20,
-                        )),
+
+                  Column(children: <Widget>[
+                    // 안내
+                    const Row(children: <Widget>[
+                      Text("사용할 아이디와 비밀번호를 입력해주세요.",
+                          style: TextStyle(
+                            fontSize: 20,
+                          )),
+                    ]),
+
+                    //  공백
+                      const SizedBox(
+                              height: 30,
+                            ),
+
+                    // 입력창 컨테이너
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 30), // 마진 추가,
+                      child: Column(
+                      children: <Widget>[
+                        // 입력창
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '아이디',
+                          controller: _loginIdController,
+                          isSecret: false,
+                        ),
+                        WarningLabel(label: '중복된 아이디가 존재합니다.', visible: visibleWarningLabel1,),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '비밀번호',
+                          controller: _passwordController,
+                          isSecret: true,
+                        ),
+                        WarningLabel(
+                            label: '비밀번호는 숫자, 소문자, 특수문자를 최소 1개 이상 포함한 8자 이상 20자 이하의 문자열이어야 합니다.', 
+                            visible: visibleWarningLabel2,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '비밀번호 확인',
+                          controller: _confirmPasswordController,
+                          isSecret: true,
+                        ),
+                        WarningLabel(label: '비밀번호가 일치하지 않습니다.', visible: visibleWarningLabel3,),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ])),
                   ]),
-                  // 입력창 컨테이너
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 0, vertical: 30), // 마진 추가,
-                    child: Column(
-                    children: <Widget>[
-                      // 입력창
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '아이디',
-                        controller: _loginIdController,
-                        isSecret: false,
-                      ),
-                      WarningLabel(label: '중복된 아이디가 존재합니다.', visible: visibleWarningLabel1,),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '비밀번호',
-                        controller: _passwordController,
-                        isSecret: true,
-                      ),
-                      WarningLabel(
-                          label: '비밀번호는 숫자, 소문자, 특수문자를 최소 1개 이상 포함한 8자 이상 20자 이하의 문자열이어야 합니다.', 
-                          visible: visibleWarningLabel2,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '비밀번호 확인',
-                        controller: _confirmPasswordController,
-                        isSecret: true,
-                      ),
-                      WarningLabel(label: '비밀번호가 일치하지 않습니다.', visible: visibleWarningLabel3,),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ])),
+
                   // 버튼 컨테이너
                   Container(
                     child: Column(

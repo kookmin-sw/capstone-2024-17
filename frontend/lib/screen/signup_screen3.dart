@@ -45,29 +45,41 @@ class _SignupScreen3State extends State<SignupScreen3> {
             child: Column(
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  // 안내
-                  const Row(children: <Widget>[
-                    Text("다음 정보를 입력해주세요.",
-                        style: TextStyle(
-                          fontSize: 20,
-                        )),
-                  ]),
-                  // 입력창 컨테이너
-                  Column(
-                    children: <Widget>[
-                      IconedTextfield(icon: null, hintText: '닉네임', controller: _nicknameController, isSecret: false,),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        IconedTextfield(icon: null, hintText: '이메일', controller: _emailController, isSecret: false,),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        IconedTextfield(icon: null, hintText: '전화번호', controller: _phoneController, isSecret: false,),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                    ]),
+
+                  Column(children: <Widget>[ 
+                    // 안내
+                    const Row(children: <Widget>[
+                      Text("다음 정보를 입력해주세요.",
+                          style: TextStyle(
+                            fontSize: 20,
+                          )),
+                      ]),
+                      
+                    //  공백
+                    const SizedBox(
+                            height: 30,
+                          ),
+
+                    // 입력창 컨테이너
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 30), 
+                      child: Column(
+                        children: <Widget>[
+                          IconedTextfield(icon: null, hintText: '닉네임', controller: _nicknameController, isSecret: false,),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            IconedTextfield(icon: null, hintText: '이메일', controller: _emailController, isSecret: false,),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            IconedTextfield(icon: null, hintText: '전화번호', controller: _phoneController, isSecret: false,),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                      ]),
+                    ),],),
+                 
                   // 회원가입 버튼
                   BottomTextButton(text: '회원가입 완료', handlePressed: signUpPressed),
                 ],

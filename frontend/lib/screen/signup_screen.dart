@@ -134,6 +134,8 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+
+                  Column(children: <Widget>[
                   // 안내
                   const Row(children: <Widget>[
                     Text("아래의 서비스 이용약관을 읽고 동의해주세요.",
@@ -141,6 +143,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           fontSize: 20,
                         )),
                   ]),
+
+                  // 공백
+                  const SizedBox(
+                        height: 30,
+                      ),
+
                   // 약관 체크박스 컨테이너
                   Container(
                       // margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
@@ -200,6 +208,9 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           
                           ])),
+                  ],),
+
+                  
 
                 // 다음으로 넘어가는 버튼
                 BottomTextButton(text: '다음', handlePressed: nextPressed,),
