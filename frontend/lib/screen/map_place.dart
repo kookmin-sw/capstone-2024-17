@@ -280,7 +280,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       child: Stack(
         children: [
           GoogleMap(
-            mapType: MapType.terrain,
+            // mapType: MapType.terrain,
             initialCameraPosition: CameraPosition(
               target: LatLng(37.611035490773, 126.99457310622), // 국민대
               zoom: 15,
