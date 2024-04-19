@@ -72,8 +72,9 @@ class _SignupScreen2State extends State<SignupScreen2> {
         ),
         body:  Container(
           alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+           margin: const EdgeInsets.only(top: 20, bottom: 40, left: 40, right: 40),
             child: Column(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   // 안내
                   const Row(children: <Widget>[
@@ -82,9 +83,6 @@ class _SignupScreen2State extends State<SignupScreen2> {
                           fontSize: 20,
                         )),
                   ]),
-                  const SizedBox(
-                    height: 20,
-                  ),
                   // 입력창 컨테이너
                   Container(
                     margin: const EdgeInsets.symmetric(

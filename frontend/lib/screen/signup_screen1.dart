@@ -130,8 +130,9 @@ class _SignupScreen1State extends State<SignupScreen1> {
         ),
         body: Container(
           alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          margin: const EdgeInsets.only(top: 20, bottom: 40, left: 40, right: 40),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   // 안내
                   const Row(children: <Widget>[
@@ -140,9 +141,6 @@ class _SignupScreen1State extends State<SignupScreen1> {
                           fontSize: 20,
                         )),
                   ]),
-                  const SizedBox(
-                    height: 20,
-                  ),
                   // 약관 체크박스 컨테이너
                   Container(
                       // margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
@@ -202,6 +200,8 @@ class _SignupScreen1State extends State<SignupScreen1> {
                             ),
                           
                           ])),
+
+                // 다음으로 넘어가는 버튼
                 BottomTextButton(text: '다음', handlePressed: nextPressed,),
                           
                       ],
