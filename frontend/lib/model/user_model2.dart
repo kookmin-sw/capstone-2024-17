@@ -1,7 +1,7 @@
-class UserModel {
+class UserModel2 {
   final String loginId;
   final String nickname;
   final String loginType; // none, kakao, ...
 
-  UserModel(this.loginId, this.nickname, this.loginType);
+  UserModel2(this.loginId, this.nickname, this.loginType);
 }

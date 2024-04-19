@@ -19,13 +19,15 @@ void main() async {
   if (status == LocationPermission.denied) {
     await Geolocator.requestPermission();
   }
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return const CupertinoApp(
       home: Google_Map(),
     );
   }
@@ -57,7 +59,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     // LocationPermission();
     // _setCircle(LatLng(37.611035490773, 126.99457310622));
     // _searchcafes(LatLng(37.611035490773, 126.99457310622));
-    // -------------------------------------------------
+
   }
 
   late GoogleMapController _controller;
@@ -89,6 +91,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     print("현재 위치로 이동");
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+
     final cameraPosition = CameraPosition(
       target: LatLng(position.latitude, position.longitude),
       zoom: 15.5,
@@ -129,6 +132,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       debugPrint("Response Body: ${response.body}");
       final data = json.decode(response.body);
       _setMarkers(data['places'], position.latitude, position.longitude);
+
     } else {
       print("실패");
       throw Exception('Failed to load cafe');
@@ -247,8 +251,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       ..color = Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
     canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
+
     // 텍스트 크기 계산 (중앙배치 하기 위함)
-    final textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
+    const textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
     final textSpan = TextSpan(text: label, style: textStyle); // 마진
     final textPainter =
         TextPainter(text: textSpan, textDirection: TextDirection.ltr);
@@ -274,6 +279,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             // mapType: MapType.terrain,
             initialCameraPosition: CameraPosition(
               target: LatLng(37.611035490773, 126.99457310622), // 국민대
+
               zoom: 15,
             ),
             myLocationEnabled: _myLocationEnabled,
@@ -299,10 +305,10 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               foregroundColor: Colors.black,
               backgroundColor: Colors.white,
               elevation: 8,
-              child: Icon(Icons.my_location),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
               ),
+              child: const Icon(Icons.my_location),
             ),
           ),
         ],
