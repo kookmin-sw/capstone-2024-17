@@ -24,8 +24,10 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
     Map<String, dynamic> jsonResult = jsonDecode(response.body);
 
     jsonResult.forEach((cafe, userList) {
+      List<Map<String, dynamic>> userMapList =
+          userList.cast<Map<String, dynamic>>();
       allUsers[cafe] =
-          userList.map((user) => UserModel.fromJson(user)).toList();
+          userMapList.map((user) => UserModel.fromJson(user)).toList();
     });
 
     return allUsers;
