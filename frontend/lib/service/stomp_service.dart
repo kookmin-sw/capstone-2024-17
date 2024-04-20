@@ -23,7 +23,7 @@ void subCafeList(StompClient stompClient, List<String> cafeList,
         else if (result["type"] == "delete") {
           print("delete user in cafe $cafeId");
           allUsers[cafeId]!
-              .removeWhere((user) => user.userId == result["loginId"]);
+              .removeWhere((user) => user.loginId == result["loginId"]);
         }
       },
     );
