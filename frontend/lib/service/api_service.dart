@@ -9,17 +9,17 @@ const userToken =
 
 // 주변 카페에 있는 유저 목록 POST 요청으로 받아오기
 Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
-  final url = Uri.parse("$baseUrl/cafe/get-users");
-  final response = await http.post(
-    url,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $userToken",
-    },
-    body: jsonEncode({"cafeList": cafeList}),
-  );
+  try {
+    final url = Uri.parse("$baseUrl/cafe/get-users");
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({"cafeList": cafeList}),
+    );
 
-  if (response.statusCode == 200) {
     Map<String, List<UserModel>> allUsers = {};
     Map<String, dynamic> jsonResult = jsonDecode(response.body);
 
@@ -31,8 +31,10 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
     });
 
     return allUsers;
+  } catch (error) {
+    print("HTTP POST error: $error");
+    throw Error();
   }
-  throw Error();
 }
 
 // 회원가입
