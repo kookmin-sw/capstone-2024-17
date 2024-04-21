@@ -7,7 +7,7 @@ const baseUrl = "http://43.203.218.27:8080";
 const userToken =
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
 
-// 주변 카페에 있는 유저 목록 POST 요청으로 받아오기
+// 주변 카페에 있는 모든 유저 목록 받아오기 - http post 요청
 Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
   try {
     final url = Uri.parse("$baseUrl/cafe/get-users");
