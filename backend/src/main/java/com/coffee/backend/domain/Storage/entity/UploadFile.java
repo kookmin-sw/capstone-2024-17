@@ -1,12 +1,10 @@
-package com.coffee.backend.domain.company.entity;
-import com.coffee.backend.domain.storage.entity.UploadFile;
+package com.coffee.backend.domain.Storage.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,15 +12,14 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Company {
+@Builder
+@Table(name = "upload_file")
+public class UploadFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "company_id")
-    private Long companyId;
-    private String name;
-    @OneToOne
-    private UploadFile logo;
+    private Long fileId;
+    private String originFilename;
+    private String storedFilename; // S3에 업로드 된 이름: UUID.randomUUID() + originalFilename + "." + extension
 }

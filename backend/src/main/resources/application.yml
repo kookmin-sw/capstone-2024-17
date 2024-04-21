@@ -3,9 +3,9 @@ spring:
     name: backend
 
   datasource:
-    url: ${SPRING_LOCAL_DATASOURCE_URL}
-    username: ${SPRING_LOCAL_DATASOURCE_USERNAME}
-    password: ${SPRING_LOCAL_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-timeout: 60000 # 60초 타임아웃
@@ -32,9 +32,8 @@ spring:
 
   data:
     redis:
-      host: redis
+      host: ${REDIS_HOST}
       port: 6379
-
   mail:
     host: smtp.gmail.com
     port: 587

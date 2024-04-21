@@ -1,17 +1,17 @@
 package com.coffee.backend.domain.cafe.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeDto;
+import com.coffee.backend.domain.cafe.dto.CafeSubDto;
+import com.coffee.backend.domain.cafe.dto.CafeUserProfileDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class CafePublisher {
-    private final RedisTemplate<String, Object> redisTemplate;
     private final CafeService cafeService;
     private final SimpMessageSendingOperations sendingOperations;
 
@@ -32,6 +32,9 @@ public class CafePublisher {
                         "updateCafeChoice : request type 형식을 (add/delete) 중 하나로 작성해주세요. 입력 type: '" + type + "'");
         }
         String cafeDtoJson = new ObjectMapper().writeValueAsString(dto);
-        sendingOperations.convertAndSend("/sub/cafe/" + cafeId, cafeDtoJson);
+        // 해당 user의 전체 정보를 조회
+        CafeUserProfileDto cafeUserProfileDto = cafeService.getUserInfoFromDB(loginId);
+        CafeSubDto cafeSubDto = new CafeSubDto(dto, cafeUserProfileDto);
+        sendingOperations.convertAndSend("/sub/cafe/" + cafeId, cafeSubDto);
     }
 }
