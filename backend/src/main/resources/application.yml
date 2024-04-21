@@ -34,8 +34,6 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: 6379
-
-
   mail:
     host: smtp.gmail.com
     port: 587

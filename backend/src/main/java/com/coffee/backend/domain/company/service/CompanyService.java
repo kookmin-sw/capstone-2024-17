@@ -1,6 +1,6 @@
 package com.coffee.backend.domain.company.service;
 
-import com.coffee.backend.domain.Storage.service.StorageService;
+import com.coffee.backend.domain.storage.service.StorageService;
 import com.coffee.backend.domain.company.dto.CompanyDto;
 import com.coffee.backend.domain.company.dto.EmailVerificationResponse;
 import com.coffee.backend.domain.company.entity.Company;
