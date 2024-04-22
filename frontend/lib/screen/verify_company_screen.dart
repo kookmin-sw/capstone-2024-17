@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/widgets/suffix_textfield.dart';
+import 'package:frontend/widgets/profile_img.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
   final String companyName;
@@ -55,59 +54,63 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         body: Container(
             alignment: Alignment.center,
             margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child: Column(children: <Widget>[
+            child:  Column(children: <Widget>[
               const Row(children: <Widget>[
-                Text("코드를 전송할 회사 이메일을 입력하세요.",
+                Flexible(child: Text("인증코드를 전송할 회사 이메일을 입력하세요.",
                     style: TextStyle(
                       fontSize: 20,
-                    )),
-              ]),
+                    ), overflow: TextOverflow.visible,),
+              ),],),
               const SizedBox(
                 height: 20,
               ),
-/*
-              Text("회사: ${widget.companyName}",
-                  style: const TextStyle(fontSize: 18)),
-              const SizedBox(
-                height: 20,
+
+              // 회사정보 컨테이너
+              Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
+                child: Column(children: <Widget>[
+                  // 회사 로고
+                  const ProfileImg(logo: 'assets/logo.png',),
+                  // ProfileImg(logo: Image.network(src));
+                  const SizedBox(
+                      height: 20,
+                    ),
+
+                  // 회사 이름
+                   Text(widget.companyName,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                  // 회사 도메인
+                  Text("_______$domain",
+                      style: const TextStyle(fontSize: 16)),
+                  const SizedBox(
+                      height: 20,
+                    ),
+                ]),
               ),
-*/
+
               // 회사 이메일 입력 및 인증코드 전송 필드
-              TextField(
+              TextFormField(
                 controller: _emailIdController,
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(RegExp(r'[@]')),
-                ],
                 decoration: InputDecoration(
                   hintText: '이메일 입력',
                   suffixIcon: LayoutBuilder(
                     builder: (context, constraints) {
-                      double iconWidth = constraints.maxWidth *
-                          2 /
-                          3; // suffixIcon의 너비가 TextField의 절반이 되도록 함
+                      // double iconWidth = constraints.maxWidth / 4;
                       return SizedBox(
-                        width: iconWidth,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              domain,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                // fontWeight: FontWeight.bold,
-                                // color: Colors.grey,
-                              ),
-                            ),
-                            TextButton(
+                        // width: iconWidth,
+                        child: TextButton(
                               onPressed: () =>
                                   sendPressed(_emailIdController.text),
                               child: const Text('전송',
                                   style: TextStyle(fontSize: 16)),
                             ),
-                          ],
-                        ),
-                      );
-                    },
+                        );
+                    }
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -172,21 +175,26 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                 height: 20,
               ),
 
+              /* 타이머 테스트용
               ElevatedButton(
                 onPressed: () {
                   startTimer();
                 },
                 child: const Text('타이머 시작'),
               ),
+              */
             ])));
   }
 
-  void sendPressed(emailId) async {
+  void sendPressed(emailAddress) async {
+    if (!emailAddress.endsWith(domain)) {
+      showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
+      return;
+    }
     // 서버에서 인증번호 받아오기
     const verifyCode = '123456'; // 임시로 사용?
     // verifyCode를 이메일에 전송하기
-    String emailAdress = emailId + domain;
-    if (await _sendEmail(emailAdress, verifyCode)) {
+    if (await _sendEmail(emailAddress, verifyCode)) {
       showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 확인해주세요.");
     }
     return;
@@ -195,6 +203,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   // 도메인 설정(or screen에 넘겨주기?)
   void setDomain() {
     domain = '@gmail.com';
+    // print(domain);
   }
 
   void verifyPressed(verifyCode) async {
@@ -219,11 +228,11 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     });
   }
 
-  Future<bool> _sendEmail(String emailAdress, String verifyCode) async {
+  Future<bool> _sendEmail(String emailAddress, String verifyCode) async {
     final Email email = Email(
       body: '인증코드를 확인해주세요. [$verifyCode]',
       subject: '[커리어 한 잔] 회사 인증 메일입니다.',
-      recipients: [emailAdress],
+      recipients: [emailAddress],
       cc: [], // 참조
       bcc: [], // 숨은참조
       attachmentPaths: [], // 첨부
