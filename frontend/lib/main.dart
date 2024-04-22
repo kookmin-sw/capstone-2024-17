@@ -14,9 +14,11 @@ import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:frontend/screen/cafe_details.dart';
 
+// 웹소켓(stomp) 관련 변수
 StompClient? stompClient;
 const socketUrl = "http://43.203.218.27:8080/ws";
 
+// 주변 카페에 있는 모든 유저 목록
 Map<String, List<UserModel>>? allUsers;
 
 const List<String> sampleCafeList = [
@@ -28,6 +30,7 @@ const List<String> sampleCafeList = [
 ];
 
 void main() async {
+  // http post 요청
   allUsers = await getAllUsers(sampleCafeList);
 
   // 웹소켓(stomp) 연결
