@@ -29,7 +29,7 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
 }
 
 // 회원가입
-Future<Map<String, dynamic>> signup(String loginId, String password,
+Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
   final url = Uri.parse('$baseUrl/auth/signUp');
   final data = jsonEncode({
@@ -43,6 +43,7 @@ Future<Map<String, dynamic>> signup(String loginId, String password,
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
+    print(jsonData);
     return jsonData;
   } catch (error) {
     print('error: $error');
