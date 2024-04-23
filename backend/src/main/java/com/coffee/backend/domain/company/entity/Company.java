@@ -1,6 +1,6 @@
 package com.coffee.backend.domain.company.entity;
-
 import com.coffee.backend.domain.storage.entity.UploadFile;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
