@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
 }
 
 class Google_Map extends StatefulWidget {
+  const Google_Map({Key? key}) : super(key: key);
+
   @override
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
 }
