@@ -3,21 +3,29 @@
 # 스크립트 실행 시 발생할 수 있는 오류에 대해 즉시 스크립트를 중단
 set -e
 
-# Docker Compose를 사용하여 현재 실행 중인 컨테이너 종료 및 네트워크, 볼륨과 함께 제거
-echo "실행 중인 컨테이너 종료 및 네트워크, 볼륨과 함께 제거 :"
-sudo docker compose down
+# spring-service 컨테이너만 재시작
+echo "<< spring-service 삭제 시도 >>"
+sudo docker compose stop spring-service
+sudo docker compose rm spring-service
+docker rmi backend-was
 
-# Docker 이미지 삭제
-echo "Docker 이미지 삭제 : "
-docker rmi backend-was:latest mysql redis
-
-# 애플리케이션 빌드
-echo "애플리케이션 빌드 : "
+# 애플리케이션 빌드 시도
+echo "<< spring app 빌드 >>"
 chmod +x gradlew
 sudo ./gradlew build
 
-# Docker Compose를 사용하여 새로운 이미지로 컨테이너 시작
-echo "새로운 이미지 생성 및 세 컨테이너 시작 : "
-sudo docker compose up -d
+# 재시작 시도
+echo "<< spring-service 재빌드 및 재시작 >>"
+if sudo docker compose up -d --no-deps spring-service; then
+    echo "<< spring-service 배포 성공 !! >>"
+else
+    echo "<< spring-service 재시작 실패 >>"
+    echo "<< [전체 재시작] 모든 컨테이너, 이미지 삭제 >>"
+    sudo docker compose down # 실행 중인 모든 컨테이너 종료 및 제거
+    docker rmi backend-was:latest mysql redis # 모든 관련 이미지 삭제
 
-echo "배포 성공 !!"
+    echo "<< [전체 재시작] 재배포 >>"
+    sudo docker compose up -d
+
+    echo "<< [전체 재시작] 배포 성공 !! >>"
+fi
