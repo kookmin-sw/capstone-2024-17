@@ -1,7 +1,6 @@
 package com.coffee.backend.domain.fcm.service;
 
 import com.coffee.backend.domain.fcm.dto.FcmPushMessageDto;
-import com.coffee.backend.domain.fcm.dto.FcmRequestDto;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,18 +22,21 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class FcmService {
-    public void sendPushMessageTo(FcmRequestDto dto) {
+    private final ObjectMapper objectMapper;
+    private static final String FIREBASE_CONFIG_PATH = "firebase/firebase-secret-key.json";
+    private static final String API_URL = "https://fcm.googleapis.com/v1/projects/capstone-coffeechat/messages:send";
+    private static final List<String> SCOPES = List.of("https://www.googleapis.com/auth/cloud-platform");
+
+    public void sendPushMessageTo(String targetToken, String title, String body) {
         try {
-            String pushMessage = makePushMessage(dto);
+            String pushMessage = makePushMessage(targetToken, title, body);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "Bearer " + getAccessToken());
+            headers.setBearerAuth(getAccessToken());
 
             HttpEntity<String> entity = new HttpEntity<>(pushMessage, headers);
-
             RestTemplate restTemplate = new RestTemplate();
-            String API_URL = "<https://fcm.googleapis.com/v1/projects/capstone-coffeechat/messages:send>";
             ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
 
             System.out.println(response.getStatusCode());
@@ -48,29 +50,24 @@ public class FcmService {
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/firebase-secret-key.json";
-
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
-                .createScoped(List.of("<https://www.googleapis.com/auth/cloud-platform>"));
+                .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream())
+                .createScoped(SCOPES);
 
         googleCredentials.refreshIfExpired();
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
-    private String makePushMessage(FcmRequestDto dto) throws JsonProcessingException {
-        ObjectMapper om = new ObjectMapper();
+    private String makePushMessage(String targetToken, String title, String body) throws JsonProcessingException {
         FcmPushMessageDto fcmPushMessageDto = FcmPushMessageDto.builder()
                 .message(FcmPushMessageDto.Message.builder()
-                        .token(dto.getToken())
+                        .targetToken(targetToken)
                         .notification(FcmPushMessageDto.Notification.builder()
-                                .title(dto.getTitle())
-                                .body(dto.getBody())
-                                .image(null)
-                                .build()
-                        )
+                                .title(title)
+                                .body(body)
+                                .build())
                         .build())
                 .build();
-        return om.writeValueAsString(fcmPushMessageDto);
+        return objectMapper.writeValueAsString(fcmPushMessageDto);
     }
 }
