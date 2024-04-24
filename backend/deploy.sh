@@ -6,8 +6,10 @@ set -e
 # spring-service 컨테이너만 재시작
 echo "<< spring-service 삭제 시도 >>"
 sudo docker compose stop spring-service
-sudo docker compose rm spring-service
-docker rmi backend-was
+echo "y" | sudo docker compose rm spring-service
+if docker images | grep -w backend-was; then
+  docker rmi backend-was # 이미지 삭제
+fi
 
 # 애플리케이션 빌드 시도
 echo "<< spring app 빌드 >>"
