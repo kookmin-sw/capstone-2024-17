@@ -73,6 +73,7 @@ public class MatchService {
     }
 
     // 매칭 요청 거절
+    @Transactional
     public void declineMatchRequest(MatchDto dto) {
         if (verifyMatchRequest(dto)) {
             dto.setStatus("declined");
@@ -90,6 +91,7 @@ public class MatchService {
     }
 
     // 매칭 요청 수동 취소
+    @Transactional
     public void cancelMatchRequest(MatchDto dto) {
         dto.setStatus("canceled");
         messagingTemplate.convertAndSend("/user/" + dto.getReceiverId(), dto);
@@ -106,6 +108,7 @@ public class MatchService {
         return ttl != null && ttl > 0;
     }
 
+    @Transactional
     public Review submitReview(ReviewDto dto) {
         Review review = new Review();
         review.setSenderId(dto.getSenderId());
