@@ -18,7 +18,8 @@ class KakaoLoginWidget extends StatelessWidget {
         UserModel2 user = await KakaoLogin().login();
         loginViewModel.login(user);
         await storage.write(key: 'userUUID', value: '카톡');
-        await storage.write(key: 'authToken', value: '카톡토큰');
+        // 임시로 넣었던 토큰
+        // await storage.write(key: 'authToken', value: '카톡토큰');
         onPressed(); // await이 끝나면 콜백함수를 돌려준다
       },
       child: Container(
