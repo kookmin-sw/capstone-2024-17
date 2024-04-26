@@ -92,6 +92,31 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
     http.Response res = await http.post(url,
       headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
+    print(jsonData);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 키워드로 회사 검색
+Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
+
+  const endpointUrl = '$baseUrl/company/search';
+
+  String queryString = Uri(queryParameters: {
+    'keyword': companyKeyword,
+  }).query;
+
+  final url = '$endpointUrl?$queryString';
+
+  try {
+    http.Response res = await http.get(Uri.parse(url), headers: {
+      "Content-Type": "application/json",
+    },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(res.body);
     return jsonData;
   } catch (error) {
     print('error: $error');

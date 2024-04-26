@@ -4,13 +4,13 @@ import 'package:frontend/screen/verify_company_screen.dart';
 class CompanyItem extends StatelessWidget {
   // final int id;
   final String companyName;
-  // final Image? logoImage;
+  final String logoInfo;
 
   const CompanyItem({
     super.key,
     // required this.id,
     required this.companyName,
-    // required this.logoImage,
+    required this.logoInfo,
   });
 
   @override
@@ -25,7 +25,7 @@ class CompanyItem extends StatelessWidget {
                   builder: (context) => VerifyCompanyScreen(
                         // companyId: id,
                         companyName: companyName,
-                        // logoImage: logoImage ?? Image.asset('assets/logo.png'),
+                        // logoImage: logoImage,
                       )));
         });
       },
@@ -38,18 +38,10 @@ class CompanyItem extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              /*
               Container(
                 padding: const EdgeInsets.all(10),
-                
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      (logoImage ?? Image.asset('assets/logo.png')).image,
-                ),
-                
+                child: Image.network(logoInfo, scale: 100,),
               ),
-              */
               Expanded(
                 child: Text(
                   companyName,
