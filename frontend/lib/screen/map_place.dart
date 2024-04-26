@@ -313,9 +313,25 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               child: const Icon(Icons.my_location),
             ),
           ),
+          Positioned(
+            top: 80,
+            right: 10,
+            child: ElevatedButton(
+              onPressed: () {
+                // 버튼이 클릭되었을 때 동작
+                // 여기에 원하는 동작을 추가하세요.
+                print('Button clicked!');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange, // 배경 색상 설정
+                shape: CircleBorder(), // 원 모양의 버튼을 만들기 위해 사용
+                padding: EdgeInsets.all(10), // 버튼의 패딩 설정
+              ),
+              child: Icon(Icons.add_alert, color: Colors.white70 ), // 아이콘과 색상 설정
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
