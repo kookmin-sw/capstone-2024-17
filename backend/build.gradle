@@ -32,11 +32,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
 
+    // s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // email
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.4'
+
     // websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:sockjs-client:1.1.2' // sockjs
     implementation 'org.webjars:stomp-websocket:2.3.4' // stomp
-
 
     // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -45,9 +50,6 @@ dependencies {
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    // websocket
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     // fcm
     implementation 'com.google.firebase:firebase-admin:9.2.0'

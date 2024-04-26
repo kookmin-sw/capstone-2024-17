@@ -2,9 +2,12 @@ package com.coffee.backend.domain.auth.controller;
 
 import com.coffee.backend.domain.auth.dto.AuthDto;
 import com.coffee.backend.domain.auth.dto.DeleteUserDto;
+import com.coffee.backend.domain.auth.dto.KakaoRequestDto;
+import com.coffee.backend.domain.auth.dto.KakaoUserInfoDto;
 import com.coffee.backend.domain.auth.dto.SignInDto;
 import com.coffee.backend.domain.auth.dto.SignUpDto;
 import com.coffee.backend.domain.auth.service.AuthService;
+import com.coffee.backend.domain.auth.service.KakaoLoginService;
 import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.exception.CustomException;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
     private final AuthService authService;
+    private final KakaoLoginService kakaoLoginService;
 
     @PostMapping("/signUp")
     public ResponseEntity<ApiResponse<UserDto>> signUp(
@@ -54,5 +58,12 @@ public class AuthController {
         } else {
             throw new CustomException(ErrorCode.DELETE_USER_FAILED);
         }
+    }
+
+    @PostMapping("/kakaoSignIn")
+    public ResponseEntity<ApiResponse<AuthDto>> kakaoLogin(@RequestBody KakaoRequestDto dto) {
+        KakaoUserInfoDto userInfoDto = kakaoLoginService.getUserInfo(dto.getAccessToken());
+        AuthDto authDto = kakaoLoginService.signIn(userInfoDto);
+        return ResponseEntity.ok(ApiResponse.success(authDto));
     }
 }

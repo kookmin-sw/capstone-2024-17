@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: backend
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 60000 # 60초 타임아웃
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000 # 5분
+      max-lifetime: 2000000 # 33분
+      initialization-fail-timeout: 60000 # 초기화 실패 타임아웃
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show-sql: true
+        format_sql: true
+
+  profiles:
+    include: jwt,db
+
+  cache:
+    type: redis
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true # SMTP 서버에 인증 필요한 경우 true로 지정한다. Gmail SMTP 서버는 인증을 요구하기 때문에 true로 설정해야 한다.
+          starttls:
+            enable: true
+            required: true
+    auth-code-expiration-millis: 1800000  # 이메일 인증 코드의 만료 시간(Millisecond), 30 * 60 * 1000 == 30분
+    protocol: smtps
+
+
+cloud:
+  aws:
+    s3:
+      bucket: capstone2024-17-coffeechat
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
