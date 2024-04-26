@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/color_text_container.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +44,7 @@ class CoffeechatReqList extends StatelessWidget {
               ]),
               Expanded(
                 child: TabBarView(children: [
-                  const Text("보낸 요청"),
+                  const SentReqList(),
                   ListView.builder(
                     itemCount: 10,
                     itemBuilder: (context, index) {
@@ -55,6 +57,25 @@ class CoffeechatReqList extends StatelessWidget {
               ),
             ],
           )),
+    );
+  }
+}
+
+class SentReqList extends StatelessWidget {
+  const SentReqList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text("프로필"),
+        const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
+        const Text(
+          "자동 취소까지 남은 시간\n09:59",
+          textAlign: TextAlign.center,
+        ),
+        BottomTextButton(text: "요청 취소하기", handlePressed: () {}),
+      ],
     );
   }
 }
