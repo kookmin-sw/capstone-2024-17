@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screen/map.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/screen/map_place.dart';
 
 
 
-void main() {
+void main() async{
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: mapScreen(),
+      home: Google_Map(),
     );
   }
 }
