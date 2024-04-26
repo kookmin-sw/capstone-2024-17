@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
     
   cupertino_icons: ^1.0.6
-  google_maps_flutter: ^2.6.0
+  google_maps_flutter: ^2.2.8
   geolocator: ^11.0.0
   permission_handler: ^11.3.1
   google_place: ^0.4.7
@@ -46,6 +46,8 @@ dependencies:
   flutter_secure_storage: ^4.2.1
   flutter_email_sender: ^6.0.2
   custom_marker: ^1.0.0
+  latlong2: ^0.9.1
+  google_maps_webservice: ^0.0.20-nullsafety.5
   stomp_dart_client: ^1.0.3
 
 dev_dependencies:
