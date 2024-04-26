@@ -318,8 +318,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             right: 10,
             child: ElevatedButton(
               onPressed: () {
-                // 버튼이 클릭되었을 때 동작
-                // 여기에 원하는 동작을 추가하세요.
                 print('Button clicked!');
               },
               style: ElevatedButton.styleFrom(
@@ -328,6 +326,23 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 padding: EdgeInsets.all(10), // 버튼의 패딩 설정
               ),
               child: Icon(Icons.add_alert, color: Colors.white70 ), // 아이콘과 색상 설정
+            ),
+          ),
+          Positioned(
+            bottom: 110,
+            right: 16,
+            child: ElevatedButton(
+              onPressed: () {
+                print('Button clicked!');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black12  , // 배경 색상 설정
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
+              ),
+              child: Text(
+                "위치 OFF",
+                style: TextStyle(color: Colors.white), // 폰트 색상 설정
+              ),
             ),
           ),
         ],
