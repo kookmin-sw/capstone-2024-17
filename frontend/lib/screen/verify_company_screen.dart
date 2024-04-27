@@ -134,34 +134,29 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                 controller: _verifyCodeController,
                 decoration: InputDecoration(
                   hintText: '인증코드 입력',
-                  suffixIcon: LayoutBuilder(
-                    builder: (context, constraints) {
-                      double iconWidth = constraints.maxWidth / 4;
-                      return SizedBox(
-                        width: iconWidth,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            // 타이머가 들어갈 자리
-                            if (_timerVisible)
-                              Text(
-                                '${_secondsLeft ~/ 60}:${_secondsLeft % 60}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            TextButton(
-                              onPressed: () =>
-                                  verifyPressed(_verifyCodeController.text),
-                              child: const Text('인증',
-                                  style: TextStyle(fontSize: 16)),
+                  suffixIcon: SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        // 타이머가 들어갈 자리
+                        if (_timerVisible)
+                          Text(
+                            '${_secondsLeft ~/ 60}:${_secondsLeft % 60}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              // fontWeight: FontWeight.bold,
+                              color: Colors.red,
                             ),
-                          ],
+                          ),
+                        TextButton(
+                          onPressed: () =>
+                              verifyPressed(_verifyCodeController.text),
+                          child: const Text('인증',
+                              style: TextStyle(fontSize: 16)),
                         ),
-                      );
-                    },
+                      ],
+                    ),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
