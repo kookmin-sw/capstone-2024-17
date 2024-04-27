@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend/screen/edit_profile_screen.dart';
+import 'package:frontend/widgets/bottom_text_button.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -13,6 +14,12 @@ class _UserScreenState extends State<UserScreen> {
   final storage = const FlutterSecureStorage();
   String? token;
   bool isLogined = false;
+  String nickname = '';
+  String logoInfo = '';
+  String companyName = '';
+  String position = '';
+  int temperature = 0;
+  String introduction = '';
 
   @override
   void initState() {
@@ -23,12 +30,6 @@ class _UserScreenState extends State<UserScreen> {
   
   @override
   Widget build(BuildContext context) {
-
-    if (token == null) {
-      isLogined = false;
-    } else {
-      isLogined = true;
-    }
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -38,15 +39,8 @@ class _UserScreenState extends State<UserScreen> {
             style: TextStyle(fontSize: 24),
           ),
           toolbarHeight: 100,
-          /*
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
-          */
           actions: [
+            if (isLogined)
           IconButton(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             icon: const Icon(Icons.settings_outlined),
@@ -60,28 +54,47 @@ class _UserScreenState extends State<UserScreen> {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // 로그인 정보 표시
-            Text('로그인됨: $isLogined'),
-            Text('token: $token'),
-
-            // storage 정보 표시
-            ElevatedButton(
+            if (isLogined)
+              Column(children: [
+                Text('nickname: $nickname'),
+                Text('logoInfo: $logoInfo'),
+                Text('companyName: $companyName'),
+                Text('position: $position'),
+                Text('temperature: $temperature'),
+                Text('introduction: $introduction'),
+                 // 로그아웃 버튼
+                  ElevatedButton(
                 onPressed: () async {
-                  final storageData = await storage.readAll();
-                  print('스토리지: ${storageData.toString()}');
+                  await logout(context).then((_) { 
+                    initState();
+                  });
                 },
-                child: const Text(
-                  "스토리지 콘솔에 출력",
-                  style: TextStyle(fontSize: 14),
-                )),
-
-            // isLogined 상태에 따라 로그인/로그아웃 버튼이 보이게
+                child: const Text('로그아웃'),
+              ),
+                BottomTextButton(
+                      text: '프로필 정보 수정',
+                      handlePressed: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileScreen(
+                              nickname: nickname, 
+                              logoInfo: logoInfo, 
+                              companyName: companyName, 
+                              position: position, 
+                              temperature: temperature, 
+                              introduction: introduction,),
+                          ),
+                        );
+                      },
+                    ),
+              ],)
+            
             // 로그인되지 않았을 경우
-            Visibility(
-                visible: !isLogined,
-                child: Row(
-                  children: <Widget>[
-                    // 로그인 버튼
+            else
+              Column(children: <Widget>[
+                const Text('로그인이 필요한 서비스입니다.'),
+                // 로그인 버튼
                     TextButton(
                         onPressed: () {
                           Navigator.of(context).pushNamed('/signin');
@@ -94,25 +107,7 @@ class _UserScreenState extends State<UserScreen> {
                           Navigator.of(context).pushNamed('/signup');
                         },
                         child: const Text('회원가입')),
-                  ],
-                )),
-
-            // 로그인되었을 경우
-            Visibility(
-              visible: isLogined,
-              child:
-                  // 로그아웃 버튼
-                  ElevatedButton(
-                onPressed: () async {
-                  await logout(context).then((_) { 
-                    initState();
-                  });
-                },
-                child: const Text('로그아웃'),
-              ),
-            ),
-          ],
-        )),
+              ],),],),),
   );
   }
 
@@ -125,7 +120,9 @@ class _UserScreenState extends State<UserScreen> {
 
   Future<String?> setAccessToken() async {
     token = await storage.read(key: 'authToken');
-    setState(() {});
+    setState(() {
+      isLogined = (token != null);
+    });
     return token;
   }
 }
