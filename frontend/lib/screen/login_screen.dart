@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
       showAlertDialog(context, res['message']);
       // 현재 페이지를 대신해 유저 페이지로 navigate
       Future.delayed(Duration.zero, () {
-        Navigator.of(context).pushReplacementNamed('/user');
+        Navigator.pushNamedAndRemoveUntil(context, '/user', (route) => false);
       });
     } else {
       // 실패
