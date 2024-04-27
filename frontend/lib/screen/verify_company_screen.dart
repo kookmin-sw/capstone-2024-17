@@ -23,6 +23,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   final TextEditingController _emailIdController = TextEditingController();
   final TextEditingController _verifyCodeController = TextEditingController();
   String domain = '';
+  String sentEmailAddress = '';
   bool _timerVisible = false;
   int timeLimit = 180;
   int _secondsLeft = 0;
@@ -205,17 +206,18 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   }
 
   // 전송 버튼 클릭 시
-  void sendPressed(emailAddress) async {
-    if (!emailAddress.endsWith(domain)) {
+  void sendPressed(email) async {
+    if (!email.endsWith(domain)) {
       showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
       return;
     }
     try {
-      Map<String, dynamic> res = await verificationRequest(emailAddress);
+      Map<String, dynamic> res = await verificationRequest(email);
       if (res['success']) {
         // 요청 성공
         startTimer();
-        showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 확인해주세요.");
+        sentEmailAddress = email;  // 이메일이 발송된 이메일주소 저장
+        showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 입력해주세요.");
       } else {
         // 요청 실패
         print('이메일 전송 실패: ${res["message"]}(${res["statusCode"]})');
@@ -238,12 +240,32 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     domain = '@kookmin.ac.kr';  // 임시 도메인
   }
 
+  // 인증코드 입력 후 인증버튼 클릭 시
   void verifyPressed(verifyCode) async {
-    // 서버에 인증번호 전송, 비교
-    // 성공시
-    showAlertDialog(context, "회사 인증이 완료되었습니다.");
+    if (verifyCode == '') {
+      showAlertDialog(context, "인증코드를 입력해주세요.");
+      return;
+    }
+    try {
+      Map<String, dynamic> res = await verification(sentEmailAddress, verifyCode);
+      if (res['success']) {
+        // 요청 성공
+        showAlertDialog(context, "회사 인증이 완료되었습니다.");
+      } else {
+        // 요청 실패
+        print('인증 실패: ${res["message"]}(${res["statusCode"]})');
+        showAlertDialog(
+          context,
+          '인증 실패: ${res["message"]}(${res["statusCode"]})',
+        );
+      }
+      // 에러
+    } catch (error) {
+      print('에러: $error');
+      showAlertDialog(context, '에러: $error');
+    }
+    return;
   }
-
 
   @override
   void dispose() {
