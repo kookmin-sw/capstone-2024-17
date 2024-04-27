@@ -58,6 +58,7 @@ class CoffeechatReqList extends StatelessWidget {
             ),
           ],
         ),
+        bottomNavigationBar: const BottomAppBar(),
       ),
     );
   }
@@ -78,6 +79,7 @@ class SentReqList extends StatelessWidget {
               "안녕하세요, goodnavers 입니다. 편하게 커피챗 걸어주세요. 어쩌고 저쩌고 블라블라블라블라블라블라블라블라블라",
         ),
         const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
+        const Expanded(child: SizedBox()),
         const Text(
           "자동 취소까지 남은 시간\n09:59",
           textAlign: TextAlign.center,
