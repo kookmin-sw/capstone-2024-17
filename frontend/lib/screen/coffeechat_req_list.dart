@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/profile_img.dart';
+import 'package:frontend/widgets/thermometer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -149,6 +150,9 @@ class ReceiverProfile extends StatelessWidget {
           ),
           const SizedBox(
             height: 20,
+          ),
+          const Thermometer(
+            proportion: 0.7,
           ),
           Container(
             width: 280,
