@@ -12,16 +12,32 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   final storage = const FlutterSecureStorage();
+  String? token;
   bool isLogined = false;
 
+  @override
+  void initState() {
+    super.initState();
+    setAccessToken();
+    print('token: $token');
+  }
+  
   @override
   Widget build(BuildContext context) {
     LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
+        /*
     if (loginViewModel.user != null) {
       isLogined = true;
     } else {
       isLogined = false;
+    }
+    */
+
+    if (token == null) {
+      isLogined = false;
+    } else {
+      isLogined = true;
     }
     return Scaffold(
         appBar: AppBar(
@@ -44,6 +60,8 @@ class _UserScreenState extends State<UserScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // 로그인 정보 표시
+            Text('로그인됨: $isLogined'),
+            Text('token: $token'),
             Text('로그인 id: ${loginViewModel.user?.loginId}'),
             Text(
               '닉네임: ${loginViewModel.user?.nickname}',
@@ -64,7 +82,6 @@ class _UserScreenState extends State<UserScreen> {
                 )),
 
             // isLogined 상태에 따라 로그인/로그아웃 버튼이 보이게
-
             // 로그인되지 않았을 경우
             Visibility(
                 visible: !isLogined,
@@ -93,21 +110,31 @@ class _UserScreenState extends State<UserScreen> {
                   // 로그아웃 버튼
                   ElevatedButton(
                 onPressed: () async {
-                  await logout(context);
-                  setState(() {}); // 화면 갱신
+                  await logout(context).then((_) { 
+                    initState();
+                  });
                 },
                 child: const Text('로그아웃'),
               ),
             ),
           ],
-        )));
+        )),
+  );
   }
 
   Future<void> logout(BuildContext context) async {
     LoginViewModel loginViewModel =
         Provider.of<LoginViewModel>(context, listen: false);
-    await storage.deleteAll();
     loginViewModel.logout();
-    setState(() {}); // context.mount ?  바로 적용이 안됨
+    await storage.deleteAll().then((_) {
+      setAccessToken();
+    });
+    return;
+  }
+
+  Future<String?> setAccessToken() async {
+    token = await storage.read(key: 'authToken');
+    setState(() {});
+    return token;
   }
 }
