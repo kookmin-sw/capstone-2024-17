@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
+import 'package:frontend/widgets/user_details.dart';
 
 class UserDetailsModal extends StatelessWidget {
   const UserDetailsModal({
@@ -31,56 +31,12 @@ class UserDetailsModal extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  width: 25,
-                ),
-                const ProfileImg(logo: "assets/coffee_bean.png"),
-                const SizedBox(
-                  width: 30,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      nickname,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      company,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      position,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Expanded(
-              child: Container(
-                width: 280,
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: SingleChildScrollView(
-                  child: Text(
-                    introduction,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
+            UserDetails(
+              nickname: nickname,
+              company: company,
+              position: position,
+              introduction: introduction,
             ),
             ModalButton(
               text: "커피챗 요청하기",

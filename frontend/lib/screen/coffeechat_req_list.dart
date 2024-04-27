@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
-import 'package:frontend/widgets/profile_img.dart';
-import 'package:frontend/widgets/thermometer.dart';
+import 'package:frontend/widgets/user_details.dart';
 
 void main() {
   runApp(const MyApp());
@@ -72,12 +71,21 @@ class SentReqList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const ReceiverProfile(
-          nickname: "goodnavers",
-          company: "네이버",
-          position: "데이터 엔지니어링",
-          introduction:
-              "안녕하세요, goodnavers 입니다. 편하게 커피챗 걸어주세요. 어쩌고 저쩌고 블라블라블라블라블라블라블라블라블라",
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+          width: 370,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey, width: 1),
+          ),
+          child: const UserDetails(
+            nickname: "goodnavers",
+            company: "네이버",
+            position: "데이터 엔지니어링",
+            introduction:
+                "안녕하세요, goodnavers 입니다. 편하게 커피챗 걸어주세요. 어쩌고 저쩌고 블라블라블라블라블라블라블라블라블라",
+          ),
         ),
         const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
         const Expanded(child: SizedBox()),
@@ -87,91 +95,6 @@ class SentReqList extends StatelessWidget {
         ),
         BottomTextButton(text: "요청 취소하기", handlePressed: () {}),
       ],
-    );
-  }
-}
-
-class ReceiverProfile extends StatelessWidget {
-  final String nickname;
-  final String company;
-  final String position;
-  final String introduction;
-
-  const ReceiverProfile({
-    super.key,
-    required this.nickname,
-    required this.company,
-    required this.position,
-    required this.introduction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
-      width: 370,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey, width: 1),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const SizedBox(
-                width: 35,
-              ),
-              const ProfileImg(logo: "assets/coffee_bean.png"),
-              const SizedBox(
-                width: 35,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    nickname,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    company,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    position,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Thermometer(
-            proportion: 0.7,
-          ),
-          Container(
-            width: 280,
-            height: 150,
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: SingleChildScrollView(
-              child: Text(
-                introduction,
-                style: const TextStyle(fontSize: 18),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
