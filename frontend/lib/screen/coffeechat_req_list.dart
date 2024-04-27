@@ -109,7 +109,7 @@ class ReceiverProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20),
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
       width: 370,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -149,7 +149,7 @@ class ReceiverProfile extends StatelessWidget {
             ],
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           const Thermometer(
             proportion: 0.7,
