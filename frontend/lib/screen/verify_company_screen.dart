@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/rounded_img.dart';
 
@@ -187,32 +188,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
             ])));
   }
 
-  void sendPressed(emailAddress) async {
-    if (!emailAddress.endsWith(domain)) {
-      showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
-      return;
-    }
-    // 서버에서 인증번호 받아오기
-    const verifyCode = '123456'; // 임시로 사용?
-    // verifyCode를 이메일에 전송하기
-    if (await _sendEmail(emailAddress, verifyCode)) {
-      showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 확인해주세요.");
-    }
-    return;
-  }
-
-  // 도메인 설정(or screen에 넘겨주기?)
-  void setDomain() {
-    domain = '@gmail.com';
-    // print(domain);
-  }
-
-  void verifyPressed(verifyCode) async {
-    // 서버에 인증번호 전송, 비교
-    // 성공시
-    showAlertDialog(context, "회사 인증이 완료되었습니다.");
-  }
-
   void startTimer() {
     _timer.cancel();
     _timerVisible = true;
@@ -229,26 +204,46 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     });
   }
 
-  Future<bool> _sendEmail(String emailAddress, String verifyCode) async {
-    final Email email = Email(
-      body: '인증코드를 확인해주세요. [$verifyCode]',
-      subject: '[커리어 한 잔] 회사 인증 메일입니다.',
-      recipients: [emailAddress],
-      cc: [], // 참조
-      bcc: [], // 숨은참조
-      attachmentPaths: [], // 첨부
-      isHTML: false,
-    );
-    try {
-      await FlutterEmailSender.send(email);
-      return true;
-    } catch (error) {
-      String message = "이메일 전송 에러: $error";
-      print(message);
-      await showAlertDialog(context, message);
+  // 전송 버튼 클릭 시
+  void sendPressed(emailAddress) async {
+    if (!emailAddress.endsWith(domain)) {
+      showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
+      return;
     }
-    return false;
+    try {
+      Map<String, dynamic> res = await verificationRequest(emailAddress);
+      if (res['success']) {
+        // 요청 성공
+        startTimer();
+        showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 확인해주세요.");
+      } else {
+        // 요청 실패
+        print('이메일 전송 실패: ${res["message"]}(${res["statusCode"]})');
+        showAlertDialog(
+          context,
+          '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
+        );
+      }
+      // 에러
+    } catch (error) {
+      print('에러: $error');
+      showAlertDialog(context, '에러: $error');
+    }
+    return;
   }
+
+  // 도메인 설정
+  void setDomain() {
+    // 넘겨받은 도메인 set하기!
+    domain = '@kookmin.ac.kr';  // 임시 도메인
+  }
+
+  void verifyPressed(verifyCode) async {
+    // 서버에 인증번호 전송, 비교
+    // 성공시
+    showAlertDialog(context, "회사 인증이 완료되었습니다.");
+  }
+
 
   @override
   void dispose() {
