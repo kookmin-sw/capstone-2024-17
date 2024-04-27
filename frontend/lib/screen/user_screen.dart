@@ -44,16 +44,27 @@ class _UserScreenState extends State<UserScreen> {
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: const Text(
-            '유저',
+            '내 프로필',
             style: TextStyle(fontSize: 24),
           ),
           toolbarHeight: 100,
+          /*
           leading: GestureDetector(
             onTap: () {
               Navigator.of(context).pop();
             },
             child: const Icon(Icons.arrow_back),
           ),
+          */
+          actions: [
+          IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              print('설정 버튼 클릭됨');
+            },
+          ),
+        ],
         ),
         body: Center(
             child: Column(
