@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/login_view_model.dart';
 import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
@@ -24,15 +23,6 @@ class _UserScreenState extends State<UserScreen> {
   
   @override
   Widget build(BuildContext context) {
-    LoginViewModel loginViewModel =
-        Provider.of<LoginViewModel>(context, listen: false);
-        /*
-    if (loginViewModel.user != null) {
-      isLogined = true;
-    } else {
-      isLogined = false;
-    }
-    */
 
     if (token == null) {
       isLogined = false;
@@ -73,13 +63,6 @@ class _UserScreenState extends State<UserScreen> {
             // 로그인 정보 표시
             Text('로그인됨: $isLogined'),
             Text('token: $token'),
-            Text('로그인 id: ${loginViewModel.user?.loginId}'),
-            Text(
-              '닉네임: ${loginViewModel.user?.nickname}',
-            ),
-            Text(
-              '로그인 타입: ${loginViewModel.user?.loginType}',
-            ),
 
             // storage 정보 표시
             ElevatedButton(
@@ -134,9 +117,6 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Future<void> logout(BuildContext context) async {
-    LoginViewModel loginViewModel =
-        Provider.of<LoginViewModel>(context, listen: false);
-    loginViewModel.logout();
     await storage.deleteAll().then((_) {
       setAccessToken();
     });

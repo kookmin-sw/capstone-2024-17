@@ -1,3 +1,4 @@
+import 'package:frontend/screen/test_screen.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:frontend/service/stomp_service.dart';
@@ -9,7 +10,6 @@ import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/login_view_model.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:frontend/screen/cafe_details.dart';
@@ -67,9 +67,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => LoginViewModel(user: null),
-        ), // provider로 감싸고 유저의 초기값 넣어주기
         Provider(
           create: (context) => allUsers,
         ),
