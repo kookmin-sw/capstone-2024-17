@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/verify_company_screen.dart';
+import 'package:frontend/widgets/rounded_img.dart';
 
 class CompanyItem extends StatelessWidget {
   // final int id;
@@ -15,6 +16,7 @@ class CompanyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Image logoImage = Image.network(logoInfo, fit: BoxFit.cover);
     return GestureDetector(
       onTap: () {
         print('탭됨: $companyName');
@@ -23,25 +25,22 @@ class CompanyItem extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => VerifyCompanyScreen(
-                        // companyId: id,
                         companyName: companyName,
-                        // logoImage: logoImage,
+                        logoImage: logoImage,
                       )));
         });
       },
       child: Card(
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 10,
-          ),
+          padding: const EdgeInsets.all(10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
-                child: Image.network(logoInfo, scale: 100,),
+                padding: const EdgeInsets.all(5),
+                child: RoundedImg(image: logoImage, size: 50),
               ),
+              const SizedBox(width: 10,),
               Expanded(
                 child: Text(
                   companyName,

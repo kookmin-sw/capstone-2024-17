@@ -2,14 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/widgets/profile_img.dart';
+import 'package:frontend/widgets/rounded_img.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
   final String companyName;
+  final Image logoImage;
 
   const VerifyCompanyScreen({
     super.key,
     required this.companyName,
+    required this.logoImage,
   });
 
   @override
@@ -71,8 +73,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
                 child: Column(children: <Widget>[
                   // 회사 로고
-                  const ProfileImg(logo: 'assets/logo.png',),
-                  // ProfileImg(logo: Image.network(src));
+                  RoundedImg(image: widget.logoImage, size: 100),
                   const SizedBox(
                       height: 20,
                     ),

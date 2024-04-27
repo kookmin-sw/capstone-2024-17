@@ -17,9 +17,9 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   // List<Map<String, dynamic>> companyList = [];
   // 검색 이전: 테스트를 위한 임의의 데이터
   List<Map<String, dynamic>> companyList = [
-      {'name': 'NAVER', 'logoUrl': 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0'},
-      {'name': '카카오', 'logoUrl': 'https://images.unsplash.com/photo-1488998427799-e3362cec87c3'},
-      {'name': 'Google', 'logoUrl': 'https://images.unsplash.com/photo-1491975474562-1f4e30bc9468'},
+      {'name': 'NAVER', 'logoUrl': 'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'},
+      {'name': '카카오', 'logoUrl': 'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'},
+      {'name': 'Google', 'logoUrl': 'https://images.unsplash.com/photo-1572059002053-8cc5ad2f4a38?q=80&w=2680&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
     ];
 
   @override
@@ -85,17 +85,6 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   }
 
   List<Widget> _buildCompanyItems() {
-
-    /*
-    if (companyList.isEmpty) {
-      return [
-        const CompanyItem(
-          companyName: '없어요',
-          logoInfo: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0'
-        )
-      ];
-    }
-    */
 
     return companyList.map((company) {
       String companyName = company['name'];
