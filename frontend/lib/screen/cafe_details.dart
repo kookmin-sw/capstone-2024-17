@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
 
 const List<Map<String, dynamic>> sampleUserList = [
   {
