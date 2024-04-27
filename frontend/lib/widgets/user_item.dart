@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/user_details.dart';
+import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
 
 class UserItem extends StatelessWidget {
@@ -106,7 +106,7 @@ class _ReqDialogState extends State<ReqDialog> {
     return Dialog(
       child: isNext
           ? const ChoosePurpose()
-          : UserDetails(
+          : UserDetailsModal(
               nickname: widget.nickname,
               company: widget.company,
               position: widget.position,

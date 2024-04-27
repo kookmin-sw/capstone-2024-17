@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 
-class UserDetails extends StatelessWidget {
-  const UserDetails({
+class UserDetailsModal extends StatelessWidget {
+  const UserDetailsModal({
     super.key,
     required this.nickname,
     required this.company,
