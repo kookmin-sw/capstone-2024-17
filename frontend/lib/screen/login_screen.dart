@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await storage.write(
           key: 'authToken', value: res["data"]["authToken"]);
       showAlertDialog(context, res['message']);
-      // 현재 페이지를 대신해 유저 페이지로 navigate
+      // 유저 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
       Future.delayed(Duration.zero, () {
         Navigator.pushNamedAndRemoveUntil(context, '/user', (route) => false);
       });
