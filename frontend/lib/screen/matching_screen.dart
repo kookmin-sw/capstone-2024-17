@@ -98,14 +98,34 @@ class _MatchingWidgetState extends State<Matching> {
 
             ),
 //here
+          //이부분은 유저 상세보기 하는 그 코드 쓰면 될 듯
             Padding(
-              padding: EdgeInsets.only(top: 80), // 버튼 주위의 패딩 설정
+              padding: const EdgeInsets.only(top: 80), // 버튼 주위의 패딩 설정
               child: SizedBox(
                 width: 350, // 버튼의 너비 설정
                 height: 80, // 버튼의 높이 설정
                 child: ElevatedButton(
                   onPressed: () {
-                    print('Button clicked!');
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('정말 종료하시겠습니까?'),
+                        content: Text('커피챗을 종료하고 나가시겠습니까?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // 다이얼로그 닫기
+                              Navigator.of(context).pop(); // 화면 닫기
+                            },
+                            child: Text('예'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(), // 다이얼로그 닫기
+                            child: Text('아니오'),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20), // 버튼의 내부 패딩 설정
@@ -119,6 +139,7 @@ class _MatchingWidgetState extends State<Matching> {
                 ),
               ),
             ),
+
 
 
           ],
