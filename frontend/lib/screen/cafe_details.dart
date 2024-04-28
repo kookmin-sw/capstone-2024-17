@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,10 +20,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: CafeDetails(
-        cafeId:"1", cafeName: "스타벅스 국민대점", cafeDetailsArguments: ['정보 없음'],), // 임시로 cafeId, cafeName 지정
+        cafeId: "1",
+        cafeName: "스타벅스 국민대점",
+        cafeDetailsArguments: ['정보 없음'],
+      ), // 임시로 cafeId, cafeName 지정
     );
   }
 }
+
 const List<Map<String, dynamic>> sampleUserList = [
   {
     "nickname": "뽕순이",
@@ -52,13 +56,12 @@ const List<Map<String, dynamic>> sampleUserList = [
 ];
 
 class CafeDetails extends StatefulWidget {
-
   final String cafeId;
   final String cafeName;
   final List<String> cafeDetailsArguments;
 
-
   const CafeDetails({
+    super.key,
     this.cafeId = "defaultCafeId",
     this.cafeName = "defaultCafeName",
     this.cafeDetailsArguments = const [],
@@ -77,19 +80,20 @@ class _CafeDetailsState extends State<CafeDetails>
 
   void _startTimer() {
     print("타이머 시작");
-    _timer = Timer.periodic(Duration(minutes: 20), (Timer timer) async {
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    _timer = Timer.periodic(const Duration(minutes: 20), (Timer timer) async {
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       double cafeLat = double.parse(widget.cafeDetailsArguments[6]); // 카페 위도
       double cafeLong = double.parse(widget.cafeDetailsArguments[7]); // 카페 경도
 
-      final latlong2.Distance distance = latlong2.Distance();
+      const latlong2.Distance distance = latlong2.Distance();
       final double meter = distance.as(
           latlong2.LengthUnit.Meter,
           latlong2.LatLng(position.latitude, position.longitude),
           latlong2.LatLng(cafeLat, cafeLong));
 
-      if (meter > 500){
+      if (meter > 500) {
         _stopTimer();
         print("어플의 지원 범위인 500m를 벗어났습니다.");
       }
@@ -103,10 +107,12 @@ class _CafeDetailsState extends State<CafeDetails>
 
   Future<void> getPlacePhotoUri() async {
     try {
-      PlacesDetailsResponse place = await places.getDetailsByPlaceId(widget.cafeDetailsArguments[9]);
+      PlacesDetailsResponse place =
+          await places.getDetailsByPlaceId(widget.cafeDetailsArguments[9]);
       if (place.isOkay && place.result.photos.isNotEmpty) {
         String photoReference = place.result.photos[0].photoReference;
-        photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
+        photoUrl =
+            'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
         setState(() {});
       } else {
         throw Exception('No photo found for this place.');
@@ -132,7 +138,7 @@ class _CafeDetailsState extends State<CafeDetails>
     tabController!.addListener(() {
       // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
       if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId as String); //위도 경도로 사용자 요청?
+        waitForUserList(widget.cafeId); //위도 경도로 사용자 요청?
       }
     });
   }
@@ -166,16 +172,16 @@ class _CafeDetailsState extends State<CafeDetails>
           Center(
             child: photoUrl.isNotEmpty
                 ? Image.network(
-              photoUrl,
-              width: 450,
-              height: 250,
-              fit: BoxFit.cover,
-            )
+                    photoUrl,
+                    width: 450,
+                    height: 250,
+                    fit: BoxFit.cover,
+                  )
                 : Image.asset(
-              "assets/cafe.jpeg",
-              width: 450,
-              fit: BoxFit.fitWidth,
-            ),
+                    "assets/cafe.jpeg",
+                    width: 450,
+                    fit: BoxFit.fitWidth,
+                  ),
           ),
           TabBar(
             controller: tabController,
@@ -225,18 +231,18 @@ class _CafeDetailsState extends State<CafeDetails>
                     itemBuilder: (context, index) {
                       return userList.isEmpty
                           ? UserItem(
-                        nickname: sampleUserList[index]["nickname"],
-                        company: sampleUserList[index]["companyName"],
-                        position: sampleUserList[index]["positionName"],
-                        introduction: sampleUserList[index]
-                        ["introduction"],
-                      )
+                              nickname: sampleUserList[index]["nickname"],
+                              company: sampleUserList[index]["companyName"],
+                              position: sampleUserList[index]["positionName"],
+                              introduction: sampleUserList[index]
+                                  ["introduction"],
+                            )
                           : UserItem(
-                        nickname: userList[index].nickname,
-                        company: userList[index].companyName,
-                        position: userList[index].positionName,
-                        introduction: userList[index].introduction,
-                      );
+                              nickname: userList[index].nickname,
+                              company: userList[index].companyName,
+                              position: userList[index].positionName,
+                              introduction: userList[index].introduction,
+                            );
                     },
                   ),
                 ],
