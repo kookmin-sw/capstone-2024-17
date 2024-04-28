@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
+import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 
 class UserScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _UserScreenState extends State<UserScreen> {
   String position = '';
   int temperature = 0;
   String introduction = '';
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -29,6 +31,13 @@ class _UserScreenState extends State<UserScreen> {
       print('token: $token');
       setProfile(token);
     });
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -63,7 +72,7 @@ class _UserScreenState extends State<UserScreen> {
         // mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           if (isLogined)
-            Flexible(
+            Expanded(
                 child: Container(
                     // alignment: Alignment.center,
                     margin: const EdgeInsets.symmetric(
@@ -180,18 +189,51 @@ class _UserScreenState extends State<UserScreen> {
                                 const Row(
                                   children: <Widget>[Text('나의 커피온도')],
                                 ),
-                                Text('temperature: $temperature'),
+                                Row(children: <Widget>[
+                                  Expanded(
+                                    child: BigThermometer(
+                                        temperature: temperature),
+                                  )
+                                ]),
                               ])),
 
                           // 유저 자기소개
                           Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(children: <Widget>[
-                                const Row(
-                                  children: <Widget>[Text('자기소개')],
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(children: <Widget>[
+                              const Row(
+                                children: <Widget>[Text('자기소개')],
+                              ),
+                              Row(children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                    padding: const EdgeInsets.all(10),
+                                    height: 90,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey, width: 0.6),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Scrollbar(
+                                      controller: _scrollController,
+                                      thumbVisibility: true,
+                                      child: SingleChildScrollView(
+                                        controller: _scrollController,
+                                        scrollDirection: Axis.vertical,
+                                        child: Text(
+                                          introduction,
+                                          // textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                Text(introduction),
-                              ])),
+                              ]),
+                            ]),
+                          ),
                         ])),
 
                         // 프로필 수정 버튼
@@ -270,7 +312,7 @@ class _UserScreenState extends State<UserScreen> {
     position = '웹 풀스택';
     temperature = 46;
     introduction =
-        '긴 텍스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ';
+        '긴 텍스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ';
     return;
   }
 }
