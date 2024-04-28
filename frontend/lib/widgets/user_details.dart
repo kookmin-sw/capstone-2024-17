@@ -61,7 +61,7 @@ class UserDetails extends StatelessWidget {
         ),
         Container(
           width: 280,
-          margin: const EdgeInsets.symmetric(vertical: 20),
+          margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
