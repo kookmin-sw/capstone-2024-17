@@ -70,29 +70,45 @@ class _MatchingWidgetState extends State<Matching> {
                           color: Colors.black),
                     ),
                   ),Positioned(
-                    top: 200, // 텍스트 상위 여백 설정
+                    top: 200,
                     left: 80,
                     child: Container(
-                      width: 140, // 원의 너비
-                      height: 140, // 원의 높이
+                      width: 140,
+                      height: 140,
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle, // 원 모양 설정
-                        color: Colors.white ,
+                        shape: BoxShape.circle,
+                        color: Colors.white,
                       ),
-                    ),
-                  ),Positioned(
-                    top: 200, // 텍스트 상위 여백 설정
-                    right: 80,
-                    child: Container(
-                      width: 140, // 원의 너비
-                      height: 140, // 원의 높이
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle, // 원 모양 설정
-                        color: Colors.grey ,
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/logo.png', // 이미지의 경로
+                          width: 140,
+                          height: 140,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
-
+                  Positioned(
+                    top: 200,
+                    right: 80,
+                    child: Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/logo.png', // 이미지의 경로
+                          width: 140,
+                          height: 140,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
 
               ),
