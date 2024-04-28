@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String nickname;

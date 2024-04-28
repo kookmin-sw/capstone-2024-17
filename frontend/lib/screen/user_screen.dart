@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
