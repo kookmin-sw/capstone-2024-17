@@ -155,42 +155,6 @@ Future<Map<String, dynamic>> verificationRequest(String email) async {
 
 // 인증코드로 인증
 Future<Map<String, dynamic>> verification(String email, String authCode) async {
-  /*
-  final token = (await storage.read(key: 'authToken')) ?? '';
-  final payload = '{"email":"$email", "authCode":"$authCode"}';
-  final request = http.StreamedRequest(
-    'GET',
-    Uri.https(baseUrl, '/email/verification',),
-  );
-  
-  request.headers['Content-type'] = 'application/json';
-  request.headers['Accept'] = 'application/json';
-  request.headers['Authorization'] = 'Bearer $token';
-
-  try {
-    request.sink
-      ..add(utf8.encode(payload))
-      ..close();
-    final streamedResponse = await request.send();
-    final res = await http.Response.fromStream(streamedResponse);
-  */
-  /*
-  final queryParameters = {
-    'email': email,
-    'authCode': authCode,
-  };
-  final url = Uri.http(baseUrl, '/email/verification', queryParameters);
-  final token = (await storage.read(key: 'authToken')) ?? '';
-  try {
-    final res = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-    );
-    */
   final url = Uri.parse('$baseUrl/email/verification');
   final token = (await storage.read(key: 'authToken')) ?? '';
   final data = jsonEncode({
