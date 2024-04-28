@@ -24,6 +24,14 @@ class Matching extends StatefulWidget {
 }
 
 class _MatchingWidgetState extends State<Matching> {
+
+  //무직이나 취준일 때 default 이미지 필요할 듯
+  var company1 = 'Samsung';
+  var company2 = 'Coupang';
+  var imgpath1 = 'bean(1).png';
+  var imgpath2 = 'cafe.jpeg';
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +71,7 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      'goodnavers X cupang',
+                      '${company1} X ${company2}', // 회사 이름이 길어졌을 때 논의 필요
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -81,7 +89,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/logo.png', // 이미지의 경로
+                          'assets/${imgpath1}', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -101,7 +109,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/logo.png', // 이미지의 경로
+                          'assets/${imgpath2}', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -110,12 +118,8 @@ class _MatchingWidgetState extends State<Matching> {
                     ),
                   )
                 ],
-
               ),
-
             ),
-
-            //이부분은 유저 상세보기 하는 그 코드 쓰면 될 듯
             Padding(
               padding: const EdgeInsets.only(top: 80), // 버튼 주위의 패딩 설정
               child: SizedBox(
@@ -137,13 +141,9 @@ class _MatchingWidgetState extends State<Matching> {
                 ),
               ),
             ),
-
           ],
-
         ),
-
       ),
-
     );
   }
 }
