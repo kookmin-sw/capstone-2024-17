@@ -100,32 +100,19 @@ class _UserScreenState extends State<UserScreen> {
                                 Flexible(
                                     child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Flexible(
-                                              child: Text(
-                                                nickname,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                            TextButton(
-                                                onPressed: () {},
-                                                style: TextButton.styleFrom(
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero,
-                                                  tapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                ),
-                                                child: const Text('수정')),
-                                          ]),
+                                      Row(children: <Widget>[
+                                        Flexible(
+                                          child: Text(
+                                            nickname,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ]),
                                       const SizedBox(
                                         height: 20,
                                       ),
@@ -142,16 +129,6 @@ class _UserScreenState extends State<UserScreen> {
                                             const SizedBox(
                                               width: 10,
                                             ),
-                                            TextButton(
-                                                onPressed: () {},
-                                                style: TextButton.styleFrom(
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero,
-                                                  tapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                ),
-                                                child: const Text('수정')),
                                           ]),
                                       const SizedBox(
                                         height: 10,
@@ -166,16 +143,6 @@ class _UserScreenState extends State<UserScreen> {
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            TextButton(
-                                                onPressed: () {},
-                                                style: TextButton.styleFrom(
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero,
-                                                  tapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                ),
-                                                child: const Text('수정')),
                                           ])
                                     ])),
                               ],
@@ -213,8 +180,7 @@ class _UserScreenState extends State<UserScreen> {
                                     padding: const EdgeInsets.all(10),
                                     height: 90,
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey, width: 0.6),
+                                      border: Border.all(color: Colors.grey),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Scrollbar(
