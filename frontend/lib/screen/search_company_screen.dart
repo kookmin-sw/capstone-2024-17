@@ -13,14 +13,27 @@ class SearchCompanyScreen extends StatefulWidget {
 }
 
 class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
-  final TextEditingController _companyKeywordController = TextEditingController();
+  final TextEditingController _companyKeywordController =
+      TextEditingController();
   // List<Map<String, dynamic>> companyList = [];
   // 검색 이전: 테스트를 위한 임의의 데이터
   List<Map<String, dynamic>> companyList = [
-      {'name': 'NAVER', 'logoUrl': 'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'},
-      {'name': '카카오', 'logoUrl': 'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'},
-      {'name': 'Google', 'logoUrl': 'https://images.unsplash.com/photo-1572059002053-8cc5ad2f4a38?q=80&w=2680&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
-    ];
+    {
+      'name': 'NAVER',
+      'logoUrl':
+          'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'
+    },
+    {
+      'name': '카카오',
+      'logoUrl':
+          'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'
+    },
+    {
+      'name': 'Google',
+      'logoUrl':
+          'https://images.unsplash.com/photo-1572059002053-8cc5ad2f4a38?q=80&w=2680&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +81,15 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.only(bottom: 20),
-                  children: companyList.isEmpty ? [
-                    Container(alignment: Alignment.center, margin: const EdgeInsets.all(60), child: const Text('검색 결과가 없습니다.'),),
-                    ] : _buildCompanyItems(),
+                  children: companyList.isEmpty
+                      ? [
+                          Container(
+                            alignment: Alignment.center,
+                            margin: const EdgeInsets.all(60),
+                            child: const Text('검색 결과가 없습니다.'),
+                          ),
+                        ]
+                      : _buildCompanyItems(),
                 ),
               ),
             ])));
@@ -85,7 +104,6 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   }
 
   List<Widget> _buildCompanyItems() {
-
     return companyList.map((company) {
       String companyName = company['name'];
       String logoInfo = company['logoUrl'];
@@ -104,8 +122,7 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
       if (res['success']) {
         // 요청 성공
         setState(() {
-          companyList =
-              List<Map<String, dynamic>>.from(res['data']);
+          companyList = List<Map<String, dynamic>>.from(res['data']);
         });
       } else {
         // 예외처리
@@ -119,7 +136,7 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
       print('회사정보 검색 실패: $error');
       showAlertDialog(context, '회사정보 검색 실패: $error');
     }
-    
+
     setState(() => {});
   }
 

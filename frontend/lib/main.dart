@@ -85,8 +85,9 @@ class MyApp extends StatelessWidget {
           '/signin': (BuildContext context) => const LoginScreen(),
           '/user': (BuildContext context) => const UserScreen(),
           '/cafe': (BuildContext context) => const CafeDetails(),
-          '/searchcompany': (BuildContext context) => const SearchCompanyScreen(),
-      },
+          '/searchcompany': (BuildContext context) =>
+              const SearchCompanyScreen(),
+        },
       ),
     );
   }

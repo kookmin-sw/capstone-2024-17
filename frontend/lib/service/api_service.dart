@@ -91,7 +91,7 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
   });
   try {
     http.Response res = await http.post(url,
-      headers: {"Content-Type": "application/json"}, body: data);
+        headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
     print(jsonData);
     return jsonData;
@@ -103,7 +103,6 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
 
 // 키워드로 회사 검색
 Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
-
   const endpointUrl = '$baseUrl/company/search';
 
   String queryString = Uri(queryParameters: {
@@ -113,9 +112,11 @@ Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
   final url = '$endpointUrl?$queryString';
 
   try {
-    http.Response res = await http.get(Uri.parse(url), headers: {
-      "Content-Type": "application/json",
-    },
+    http.Response res = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+      },
     );
     Map<String, dynamic> jsonData = jsonDecode(res.body);
     return jsonData;
@@ -198,11 +199,12 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
   });
   try {
     http.Response res = await http.post(url,
-    headers: {
-      "Content-Type": "application/json",
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token'
-    }, body: data);
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
     print(jsonData);
     return jsonData;

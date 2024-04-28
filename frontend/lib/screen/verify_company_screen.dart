@@ -58,13 +58,20 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         body: Container(
             alignment: Alignment.center,
             margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child:  Column(children: <Widget>[
-              const Row(children: <Widget>[
-                Flexible(child: Text("인증코드를 전송할 회사 이메일을 입력하세요.",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ), overflow: TextOverflow.visible,),
-              ),],),
+            child: Column(children: <Widget>[
+              const Row(
+                children: <Widget>[
+                  Flexible(
+                    child: Text(
+                      "인증코드를 전송할 회사 이메일을 입력하세요.",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -72,27 +79,28 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
               // 회사정보 컨테이너
               Container(
                 alignment: Alignment.center,
-                margin: const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
                 child: Column(children: <Widget>[
                   // 회사 로고
                   RoundedImg(image: widget.logoImage, size: 100),
                   const SizedBox(
-                      height: 20,
-                    ),
+                    height: 20,
+                  ),
 
                   // 회사 이름
-                   Text(widget.companyName,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                  Text(widget.companyName,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(
+                    height: 5,
+                  ),
 
                   // 회사 도메인
-                  Text("_______$domain",
-                      style: const TextStyle(fontSize: 16)),
+                  Text("_______$domain", style: const TextStyle(fontSize: 16)),
                   const SizedBox(
-                      height: 20,
-                    ),
+                    height: 20,
+                  ),
                 ]),
               ),
 
@@ -101,20 +109,16 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                 controller: _emailIdController,
                 decoration: InputDecoration(
                   hintText: '이메일 입력',
-                  suffixIcon: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // double iconWidth = constraints.maxWidth / 4;
-                      return SizedBox(
-                        // width: iconWidth,
-                        child: TextButton(
-                              onPressed: () =>
-                                  sendPressed(_emailIdController.text),
-                              child: const Text('전송',
-                                  style: TextStyle(fontSize: 16)),
-                            ),
-                        );
-                    }
-                  ),
+                  suffixIcon: LayoutBuilder(builder: (context, constraints) {
+                    // double iconWidth = constraints.maxWidth / 4;
+                    return SizedBox(
+                      // width: iconWidth,
+                      child: TextButton(
+                        onPressed: () => sendPressed(_emailIdController.text),
+                        child: const Text('전송', style: TextStyle(fontSize: 16)),
+                      ),
+                    );
+                  }),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -152,8 +156,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                         TextButton(
                           onPressed: () =>
                               verifyPressed(_verifyCodeController.text),
-                          child: const Text('인증',
-                              style: TextStyle(fontSize: 16)),
+                          child:
+                              const Text('인증', style: TextStyle(fontSize: 16)),
                         ),
                       ],
                     ),
@@ -211,7 +215,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       if (res['success']) {
         // 요청 성공
         startTimer();
-        sentEmailAddress = email;  // 이메일이 발송된 이메일주소 저장
+        sentEmailAddress = email; // 이메일이 발송된 이메일주소 저장
         showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 입력해주세요.");
       } else {
         // 요청 실패
@@ -232,7 +236,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   // 도메인 설정
   void setDomain() {
     // 넘겨받은 도메인 set하기!
-    domain = '@kookmin.ac.kr';  // 임시 도메인
+    domain = '@kookmin.ac.kr'; // 임시 도메인
   }
 
   // 인증코드 입력 후 인증버튼 클릭 시
@@ -242,7 +246,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       return;
     }
     try {
-      Map<String, dynamic> res = await verification(sentEmailAddress, verifyCode);
+      Map<String, dynamic> res =
+          await verification(sentEmailAddress, verifyCode);
       if (res['success']) {
         // 요청 성공
         showAlertDialog(context, "회사 인증이 완료되었습니다.");
