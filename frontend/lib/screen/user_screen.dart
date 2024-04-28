@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
+import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/widgets/bottom_text_button.dart';
 
 class UserScreen extends StatefulWidget {
@@ -24,8 +25,10 @@ class _UserScreenState extends State<UserScreen> {
   @override
   void initState() {
     super.initState();
-    setAccessToken();
-    print('token: $token');
+    setAccessToken().then((token) {
+      print('token: $token');
+      setProfile(token);
+    });
   }
   
   @override
@@ -45,7 +48,12 @@ class _UserScreenState extends State<UserScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
-              print('설정 버튼 클릭됨');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(),
+                ),
+              );
             },
           ),
         ],
@@ -62,15 +70,7 @@ class _UserScreenState extends State<UserScreen> {
                 Text('position: $position'),
                 Text('temperature: $temperature'),
                 Text('introduction: $introduction'),
-                 // 로그아웃 버튼
-                  ElevatedButton(
-                onPressed: () async {
-                  await logout(context).then((_) { 
-                    initState();
-                  });
-                },
-                child: const Text('로그아웃'),
-              ),
+                 
                 BottomTextButton(
                       text: '프로필 정보 수정',
                       handlePressed: () {
@@ -111,12 +111,7 @@ class _UserScreenState extends State<UserScreen> {
   );
   }
 
-  Future<void> logout(BuildContext context) async {
-    await storage.deleteAll().then((_) {
-      setAccessToken();
-    });
-    return;
-  }
+  
 
   Future<String?> setAccessToken() async {
     token = await storage.read(key: 'authToken');
@@ -124,5 +119,17 @@ class _UserScreenState extends State<UserScreen> {
       isLogined = (token != null);
     });
     return token;
+  }
+
+  Future<void> setProfile(String? token) async {
+    // 토큰으로 프로필 get하는 코드
+    // 임의의 프로필
+    nickname = '뿡순이';
+    logoInfo = 'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
+    companyName = '쿠팡';
+    position = '웹 풀스택';
+    temperature = 46;
+    introduction = '긴 텍스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ';
+    return;
   }
 }
