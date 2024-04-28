@@ -24,12 +24,11 @@ class KakaoLogin implements SocialLogin {
       if (res['success'] == true) {
         // 요청 성공
         const storage = FlutterSecureStorage();
-        await storage.write(
-            key: 'authToken', value: res["data"]["authToken"]);
+        await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       } else {
         // 실패
         print('카카오 로그인 실패: ${res['message']}(${res['code']})');
-      } 
+      }
     } catch (error) {
       print('카카오 로그인 에러: $error');
       return null;

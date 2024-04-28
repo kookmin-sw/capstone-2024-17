@@ -9,7 +9,6 @@ import 'package:frontend/widgets/kakao_login_widget.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -157,8 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (res['success'] == true) {
       // 요청 성공
       const storage = FlutterSecureStorage();
-      await storage.write(
-          key: 'authToken', value: res["data"]["authToken"]);
+      await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       showAlertDialog(context, res['message']);
       // 유저 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
       Future.delayed(Duration.zero, () {
@@ -168,6 +166,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // 실패
       showAlertDialog(
           context, '로그인 실패: ${res['message']}(${res['statusCode']})');
-    } 
+    }
   }
 }
