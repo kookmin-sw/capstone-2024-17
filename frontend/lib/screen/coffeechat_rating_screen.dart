@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'map_place.dart';
 
 void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -98,6 +101,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               child: GestureDetector(
                 onTap: selectedIndex >= 0 ? () {
                   Navigator.pop(context); // 현재 화면 닫기
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Google_Map()));
 
                 } : null, // selectedIndex가 0 이상인 경우에만 클릭 가능하도록 설정
                 child: Text(
