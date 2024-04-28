@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {
-  runApp(MaterialApp(
-    home: mapScreen(),
-  ),
+  runApp(
+    MaterialApp(
+      home: mapScreen(),
+    ),
   );
 }
+
 class mapScreen extends StatefulWidget {
   @override
   _mapScreenState createState() => _mapScreenState();

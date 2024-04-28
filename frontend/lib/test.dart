@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/map.dart';
 
-
-
 void main() {
   runApp(const MyApp());
 }
