@@ -6,7 +6,6 @@ import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/chat_item.dart';
 import 'package:frontend/main.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
 
 class ChatScreen extends StatefulWidget {
   final int chatroomId;
@@ -33,8 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // stompClient가 activate되고 나면(onActivated가 호출되고 나면) chatroom을 sub한다
-    subscribeChatroom();
+    subscribeChatroom(); // stompClient가 activate되고 난 후에 가능
     waitGetChatList(widget.chatroomId);
   }
 
@@ -49,15 +47,13 @@ class _ChatScreenState extends State<ChatScreen> {
             'Authorization': 'Bearer $token'
           },
           callback: (frame) {
-            print('sub 성공!');
-            print(frame.body);
+            // print('sub 성공!');
+            // print(frame.body);
             Map<String, dynamic> jsonData = jsonDecode(frame.body!);
             setState(() {
               chats.add(jsonData);
             });
           });
-    } else {
-      print('sub 실패: stompClient가 null');
     }
     return;
   }
@@ -119,22 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // 채팅방
             Expanded(
               child: ListView(
-                children: /*const <Widget>[
-                  // 날짜표시
-                  ChatDate(date: '2024년 04월 08일'),
-                  // 채팅
-                  ChatItem(
-                      sender: 'me',
-                      message: '마라탕',
-                      date: '2024년 04월 08일',
-                      time: '11:48'),
-                  ChatItem(
-                      sender: 'other',
-                      message: '네 거기서 봬요!',
-                      date: '2024년 04월 08일',
-                      time: '11:48'),
-                ],*/
-                    buildChatItems(),
+                children: buildChatItems(),
               ),
             ),
 
@@ -198,11 +179,9 @@ class _ChatScreenState extends State<ChatScreen> {
           },
           body: data,
         );
-        print('pub 성공!');
+        // print('pub 성공!');
         _sendingMsgController.clear();
         setState(() {});
-      } else {
-        print('pub 실패: stompClient가 null');
       }
     }
   }
@@ -225,13 +204,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> waitGetChatList(int chatroomId) async {
     Map<String, dynamic> res = await getChatList(chatroomId);
-    print('결과: $res');
     if (res['success']) {
       // 요청 성공
       setState(() {
         chats =
             List<Map<String, dynamic>>.from(res['data']['messageResponses']);
-        // print('chats: ${chats[0]}');
       });
     } else {
       // 실패: 예외처리
