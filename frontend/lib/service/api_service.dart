@@ -4,31 +4,44 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/user_model.dart';
 
-// 임의로 baseUrl 지정 (추후 서버 주소로 변경 필요)
-// const baseUrl = "https://localhost:8080";
 const baseUrl = "http://43.203.218.27:8080";
 const storage = FlutterSecureStorage();
+const userToken =
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
 
-// 카페에 있는 유저 목록 GET 요청
-Future<List<UserModel>> getUserList(String cafeId) async {
-  List<UserModel> userList = [];
-  final url = Uri.parse("$baseUrl/cafe/$cafeId");
-  final response = await http.get(url);
+// 주변 카페에 있는 모든 유저 목록 받아오기 - http post 요청
+Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
+  try {
+    final url = Uri.parse("$baseUrl/cafe/get-users");
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({"cafeList": cafeList}),
+    );
 
-  if (response.statusCode == 200) {
-    List<dynamic> users = jsonDecode(response.body);
+    Map<String, List<UserModel>> allUsers = {};
+    Map<String, dynamic> jsonResult =
+        jsonDecode(utf8.decode(response.bodyBytes));
 
-    for (var user in users) {
-      final userModel = UserModel.fromJson(user);
-      userList.add(userModel);
-    }
-    return userList;
+    jsonResult.forEach((cafe, userList) {
+      List<Map<String, dynamic>> userMapList =
+          userList.cast<Map<String, dynamic>>();
+      allUsers[cafe] =
+          userMapList.map((user) => UserModel.fromJson(user)).toList();
+    });
+
+    return allUsers;
+  } catch (error) {
+    print("HTTP POST error: $error");
+    throw Error();
   }
-  throw Error();
 }
 
 // 회원가입
-Future<Map<String, dynamic>> signup(String loginId, String password,
+Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
   final url = Uri.parse('$baseUrl/auth/signUp');
   final data = jsonEncode({
@@ -42,6 +55,7 @@ Future<Map<String, dynamic>> signup(String loginId, String password,
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
+    print(jsonData);
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -97,8 +111,7 @@ Future<Map<String, dynamic>> getChatList(int chatroomId) async {
   final queryParameters = {
     'chatroomId': chatroomId,
   };
-  final url =
-      Uri.https(baseUrl, '/message/list', queryParameters);
+  final url = Uri.https(baseUrl, '/message/list', queryParameters);
 
   final token = (await storage.read(key: 'authToken')) ?? '';
   try {
@@ -110,6 +123,22 @@ Future<Map<String, dynamic>> getChatList(int chatroomId) async {
         'Authorization': 'Bearer $token'
       },
     );
+    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+} // 카카오톡 로그인
+
+Future<Map<String, dynamic>> kakaoLogin(String token) async {
+  final url = Uri.parse('$baseUrl/auth/kakao/signIn');
+  final data = jsonEncode({
+    'accessToken': token,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
     return jsonData;
   } catch (error) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class IconedTextfield extends StatelessWidget {
-  final Icon icon;
+  final Icon? icon;
   final String hintText;
   final TextEditingController controller;
   final bool isSecret;

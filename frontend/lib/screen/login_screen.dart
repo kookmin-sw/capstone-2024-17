@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
-import 'package:frontend/widgets/bottom_text_secondary_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:frontend/model/user_model2.dart';
@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +22,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _loginIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
 
   // 카카오 로그인 버튼을 누르면 돌아오는 콜백함수
   void _handleKakaoLoginPressed() {
@@ -169,10 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
     Map<String, dynamic> res = await login(loginId, password);
     if (res['success'] == true) {
       // 요청 성공
-      LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+      LoginViewModel loginViewModel =
+          Provider.of<LoginViewModel>(context, listen: false);
       const storage = FlutterSecureStorage();
-      await storage.write(
-          key: 'authToken', value: res["data"]["authToken"]);
+      await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       // 아이디와 닉네임, 로그인타입으로 UserModel 만들어서 provider에 로그인
       UserModel2 user = UserModel2(loginId, 'none', 'none');
       loginViewModel.login(user);
@@ -185,6 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // 실패
       showAlertDialog(
           context, '로그인 실패: ${res['message']}(${res['statusCode']})');
-    } 
+    }
   }
 }
