@@ -2,13 +2,19 @@ package com.coffee.backend.domain.match.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.ReviewDto;
+import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
 import com.coffee.backend.domain.user.entity.User;
+import com.coffee.backend.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RequiredArgsConstructor
 @Controller
@@ -42,5 +48,11 @@ public class MatchController {
     public void cancelMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
         log.info("Cancel Message Catch!!");
         matchService.cancelMatchRequest(dto);
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<Review>> submitReview(@RequestBody ReviewDto dto) {
+        Review response = matchService.submitReview(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
