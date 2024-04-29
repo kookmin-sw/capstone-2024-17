@@ -67,10 +67,17 @@ class CoffeechatReqList extends StatelessWidget {
         ),
         body: const Column(
           children: [
-            TabBar(tabs: [
-              Tab(text: '보낸 요청'),
-              Tab(text: '받은 요청'),
-            ]),
+            TabBar(
+              tabs: [
+                Tab(text: '보낸 요청'),
+                Tab(text: '받은 요청'),
+              ],
+              indicatorColor: Color(0xff212121),
+              labelStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
             Expanded(
               child: TabBarView(children: [
                 SentReq(),
