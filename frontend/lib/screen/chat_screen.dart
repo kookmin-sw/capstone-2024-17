@@ -23,7 +23,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final storage = const FlutterSecureStorage();
-  List<dynamic> chats = [];
+  List<Map<String, dynamic>> chats = [];
   final TextEditingController _sendingMsgController = TextEditingController();
   final ChatService _chatService = ChatService();
 
@@ -175,7 +175,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Widget> _buildChatItems() {
     // 받아온 각 chat들의 정보를 ChatItem으로 만들어 반환
     return chats.map((chat) {
-      String sender = chat['senderId'];
+      String sender = chat['senderId'].toString();
       String message = chat['content'];
       String date = chat['datetime'].substring(0, 13);
       String time = chat['datetime'].substring(14, 19);
@@ -193,8 +193,9 @@ class _ChatScreenState extends State<ChatScreen> {
     if (res['success']) {
       // 요청 성공
       setState(() {
-        chats = List<Map<String, dynamic>>.from(
-            res['data']['messageResponses']);
+        chats =
+            List<Map<String, dynamic>>.from(res['data']['messageResponses']);
+        // print('chats: ${chats[0]}');
       });
     } else {
       // 실패: 예외처리

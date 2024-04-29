@@ -108,12 +108,12 @@ Future<Map<String, dynamic>> getChatroomlist() async {
 
 // 해당 채팅방의 채팅 목록을 get
 Future<Map<String, dynamic>> getChatList(int chatroomId) async {
-  const endpoiintUrl = '$baseUrl/message/list';
+  const endpointUrl = '$baseUrl/message/list';
 
   String queryString = Uri(queryParameters: {
-    'chatroomId': chatroomId,
+    'chatroom_id': chatroomId.toString(),
   }).query;
-  final url = '$endpoiintUrl?$queryString';
+  final url = '$endpointUrl?$queryString';
 
   final token = (await storage.read(key: 'authToken')) ?? '';
   try {
