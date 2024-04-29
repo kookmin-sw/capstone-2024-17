@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/user_item.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:geolocator/geolocator.dart';
@@ -61,6 +61,7 @@ class CafeDetails extends StatefulWidget {
   final List<String> cafeDetailsArguments;
 
   const CafeDetails({
+    super.key,
     this.cafeId = "defaultCafeId",
     this.cafeName = "defaultCafeName",
     this.cafeDetailsArguments = const [],
@@ -86,7 +87,7 @@ class _CafeDetailsState extends State<CafeDetails>
       double cafeLat = double.parse(widget.cafeDetailsArguments[6]); // 카페 위도
       double cafeLong = double.parse(widget.cafeDetailsArguments[7]); // 카페 경도
 
-      final latlong2.Distance distance = latlong2.Distance();
+      const latlong2.Distance distance = latlong2.Distance();
       final double meter = distance.as(
           latlong2.LengthUnit.Meter,
           latlong2.LatLng(position.latitude, position.longitude),
@@ -137,7 +138,7 @@ class _CafeDetailsState extends State<CafeDetails>
     tabController!.addListener(() {
       // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
       if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId as String); //위도 경도로 사용자 요청?
+        waitForUserList(widget.cafeId); //위도 경도로 사용자 요청?
       }
     });
   }

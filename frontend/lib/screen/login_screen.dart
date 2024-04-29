@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
-import 'package:frontend/widgets/bottom_text_button.dart';
-import 'package:frontend/widgets/bottom_text_secondary_button.dart';
+import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/button/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
 import 'package:frontend/login_view_model.dart';
 import 'package:frontend/model/user_model2.dart';
