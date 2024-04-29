@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MatchDto {
-    private String requestId;
+public class MatchRequestDto {
     private String senderId;
     private String receiverId;
-    private String status;
+    private String targetToken; // 푸시 알림 위해 필요
 }
