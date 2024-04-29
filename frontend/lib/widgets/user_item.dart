@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
+import 'package:frontend/widgets/user_details.dart';
+import 'package:frontend/widgets/color_text_container.dart';
+import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 
 class UserItem extends StatelessWidget {
+  final String type;
   final String nickname;
   final String company;
   final String position;
@@ -10,6 +14,7 @@ class UserItem extends StatelessWidget {
 
   const UserItem({
     super.key,
+    required this.type,
     required this.nickname,
     required this.company,
     required this.position,
@@ -20,16 +25,27 @@ class UserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // 클릭 시 유저 상세보기 모달 띄우기
+        // 클릭 시 유저 상세보기 or 받은요청 상세보기 모달 띄우기
         showDialog(
           context: context,
           builder: (context) {
-            return ReqDialog(
-              nickname: nickname,
-              company: company,
-              position: position,
-              introduction: introduction,
-            );
+            if (type == "cafeUser") {
+              return ReqDialog(
+                nickname: nickname,
+                company: company,
+                position: position,
+                introduction: introduction,
+              );
+            } else if (type == "receivedReqUser") {
+              return ReceivedReqDialog(
+                nickname: nickname,
+                company: company,
+                position: position,
+                introduction: introduction,
+              );
+            } else {
+              return Container();
+            }
           },
         );
       },
@@ -113,6 +129,53 @@ class _ReqDialogState extends State<ReqDialog> {
               introduction: widget.introduction,
               handleChangeDialog: handleChangeDialog,
             ),
+    );
+  }
+}
+
+// 받은 요청 상세보기 모달
+class ReceivedReqDialog extends StatelessWidget {
+  final String nickname;
+  final String company;
+  final String position;
+  final String introduction;
+
+  const ReceivedReqDialog({
+    super.key,
+    required this.nickname,
+    required this.company,
+    required this.position,
+    required this.introduction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
+        width: 350,
+        height: 470,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            UserDetails(
+              nickname: nickname,
+              company: company,
+              position: position,
+              introduction: introduction,
+            ),
+            const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
+            const Expanded(child: SizedBox()),
+            const BottomTwoButtons(
+              first: "수락",
+              second: "거절",
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

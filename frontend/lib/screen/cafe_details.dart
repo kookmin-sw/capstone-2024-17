@@ -231,6 +231,7 @@ class _CafeDetailsState extends State<CafeDetails>
                     itemBuilder: (context, index) {
                       return userList.isEmpty
                           ? UserItem(
+                              type: "cafeUser",
                               nickname: sampleUserList[index]["nickname"],
                               company: sampleUserList[index]["companyName"],
                               position: sampleUserList[index]["positionName"],
@@ -238,6 +239,7 @@ class _CafeDetailsState extends State<CafeDetails>
                                   ["introduction"],
                             )
                           : UserItem(
+                              type: "cafeUser",
                               nickname: userList[index].nickname,
                               company: userList[index].companyName,
                               position: userList[index].positionName,

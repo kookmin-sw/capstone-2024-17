@@ -131,6 +131,7 @@ class ReceivedReq extends StatelessWidget {
         itemCount: sampleUserList.length,
         itemBuilder: (context, index) {
           return UserItem(
+            type: "receivedReqUser",
             nickname: sampleUserList[index]["nickname"],
             company: sampleUserList[index]["companyName"],
             position: sampleUserList[index]["positionName"],
