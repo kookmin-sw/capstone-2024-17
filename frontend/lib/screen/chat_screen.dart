@@ -175,12 +175,12 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Widget> _buildChatItems() {
     // 받아온 각 chat들의 정보를 ChatItem으로 만들어 반환
     return chats.map((chat) {
-      String sender = chat['senderId'].toString();
+      String sender = chat['userInfo']['nickname'];
       String message = chat['content'];
       String date = chat['datetime'].substring(0, 13);
       String time = chat['datetime'].substring(14, 19);
       return ChatItem(
-        sender: sender,
+        isMe: !(sender == widget.nickname),
         message: message,
         date: date,
         time: time,

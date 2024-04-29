@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ChatItem extends StatelessWidget {
-  final String sender;
+  final bool isMe;
   final String message;
   final String date;
   final String time;
 
   const ChatItem({
     super.key,
-    required this.sender,
+    required this.isMe,
     required this.message,
     required this.date,
     required this.time,
@@ -16,8 +16,6 @@ class ChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMe = sender == 'me';
-
     // 말풍선 색상 및 정렬을 판단하여 설정
     final bubbleColor =
         isMe ? const Color(0xffff6c3e) : const Color(0xe7e7ebff);
