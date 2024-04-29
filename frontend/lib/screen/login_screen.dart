@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -168,10 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
     Map<String, dynamic> res = await login(loginId, password);
     if (res['success'] == true) {
       // 요청 성공
-      LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+      LoginViewModel loginViewModel =
+          Provider.of<LoginViewModel>(context, listen: false);
       const storage = FlutterSecureStorage();
-      await storage.write(
-          key: 'authToken', value: res["data"]["authToken"]);
+      await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       // 아이디와 닉네임, 로그인타입으로 UserModel 만들어서 provider에 로그인
       UserModel2 user = UserModel2(loginId, 'none', 'none');
       loginViewModel.login(user);
@@ -184,6 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // 실패
       showAlertDialog(
           context, '로그인 실패: ${res['message']}(${res['statusCode']})');
-    } 
+    }
   }
 }

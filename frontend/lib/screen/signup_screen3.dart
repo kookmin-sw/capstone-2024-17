@@ -4,15 +4,17 @@ import 'package:frontend/widgets/bottom_text_button.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/service/api_service.dart';
 
-
 class SignupScreen3 extends StatefulWidget {
   final String? loginId;
   final String? password;
-  const SignupScreen3({super.key, required this.loginId, required this.password,});
+  const SignupScreen3({
+    super.key,
+    required this.loginId,
+    required this.password,
+  });
 
   @override
-  State<SignupScreen3> createState() =>
-  _SignupScreen3State();
+  State<SignupScreen3> createState() => _SignupScreen3State();
 }
 
 class _SignupScreen3State extends State<SignupScreen3> {
@@ -41,50 +43,67 @@ class _SignupScreen3State extends State<SignupScreen3> {
         ),
         body: Container(
           alignment: Alignment.center,
-           margin: const EdgeInsets.only(top: 20, bottom: 40, left: 40, right: 40),
-            child: Column(
-               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          margin:
+              const EdgeInsets.only(top: 20, bottom: 40, left: 40, right: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Column(
                 children: <Widget>[
+                  // 안내
+                  const Row(children: <Widget>[
+                    Text("다음 정보를 입력해주세요.",
+                        style: TextStyle(
+                          fontSize: 20,
+                        )),
+                  ]),
 
-                  Column(children: <Widget>[ 
-                    // 안내
-                    const Row(children: <Widget>[
-                      Text("다음 정보를 입력해주세요.",
-                          style: TextStyle(
-                            fontSize: 20,
-                          )),
-                      ]),
-                      
-                    //  공백
-                    const SizedBox(
-                            height: 30,
-                          ),
+                  //  공백
+                  const SizedBox(
+                    height: 30,
+                  ),
 
-                    // 입력창 컨테이너
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 30), 
-                      child: Column(
-                        children: <Widget>[
-                          IconedTextfield(icon: null, hintText: '닉네임', controller: _nicknameController, isSecret: false,),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            IconedTextfield(icon: null, hintText: '이메일', controller: _emailController, isSecret: false,),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            IconedTextfield(icon: null, hintText: '전화번호', controller: _phoneController, isSecret: false,),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                      ]),
-                    ),],),
-                 
-                  // 회원가입 버튼
-                  BottomTextButton(text: '회원가입 완료', handlePressed: signUpPressed),
+                  // 입력창 컨테이너
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 30),
+                    child: Column(children: <Widget>[
+                      IconedTextfield(
+                        icon: null,
+                        hintText: '닉네임',
+                        controller: _nicknameController,
+                        isSecret: false,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      IconedTextfield(
+                        icon: null,
+                        hintText: '이메일',
+                        controller: _emailController,
+                        isSecret: false,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      IconedTextfield(
+                        icon: null,
+                        hintText: '전화번호',
+                        controller: _phoneController,
+                        isSecret: false,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ]),
+                  ),
                 ],
               ),
-            ));
+
+              // 회원가입 버튼
+              BottomTextButton(text: '회원가입 완료', handlePressed: signUpPressed),
+            ],
+          ),
+        ));
   }
 
   void signUpPressed() {
@@ -98,7 +117,7 @@ class _SignupScreen3State extends State<SignupScreen3> {
     } else if (_phoneController.text == '') {
       showAlertDialog(context, '전화번호를 입력해주세요.');
       return;
-    } 
+    }
     try {
       waitSignup(
           context,
@@ -113,16 +132,18 @@ class _SignupScreen3State extends State<SignupScreen3> {
   }
 }
 
- void waitSignup(BuildContext context, String? loginId, String? password,
-      String nickname, String email, String phone) async {
-        Map<String, dynamic> res = await signup(loginId, password, nickname, email, phone);
-        if (res['success'] == true) {
-            // 요청 성공
-            print(res);
-            showAlertDialog(context, res['message']);
-            Navigator.of(context).pushNamed('/signin');
-        } else {
-          // 회원가입 실패
-          showAlertDialog(context, '회원가입 실패: ${res['message']}(${res['statusCode']})');
-        }
-      }
+void waitSignup(BuildContext context, String? loginId, String? password,
+    String nickname, String email, String phone) async {
+  Map<String, dynamic> res =
+      await signup(loginId, password, nickname, email, phone);
+  if (res['success'] == true) {
+    // 요청 성공
+    print(res);
+    showAlertDialog(context, res['message']);
+    Navigator.of(context).pushNamed('/signin');
+  } else {
+    // 회원가입 실패
+    showAlertDialog(
+        context, '회원가입 실패: ${res['message']}(${res['statusCode']})');
+  }
+}
