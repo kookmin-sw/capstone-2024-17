@@ -73,8 +73,8 @@ class CoffeechatReqList extends StatelessWidget {
             ]),
             Expanded(
               child: TabBarView(children: [
-                SentReqList(),
-                ReceivedReqList(),
+                SentReq(),
+                ReceivedReq(),
               ]),
             ),
           ],
@@ -85,8 +85,8 @@ class CoffeechatReqList extends StatelessWidget {
   }
 }
 
-class SentReqList extends StatelessWidget {
-  const SentReqList({super.key});
+class SentReq extends StatelessWidget {
+  const SentReq({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -120,8 +120,8 @@ class SentReqList extends StatelessWidget {
   }
 }
 
-class ReceivedReqList extends StatelessWidget {
-  const ReceivedReqList({super.key});
+class ReceivedReq extends StatelessWidget {
+  const ReceivedReq({super.key});
 
   @override
   Widget build(BuildContext context) {
