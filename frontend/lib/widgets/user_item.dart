@@ -4,6 +4,7 @@ import 'package:frontend/widgets/choose_purpose.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
+import 'package:frontend/widgets/profile_img.dart';
 
 class UserItem extends StatelessWidget {
   final String type;
@@ -60,14 +61,7 @@ class UserItem extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Row(
           children: [
-            const SizedBox(
-              width: 100,
-              child: Icon(
-                Icons.circle_notifications,
-                size: 70,
-              ),
-            ),
-            // CircleAvatar(child: Image.asset("assets/logo.png"),),
+            const ProfileImg(logo: "assets/coffee_bean.png"),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
