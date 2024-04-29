@@ -51,7 +51,10 @@ class _ChatScreenState extends State<ChatScreen> {
           callback: (frame) {
             print('sub 성공!');
             print(frame.body);
-            setState(() {});
+            Map<String, dynamic> jsonData = jsonDecode(frame.body!);
+            setState(() {
+              chats.add(jsonData);
+            });
           });
     } else {
       print('sub 실패: stompClient가 null');
