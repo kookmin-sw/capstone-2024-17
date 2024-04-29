@@ -108,15 +108,17 @@ Future<Map<String, dynamic>> getChatroomlist() async {
 
 // 해당 채팅방의 채팅 목록을 get
 Future<Map<String, dynamic>> getChatList(int chatroomId) async {
-  final queryParameters = {
+  const endpoiintUrl = '$baseUrl/message/list';
+
+  String queryString = Uri(queryParameters: {
     'chatroomId': chatroomId,
-  };
-  final url = Uri.https(baseUrl, '/message/list', queryParameters);
+  }).query;
+  final url = '$endpoiintUrl?$queryString';
 
   final token = (await storage.read(key: 'authToken')) ?? '';
   try {
     http.Response res = await http.get(
-      url,
+      Uri.parse(url),
       headers: {
         "Content-Type": "application/json",
         'Accept': 'application/json',
@@ -129,8 +131,9 @@ Future<Map<String, dynamic>> getChatList(int chatroomId) async {
     print('error: $error');
     throw Error();
   }
-} // 카카오톡 로그인
+}
 
+// 카카오톡 로그인
 Future<Map<String, dynamic>> kakaoLogin(String token) async {
   final url = Uri.parse('$baseUrl/auth/kakao/signIn');
   final data = jsonEncode({
