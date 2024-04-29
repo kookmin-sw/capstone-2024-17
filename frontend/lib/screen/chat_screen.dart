@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
@@ -40,11 +42,11 @@ class _ChatScreenState extends State<ChatScreen> {
     if (stompClient != null) {
       stompClient!.subscribe(
           destination: '/sub/chatroom/${widget.chatroomId}',
-          callback: (StompFrame frame) {
+          headers: {},
+          callback: (frame) {
             print('sub 성공!');
-            setState(() {
-              print(frame);
-            });
+            print(frame.body);
+            setState(() {});
           });
     } else {
       print('sub 실패: stompClient가 null');
@@ -177,7 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (stompClient != null) {
         stompClient!.send(
           destination: '/pub/chatroom/${widget.chatroomId.toString()}',
-          body: message,
+          body: jsonEncode({"content": message, "receiver": widget.nickname}),
         );
         print('pub 성공!');
         _sendingMsgController.clear();
