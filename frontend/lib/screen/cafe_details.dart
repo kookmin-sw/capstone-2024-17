@@ -80,7 +80,7 @@ class _CafeDetailsState extends State<CafeDetails>
 
   void _startTimer() {
     print("타이머 시작");
-    _timer = Timer.periodic(const Duration(minutes: 20), (Timer timer) async {
+    _timer = Timer.periodic(Duration(minutes: 20), (Timer timer) async {
       final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
 

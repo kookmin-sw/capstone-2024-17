@@ -59,8 +59,8 @@ class MapJsonRequest {
 }
 
 class MapDTO {
-  Map<String, dynamic> request(List<String> incTypes, int maxCount, double lat,
-      double log, double rad) {
+  Map<String, dynamic> request(
+      List<String> incTypes, int maxCount, double lat, double log, double rad) {
     var request = MapJsonRequest(
       includedTypes: incTypes,
       maxResultCount: maxCount,
