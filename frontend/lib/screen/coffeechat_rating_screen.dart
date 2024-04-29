@@ -110,7 +110,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                       }
                     : null, // selectedIndex가 0 이상인 경우에만 클릭 가능하도록 설정
                 child: Text(
-                  selectedIndex >= 0 ? 'X 닫기' : '커피콩점을 매겨주세요.',
+                  selectedIndex >= 0 ? '제출하기 ->' : '커피콩점을 매겨주세요.',
                   style: TextStyle(
                     fontSize: 20,
                   ),
