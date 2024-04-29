@@ -98,7 +98,7 @@ Future<Map<String, dynamic>> getChatroomlist() async {
         'Authorization': 'Bearer $token'
       },
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -125,7 +125,7 @@ Future<Map<String, dynamic>> getChatList(int chatroomId) async {
         'Authorization': 'Bearer $token'
       },
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
