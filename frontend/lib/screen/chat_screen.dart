@@ -12,7 +12,6 @@ class ChatScreen extends StatefulWidget {
   final int chatroomId;
   final String nickname;
   final Image logoImage;
-  static const String baseUrl = "https://43.203.218.27:8080";
 
   const ChatScreen({
     super.key,
@@ -29,6 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final storage = const FlutterSecureStorage();
   List<Map<String, dynamic>> chats = [];
   final TextEditingController _sendingMsgController = TextEditingController();
+  String token = '';
 
   @override
   void initState() {
@@ -40,9 +40,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void subscribeChatroom() async {
     if (stompClient != null) {
+      token = (await storage.read(key: 'authToken')) ?? '';
       stompClient!.subscribe(
           destination: '/sub/chatroom/${widget.chatroomId}',
-          headers: {},
+          headers: {
+            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
           callback: (frame) {
             print('sub 성공!');
             print(frame.body);
@@ -173,13 +178,22 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void sendMessage() {
+  void sendMessage() async {
     final message = _sendingMsgController.text;
     if (message != '') {
       if (stompClient != null) {
+        // 메시지 전송
+        token = (await storage.read(key: 'authToken')) ?? '';
+        final data = jsonEncode(
+            {"senderId": 1, "content": message}); // senderId는 임시로 고정!!
         stompClient!.send(
           destination: '/pub/chatroom/${widget.chatroomId.toString()}',
-          body: jsonEncode({"content": message, "receiver": widget.nickname}),
+          headers: {
+            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+          body: data,
         );
         print('pub 성공!');
         _sendingMsgController.clear();
