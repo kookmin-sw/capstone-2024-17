@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/chat_date.dart';
 import 'package:frontend/widgets/chat_item.dart';
 import 'package:frontend/main.dart';
 
@@ -187,19 +188,33 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   List<Widget> buildChatItems() {
-    // 받아온 각 chat들의 정보를 ChatItem으로 만들어 반환
-    return chats.map((chat) {
+    List<Widget> items = []; // ChatItem과 ChatDate를 포함
+    String? lastDate;
+
+    //  List<Map<String, dynamic>>chats 에 들어있는 요소들을 ChatItem으로 만들어서 items에 add: 날짜가 바뀌면 ChatDate add
+    for (var chat in chats) {
       String sender = chat['userInfo']['nickname'];
       String message = chat['content'];
       String date = chat['datetime'].substring(0, 13);
       String time = chat['datetime'].substring(14, 19);
-      return ChatItem(
-        isMe: !(sender == widget.nickname),
-        message: message,
-        date: date,
-        time: time,
+
+      if (date != lastDate) {
+        // If the date changes, add ChatDate widget
+        items.add(ChatDate(date: date));
+        lastDate = date;
+      }
+
+      items.add(
+        ChatItem(
+          isMe: !(sender == widget.nickname),
+          message: message,
+          date: date,
+          time: time,
+        ),
       );
-    }).toList();
+    }
+
+    return items;
   }
 
   Future<void> waitGetChatList(int chatroomId) async {
