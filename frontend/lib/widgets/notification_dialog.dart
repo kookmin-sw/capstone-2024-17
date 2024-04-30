@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
+import 'package:frontend/widgets/button/modal_button.dart';
 
 // 커피챗 요청 도착 알림창
 class ArriveRequestNotification extends StatelessWidget {
@@ -24,7 +25,6 @@ class ReqAcceptedNotification extends StatelessWidget {
     return const NotificationDialog(
       contents: "OO 님이 커피챗 요청을 \n수락했어요!",
       firstButton: "확인",
-      secondButton: "닫기",
     );
   }
 }
@@ -38,7 +38,6 @@ class ReqDeniedNotification extends StatelessWidget {
     return const NotificationDialog(
       contents: "OO 님이 커피챗 요청을 \n거절했어요.. :(",
       firstButton: "확인",
-      secondButton: "닫기",
     );
   }
 }
@@ -46,13 +45,13 @@ class ReqDeniedNotification extends StatelessWidget {
 class NotificationDialog extends StatelessWidget {
   final String contents;
   final String firstButton;
-  final String secondButton;
+  final String? secondButton;
 
   const NotificationDialog({
     super.key,
     required this.contents,
     required this.firstButton,
-    required this.secondButton,
+    this.secondButton,
   });
 
   @override
@@ -86,10 +85,12 @@ class NotificationDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 20),
                 ),
-                BottomTwoButtonsSmall(
-                  first: firstButton,
-                  second: secondButton,
-                ),
+                (secondButton == null)
+                    ? ModalButton(text: firstButton, handlePressed: () {})
+                    : BottomTwoButtonsSmall(
+                        first: firstButton,
+                        second: secondButton!,
+                      ),
               ],
             ),
           ),
