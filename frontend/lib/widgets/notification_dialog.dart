@@ -44,7 +44,7 @@ class NotificationDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 20),
                 ),
-                BottomTwoButtons(
+                BottomTwoButtonsSmall(
                   first: firstButton,
                   second: secondButton,
                 ),

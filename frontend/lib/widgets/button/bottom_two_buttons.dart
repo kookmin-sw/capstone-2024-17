@@ -1,11 +1,45 @@
 import 'package:flutter/material.dart';
 
+class BottomTwoButtonsSmall extends StatelessWidget {
+  final String first;
+  final String second;
+
+  const BottomTwoButtonsSmall({
+    super.key,
+    required this.first,
+    required this.second,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomTwoButtons(width: 110, first: first, second: second);
+  }
+}
+
+class BottomTwoButtonsMedium extends StatelessWidget {
+  final String first;
+  final String second;
+
+  const BottomTwoButtonsMedium({
+    super.key,
+    required this.first,
+    required this.second,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomTwoButtons(width: 130, first: first, second: second);
+  }
+}
+
 class BottomTwoButtons extends StatelessWidget {
+  final double width;
   final String first;
   final String second;
 
   const BottomTwoButtons({
     super.key,
+    required this.width,
     required this.first,
     required this.second,
   });
@@ -16,7 +50,7 @@ class BottomTwoButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
-          width: 130,
+          width: width,
           height: 50,
           child: ElevatedButton(
             onPressed: () {},
@@ -31,7 +65,7 @@ class BottomTwoButtons extends StatelessWidget {
           ),
         ),
         SizedBox(
-          width: 130,
+          width: width,
           height: 50,
           child: TextButton(
             onPressed: () {},
