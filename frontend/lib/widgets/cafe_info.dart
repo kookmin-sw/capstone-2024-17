@@ -32,7 +32,7 @@ class CafeInfo extends StatelessWidget {
     return Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(width: 50),
             Icon(
@@ -49,6 +49,7 @@ class CafeInfo extends StatelessWidget {
                 overflow: TextOverflow.clip,
               ),
             ),
+            const SizedBox(width: 30),
             Icon(
               isTakeout ? Icons.wallet_giftcard_sharp : Icons.not_interested,
               size: 20,
