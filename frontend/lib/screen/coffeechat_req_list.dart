@@ -2,6 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/user_details.dart';
+import 'package:frontend/widgets/user_item.dart';
+
+const List<Map<String, dynamic>> sampleUserList = [
+  {
+    "nickname": "뽕순이",
+    "companyName": "채연컴퍼니",
+    "positionName": "집사",
+    "introduction": "안녕하세요 뽕순이입니다 뽕",
+  },
+  {
+    "nickname": "담",
+    "companyName": "네카라쿠배당토",
+    "positionName": "웹 프론트엔드",
+    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"
+  },
+  {
+    "nickname": "잠온다",
+    "companyName": "구글",
+    "positionName": "데이터 엔지니어",
+    "introduction": "잠오니까 요청하지 마세요. 감사합니다."
+  },
+  {
+    "nickname": "내가제일잘나가",
+    "companyName": "꿈의직장",
+    "positionName": "풀스택",
+    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<"
+  },
+];
 
 void main() {
   runApp(const MyApp());
@@ -37,23 +65,23 @@ class CoffeechatReqList extends StatelessWidget {
             leadingWidth: 70,
           ),
         ),
-        body: Column(
+        body: const Column(
           children: [
-            const TabBar(tabs: [
-              Tab(text: '보낸 요청'),
-              Tab(text: '받은 요청'),
-            ]),
+            TabBar(
+              tabs: [
+                Tab(text: '보낸 요청'),
+                Tab(text: '받은 요청'),
+              ],
+              indicatorColor: Color(0xff212121),
+              labelStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
             Expanded(
               child: TabBarView(children: [
-                const SentReqList(),
-                ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return const ListTile(
-                      title: Text('받은 요청'),
-                    );
-                  },
-                ),
+                SentReq(),
+                ReceivedReq(),
               ]),
             ),
           ],
@@ -64,8 +92,8 @@ class CoffeechatReqList extends StatelessWidget {
   }
 }
 
-class SentReqList extends StatelessWidget {
-  const SentReqList({super.key});
+class SentReq extends StatelessWidget {
+  const SentReq({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +123,29 @@ class SentReqList extends StatelessWidget {
         ),
         BottomTextButton(text: "요청 취소하기", handlePressed: () {}),
       ],
+    );
+  }
+}
+
+class ReceivedReq extends StatelessWidget {
+  const ReceivedReq({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: ListView.builder(
+        itemCount: sampleUserList.length,
+        itemBuilder: (context, index) {
+          return UserItem(
+            type: "receivedReqUser",
+            nickname: sampleUserList[index]["nickname"],
+            company: sampleUserList[index]["companyName"],
+            position: sampleUserList[index]["positionName"],
+            introduction: sampleUserList[index]["introduction"],
+          );
+        },
+      ),
     );
   }
 }
