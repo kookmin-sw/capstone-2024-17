@@ -41,7 +41,6 @@ class Google_Map extends StatefulWidget {
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
-
   @override
   void initState() {
     super.initState();
@@ -61,7 +60,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     // LocationPermission();
     // _setCircle(LatLng(37.611035490773, 126.99457310622));
     // _searchcafes(LatLng(37.611035490773, 126.99457310622));
-
   }
 
   late GoogleMapController _controller;
@@ -134,7 +132,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       debugPrint("Response Body: ${response.body}");
       final data = json.decode(response.body);
       _setMarkers(data['places'], position.latitude, position.longitude);
-
     } else {
       print("실패");
       throw Exception('Failed to load cafe');
@@ -152,69 +149,90 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       final markerIcon = await _createMarkerImage(
           place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
 
-        localMarkers.add(
-          Marker(
-            markerId: MarkerId(place['id']),
-            position: LatLng(
-              place['location']['latitude'],
-              place['location']['longitude'],
-            ),
-
-            icon: BitmapDescriptor.fromBytes(markerIcon),
-            infoWindow: InfoWindow(
-              title: place['displayName']['text'],
-            ),
-
-            onTap: () {
-              String cafeLatitude = place['location']['latitude'] != null ? place['location']['latitude'].toString() : '정보 없음';
-              String cafeLongitude = place['location']['longitude'] != null ? place['location']['longitude'].toString() : '정보 없음';
-
-              String cafeName = place['displayName'] != null && place['displayName']['text'] != null
-                  ? place['displayName']['text'] : '정보 없음';
-
-              String cafeId = place['id'] != null ? place['id'] : '정보 없음';
-
-              String cafeAddress = place['formattedAddress'] != null
-                  ? place['formattedAddress'] : '정보 없음';
-
-              String cafeOpen = place['regularOpeningHours'] != null &&
-                  place['regularOpeningHours']['openNow'] != null
-                  ? place['regularOpeningHours']['openNow'].toString() : '정보 없음';
-
-              String cafeTelephone = place['internationalPhoneNumber'] != null
-                  ? place['internationalPhoneNumber'] : '정보 없음';
-
-              String cafeTakeout = place['takeout'] != null ? place['takeout'].toString() : '정보 없음';
-
-              String cafeDelivery = place['delivery'] != null ? place['delivery'].toString() : '정보 없음';
-
-              String cafeDineIn = place['dineIn'] != null ? place['dineIn'].toString() : '정보 없음';
-
-
-              DateTime now = DateTime.now();
-              int currentWeekday = (now.weekday)-1;
-
-              String businessHours = place['regularOpeningHours'] != null && place['regularOpeningHours']['weekdayDescriptions'] != null
-                  ? place['regularOpeningHours']['weekdayDescriptions'][currentWeekday].toString() : '정보 없음' ;
-
-              List<String> detailsArguments = [
-                cafeAddress,
-                cafeOpen,
-                cafeTelephone,
-                cafeTakeout,
-                cafeDelivery,
-                cafeDineIn,
-                cafeLatitude,
-                cafeLongitude,
-                businessHours,
-                cafeId,
-              ];
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CafeDetails(cafeId: cafeId, cafeName: cafeName,cafeDetailsArguments: detailsArguments)),
-              );
-            },
+      localMarkers.add(
+        Marker(
+          markerId: MarkerId(place['id']),
+          position: LatLng(
+            place['location']['latitude'],
+            place['location']['longitude'],
           ),
-        );
+          icon: BitmapDescriptor.fromBytes(markerIcon),
+          infoWindow: InfoWindow(
+            title: place['displayName']['text'],
+          ),
+          onTap: () {
+            String cafeLatitude = place['location']['latitude'] != null
+                ? place['location']['latitude'].toString()
+                : '정보 없음';
+            String cafeLongitude = place['location']['longitude'] != null
+                ? place['location']['longitude'].toString()
+                : '정보 없음';
+
+            String cafeName = place['displayName'] != null &&
+                    place['displayName']['text'] != null
+                ? place['displayName']['text']
+                : '정보 없음';
+
+            String cafeId = place['id'] != null ? place['id'] : '정보 없음';
+
+            String cafeAddress = place['formattedAddress'] != null
+                ? place['formattedAddress']
+                : '정보 없음';
+
+            String cafeOpen = place['regularOpeningHours'] != null &&
+                    place['regularOpeningHours']['openNow'] != null
+                ? place['regularOpeningHours']['openNow'].toString()
+                : '정보 없음';
+
+            String cafeTelephone = place['internationalPhoneNumber'] != null
+                ? place['internationalPhoneNumber']
+                : '정보 없음';
+
+            String cafeTakeout = place['takeout'] != null
+                ? place['takeout'].toString()
+                : '정보 없음';
+
+            String cafeDelivery = place['delivery'] != null
+                ? place['delivery'].toString()
+                : '정보 없음';
+
+            String cafeDineIn =
+                place['dineIn'] != null ? place['dineIn'].toString() : '정보 없음';
+
+            DateTime now = DateTime.now();
+            int currentWeekday = (now.weekday) - 1;
+
+            String businessHours = place['regularOpeningHours'] != null &&
+                    place['regularOpeningHours']['weekdayDescriptions'] != null
+                ? place['regularOpeningHours']['weekdayDescriptions']
+                        [currentWeekday]
+                    .toString()
+                : '정보 없음';
+
+            List<String> detailsArguments = [
+              cafeAddress,
+              cafeOpen,
+              cafeTelephone,
+              cafeTakeout,
+              cafeDelivery,
+              cafeDineIn,
+              cafeLatitude,
+              cafeLongitude,
+              businessHours,
+              cafeId,
+            ];
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CafeDetails(
+                      cafeId: cafeId,
+                      cafeName: cafeName,
+                      cafeDetailsArguments: detailsArguments)),
+            );
+          },
+        ),
+      );
     }
     setState(() {
       _markers = localMarkers;
@@ -252,7 +270,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     final paint = Paint()
       ..color = Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
     canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
-
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
     const textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
@@ -325,7 +342,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 shape: CircleBorder(), // 원 모양의 버튼을 만들기 위해 사용
                 padding: EdgeInsets.all(10), // 버튼의 패딩 설정
               ),
-              child: Icon(Icons.add_alert, color: Colors.white70 ), // 아이콘과 색상 설정
+              child: Icon(Icons.add_alert, color: Colors.white70), // 아이콘과 색상 설정
             ),
           ),
           Positioned(
@@ -336,8 +353,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 print('Button clicked!');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black12  , // 배경 색상 설정
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
+                backgroundColor: Colors.black12, // 배경 색상 설정
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
               ),
               child: Text(
                 "위치 OFF",

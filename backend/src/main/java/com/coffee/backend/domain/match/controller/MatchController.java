@@ -1,46 +1,60 @@
 package com.coffee.backend.domain.match.controller;
 
-import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.MatchIdDto;
+import com.coffee.backend.domain.match.dto.MatchRequestDto;
+import com.coffee.backend.domain.match.dto.ReviewDto;
+import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
-import com.coffee.backend.domain.user.entity.User;
+import com.coffee.backend.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @Slf4j
+@RequestMapping("/match")
 public class MatchController {
     private final MatchService matchService;
 
-    // pub/match/request
-    @MessageMapping("/match/request")
-    public void sendMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+    @PostMapping("/request")
+    public ResponseEntity<ApiResponse<MatchDto>> sendMatchRequest(@RequestBody MatchRequestDto dto) {
         log.info("Request Message Catch!!");
-        matchService.sendMatchRequest(dto);
+        MatchDto response = matchService.sendMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    // pub/match/accept -> 채팅방 개설
-    @MessageMapping("/match/accept")
-    public void acceptMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+    @PutMapping("/accept")
+    public ResponseEntity<ApiResponse<MatchDto>> acceptMatchRequest(@RequestBody MatchIdDto dto) {
         log.info("Accept Message Catch!!");
-        matchService.acceptMatchRequest(dto);
+        MatchDto response = matchService.acceptMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    // pub/match/decline
-    @MessageMapping("/match/decline")
-    public void declineMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+    @DeleteMapping("/decline")
+    public ResponseEntity<ApiResponse<MatchDto>> declineMatchRequest(@RequestBody MatchIdDto dto) {
         log.info("Decline Message Catch!!");
-        matchService.declineMatchRequest(dto);
+        MatchDto response = matchService.declineMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    // pub/match/cancel
-    @MessageMapping("/match/cancel")
-    public void cancelMatchRequest(@AuthenticationPrincipal User user, @Payload MatchDto dto) {
+    @DeleteMapping("/cancel")
+    public ResponseEntity<ApiResponse<MatchDto>> cancelMatchRequest(@RequestBody MatchIdDto dto) {
         log.info("Cancel Message Catch!!");
-        matchService.cancelMatchRequest(dto);
+        MatchDto response = matchService.cancelMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/review")
+    public ResponseEntity<ApiResponse<Review>> submitReview(@RequestBody ReviewDto dto) {
+        Review response = matchService.saveReview(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

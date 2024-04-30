@@ -1,42 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/screen/edit_profile_screen.dart';
-import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 
-class UserScreen extends StatefulWidget {
-  const UserScreen({super.key});
+class EditProfileScreen extends StatefulWidget {
+  final String nickname;
+  final String logoInfo;
+  final String companyName;
+  final String position;
+  final int temperature;
+  final String introduction;
+
+  const EditProfileScreen({
+    super.key,
+    required this.nickname,
+    required this.logoInfo,
+    required this.companyName,
+    required this.position,
+    required this.temperature,
+    required this.introduction,
+  });
 
   @override
-  _UserScreenState createState() => _UserScreenState();
+  EditProfileScreenState createState() => EditProfileScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
-  final storage = const FlutterSecureStorage();
-  String? token;
-  bool isLogined = false;
-  String nickname = '';
-  String logoInfo = '';
-  String companyName = '';
-  String position = '';
-  int temperature = 0;
-  String introduction = '';
+class EditProfileScreenState extends State<EditProfileScreen> {
   late ScrollController _scrollController;
+  late TextEditingController _nicknameController;
+  late TextEditingController _introductionController;
 
   @override
   void initState() {
     super.initState();
-    setAccessToken().then((token) {
-      print('token: $token');
-      setProfile(token);
-    });
     _scrollController = ScrollController();
+    _nicknameController = TextEditingController(text: widget.nickname);
+    _introductionController = TextEditingController(text: widget.introduction);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _nicknameController.dispose();
+    _introductionController.dispose();
     super.dispose();
   }
 
@@ -47,31 +52,22 @@ class _UserScreenState extends State<UserScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: const Text(
-          '내 프로필',
+          '프로필 수정',
           style: TextStyle(fontSize: 24),
         ),
         toolbarHeight: 100,
-        actions: [
-          if (isLogined)
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(),
-                  ),
-                );
-              },
-            ),
-        ],
+        // 저장하지 않고 나가는 경우 경고창 표시해야됨
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: const Icon(Icons.arrow_back),
+        ),
       ),
       body: Center(
           child: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          if (isLogined)
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
             Expanded(
                 child: Container(
                     // alignment: Alignment.center,
@@ -91,7 +87,7 @@ class _UserScreenState extends State<UserScreen> {
                             child: Row(
                               children: <Widget>[
                                 Image.network(
-                                  logoInfo,
+                                  widget.logoInfo,
                                   scale: 4,
                                 ),
                                 const SizedBox(
@@ -102,17 +98,25 @@ class _UserScreenState extends State<UserScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                      Row(children: <Widget>[
-                                        Flexible(
-                                          child: Text(
-                                            nickname,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
+                                      TextField(
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: Color(0xffff6c3e)),
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          hintText: '닉네임',
                                         ),
-                                      ]),
+                                        controller: _nicknameController,
+                                      ),
                                       const SizedBox(
                                         height: 20,
                                       ),
@@ -122,13 +126,23 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                companyName,
+                                                widget.companyName,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             const SizedBox(
                                               width: 10,
                                             ),
+                                            TextButton(
+                                                onPressed: () {},
+                                                style: TextButton.styleFrom(
+                                                  minimumSize: Size.zero,
+                                                  padding: EdgeInsets.zero,
+                                                  tapTargetSize:
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
+                                                ),
+                                                child: const Text('수정')),
                                           ]),
                                       const SizedBox(
                                         height: 10,
@@ -139,10 +153,20 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                position,
+                                                widget.position,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
+                                            TextButton(
+                                                onPressed: () {},
+                                                style: TextButton.styleFrom(
+                                                  minimumSize: Size.zero,
+                                                  padding: EdgeInsets.zero,
+                                                  tapTargetSize:
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
+                                                ),
+                                                child: const Text('수정')),
                                           ])
                                     ])),
                               ],
@@ -159,7 +183,7 @@ class _UserScreenState extends State<UserScreen> {
                                 Row(children: <Widget>[
                                   Expanded(
                                     child: BigThermometer(
-                                        temperature: temperature),
+                                        temperature: widget.temperature),
                                   )
                                 ]),
                               ])),
@@ -171,7 +195,34 @@ class _UserScreenState extends State<UserScreen> {
                               const Row(
                                 children: <Widget>[Text('자기소개')],
                               ),
+                              const SizedBox(height: 10),
                               Row(children: <Widget>[
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 90,
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.all(10),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Color(0xffff6c3e)),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        hintText: '자기소개 입력',
+                                      ),
+                                      controller: _introductionController,
+                                      maxLines: null,
+                                    ),
+                                  ),
+                                ),
+
+                                /*
                                 Expanded(
                                   child: Container(
                                     margin: const EdgeInsets.symmetric(
@@ -180,7 +231,8 @@ class _UserScreenState extends State<UserScreen> {
                                     padding: const EdgeInsets.all(10),
                                     height: 90,
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
+                                      border: Border.all(
+                                          color: Colors.grey, width: 0.6),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Scrollbar(
@@ -190,95 +242,32 @@ class _UserScreenState extends State<UserScreen> {
                                         controller: _scrollController,
                                         scrollDirection: Axis.vertical,
                                         child: Text(
-                                          introduction,
+                                          widget.introduction,
                                           // textAlign: TextAlign.left,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ),*/
                               ]),
                             ]),
                           ),
                         ])),
 
-                        // 프로필 수정 버튼
+                        // 저장 버튼
                         BottomTextButton(
-                          text: '프로필 정보 수정',
+                          text: '저장하기',
                           handlePressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditProfileScreen(
-                                  nickname: nickname,
-                                  logoInfo: logoInfo,
-                                  companyName: companyName,
-                                  position: position,
-                                  temperature: temperature,
-                                  introduction: introduction,
-                                ),
-                              ),
-                            );
+                            // 저장하는 코드
+                            // 유저페이지로 이동
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/user', (route) => false);
                           },
                         ),
                       ],
                     )))
-          // 로그인되지 않았을 경우
-          else
-            Flexible(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('로그인이 필요한 서비스입니다.'),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // 로그인 버튼
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/signin');
-                          },
-                          child: const Text('로그인')),
-
-                      // 회원가입 버튼
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/signup');
-                          },
-                          child: const Text('회원가입')),
-                    ],
-                  )
-                ],
-              ),
-            ),
-        ],
-      )),
+          ])),
       bottomNavigationBar: const BottomAppBar(),
     );
-  }
-
-  Future<String?> setAccessToken() async {
-    token = await storage.read(key: 'authToken');
-    setState(() {
-      isLogined = (token != null);
-    });
-    return token;
-  }
-
-  Future<void> setProfile(String? token) async {
-    // 토큰으로 프로필 get하는 코드
-    // 임의의 프로필
-    nickname = '뿡순이';
-    logoInfo =
-        'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
-    companyName = '쿠팡';
-    position = '웹 풀스택';
-    temperature = 46;
-    introduction =
-        '긴 텍스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ';
-    return;
   }
 }
