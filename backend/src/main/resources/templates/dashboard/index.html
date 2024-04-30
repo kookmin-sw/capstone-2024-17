@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Comapny Requests</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/assets/dist/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/assets/dashboard/dashboard.css}" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-3 mb-lg-5">
+            <div class="overflow-hidden card table-nowrap table-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Company Reqeusts</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="small text-uppercase bg-body text-muted">
+                        <tr>
+                            <th>Requested User</th>
+                            <th>Company Name</th>
+                            <th>Domain</th>
+                            <th>Business Number</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="request , index: ${requests}" class="align-middle">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person m-1"></i>
+                                    <div>
+                                        <div th:text="${request.user}" class="h6 mb-0 lh-1">Requested User
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${request.name}">Company Name</td>
+                            <td><span th:text="${request.domain}" class="d-inline-block align-middle">Domain</span></td>
+                            <td><span th:text="${request.bno}">Business Number</span></td>
+                            <td class="text-end">
+                                <div class="drodown">
+                                    <a data-bs-toggle="dropdown" href="#" class="btn p-1" aria-expanded="false">
+                                        <i class="fa fa-bars" aria-hidden="true"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end" style="">
+                                        <button href="#" class="dropdown-item"
+                                                th:onclick="deleteCompanyRequest([[${request.id}]])">Delete record
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/assets/dist/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets/dashboard/dashboard.js}"></script>
+
+</body>
+</html>

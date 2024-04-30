@@ -34,4 +34,18 @@ public class CompanyRequestController {
         companyRequestService.deleteRequest(companyRequestId);
         return ResponseEntity.ok(ApiResponse.success("company request deleted"));
     }
+
+    @Hidden
+    @GetMapping("dashboard")
+    public String dashboard(Model model) {
+        List<CompanyRequestDto> requests = new ArrayList<>();
+        requests.add(CompanyRequestDto.builder()
+                .id(1L)
+                .user("유저이름")
+                .name("회사이름")
+                .bno("000000088")
+                .domain("google.com").build());
+        model.addAttribute("requests", requests);
+        return "dashboard/index";
+    }
 }
