@@ -42,6 +42,20 @@ class ReqDeniedNotification extends StatelessWidget {
   }
 }
 
+// 오프라인 전환 알림창
+class OfflineNotification extends StatelessWidget {
+  const OfflineNotification({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const NotificationDialogLong(
+      title: "카페를 지정해주세요!",
+      contents: "지정한 카페가 반경에서 벗어나 \n오프라인 상태로 바뀌었어요! 카페를 \n다시 지정해 주세요.",
+      button: "확인",
+    );
+  }
+}
+
 class NotificationDialog extends StatelessWidget {
   final String contents;
   final String firstButton;
@@ -91,6 +105,70 @@ class NotificationDialog extends StatelessWidget {
                         first: firstButton,
                         second: secondButton!,
                       ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NotificationDialogLong extends StatelessWidget {
+  final String title;
+  final String contents;
+  final String button;
+
+  const NotificationDialogLong({
+    super.key,
+    required this.title,
+    required this.contents,
+    required this.button,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: -50,
+            left: 110,
+            child: Image.asset(
+              'assets/logo.png',
+              width: 80,
+            ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.only(top: 50, left: 25, right: 25, bottom: 20),
+            width: 300,
+            height: 300,
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  contents,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const Expanded(child: SizedBox()),
+                ModalButton(text: button, handlePressed: () {}),
               ],
             ),
           ),
