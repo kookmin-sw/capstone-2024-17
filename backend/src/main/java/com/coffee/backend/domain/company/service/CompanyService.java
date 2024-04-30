@@ -72,8 +72,8 @@ public class CompanyService {
             }
             return builder.toString();
         } catch (NoSuchAlgorithmException e) {
-            log.debug("MemberService.createCode() exception occur");
-            throw new CustomException(ErrorCode.NO_SUCH_ALGORITHM); // TODO exception 수정
+            log.debug("CompanyService.createCode() exception occur");
+            throw new CustomException(ErrorCode.NO_SUCH_ALGORITHM);
         }
     }
 
