@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 
+// 커피챗 요청 도착 알림창
+class ArriveRequestNotification extends StatelessWidget {
+  const ArriveRequestNotification({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const NotificationDialog(
+      contents: "새로운 커피챗 요청이 \n도착했어요!",
+      firstButton: "보기",
+      secondButton: "닫기",
+    );
+  }
+}
+
 class NotificationDialog extends StatelessWidget {
   final String contents;
   final String firstButton;
