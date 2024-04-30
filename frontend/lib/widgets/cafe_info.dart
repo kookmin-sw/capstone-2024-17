@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_webservice/places.dart';
 
 class CafeInfo extends StatelessWidget {
-
   final String address;
   final String cafeTelephone;
   final String businessHours;
@@ -31,14 +30,13 @@ class CafeInfo extends StatelessWidget {
     bool isTakeout = cafeTakeout == 'true';
 
     return Column(
-
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(width: 50),
             Icon(
-              isDineIn ? Icons.fastfood_outlined : Icons.no_meals_sharp ,
+              isDineIn ? Icons.fastfood_outlined : Icons.no_meals_sharp,
               size: 20,
               color: isDineIn ? Colors.green : Colors.red,
             ),
@@ -52,7 +50,7 @@ class CafeInfo extends StatelessWidget {
               ),
             ),
             Icon(
-              isTakeout ? Icons.wallet_giftcard_sharp : Icons.not_interested ,
+              isTakeout ? Icons.wallet_giftcard_sharp : Icons.not_interested,
               size: 20,
               color: isDineIn ? Colors.green : Colors.red,
             ),
@@ -67,19 +65,19 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height:10),
+        SizedBox(height: 10),
         Row(
           children: [
             // 이전 위젯들
             Container(
-              width: 360, // 네모 박스의 가로 길이
+              width: MediaQuery.of(context).size.width - 50, // 네모 박스의 가로 길이
               height: 1, // 네모 박스의 세로 길이
-              color: Colors.grey , // 네모 박스의 색상
+              color: Colors.grey, // 네모 박스의 색상
             ),
             // 이후에 추가할 위젯들
           ],
         ),
-        SizedBox(height:15),
+        SizedBox(height: 15),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -98,7 +96,7 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height:15),
+        SizedBox(height: 15),
         Row(
           children: [
             const Icon(
@@ -115,8 +113,7 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height:15),
-
+        SizedBox(height: 15),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -126,20 +123,20 @@ class CafeInfo extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             Text(
-              isOpen? '영업중':'영업종료',
+              isOpen ? '영업중' : '영업종료',
               style: TextStyle(
                 fontSize: 15,
-                color: isOpen ? Colors.green : Colors.red, // cafeOpen이 true이면 초록색, 그렇지 않으면 검은색으로 설정
+                color: isOpen
+                    ? Colors.green
+                    : Colors.red, // cafeOpen이 true이면 초록색, 그렇지 않으면 검은색으로 설정
               ),
             ),
             const SizedBox(width: 20),
           ],
         ),
-
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const SizedBox(width: 25),
             const SizedBox(width: 20),
             Text(
