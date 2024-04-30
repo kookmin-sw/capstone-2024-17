@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:frontend/widgets/button/bottom_two_buttons.dart';
+
+class NotificationDialog extends StatelessWidget {
+  final String contents;
+  final String firstButton;
+  final String secondButton;
+
+  const NotificationDialog({
+    super.key,
+    required this.contents,
+    required this.firstButton,
+    required this.secondButton,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            top: -50,
+            left: 110,
+            child: Image.asset(
+              'assets/logo.png',
+              width: 80,
+            ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
+            width: 300,
+            height: 210,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  contents,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                BottomTwoButtons(
+                  first: firstButton,
+                  second: secondButton,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
