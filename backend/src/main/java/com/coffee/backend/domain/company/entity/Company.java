@@ -23,6 +23,8 @@ public class Company {
     @Column(name = "company_id")
     private Long companyId;
     private String name;
+    private String domain;
+    private String bno;
     @OneToOne
     private UploadFile logo;
 }

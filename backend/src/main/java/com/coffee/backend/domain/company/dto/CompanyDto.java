@@ -8,4 +8,5 @@ import lombok.Setter;
 public class CompanyDto {
     private String name;
     private String logoUrl;
+    private String domain;
 }

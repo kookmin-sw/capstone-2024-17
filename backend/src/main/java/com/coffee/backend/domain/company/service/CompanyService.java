@@ -41,6 +41,10 @@ public class CompanyService {
 
     public void sendCodeToEmail(String loginId, String toEmail) {
         userService.checkDuplicatedEmail(toEmail);
+
+        // TODO: company find by domain
+        // TODO: domain verification도 같이..!
+
         String title = "커리어 한잔 이메일 인증 코드";
         String authCode = this.createCode();
         String content = "<h1>회원님의 커리어 한잔 이메일 인증 코드</h1>" +
@@ -76,6 +80,9 @@ public class CompanyService {
     public EmailVerificationResponse verifiedCode(User user, String email, String authCode) {
         userService.checkDuplicatedEmail(email);
 
+        // TODO: company find by domain
+        // TODO: company field 변경해주기
+
         String redisAuthCode = redisTemplate.opsForValue().get(AUTH_CODE_PREFIX + email);
         boolean authResult = authCode.equals(redisAuthCode); // true : 인증 성공
         if (authResult) {
@@ -90,6 +97,7 @@ public class CompanyService {
         return companyList.stream().map(company -> {
             CompanyDto companyDto = new CompanyDto();
             companyDto.setName(company.getName());
+            companyDto.setDomain(company.getDomain());
             companyDto.setLogoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename()));
             return companyDto;
         }).toList();
