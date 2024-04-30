@@ -38,6 +38,32 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
   }
 }
 
+// 매칭 요청
+Future<Map<String, dynamic>> matchRequest(int senderId, int receiverId) async {
+  final url = Uri.parse('$baseUrl/match/request');
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'senderId': senderId,
+        'receiverId': receiverId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to send match request: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw e;
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
@@ -90,7 +116,7 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
   });
   try {
     http.Response res = await http.post(url,
-      headers: {"Content-Type": "application/json"}, body: data);
+        headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
     return jsonData;
   } catch (error) {

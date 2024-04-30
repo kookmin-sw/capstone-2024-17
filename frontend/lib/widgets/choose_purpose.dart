@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 
 class ChoosePurpose extends StatelessWidget {
@@ -43,7 +44,22 @@ class ChoosePurpose extends StatelessWidget {
               ),
             ],
           )),
-          ModalButton(text: "요청 보내기", handlePressed: () {})
+          ModalButton(
+            text: "요청 보내기",
+            handlePressed: () async {
+              // senderId와 receiverId 임의로 설정
+              int? senderId = 2;
+              int? receiverId = 3;
+
+              try {
+                Map<String, dynamic> response =
+                    await matchRequest(senderId, receiverId);
+                print("Response: $response");
+              } catch (e) {
+                print("Error: $e");
+              }
+            },
+          )
         ],
       ),
     );
