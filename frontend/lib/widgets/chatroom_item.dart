@@ -21,7 +21,7 @@ class ChatroomItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('탭됨: $id');
+        // print('탭됨: $id');
         Future.delayed(Duration.zero, () {
           Navigator.push(
               context,
