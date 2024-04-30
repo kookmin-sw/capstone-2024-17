@@ -20,10 +20,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: CafeDetails(
-        cafeId:"1", cafeName: "스타벅스 국민대점", cafeDetailsArguments: ['정보 없음'],), // 임시로 cafeId, cafeName 지정
+        cafeId: "1",
+        cafeName: "스타벅스 국민대점",
+        cafeDetailsArguments: ['정보 없음'],
+      ), // 임시로 cafeId, cafeName 지정
     );
   }
 }
+
 const List<Map<String, dynamic>> sampleUserList = [
   {
     "nickname": "뽕순이",
@@ -52,11 +56,9 @@ const List<Map<String, dynamic>> sampleUserList = [
 ];
 
 class CafeDetails extends StatefulWidget {
-
   final String cafeId;
   final String cafeName;
   final List<String> cafeDetailsArguments;
-
 
   const CafeDetails({
     this.cafeId = "defaultCafeId",
@@ -78,7 +80,8 @@ class _CafeDetailsState extends State<CafeDetails>
   void _startTimer() {
     print("타이머 시작");
     _timer = Timer.periodic(Duration(minutes: 20), (Timer timer) async {
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       double cafeLat = double.parse(widget.cafeDetailsArguments[6]); // 카페 위도
       double cafeLong = double.parse(widget.cafeDetailsArguments[7]); // 카페 경도
@@ -89,7 +92,7 @@ class _CafeDetailsState extends State<CafeDetails>
           latlong2.LatLng(position.latitude, position.longitude),
           latlong2.LatLng(cafeLat, cafeLong));
 
-      if (meter > 500){
+      if (meter > 500) {
         _stopTimer();
         print("어플의 지원 범위인 500m를 벗어났습니다.");
       }
@@ -103,10 +106,12 @@ class _CafeDetailsState extends State<CafeDetails>
 
   Future<void> getPlacePhotoUri() async {
     try {
-      PlacesDetailsResponse place = await places.getDetailsByPlaceId(widget.cafeDetailsArguments[9]);
+      PlacesDetailsResponse place =
+          await places.getDetailsByPlaceId(widget.cafeDetailsArguments[9]);
       if (place.isOkay && place.result.photos.isNotEmpty) {
         String photoReference = place.result.photos[0].photoReference;
-        photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
+        photoUrl =
+            'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
         setState(() {});
       } else {
         throw Exception('No photo found for this place.');
@@ -120,8 +125,13 @@ class _CafeDetailsState extends State<CafeDetails>
   List<UserModel> userList = [];
 
   void waitForUserList(String cafeId) async {
-    userList = await getUserList(cafeId);
-    setState(() {});
+    List<UserModel>? userListResult = await getUserList(cafeId);
+    if (userListResult != null) {
+      userList = userListResult;
+      setState(() {});
+    } else {
+      print("getUserList returned null");
+    }
   }
 
   @override
@@ -166,16 +176,16 @@ class _CafeDetailsState extends State<CafeDetails>
           Center(
             child: photoUrl.isNotEmpty
                 ? Image.network(
-              photoUrl,
-              width: 450,
-              height: 250,
-              fit: BoxFit.cover,
-            )
+                    photoUrl,
+                    width: 450,
+                    height: 250,
+                    fit: BoxFit.cover,
+                  )
                 : Image.asset(
-              "assets/cafe.jpeg",
-              width: 450,
-              fit: BoxFit.fitWidth,
-            ),
+                    "assets/cafe.jpeg",
+                    width: 450,
+                    fit: BoxFit.fitWidth,
+                  ),
           ),
           TabBar(
             controller: tabController,
@@ -225,18 +235,18 @@ class _CafeDetailsState extends State<CafeDetails>
                     itemBuilder: (context, index) {
                       return userList.isEmpty
                           ? UserItem(
-                        nickname: sampleUserList[index]["nickname"],
-                        company: sampleUserList[index]["companyName"],
-                        position: sampleUserList[index]["positionName"],
-                        introduction: sampleUserList[index]
-                        ["introduction"],
-                      )
+                              nickname: sampleUserList[index]["nickname"],
+                              company: sampleUserList[index]["companyName"],
+                              position: sampleUserList[index]["positionName"],
+                              introduction: sampleUserList[index]
+                                  ["introduction"],
+                            )
                           : UserItem(
-                        nickname: userList[index].nickname,
-                        company: userList[index].companyName,
-                        position: userList[index].positionName,
-                        introduction: userList[index].introduction,
-                      );
+                              nickname: userList[index].nickname,
+                              company: userList[index].companyName,
+                              position: userList[index].positionName,
+                              introduction: userList[index].introduction,
+                            );
                     },
                   ),
                 ],

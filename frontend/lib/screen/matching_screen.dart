@@ -24,13 +24,11 @@ class Matching extends StatefulWidget {
 }
 
 class _MatchingWidgetState extends State<Matching> {
-
   //무직이나 취준일 때 default 이미지 필요할 듯
   var company1 = 'Samsung';
   var company2 = 'Coupang';
   var imgpath1 = 'bean(1).png';
   var imgpath2 = 'cafe.jpeg';
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +75,8 @@ class _MatchingWidgetState extends State<Matching> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
-                  ),Positioned(
+                  ),
+                  Positioned(
                     top: 200,
                     left: 80,
                     child: Container(
@@ -127,16 +126,21 @@ class _MatchingWidgetState extends State<Matching> {
                 height: 80, // 버튼의 높이 설정
                 child: ElevatedButton(
                   onPressed: () {
-                    showAlertDialogYesNo(context,"커피챗 종료","커피챗을 종료하고 나가시겠습니까?");
+                    showAlertDialogYesNo(
+                        context, "커피챗 종료", "커피챗을 종료하고 나가시겠습니까?");
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20), // 버튼의 내부 패딩 설정
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)), // 버튼의 모양 설정
-                    backgroundColor: Color.fromRGBO(75, 30, 8, 1.0), // 버튼의 배경색 설정
+                    padding: EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20), // 버튼의 내부 패딩 설정
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)), // 버튼의 모양 설정
+                    backgroundColor:
+                        Color.fromRGBO(75, 30, 8, 1.0), // 버튼의 배경색 설정
                   ),
                   child: Text(
                     '커피챗 종료',
-                    style: TextStyle(fontSize: 25, color: Colors.white), // 버튼 텍스트의 스타일 설정
+                    style: TextStyle(
+                        fontSize: 25, color: Colors.white), // 버튼 텍스트의 스타일 설정
                   ),
                 ),
               ),
