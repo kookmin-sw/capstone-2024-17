@@ -1,7 +1,6 @@
 package com.coffee.backend.domain.company.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
-import com.coffee.backend.domain.company.dto.CompanyRequestDto;
 import com.coffee.backend.domain.company.dto.CompanyRequestRequest;
 import com.coffee.backend.domain.company.entity.CompanyRequest;
 import com.coffee.backend.domain.company.service.CompanyRequestService;
@@ -9,14 +8,10 @@ import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.utils.ApiResponse;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,19 +35,5 @@ public class CompanyRequestController {
     public ResponseEntity<ApiResponse<String>> deleteCompanyRequest(@RequestParam Long companyRequestId) {
         companyRequestService.deleteRequest(companyRequestId);
         return ResponseEntity.ok(ApiResponse.success("company request deleted"));
-    }
-
-    @Hidden
-    @GetMapping("dashboard")
-    public String dashboard(Model model) {
-        List<CompanyRequestDto> requests = new ArrayList<>();
-        requests.add(CompanyRequestDto.builder()
-                .id(1L)
-                .user("유저이름")
-                .name("회사이름")
-                .bno("000000088")
-                .domain("google.com").build());
-        model.addAttribute("requests", requests);
-        return "dashboard/index";
     }
 }
