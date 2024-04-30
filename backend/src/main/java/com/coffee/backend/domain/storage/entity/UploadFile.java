@@ -1,4 +1,4 @@
-package com.coffee.backend.domain.Storage.entity;
+package com.coffee.backend.domain.storage.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

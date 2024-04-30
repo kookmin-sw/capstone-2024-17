@@ -1,9 +1,9 @@
-package com.coffee.backend.domain.Storage.service;
+package com.coffee.backend.domain.storage.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.coffee.backend.domain.Storage.Repository.UploadFileRepository;
-import com.coffee.backend.domain.Storage.entity.UploadFile;
+import com.coffee.backend.domain.storage.entity.UploadFile;
+import com.coffee.backend.domain.storage.repository.UploadFileRepository;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -72,4 +72,3 @@ public class StorageService {
     }
 
 }
-

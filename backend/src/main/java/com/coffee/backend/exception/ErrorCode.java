@@ -20,8 +20,11 @@ public enum ErrorCode {
     UNABLE_TO_SEND_EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "6500", "이메일 발송 중 에러가 발생했습니다."),
     EMAIL_DUPLICATED(HttpStatus.CONFLICT, "6409", "EMAIL이 중복됩니다"),
     NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "6501", "인증코드 생성 중 오류가 발생했습니다."),
-    COMPANY_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "6404", "해당 COMPANY_REQUEST를 찾을 수 없습니다.");
+    COMPANY_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "6404", "해당 COMPANY_REQUEST를 찾을 수 없습니다."),
 
+    REQUEST_DUPLICATED(HttpStatus.CONFLICT, "7409", "요청이 중복됩니다."),
+    REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "7404", "해당 요청 정보를 찾을 수 없습니다."),
+    REQUEST_EXPIRED(HttpStatus.UNAUTHORIZED, "7401", "요청이 만료되었습니다.");
 
     private final HttpStatus status;
     private final String code;

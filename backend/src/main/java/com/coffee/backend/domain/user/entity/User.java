@@ -19,12 +19,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+    private Long kakaoId;
     private String loginId;
     private String password;
     private String nickname;
     private String email;
     private String phone;
     private String userUUID;
+    private String deviceToken;
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company companyId;

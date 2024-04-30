@@ -1,16 +1,22 @@
 package com.coffee.backend.domain.company.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
+import com.coffee.backend.domain.company.dto.CompanyRequestDto;
 import com.coffee.backend.domain.company.dto.CompanyRequestRequest;
 import com.coffee.backend.domain.company.entity.CompanyRequest;
 import com.coffee.backend.domain.company.service.CompanyRequestService;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +35,7 @@ public class CompanyRequestController {
         return ResponseEntity.ok(ApiResponse.success(companyRequestService.saveRequest(user, dto)));
     }
 
+    @Hidden
     @DeleteMapping("/company/request")
     public ResponseEntity<ApiResponse<String>> deleteCompanyRequest(@RequestParam Long companyRequestId) {
         companyRequestService.deleteRequest(companyRequestId);

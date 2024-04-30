@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/kakao_login.dart';
-import 'package:frontend/login_view_model.dart';
-import 'package:frontend/model/user_model2.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class KakaoLoginWidget extends StatelessWidget {
@@ -12,13 +9,12 @@ class KakaoLoginWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel loginViewModel = Provider.of<LoginViewModel>(context);
     return InkWell(
       onTap: () async {
-        UserModel2 user = await KakaoLogin().login();
-        loginViewModel.login(user);
+        String? user = await KakaoLogin().login();
         await storage.write(key: 'userUUID', value: '카톡');
-        await storage.write(key: 'authToken', value: '카톡토큰');
+        // 임시로 넣었던 토큰
+        // await storage.write(key: 'authToken', value: '카톡토큰');
         onPressed(); // await이 끝나면 콜백함수를 돌려준다
       },
       child: Container(
