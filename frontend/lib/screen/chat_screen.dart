@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -29,12 +30,14 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Map<String, dynamic>> chats = [];
   final TextEditingController _sendingMsgController = TextEditingController();
   String token = '';
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     subscribeChatroom(); // stompClient가 activate되고 난 후에 가능
     waitGetChatList(widget.chatroomId);
+    // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
   void subscribeChatroom() async {
@@ -61,6 +64,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // addPostFrameCallback: 렌더링된 후 즉시 실행
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -116,6 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // 채팅방
             Expanded(
               child: ListView(
+                controller: _scrollController,
                 children: buildChatItems(),
               ),
             ),
