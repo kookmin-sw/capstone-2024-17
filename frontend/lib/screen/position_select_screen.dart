@@ -85,11 +85,11 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                       ),
                     ],
                   ),
-                  Row(
+                  const Row(
                     children: <Widget>[
                       Text(
-                        "(무직인 경우 관심 분야) 현재 선택됨: $selectedPosition",
-                        style: const TextStyle(
+                        "(무직인 경우 관심 분야)",
+                        style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
@@ -130,12 +130,10 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                                         side: const BorderSide(
                                             style: BorderStyle.none),
                                         onSelected: (isSelected) {
-                                          print('선택: $position');
                                           selectedPosition = position;
-                                          print('교체됨: $selectedPosition');
+
                                           setState(() {
                                             if (isSelected) {
-                                              print('와!');
                                               selectedPosition = position;
                                             }
                                           });
