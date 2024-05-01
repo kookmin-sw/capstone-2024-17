@@ -20,6 +20,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           title,
           style: const TextStyle(fontSize: 24),
         ),
+        centerTitle: true,
         toolbarHeight: 100,
         backgroundColor: Colors.white,
         leading: IconButton(
