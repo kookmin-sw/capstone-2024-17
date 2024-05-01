@@ -18,12 +18,15 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'gradle'
+        working-directory: ./backend
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ./backend/gradlew
+      run: chmod +x gradlew
+      working-directory: ./backend
 
     - name: Build with Gradle
-      run: ./backend/gradlew build
+      run: ./gradlew build
+      working-directory: ./backend
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
@@ -32,8 +35,8 @@ jobs:
         path: build/libs/*.jar
 
     - name: Clean up Gradle Cache
-      run: ./backend/gradlew clean
-
+      run: ./gradlew clean
+      working-directory: ./backend
       
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -47,8 +50,8 @@ jobs:
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v3
       with:
-        context: .
-        file: ./backend/Dockerfile
+        context: ./backend
+        file: Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
 
@@ -56,3 +59,4 @@ jobs:
       run: |
         sudo docker compose down
         sudo docker compose up -d
+      working-directory: ./backend
