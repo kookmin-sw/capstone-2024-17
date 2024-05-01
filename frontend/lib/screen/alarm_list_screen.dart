@@ -39,7 +39,7 @@ final List<alarmEvent> events = [
 ];
 
 class alarm_list extends StatefulWidget {
-  const alarm_list({Key? key}) : super(key: key);
+  const alarm_list({super.key});
 
   @override
   _alarm_listWidgetState createState() => _alarm_listWidgetState();
@@ -75,9 +75,8 @@ class _alarm_listWidgetState extends State<alarm_list> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: 100.0, bottom: 0), // top 패딩 적용
+            const Padding(
+              padding: EdgeInsets.only(top: 100.0, bottom: 0), // top 패딩 적용
               child: Text(
                 '이벤트 목록',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -103,11 +102,11 @@ class _alarm_listWidgetState extends State<alarm_list> {
                           padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0, 0),
                           child: Text(
                             time,
-                            style: TextStyle(color: Colors.grey),
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ),
                       ),
-                      Divider(), //리스트 구분줄
+                      const Divider(), //리스트 구분줄
                     ],
                   );
                 },

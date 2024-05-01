@@ -41,11 +41,11 @@ class CafeInfo extends StatelessWidget {
               color: isDineIn ? Colors.green : Colors.red,
             ),
             const SizedBox(width: 10),
-            SizedBox(
+            const SizedBox(
               width: 120,
               child: Text(
                 '매장 내 식사',
-                style: const TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: 13),
                 overflow: TextOverflow.clip,
               ),
             ),
@@ -55,17 +55,17 @@ class CafeInfo extends StatelessWidget {
               color: isDineIn ? Colors.green : Colors.red,
             ),
             const SizedBox(width: 10),
-            SizedBox(
+            const SizedBox(
               width: 100,
               child: Text(
                 '테이크아웃',
-                style: const TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: 13),
                 overflow: TextOverflow.clip,
               ),
             ),
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           children: [
             // 이전 위젯들
@@ -77,7 +77,7 @@ class CafeInfo extends StatelessWidget {
             // 이후에 추가할 위젯들
           ],
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -96,7 +96,7 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Row(
           children: [
             const Icon(
@@ -113,7 +113,7 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
