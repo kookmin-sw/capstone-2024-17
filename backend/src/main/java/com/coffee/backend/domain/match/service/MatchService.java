@@ -4,13 +4,13 @@ import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
+import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.repository.ReviewRepository;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -28,10 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final FcmService fcmService;
+    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ModelMapper mapper;
-    private final ObjectMapper objectMapper;
-    private final UserRepository userRepository;
 
     private static final String LOCK_KEY_PREFIX = "lock:senderId:";
 
@@ -77,6 +76,7 @@ public class MatchService {
         String key = "matchId:" + dto.getMatchId();
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
+        redisTemplate.opsForHash().put(key + "-info", "status", "matching");
 
         Object sender = redisTemplate.opsForHash().get(key, "senderId");
         Long senderId = getLongId(sender);
@@ -172,6 +172,22 @@ public class MatchService {
             }
         }
         return id;
+    }
+
+    public MatchStatusDto finishMatch(MatchIdDto dto) {
+        String key = "matchId:" + dto.getMatchId() + "-info";
+        redisTemplate.delete(key);
+
+        MatchStatusDto match = new MatchStatusDto();
+        match.setMatchId(dto.getMatchId());
+        match.setStatus("finished");
+        return match;
+    }
+
+    public Boolean isMatching(MatchIdDto dto) {
+        String key = "matchId:" + dto.getMatchId() + "-info";
+        Object status = redisTemplate.opsForHash().get(key, "status");
+        return status != null; // true
     }
 
     @Transactional
