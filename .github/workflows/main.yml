@@ -52,12 +52,9 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
 
-    - name: Deploy to Docker Compose
+    - name: Send Portainer restart spring-container Trigger
       run: |
-        sudo docker compose down
-        sudo docker compose up -d
-      working-directory: ./backend
-
+        curl -X POST http://43.203.218.27:19000/api/webhooks/62247b21-eeb6-400f-89af-ae84bc566acc
 
     - name: Clean up Gradle Cache
       run: ./gradlew clean
