@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
@@ -80,7 +81,7 @@ class _CafeDetailsState extends State<CafeDetails>
 
   void _startTimer() {
     print("타이머 시작");
-    _timer = Timer.periodic(Duration(minutes: 20), (Timer timer) async {
+    _timer = Timer.periodic(const Duration(minutes: 20), (Timer timer) async {
       final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
 
@@ -158,20 +159,8 @@ class _CafeDetailsState extends State<CafeDetails>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: AppBar(
-          title: Text(
-            widget.cafeName,
-            style: const TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          backgroundColor: Colors.white,
-          elevation: 1.0,
-          shadowColor: Colors.black,
-          leading: const Icon(Icons.arrow_back_ios),
-          leadingWidth: 70,
-        ),
+      appBar: TopAppBar(
+        title: widget.cafeName,
       ),
       body: Column(
         children: [

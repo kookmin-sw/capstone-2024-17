@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
 
@@ -49,23 +50,13 @@ class CoffeechatReqList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return const DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
-          child: AppBar(
-            title: const Text(
-              "커피챗 요청 목록",
-              style: TextStyle(fontSize: 24),
-            ),
-            toolbarHeight: 100,
-            backgroundColor: Colors.white,
-            leading: const Icon(Icons.arrow_back_ios),
-            leadingWidth: 70,
-          ),
+        appBar: TopAppBar(
+          title: "커피챗 요청 목록",
         ),
-        body: const Column(
+        body: Column(
           children: [
             TabBar(
               tabs: [
@@ -86,7 +77,7 @@ class CoffeechatReqList extends StatelessWidget {
             ),
           ],
         ),
-        bottomNavigationBar: const BottomAppBar(),
+        bottomNavigationBar: BottomAppBar(),
       ),
     );
   }

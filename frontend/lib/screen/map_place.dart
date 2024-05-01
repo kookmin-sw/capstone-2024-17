@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 class Google_Map extends StatefulWidget {
-  const Google_Map({Key? key}) : super(key: key);
+  const Google_Map({super.key});
 
   @override
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
@@ -118,11 +118,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
 
-    int max_c = 5; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
+    int maxC = 5; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
     double radius = 500;
     double lat = position.latitude;
     double log = position.longitude;
-    Map<String, dynamic> body = map.request(inc, max_c, lat, log, radius);
+    Map<String, dynamic> body = map.request(inc, maxC, lat, log, radius);
     final response = await http.post(
         Uri.parse('https://places.googleapis.com/v1/places:searchNearby'),
         headers: header,
@@ -173,20 +173,16 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 ? place['displayName']['text']
                 : '정보 없음';
 
-            String cafeId = place['id'] != null ? place['id'] : '정보 없음';
+            String cafeId = place['id'] ?? '정보 없음';
 
-            String cafeAddress = place['formattedAddress'] != null
-                ? place['formattedAddress']
-                : '정보 없음';
+            String cafeAddress = place['formattedAddress'] ?? '정보 없음';
 
             String cafeOpen = place['regularOpeningHours'] != null &&
                     place['regularOpeningHours']['openNow'] != null
                 ? place['regularOpeningHours']['openNow'].toString()
                 : '정보 없음';
 
-            String cafeTelephone = place['internationalPhoneNumber'] != null
-                ? place['internationalPhoneNumber']
-                : '정보 없음';
+            String cafeTelephone = place['internationalPhoneNumber'] ?? '정보 없음';
 
             String cafeTakeout = place['takeout'] != null
                 ? place['takeout'].toString()
@@ -245,11 +241,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
     localcircles = {
       Circle(
-        circleId: CircleId('currentCircle'),
+        circleId: const CircleId('currentCircle'),
         center: LatLng(position.latitude, position.longitude), // (위도, 경도)
         radius: 500, // 반경
         fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
-        strokeColor: Color.fromRGBO(246, 82, 16, 1), // 테두리 색상
+        strokeColor: const Color.fromRGBO(246, 82, 16, 1), // 테두리 색상
         strokeWidth: 3, // 테두리 두께
       )
     };
@@ -263,13 +259,14 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
         recorder,
-        Rect.fromPoints(
-            Offset(0.0, 0.0), Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
+        Rect.fromPoints(const Offset(0.0, 0.0),
+            const Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
 
     // 마커 아이콘을 그리는 코드
     final paint = Paint()
-      ..color = Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
-    canvas.drawCircle(Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
+      ..color =
+          const Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
+    canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
     const textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
@@ -296,7 +293,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         children: [
           GoogleMap(
             // mapType: MapType.terrain,
-            initialCameraPosition: CameraPosition(
+            initialCameraPosition: const CameraPosition(
               target: LatLng(37.611035490773, 126.99457310622), // 국민대
 
               zoom: 15,
@@ -339,10 +336,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepOrange, // 배경 색상 설정
-                shape: CircleBorder(), // 원 모양의 버튼을 만들기 위해 사용
-                padding: EdgeInsets.all(10), // 버튼의 패딩 설정
+                shape: const CircleBorder(), // 원 모양의 버튼을 만들기 위해 사용
+                padding: const EdgeInsets.all(10), // 버튼의 패딩 설정
               ),
-              child: Icon(Icons.add_alert, color: Colors.white70), // 아이콘과 색상 설정
+              child: const Icon(Icons.add_alert,
+                  color: Colors.white70), // 아이콘과 색상 설정
             ),
           ),
           Positioned(
@@ -357,7 +355,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
               ),
-              child: Text(
+              child: const Text(
                 "위치 OFF",
                 style: TextStyle(color: Colors.white), // 폰트 색상 설정
               ),

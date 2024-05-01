@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String nickname;
@@ -48,21 +49,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          '프로필 수정',
-          style: TextStyle(fontSize: 24),
-        ),
-        toolbarHeight: 100,
-        // 저장하지 않고 나가는 경우 경고창 표시해야됨
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back),
-        ),
+      appBar: const TopAppBar(
+        title: "프로필 수정",
       ),
       body: Center(
           child: Column(

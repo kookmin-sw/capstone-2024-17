@@ -89,8 +89,11 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
     'accessToken': token,
   });
   try {
-    http.Response res = await http.post(url,
-      headers: {"Content-Type": "application/json"}, body: data);
+    http.Response res = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: data,
+    );
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
