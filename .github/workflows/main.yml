@@ -23,7 +23,7 @@ jobs:
       run: chmod +x ./backend/gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./backend/gradlew build
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
@@ -32,7 +32,7 @@ jobs:
         path: build/libs/*.jar
 
     - name: Clean up Gradle Cache
-      run: ./gradlew clean
+      run: ./backend/gradlew clean
 
       
     - name: Set up Docker Buildx
