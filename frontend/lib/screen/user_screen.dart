@@ -44,8 +44,22 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TopAppBar(
+      appBar: TopAppBarWithButton(
         title: "내 프로필",
+        buttons: [
+          IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
           child: Column(
