@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -72,16 +73,12 @@ class _alarm_listWidgetState extends State<alarm_list> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: const TopAppBar(
+          title: "알림 목록",
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 100.0, bottom: 0), // top 패딩 적용
-              child: Text(
-                '이벤트 목록',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: events.length,
