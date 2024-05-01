@@ -3,6 +3,7 @@ import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class SignupScreen3 extends StatefulWidget {
   final String? loginId;
@@ -25,21 +26,8 @@ class _SignupScreen3State extends State<SignupScreen3> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '회원가입',
-            // textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
+        appBar: const TopAppBar(
+          title: "회원가입",
         ),
         body: Container(
           alignment: Alignment.center,

@@ -32,7 +32,7 @@ class CafeInfo extends StatelessWidget {
     return Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(width: 50),
             Icon(
@@ -41,43 +41,44 @@ class CafeInfo extends StatelessWidget {
               color: isDineIn ? Colors.green : Colors.red,
             ),
             const SizedBox(width: 10),
-            SizedBox(
+            const SizedBox(
               width: 120,
               child: Text(
                 '매장 내 식사',
-                style: const TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: 13),
                 overflow: TextOverflow.clip,
               ),
             ),
+            const SizedBox(width: 30),
             Icon(
               isTakeout ? Icons.wallet_giftcard_sharp : Icons.not_interested,
               size: 20,
               color: isDineIn ? Colors.green : Colors.red,
             ),
             const SizedBox(width: 10),
-            SizedBox(
+            const SizedBox(
               width: 100,
               child: Text(
                 '테이크아웃',
-                style: const TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: 13),
                 overflow: TextOverflow.clip,
               ),
             ),
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           children: [
             // 이전 위젯들
             Container(
-              width: 360, // 네모 박스의 가로 길이
+              width: MediaQuery.of(context).size.width - 50, // 네모 박스의 가로 길이
               height: 1, // 네모 박스의 세로 길이
               color: Colors.grey, // 네모 박스의 색상
             ),
             // 이후에 추가할 위젯들
           ],
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -96,7 +97,7 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Row(
           children: [
             const Icon(
@@ -113,7 +114,7 @@ class CafeInfo extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

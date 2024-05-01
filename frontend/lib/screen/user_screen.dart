@@ -4,6 +4,7 @@ import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -43,28 +44,21 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          '내 프로필',
-          style: TextStyle(fontSize: 24),
-        ),
-        toolbarHeight: 100,
-        actions: [
-          if (isLogined)
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(),
-                  ),
-                );
-              },
-            ),
+      appBar: TopAppBarWithButton(
+        title: "내 프로필",
+        buttons: [
+          IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: Center(
