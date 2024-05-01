@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class PositionSelectScreen extends StatefulWidget {
   final String? lastPosition;
@@ -54,25 +55,8 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          '직무 등록',
-          style: TextStyle(fontSize: 24),
-        ),
-        toolbarHeight: 100,
-        leading: GestureDetector(
-          onTap: () {
-            if (selectedPosition != widget.lastPosition) {
-              // 직무를 저장하지 않고 나갈까요? 추가해주기
-              print('어이쿠');
-            }
-
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back),
-        ),
+      appBar: const TopAppBar(
+        title: "직무 등록",
       ),
       body: Container(
           alignment: Alignment.center,
