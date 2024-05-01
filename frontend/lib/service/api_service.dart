@@ -64,6 +64,30 @@ Future<Map<String, dynamic>> matchRequest(int senderId, int receiverId) async {
   }
 }
 
+//매칭 info 요청
+Future<Map<String, dynamic>> matchInfoRequest(
+    String matchId, int senderId, int receiverId) async {
+  final url = Uri.parse(
+      '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match info: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw e;
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {

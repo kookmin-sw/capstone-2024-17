@@ -60,6 +60,17 @@ class ChoosePurpose extends StatelessWidget {
                   print(response['data']['matchId']);
                   print(response['data']['senderId']);
                   print(response['data']['receiverId']);
+
+                  try {
+                    Map<String, dynamic> inforesponse = await matchInfoRequest(
+                        response['data']['matchId'],
+                        response['data']['senderId'],
+                        response['data']['receiverId']);
+
+                    print("info Response: $inforesponse");
+                  } catch (e) {
+                    print("matchInfoRequest Error: $e");
+                  }
                 }
 
                 print("Response: $response");
@@ -69,7 +80,7 @@ class ChoosePurpose extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => CoffeechatReqList()));
               } catch (e) {
-                print("Error: $e");
+                print("matchRequest Error: $e");
               }
             },
           )
