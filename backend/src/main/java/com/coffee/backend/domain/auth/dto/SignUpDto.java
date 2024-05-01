@@ -24,4 +24,7 @@ public class SignUpDto {
 
     @NotNull
     private String phone;
+
+    @NotNull
+    private String deviceToken;
 }

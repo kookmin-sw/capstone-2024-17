@@ -1,11 +1,9 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/screen/signup_screen3.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class WarningLabel extends StatelessWidget {
   const WarningLabel({
@@ -67,21 +65,8 @@ class _SignupScreen2State extends State<SignupScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '회원가입',
-            // textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
+        appBar: const TopAppBar(
+          title: "회원가입",
         ),
         body: Container(
             alignment: Alignment.center,

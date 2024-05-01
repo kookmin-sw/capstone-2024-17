@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MatchDto {
-    private String matchId;
+public class MatchRequestDto {
     private Long senderId;
     private Long receiverId;
-    private String status;
+    private Long requestTypeId;
 }

@@ -22,11 +22,8 @@ class UserDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              width: 35,
-            ),
             const ProfileImg(logo: "assets/coffee_bean.png"),
             const SizedBox(
               width: 35,
@@ -61,6 +58,7 @@ class UserDetails extends StatelessWidget {
         ),
         Container(
           width: 280,
+          height: 100,
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(

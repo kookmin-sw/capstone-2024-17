@@ -5,12 +5,10 @@ import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/button/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
-import 'package:frontend/login_view_model.dart';
-import 'package:frontend/model/user_model2.dart';
-import 'package:provider/provider.dart';
 
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,30 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    LoginViewModel loginViewModel =
-        Provider.of<LoginViewModel>(context, listen: false);
-    if (loginViewModel.user != null) {
-      // 현재 페이지를 대신해 유저 페이지로 navigate
-      // push나 pop의 재진입 현상 방지
-      Future.delayed(Duration.zero, () {
-        Navigator.of(context).pushReplacementNamed('/user');
-      });
-    }
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '로그인',
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
+        appBar: const TopAppBar(
+          title: "로그인",
         ),
         body: Container(
             alignment: Alignment.center,
@@ -167,17 +144,12 @@ class _LoginScreenState extends State<LoginScreen> {
     Map<String, dynamic> res = await login(loginId, password);
     if (res['success'] == true) {
       // 요청 성공
-      LoginViewModel loginViewModel =
-          Provider.of<LoginViewModel>(context, listen: false);
       const storage = FlutterSecureStorage();
       await storage.write(key: 'authToken', value: res["data"]["authToken"]);
-      // 아이디와 닉네임, 로그인타입으로 UserModel 만들어서 provider에 로그인
-      UserModel2 user = UserModel2(loginId, 'none', 'none');
-      loginViewModel.login(user);
       showAlertDialog(context, res['message']);
-      // 현재 페이지를 대신해 유저 페이지로 navigate
+      // 유저 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
       Future.delayed(Duration.zero, () {
-        Navigator.of(context).pushReplacementNamed('/user');
+        Navigator.pushNamedAndRemoveUntil(context, '/user', (route) => false);
       });
     } else {
       // 실패
