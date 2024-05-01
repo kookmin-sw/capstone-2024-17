@@ -49,12 +49,19 @@ class ChoosePurpose extends StatelessWidget {
             text: "요청 보내기",
             handlePressed: () async {
               // senderId와 receiverId 임의로 설정
-              int? senderId = 4;
-              int? receiverId = 5;
+              int? senderId = 18;
+              int? receiverId = 19;
 
               try {
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId);
+
+                if (response['success'] == true) {
+                  print(response['data']['matchId']);
+                  print(response['data']['senderId']);
+                  print(response['data']['receiverId']);
+                }
+
                 print("Response: $response");
 
                 Navigator.push(
