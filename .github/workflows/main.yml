@@ -6,6 +6,7 @@ on:
       - '#18-cicd'
     paths:
       - 'backend/**'
+      - '.github/workflows/main.yml'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
