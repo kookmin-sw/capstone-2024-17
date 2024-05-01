@@ -28,6 +28,8 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () => Navigator.pop(context),
         ),
         leadingWidth: 70,
+        elevation: 1.0,
+        shadowColor: Colors.black,
       ),
     );
   }
