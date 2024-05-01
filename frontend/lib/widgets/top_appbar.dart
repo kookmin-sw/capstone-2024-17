@@ -25,10 +25,14 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: true,
         toolbarHeight: 100,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: Navigator.of(context).canPop() // 스택에 더 페이지가 있는지 확인
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                onPressed: () {
+                  Navigator.of(context).pop(); // 현재 페이지에서 뒤로 가기
+                },
+              )
+            : null,
         leadingWidth: 70,
         elevation: 1.0,
         shadowColor: Colors.black,
