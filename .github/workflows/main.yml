@@ -54,7 +54,7 @@ jobs:
 
     - name: Send Portainer restart spring-container Trigger
       run: |
-        curl -X POST http://43.203.218.27:19000/api/webhooks/62247b21-eeb6-400f-89af-ae84bc566acc
+        curl -X POST http://3.38.153.215:19000/api/webhooks/bc388397-896b-4c57-9ab4-8cc3f4644b18
 
     - name: Clean up Gradle Cache
       run: ./gradlew clean
