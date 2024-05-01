@@ -88,6 +88,36 @@ Future<Map<String, dynamic>> matchInfoRequest(
   }
 }
 
+//match cancel 요청
+Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
+  final url = Uri.parse('$baseUrl/match/cancel');
+  print("api 들어왔고 matchId는 여기=>$matchId");
+  if (matchId == '') {
+    matchId = '7044e6c6-b521-4764-bc40-9127dc14d74d';
+  }
+
+  try {
+    final response = await http.delete(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match info: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw e;
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {

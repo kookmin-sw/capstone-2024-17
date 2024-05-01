@@ -3,6 +3,8 @@ import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 
+String reqlistpara = '';
+
 class ChoosePurpose extends StatelessWidget {
   const ChoosePurpose({
     super.key,
@@ -49,24 +51,20 @@ class ChoosePurpose extends StatelessWidget {
             text: "요청 보내기",
             handlePressed: () async {
               // senderId와 receiverId 임의로 설정
-              int? senderId = 18;
-              int? receiverId = 19;
+              int? senderId = 2;
+              int? receiverId = 3;
 
               try {
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId);
 
                 if (response['success'] == true) {
-                  print(response['data']['matchId']);
-                  print(response['data']['senderId']);
-                  print(response['data']['receiverId']);
-
                   try {
                     Map<String, dynamic> inforesponse = await matchInfoRequest(
                         response['data']['matchId'],
                         response['data']['senderId'],
                         response['data']['receiverId']);
-
+                    reqlistpara = inforesponse['data']['matchId'];
                     print("info Response: $inforesponse");
                   } catch (e) {
                     print("matchInfoRequest Error: $e");
@@ -78,7 +76,9 @@ class ChoosePurpose extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CoffeechatReqList()));
+                        //커피챗 요청 목록의 보낸 요청으로 이동됨
+                        builder: (context) =>
+                            CoffeechatReqList(matchId: reqlistpara)));
               } catch (e) {
                 print("matchRequest Error: $e");
               }

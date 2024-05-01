@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/user_details.dart';
@@ -40,16 +41,18 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: CoffeechatReqList());
+    return const MaterialApp(home: CoffeechatReqList(matchId: 'example'));
   }
 }
 
 class CoffeechatReqList extends StatelessWidget {
-  const CoffeechatReqList({super.key});
+  final String? matchId;
+
+  const CoffeechatReqList({Key? key, this.matchId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +72,7 @@ class CoffeechatReqList extends StatelessWidget {
             leadingWidth: 70,
           ),
         ),
-        body: const Column(
+        body: Column(
           children: [
             TabBar(
               tabs: [
@@ -84,20 +87,22 @@ class CoffeechatReqList extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(children: [
-                SentReq(),
+                SentReq(matchId: matchId),
                 ReceivedReq(),
               ]),
             ),
           ],
         ),
-        bottomNavigationBar: const BottomAppBar(),
+        bottomNavigationBar: BottomAppBar(),
       ),
     );
   }
 }
 
 class SentReq extends StatelessWidget {
-  const SentReq({super.key});
+  final String? matchId;
+
+  const SentReq({Key? key, this.matchId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +131,17 @@ class SentReq extends StatelessWidget {
           "자동 취소까지 남은 시간\n09:59",
           textAlign: TextAlign.center,
         ),
-        BottomTextButton(text: "요청 취소하기", handlePressed: () {}),
+        BottomTextButton(
+            text: "요청 취소하기",
+            handlePressed: () {
+              if (matchId != null) {
+                try {
+                  matchCancelRequest(matchId!);
+                } catch (e) {
+                  print(e);
+                }
+              }
+            }),
       ],
     );
   }
