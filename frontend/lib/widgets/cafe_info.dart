@@ -32,7 +32,7 @@ class CafeInfo extends StatelessWidget {
     return Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(width: 50),
             Icon(
@@ -49,6 +49,7 @@ class CafeInfo extends StatelessWidget {
                 overflow: TextOverflow.clip,
               ),
             ),
+            const SizedBox(width: 30),
             Icon(
               isTakeout ? Icons.wallet_giftcard_sharp : Icons.not_interested,
               size: 20,
@@ -70,7 +71,7 @@ class CafeInfo extends StatelessWidget {
           children: [
             // 이전 위젯들
             Container(
-              width: 360, // 네모 박스의 가로 길이
+              width: MediaQuery.of(context).size.width - 50, // 네모 박스의 가로 길이
               height: 1, // 네모 박스의 세로 길이
               color: Colors.grey, // 네모 박스의 색상
             ),

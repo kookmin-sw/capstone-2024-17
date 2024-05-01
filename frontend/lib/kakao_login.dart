@@ -20,7 +20,7 @@ class KakaoLogin implements SocialLogin {
         token = await UserApi.instance.loginWithKakaoAccount();
         // print('카카오계정으로 로그인: ${token.accessToken}');
       }
-      Map<String, dynamic> res = await kakaoLogin(token.toString());
+      Map<String, dynamic> res = await kakaoLogin(token.accessToken);
       if (res['success'] == true) {
         // 요청 성공
         const storage = FlutterSecureStorage();

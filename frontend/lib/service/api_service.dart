@@ -84,7 +84,7 @@ Future<Map<String, dynamic>> login(
 
 // 카카오톡 로그인
 Future<Map<String, dynamic>> kakaoLogin(String token) async {
-  final url = Uri.parse('$baseUrl/auth/kakao/signIn');
+  final url = Uri.parse('$baseUrl/auth/kakaoSignIn');
   final data = jsonEncode({
     'accessToken': token,
   });
@@ -94,7 +94,7 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
       headers: {"Content-Type": "application/json"},
       body: data,
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
