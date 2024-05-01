@@ -1,12 +1,17 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
+import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.repository.ReviewRepository;
+import com.coffee.backend.domain.user.dto.ReceiverInfoDto;
+import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
@@ -48,6 +53,7 @@ public class MatchService {
         Map<String, String> matchInfo = Map.of(
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
+                "requestTypeId", dto.getRequestTypeId().toString(),
                 "status", "pending"
         );
 
@@ -64,8 +70,26 @@ public class MatchService {
         MatchDto match = mapper.map(dto, MatchDto.class);
         match.setMatchId(matchId);
         match.setStatus("pending");
-
         return match;
+    }
+
+    // 매칭 요청 정보
+    public MatchInfoResponseDto getMatchRequestInfo(MatchInfoDto dto) {
+        User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
+        ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+        Company company = receiver.getCompany();
+        receiverInfo.setCompany(company);
+
+        String key = "matchId:" + dto.getMatchId();
+        Long requestTypeId = getLongId(redisTemplate.opsForHash().get(key, "requestTypeId"));
+
+        MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
+        matchInfo.setReceiverInfo(receiverInfo);
+        matchInfo.setSenderId(dto.getSenderId());
+        matchInfo.setReceiverId(dto.getReceiverId());
+        matchInfo.setRequestTypeId(requestTypeId);
+        return matchInfo;
     }
 
     // 매칭 요청 수락
@@ -176,9 +200,12 @@ public class MatchService {
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
+        User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
+        User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
         Review review = new Review();
-        review.setSenderId(dto.getSenderId());
-        review.setReceiverId(dto.getReceiverId());
+        review.setSender(sender);
+        review.setReceiver(receiver);
         review.setRating(dto.getRating());
         review.setComment(dto.getComment());
         review.setCreatedAt(new Date());
