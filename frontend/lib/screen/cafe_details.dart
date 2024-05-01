@@ -126,8 +126,14 @@ class _CafeDetailsState extends State<CafeDetails>
   List<UserModel> userList = [];
 
   void waitForUserList(String cafeId) async {
-    userList = await getUserList(cafeId);
-    setState(() {});
+    // Null error 방지
+    List<UserModel>? userListResult = await getUserList(cafeId);
+    if (userListResult != null) {
+      userList = userListResult;
+      setState(() {});
+    } else {
+      print("getUserList returned null");
+    }
   }
 
   @override
