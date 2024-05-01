@@ -255,7 +255,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     )))
           ])),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 }

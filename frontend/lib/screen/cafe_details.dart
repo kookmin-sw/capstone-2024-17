@@ -254,7 +254,6 @@ class _CafeDetailsState extends State<CafeDetails>
           ),
         ],
       ),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 

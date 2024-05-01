@@ -250,7 +250,6 @@ class _UserScreenState extends State<UserScreen> {
             ),
         ],
       )),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 
