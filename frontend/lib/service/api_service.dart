@@ -84,7 +84,7 @@ Future<Map<String, dynamic>> login(
 
 // 카카오톡 로그인
 Future<Map<String, dynamic>> kakaoLogin(String token) async {
-  final url = Uri.parse('$baseUrl/auth/kakao/kakaoSignIn');
+  final url = Uri.parse('$baseUrl/auth/kakaoSignIn');
   final data = jsonEncode({
     'accessToken': token,
   });
