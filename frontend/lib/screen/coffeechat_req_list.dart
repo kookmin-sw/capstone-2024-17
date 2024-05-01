@@ -10,24 +10,28 @@ const List<Map<String, dynamic>> sampleUserList = [
     "companyName": "채연컴퍼니",
     "positionName": "집사",
     "introduction": "안녕하세요 뽕순이입니다 뽕",
+    "rating": 10,
   },
   {
     "nickname": "담",
     "companyName": "네카라쿠배당토",
     "positionName": "웹 프론트엔드",
-    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ"
+    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
+    "rating": 20,
   },
   {
     "nickname": "잠온다",
     "companyName": "구글",
     "positionName": "데이터 엔지니어",
-    "introduction": "잠오니까 요청하지 마세요. 감사합니다."
+    "introduction": "잠오니까 요청하지 마세요. 감사합니다.",
+    "rating": 30,
   },
   {
     "nickname": "내가제일잘나가",
     "companyName": "꿈의직장",
     "positionName": "풀스택",
-    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<"
+    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<",
+    "rating": 40,
   },
 ];
 
@@ -113,6 +117,7 @@ class SentReq extends StatelessWidget {
             position: "데이터 엔지니어링",
             introduction:
                 "안녕하세요, goodnavers 입니다. 편하게 커피챗 걸어주세요. 어쩌고 저쩌고 블라블라블라블라블라블라블라블라블라",
+            rating: 10,
           ),
         ),
         const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
@@ -143,6 +148,7 @@ class ReceivedReq extends StatelessWidget {
             company: sampleUserList[index]["companyName"],
             position: sampleUserList[index]["positionName"],
             introduction: sampleUserList[index]["introduction"],
+            rating: sampleUserList[index]["rating"],
           );
         },
       ),

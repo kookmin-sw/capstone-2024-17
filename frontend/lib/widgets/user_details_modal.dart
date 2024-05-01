@@ -10,6 +10,7 @@ class UserDetailsModal extends StatelessWidget {
     required this.position,
     required this.introduction,
     required this.handleChangeDialog,
+    required this.rating,
   });
 
   final String nickname;
@@ -17,6 +18,7 @@ class UserDetailsModal extends StatelessWidget {
   final String position;
   final String introduction;
   final Function handleChangeDialog;
+  final int rating;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class UserDetailsModal extends StatelessWidget {
               company: company,
               position: position,
               introduction: introduction,
+              rating: rating,
             ),
             ModalButton(
               text: "커피챗 요청하기",

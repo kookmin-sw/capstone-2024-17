@@ -49,8 +49,8 @@ class ChoosePurpose extends StatelessWidget {
             text: "요청 보내기",
             handlePressed: () async {
               // senderId와 receiverId 임의로 설정
-              int? senderId = 2;
-              int? receiverId = 3;
+              int? senderId = 4;
+              int? receiverId = 5;
 
               try {
                 Map<String, dynamic> response =
