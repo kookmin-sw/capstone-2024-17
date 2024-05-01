@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 
@@ -55,6 +56,11 @@ class ChoosePurpose extends StatelessWidget {
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId);
                 print("Response: $response");
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CoffeechatReqList()));
               } catch (e) {
                 print("Error: $e");
               }
