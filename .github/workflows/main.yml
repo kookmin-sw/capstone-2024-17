@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - '#18-cicd'
-
+    paths:
+      - 'backend/**'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
