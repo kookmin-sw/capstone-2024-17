@@ -66,7 +66,7 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
                       ),
                       IconedTextfield(
                         icon: null,
-                        hintText: '사내메일 도메인',
+                        hintText: '사내메일 도메인  ex) @kookmin.ac.kr',
                         controller: _domainController,
                         isSecret: false,
                       ),
