@@ -53,7 +53,6 @@ class BigThermometer extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  // color: Colors.white,
                 ),
               ),
               Text(

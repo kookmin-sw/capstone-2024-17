@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/screen/signup_screen2.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
@@ -147,7 +146,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
                   // 약관 체크박스 컨테이너
                   Container(
-                      // margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
                       child: Column(children: <Widget>[
                     ExpansionLabeledCheckbox(
                       label: '(필수) 이용약관 동의',
