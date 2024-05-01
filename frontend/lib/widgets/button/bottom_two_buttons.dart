@@ -16,30 +16,14 @@ class BottomTwoButtonsSmall extends StatelessWidget {
   }
 }
 
-class BottomTwoButtonsMedium extends StatelessWidget {
-  final String first;
-  final String second;
-
-  const BottomTwoButtonsMedium({
-    super.key,
-    required this.first,
-    required this.second,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomTwoButtons(width: 130, first: first, second: second);
-  }
-}
-
 class BottomTwoButtons extends StatelessWidget {
-  final double width;
+  final double? width;
   final String first;
   final String second;
 
   const BottomTwoButtons({
     super.key,
-    required this.width,
+    this.width = 130,
     required this.first,
     required this.second,
   });
