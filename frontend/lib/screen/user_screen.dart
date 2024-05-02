@@ -63,12 +63,10 @@ class _UserScreenState extends State<UserScreen> {
       ),
       body: Center(
           child: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           if (isLogined)
             Expanded(
                 child: Container(
-                    // alignment: Alignment.center,
                     margin: const EdgeInsets.symmetric(
                       horizontal: 30,
                       vertical: 15,

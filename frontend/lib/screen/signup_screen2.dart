@@ -78,10 +78,12 @@ class _SignupScreen2State extends State<SignupScreen2> {
                   Column(children: <Widget>[
                     // 안내
                     const Row(children: <Widget>[
-                      Text("사용할 아이디와 비밀번호를 입력해주세요.",
-                          style: TextStyle(
-                            fontSize: 20,
-                          )),
+                      Flexible(
+                          child: Text("사용할 아이디와 비밀번호를 입력해주세요.",
+                              overflow: TextOverflow.visible,
+                              style: TextStyle(
+                                fontSize: 20,
+                              ))),
                     ]),
 
                     //  공백
