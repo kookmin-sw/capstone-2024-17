@@ -94,8 +94,8 @@ class _SignupScreen2State extends State<SignupScreen2> {
 
                     // 입력창 컨테이너
                     Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 30), // 마진 추가,
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: 0), // 마진 추가,
                         child: Column(children: <Widget>[
                           // 입력창
                           IconedTextfield(
