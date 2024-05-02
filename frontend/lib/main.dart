@@ -9,7 +9,6 @@ import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
-import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -32,7 +31,7 @@ const List<String> sampleCafeList = [
 
 void main() async {
   // http post 요청
-  allUsers = await getAllUsers(sampleCafeList);
+  // allUsers = await getAllUsers(sampleCafeList);
 
   // 웹소켓(stomp) 연결
   stompClient = StompClient(
