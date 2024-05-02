@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,5 +66,10 @@ public class AuthController {
         KakaoUserInfoDto userInfoDto = kakaoLoginService.getUserInfo(dto.getAccessToken());
         AuthDto authDto = kakaoLoginService.signIn(userInfoDto);
         return ResponseEntity.ok(ApiResponse.success(authDto));
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<ApiResponse<UserDto>> detail(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(ApiResponse.success(authService.detail(user)));
     }
 }
