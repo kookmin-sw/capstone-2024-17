@@ -24,7 +24,9 @@ public enum ErrorCode {
 
     REQUEST_DUPLICATED(HttpStatus.CONFLICT, "7409", "요청이 중복됩니다."),
     REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "7404", "해당 요청 정보를 찾을 수 없습니다."),
-    REQUEST_EXPIRED(HttpStatus.UNAUTHORIZED, "7401", "요청이 만료되었습니다.");
+    REQUEST_EXPIRED(HttpStatus.UNAUTHORIZED, "7401", "요청이 만료되었습니다."),
+
+    COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "8404", "해당 COMPANY를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;

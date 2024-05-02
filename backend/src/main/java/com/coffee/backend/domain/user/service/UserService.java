@@ -1,6 +1,7 @@
 package com.coffee.backend.domain.user.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeUserDto;
+import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
@@ -47,6 +48,11 @@ public class UserService {
     public void setUserEmail(User user, String email) {
 //        this.checkDuplicatedEmail(email);
         user.setEmail(email);
+        userRepository.save(user);
+    }
+
+    public void setUserCompany(User user, Company company) {
+        user.setCompany(company);
         userRepository.save(user);
     }
 }
