@@ -2,7 +2,6 @@ package com.coffee.backend.domain.company.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.company.dto.CompanyRequestRequest;
-import com.coffee.backend.domain.company.entity.CompanyRequest;
 import com.coffee.backend.domain.company.service.CompanyRequestService;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.utils.ApiResponse;
@@ -24,7 +23,7 @@ public class CompanyRequestController {
     private final CompanyRequestService companyRequestService;
 
     @PostMapping("/company/request")
-    public ResponseEntity<ApiResponse<CompanyRequest>> createCompanyRequest(
+    public ResponseEntity<ApiResponse<CompanyRequestRequest>> createCompanyRequest(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody CompanyRequestRequest dto) {
         return ResponseEntity.ok(ApiResponse.success(companyRequestService.saveRequest(user, dto)));

@@ -19,13 +19,14 @@ public class CompanyRequestService {
 
     private final CompanyRequestRepository companyRequestRepository;
 
-    public CompanyRequest saveRequest(User user, CompanyRequestRequest dto) {
-        return companyRequestRepository.save(CompanyRequest.builder()
+    public CompanyRequestRequest saveRequest(User user, CompanyRequestRequest dto) {
+        companyRequestRepository.save(CompanyRequest.builder()
                 .name(dto.getName())
                 .domain(dto.getDomain())
                 .bno(dto.getBno())
                 .user(user).build()
         );
+        return dto;
     }
 
     public void deleteRequest(Long companyRequestId) {
