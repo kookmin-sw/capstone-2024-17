@@ -1,7 +1,19 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:frontend/model/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// // 사용자 토큰을 저장하는 함수
+// Future<void> saveUserToken(String token) async {
+//   final prefs = await SharedPreferences.getInstance();
+//   await prefs.setString('userToken', token);
+// }
+
+// 사용자 토큰을 가져오는 함수
+Future<String?> getUserToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('userToken');
+}
 
 const baseUrl = "http://52.79.248.128:8080";
 const userToken =
@@ -42,12 +54,14 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
 Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
+  final token = await getUserToken();
+  print("token = $token");
   try {
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $userToken",
+        "Authorization": "Bearer $token",
       },
       body: jsonEncode({
         'senderId': senderId,
@@ -71,18 +85,23 @@ Future<Map<String, dynamic>> matchInfoRequest(
     String matchId, int senderId, int receiverId) async {
   final url = Uri.parse(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
+  final token = await getUserToken();
+  print("info token = $token");
+
   try {
     final response = await http.get(
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $userToken",
+        "Authorization": "Bearer $token",
       },
     );
-
+    print("처리중");
     if (response.statusCode == 200) {
+      print("O1");
       return json.decode(response.body);
     } else {
+      print("O2");
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (e) {
