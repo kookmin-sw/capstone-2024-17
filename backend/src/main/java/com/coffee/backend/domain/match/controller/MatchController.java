@@ -1,7 +1,9 @@
 package com.coffee.backend.domain.match.controller;
 
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
+import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +31,12 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchDto>> sendMatchRequest(@RequestBody MatchRequestDto dto) {
         log.info("Request Message Catch!!");
         MatchDto response = matchService.sendMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/request/info")
+    public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(@RequestBody MatchInfoDto dto) {
+        MatchInfoResponseDto response = matchService.getMatchRequestInfo(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

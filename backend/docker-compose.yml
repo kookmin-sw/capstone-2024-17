@@ -4,9 +4,7 @@ services:
     env_file:
       - .env
     container_name: spring-container
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: hyeesw/spring-app
     ports:
       - "8080:8080"
     depends_on:

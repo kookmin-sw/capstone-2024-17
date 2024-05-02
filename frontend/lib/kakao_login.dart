@@ -13,12 +13,10 @@ class KakaoLogin implements SocialLogin {
         // 카카오톡이 설치되어있음
         // 카카오톡으로 로그인
         token = await UserApi.instance.loginWithKakaoTalk();
-        // print('카카오톡으로 로그인: ${token.accessToken}');
       } else {
         // 카카오톡이 설치되어있지 않음
         // 카카오계정으로 로그인
         token = await UserApi.instance.loginWithKakaoAccount();
-        // print('카카오계정으로 로그인: ${token.accessToken}');
       }
       Map<String, dynamic> res = await kakaoLogin(token.accessToken);
       if (res['success'] == true) {
