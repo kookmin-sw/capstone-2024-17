@@ -24,7 +24,7 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", insertable = false, updatable = false)
     private Company company;
 
 //    @ManyToOne
