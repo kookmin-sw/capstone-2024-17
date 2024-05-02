@@ -4,6 +4,7 @@ import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/map_place.dart';
@@ -31,7 +32,7 @@ const List<String> sampleCafeList = [
 
 void main() async {
   // http post 요청
-  // allUsers = await getAllUsers(sampleCafeList);
+  allUsers = await getAllUsers(sampleCafeList);
 
   // 웹소켓(stomp) 연결
   stompClient = StompClient(
