@@ -4,11 +4,13 @@ import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 
 String reqlistpara = '';
+int requestTypeId = 0;
+int _selectedIndex = 0; // 선택된 인덱스를 저장할 변수
 
 class ChoosePurpose extends StatelessWidget {
   const ChoosePurpose({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,33 +32,44 @@ class ChoosePurpose extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          const Expanded(
-              child: Column(
-            children: [
-              PurposeButton(
-                purpose: "당신의 회사가 궁금해요",
-              ),
-              PurposeButton(
-                purpose: "당신의 업무가 궁금해요",
-              ),
-              PurposeButton(
-                purpose: "같이 개발 이야기 나눠요",
-              ),
-              PurposeButton(
-                purpose: "점심시간 함께 산책해요",
-              ),
-            ],
-          )),
+          Expanded(
+            child: Column(
+              children: [
+                PurposeButton(
+                  purpose: "당신의 회사가 궁금해요",
+                  selectedindex: 0,
+                  onIndexChanged: _updateSelectedIndex, // 함수 전달
+                ),
+                PurposeButton(
+                  purpose: "당신의 업무가 궁금해요",
+                  selectedindex: 1,
+                  onIndexChanged: _updateSelectedIndex, // 함수 전달
+                ),
+                PurposeButton(
+                  purpose: "같이 개발 이야기 나눠요",
+                  selectedindex: 2,
+                  onIndexChanged: _updateSelectedIndex, // 함수 전달
+                ),
+                PurposeButton(
+                  purpose: "점심시간 함께 산책해요",
+                  selectedindex: 3,
+                  onIndexChanged: _updateSelectedIndex, // 함수 전달
+                ),
+              ],
+            ),
+          ),
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              // senderId와 receiverId 임의로 설정
-              int? senderId = 2;
-              int? receiverId = 3;
+              int senderId = 20;
+              int receiverId = 21;
+              print("selectedindex는 여기 $_selectedIndex");
 
               try {
                 Map<String, dynamic> response =
-                    await matchRequest(senderId, receiverId);
+                    await matchRequest(senderId, receiverId, _selectedIndex);
+
+                print("Response: $response");
 
                 if (response['success'] == true) {
                   try {
@@ -64,21 +77,13 @@ class ChoosePurpose extends StatelessWidget {
                         response['data']['matchId'],
                         response['data']['senderId'],
                         response['data']['receiverId']);
-                    reqlistpara = inforesponse['data']['matchId'];
+
                     print("info Response: $inforesponse");
+                    reqlistpara = inforesponse['data']['matchId'];
                   } catch (e) {
                     print("matchInfoRequest Error: $e");
                   }
                 }
-
-                print("Response: $response");
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        //커피챗 요청 목록의 보낸 요청으로 이동됨
-                        builder: (context) =>
-                            CoffeechatReqList(matchId: reqlistpara)));
               } catch (e) {
                 print("matchRequest Error: $e");
               }
@@ -88,15 +93,24 @@ class ChoosePurpose extends StatelessWidget {
       ),
     );
   }
+
+  // 선택된 인덱스를 업데이트하는 함수
+  void _updateSelectedIndex(int newIndex) {
+    _selectedIndex = newIndex;
+  }
 }
 
 class PurposeButton extends StatefulWidget {
   final String purpose;
+  final int selectedindex;
+  final Function(int) onIndexChanged; // 새로운 함수 추가
 
   const PurposeButton({
-    super.key,
+    Key? key,
     required this.purpose,
-  });
+    required this.selectedindex,
+    required this.onIndexChanged, // 생성자에 함수 추가
+  }) : super(key: key);
 
   @override
   State<PurposeButton> createState() => _PurposeButtonState();
@@ -115,6 +129,8 @@ class _PurposeButtonState extends State<PurposeButton> {
         onPressed: () {
           setState(() {
             isPressed = !isPressed;
+            // 버튼이 눌리면 새로운 인덱스로 업데이트
+            widget.onIndexChanged(widget.selectedindex);
           });
         },
         style: ButtonStyle(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
@@ -36,7 +38,8 @@ const List<Map<String, dynamic>> sampleUserList = [
   },
 ];
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -133,10 +136,20 @@ class SentReq extends StatelessWidget {
         ),
         BottomTextButton(
             text: "요청 취소하기",
-            handlePressed: () {
+            handlePressed: () async {
               if (matchId != null) {
                 try {
-                  matchCancelRequest(matchId!);
+                  Map<String, dynamic> response =
+                      await matchCancelRequest(matchId!);
+                  if (response['success'] == 'true') {
+                    print("정상적으로 삭제됨");
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            //우선 구굴맵으로 이동
+                            builder: (context) => Google_Map()));
+                  }
                 } catch (e) {
                   print(e);
                 }

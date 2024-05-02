@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/model/user_model.dart';
 
-const baseUrl = "http://43.203.218.27:8080";
+const baseUrl = "http://52.79.248.128:8080";
 const userToken =
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
 
@@ -39,7 +39,8 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
 }
 
 // 매칭 요청
-Future<Map<String, dynamic>> matchRequest(int senderId, int receiverId) async {
+Future<Map<String, dynamic>> matchRequest(
+    int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
   try {
     final response = await http.post(
@@ -51,6 +52,7 @@ Future<Map<String, dynamic>> matchRequest(int senderId, int receiverId) async {
       body: jsonEncode({
         'senderId': senderId,
         'receiverId': receiverId,
+        "requestTypeId": requestTypeId
       }),
     );
 
