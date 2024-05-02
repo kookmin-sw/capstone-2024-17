@@ -22,10 +22,20 @@ public class User {
     private Long kakaoId;
     private String loginId;
     private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+//    @ManyToOne
+//    @JoinColumn(name = "position_id")
+//    private Position position;
+
     private String nickname;
     private String email;
     private String phone;
     private String userUUID;
+    private String introduction;
     private String deviceToken;
     @ManyToOne
     @JoinColumn(name = "company_id")

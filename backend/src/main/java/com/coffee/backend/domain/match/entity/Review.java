@@ -1,10 +1,13 @@
 package com.coffee.backend.domain.match.entity;
 
+import com.coffee.backend.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,18 +20,16 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-    @Column(nullable = false)
-    private Long senderId;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
-    @Column(nullable = false)
-    private Long receiverId;
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
+    private User receiver;
 
-    @Column(nullable = false)
     private int rating; // 커피콩 (1-5)
-
     @Column(length = 1024)
     private String comment;
-
-    @Column(nullable = false)
     private Date createdAt;
 }

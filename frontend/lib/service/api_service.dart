@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/user_model.dart';
 
 const baseUrl = "http://43.203.218.27:8080";
+const storage = FlutterSecureStorage();
 const userToken =
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
 
@@ -82,16 +84,68 @@ Future<Map<String, dynamic>> login(
   }
 }
 
+// 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
+Future<Map<String, dynamic>> getChatroomlist() async {
+  final url = Uri.parse('$baseUrl/chatroom/list');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  // print("토큰은: $token");
+  try {
+    http.Response res = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 해당 채팅방의 채팅 목록을 get
+Future<Map<String, dynamic>> getChatList(int chatroomId) async {
+  const endpointUrl = '$baseUrl/message/list';
+
+  String queryString = Uri(queryParameters: {
+    'chatroom_id': chatroomId.toString(),
+  }).query;
+  final url = '$endpointUrl?$queryString';
+
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 카카오톡 로그인
 Future<Map<String, dynamic>> kakaoLogin(String token) async {
-  final url = Uri.parse('$baseUrl/auth/kakao/signIn');
+  final url = Uri.parse('$baseUrl/auth/kakaoSignIn');
   final data = jsonEncode({
     'accessToken': token,
   });
   try {
-    http.Response res = await http.post(url,
-      headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    http.Response res = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: data,
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');

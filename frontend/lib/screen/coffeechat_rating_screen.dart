@@ -8,18 +8,18 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const CoffeeChatRating(),
+    return const MaterialApp(
+      home: CoffeeChatRating(),
     );
   }
 }
 
 class CoffeeChatRating extends StatefulWidget {
-  const CoffeeChatRating({Key? key}) : super(key: key);
+  const CoffeeChatRating({super.key});
 
   @override
   _CoffeeChatRatingState createState() => _CoffeeChatRatingState();
@@ -86,7 +86,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               child: Text(
                 selectedIndex >= 0 ? comments[selectedIndex] : '',
                 style: const TextStyle(
@@ -97,7 +97,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 150),
+              padding: const EdgeInsets.only(top: 150),
               child: GestureDetector(
                 onTap: selectedIndex >= 0
                     ? () {
@@ -106,12 +106,12 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Google_Map()));
+                                builder: (context) => const Google_Map()));
                       }
                     : null, // selectedIndex가 0 이상인 경우에만 클릭 가능하도록 설정
                 child: Text(
                   selectedIndex >= 0 ? '제출하기 ->' : '커피콩점을 매겨주세요.',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                   ),
                 ),

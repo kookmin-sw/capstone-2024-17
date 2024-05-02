@@ -1,10 +1,11 @@
-import 'package:frontend/screen/test_screen.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/screen/chatroom_list_screen.dart';
+import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
@@ -80,6 +81,7 @@ class MyApp extends StatelessWidget {
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),
           '/user': (BuildContext context) => const UserScreen(),
+          '/chatroomlist': (BuildContext context) => const ChatroomListScreen(),
           '/cafe': (BuildContext context) => const CafeDetails(),
         },
       ),

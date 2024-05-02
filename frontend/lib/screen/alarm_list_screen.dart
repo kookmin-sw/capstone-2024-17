@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -39,7 +40,7 @@ final List<alarmEvent> events = [
 ];
 
 class alarm_list extends StatefulWidget {
-  const alarm_list({Key? key}) : super(key: key);
+  const alarm_list({super.key});
 
   @override
   _alarm_listWidgetState createState() => _alarm_listWidgetState();
@@ -72,17 +73,12 @@ class _alarm_listWidgetState extends State<alarm_list> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: const TopAppBar(
+          title: "알림 목록",
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: 100.0, bottom: 0), // top 패딩 적용
-              child: Text(
-                '이벤트 목록',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: events.length,
@@ -103,11 +99,11 @@ class _alarm_listWidgetState extends State<alarm_list> {
                           padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0, 0),
                           child: Text(
                             time,
-                            style: TextStyle(color: Colors.grey),
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ),
                       ),
-                      Divider(), //리스트 구분줄
+                      const Divider(), //리스트 구분줄
                     ],
                   );
                 },
