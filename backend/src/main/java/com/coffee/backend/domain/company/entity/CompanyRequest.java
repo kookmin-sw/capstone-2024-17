@@ -5,7 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,7 +17,8 @@ public class CompanyRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long CompanyRequestId;
-    @OneToOne
+    @ManyToOne // 유저 한 명이 여러 회사 request 가능
+    @JoinColumn(name = "user_id")
     private User user;
     private String name;
     private String domain;
