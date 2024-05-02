@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
   static final List<Widget> _screenOptions = [
     const Google_Map(),
     const CoffeechatReqList(),
-    const Center(child: Text('채팅')), // 임시 채팅 스크린
+    const ChatroomListScreen(),
     const UserScreen(),
   ];
 
