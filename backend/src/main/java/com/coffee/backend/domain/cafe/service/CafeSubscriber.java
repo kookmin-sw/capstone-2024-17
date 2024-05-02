@@ -1,7 +1,6 @@
 package com.coffee.backend.domain.cafe.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeDto;
-import com.coffee.backend.domain.match.dto.MatchDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
