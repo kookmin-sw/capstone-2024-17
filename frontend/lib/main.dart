@@ -37,26 +37,6 @@ const List<String> sampleCafeList = [
 ];
 
 void main() async {
-  // http post 요청
-  allUsers = await getAllUsers(sampleCafeList);
-
-  // 웹소켓(stomp) 연결
-  stompClient = StompClient(
-    config: StompConfig.sockJS(
-      url: socketUrl,
-      onConnect: (_) {
-        print("websocket connected !!");
-        subCafeList(
-            stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
-      },
-      beforeConnect: () async {
-        print('waiting to connect websocket...');
-      },
-      onWebSocketError: (dynamic error) => print(error.toString()),
-    ),
-  );
-  stompClient!.activate();
-
   await dotenv.load();
   KakaoSdk.init(
     nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY'],
@@ -98,6 +78,29 @@ class _MyAppState extends State<MyApp> {
     storage.read(key: 'authToken').then((token) {
       userToken = token;
     });
+
+    if (userToken != null) {
+      // http post 요청
+      getAllUsers(userToken!, sampleCafeList).then((value) {
+        allUsers = value;
+      });
+      // 웹소켓(stomp) 연결
+      stompClient = StompClient(
+        config: StompConfig.sockJS(
+          url: socketUrl,
+          onConnect: (_) {
+            print("websocket connected !!");
+            subCafeList(
+                stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
+          },
+          beforeConnect: () async {
+            print('waiting to connect websocket...');
+          },
+          onWebSocketError: (dynamic error) => print(error.toString()),
+        ),
+      );
+      stompClient!.activate();
+    }
   }
 
   @override
