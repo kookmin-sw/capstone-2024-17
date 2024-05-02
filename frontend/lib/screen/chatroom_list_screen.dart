@@ -3,6 +3,7 @@ import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/chatroom_item.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class ChatroomListScreen extends StatefulWidget {
   const ChatroomListScreen({super.key});
@@ -24,20 +25,8 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          '채팅방 목록',
-          style: TextStyle(fontSize: 24),
-        ),
-        toolbarHeight: 100,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back),
-        ),
+      appBar: const TopAppBar(
+        title: '채팅방 목록',
       ),
       body: ListView(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
@@ -86,13 +75,11 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
     if (res['success']) {
       // 요청 성공
       setState(() {
-        chatrooms =
-          List<Map<String, dynamic>>.from(res['data']['chatrooms']);
+        chatrooms = List<Map<String, dynamic>>.from(res['data']['chatrooms']);
       });
     } else {
       // 실패: 예외처리
-      print(
-          '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})');
+      print('채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})');
       showAlertDialog(
         context,
         '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
