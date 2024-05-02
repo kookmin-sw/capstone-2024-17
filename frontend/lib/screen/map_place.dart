@@ -12,26 +12,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final status = await Geolocator.checkPermission();
-  if (status == LocationPermission.denied) {
-    await Geolocator.requestPermission();
-  }
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const CupertinoApp(
-      home: Google_Map(),
-    );
-  }
-}
-
 class Google_Map extends StatefulWidget {
   const Google_Map({super.key});
 

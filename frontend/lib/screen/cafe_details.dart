@@ -10,24 +10,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CafeDetails(
-        cafeId: "1",
-        cafeName: "스타벅스 국민대점",
-        cafeDetailsArguments: ['정보 없음'],
-      ), // 임시로 cafeId, cafeName 지정
-    );
-  }
-}
-
 const List<Map<String, dynamic>> sampleUserList = [
   {
     "nickname": "뽕순이",

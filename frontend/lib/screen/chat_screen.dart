@@ -8,6 +8,7 @@ import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/chat_date.dart';
 import 'package:frontend/widgets/chat_item.dart';
 import 'package:frontend/main.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class ChatScreen extends StatefulWidget {
   final int chatroomId;
@@ -69,52 +70,9 @@ class _ChatScreenState extends State<ChatScreen> {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title:
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: CircleAvatar(
-              radius: 35,
-              backgroundImage: widget.logoImage.image,
-            ),
-          ),
-          Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  widget.nickname,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.mode_standby,
-                        color: Colors.lightGreen,
-                        size: 15,
-                      ),
-                      Text(' 온라인', style: TextStyle(fontSize: 14)),
-                    ]),
-              ]),
-        ]),
-        toolbarHeight: 100,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back),
-        ),
-        shape: const Border(
-          bottom: BorderSide(
-            color: Colors.grey,
-            width: 1,
-          ),
-        ),
+      appBar: ChatroomAppBar(
+        logoImage: widget.logoImage,
+        nickname: widget.nickname,
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
