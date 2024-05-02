@@ -44,7 +44,7 @@ public class AuthService {
         user.setUserUUID(UUID.randomUUID().toString());
 
         User savedUser = userRepository.save(user);
-        return mapper.map(savedUser, UserDto.class);
+        return customMapper.toUserDto(savedUser);
     }
 
     public AuthDto signIn(SignInDto dto) {

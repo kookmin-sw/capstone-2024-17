@@ -11,6 +11,7 @@ import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.domain.userChatroom.entity.UserChatroom;
 import com.coffee.backend.domain.userChatroom.repository.UserChatroomRepository;
+import com.coffee.backend.utils.CustomMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,6 +25,7 @@ public class ChatroomService {
     private final ChatroomRepository chatroomRepository;
     private final UserChatroomRepository userChatroomRepository;
     private final MessageService messageService;
+    private final CustomMapper customMapper;
 
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreationDto dto) {
@@ -45,8 +47,7 @@ public class ChatroomService {
         uc2.setUser(receiver);
         userChatroomRepository.save(uc2);
 
-        UserDto userInfo = new UserDto();
-        userInfo.setNickname(sender.getNickname());
+        UserDto userInfo = customMapper.toUserDto(sender);
         return new ChatroomResponse(room.getChatroomId(), userInfo, "");
     }
 
@@ -58,8 +59,7 @@ public class ChatroomService {
                 .map(cr -> {
                     User other = userChatroomRepository.findOtherUserChatroomByChatroomAndUser(cr, user).orElseThrow()
                             .getUser();
-                    UserDto otherInfo = new UserDto();
-                    otherInfo.setNickname(other.getNickname());
+                    UserDto otherInfo = customMapper.toUserDto(other);
 
                     return new ChatroomResponse(cr.getChatroomId(), otherInfo,
                             messageService.getRecentMessageContent(cr));
