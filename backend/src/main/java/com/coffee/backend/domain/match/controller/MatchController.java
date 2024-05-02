@@ -61,6 +61,20 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @PostMapping("/finish")
+    public ResponseEntity<ApiResponse<MatchDto>> finishMatch(@RequestBody MatchIdDto dto) {
+        log.info("Finish Message Catch!!");
+        MatchDto response = matchService.finishMatch(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/isMatching")
+    public ResponseEntity<ApiResponse<Boolean>> isMatching(@RequestBody MatchIdDto dto) {
+        log.info("Check if isMathing");
+        Boolean response = matchService.isMatching(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     @PostMapping("/review")
     public ResponseEntity<ApiResponse<Review>> submitReview(@RequestBody ReviewDto dto) {
         Review response = matchService.saveReview(dto);
