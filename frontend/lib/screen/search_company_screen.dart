@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/company_item.dart';
 import 'package:frontend/widgets/search_textfield.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class SearchCompanyScreen extends StatefulWidget {
   const SearchCompanyScreen({super.key});
@@ -38,21 +39,7 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '회사 등록',
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
-        ),
+        appBar: const TopAppBar(title: '회사 검색'),
         body: Container(
             // alignment: Alignment.center,
             margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),

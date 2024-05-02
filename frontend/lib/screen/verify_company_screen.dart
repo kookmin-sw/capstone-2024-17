@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/rounded_img.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
   final String companyName;
@@ -39,145 +40,133 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '회사 인증',
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
-        ),
-        body: Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child: Column(children: <Widget>[
-              const Row(
-                children: <Widget>[
-                  Flexible(
-                    child: Text(
-                      "인증코드를 전송할 회사 이메일을 입력하세요.",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                      overflow: TextOverflow.visible,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-
-              // 회사정보 컨테이너
-              Container(
-                alignment: Alignment.center,
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
-                child: Column(children: <Widget>[
-                  // 회사 로고
-                  RoundedImg(image: widget.logoImage, size: 100),
-                  const SizedBox(
-                    height: 20,
-                  ),
-
-                  // 회사 이름
-                  Text(widget.companyName,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(
-                    height: 5,
-                  ),
-
-                  // 회사 도메인
-                  Text("_______${widget.domain}",
-                      style: const TextStyle(fontSize: 16)),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ]),
-              ),
-
-              // 회사 이메일 입력 및 인증코드 전송 필드
-              TextFormField(
-                controller: _emailIdController,
-                decoration: InputDecoration(
-                  hintText: '이메일 입력',
-                  suffixIcon: LayoutBuilder(builder: (context, constraints) {
-                    // double iconWidth = constraints.maxWidth / 4;
-                    return SizedBox(
-                      // width: iconWidth,
-                      child: TextButton(
-                        onPressed: () => sendPressed(_emailIdController.text),
-                        child: const Text('전송', style: TextStyle(fontSize: 16)),
-                      ),
-                    );
-                  }),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xffff6c3e)),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-
-              const SizedBox(
-                height: 20,
-              ),
-
-              // 인증코드 입력 및 제출 필드
-              TextField(
-                controller: _verifyCodeController,
-                decoration: InputDecoration(
-                  hintText: '인증코드 입력',
-                  suffixIcon: SizedBox(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        // 타이머가 들어갈 자리
-                        if (_timerVisible)
-                          Text(
-                            '${_secondsLeft ~/ 60}:${_secondsLeft % 60}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              // fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        TextButton(
-                          onPressed: () =>
-                              verifyPressed(_verifyCodeController.text),
-                          child:
-                              const Text('인증', style: TextStyle(fontSize: 16)),
+      appBar: const TopAppBar(title: '회사 인증'),
+      body: SingleChildScrollView(
+          child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: Column(children: <Widget>[
+                const Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: Text(
+                        "인증코드를 전송할 회사 이메일을 입력하세요.",
+                        style: TextStyle(
+                          fontSize: 20,
                         ),
-                      ],
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // 회사정보 컨테이너
+                Container(
+                  alignment: Alignment.center,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
+                  child: Column(children: <Widget>[
+                    // 회사 로고
+                    RoundedImg(image: widget.logoImage, size: 100),
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // 회사 이름
+                    Text(widget.companyName,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      height: 5,
+                    ),
+
+                    // 회사 도메인
+                    Text("_______${widget.domain}",
+                        style: const TextStyle(fontSize: 16)),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ]),
+                ),
+
+                // 회사 이메일 입력 및 인증코드 전송 필드
+                TextFormField(
+                  controller: _emailIdController,
+                  decoration: InputDecoration(
+                    hintText: '이메일 입력',
+                    suffixIcon: LayoutBuilder(builder: (context, constraints) {
+                      // double iconWidth = constraints.maxWidth / 4;
+                      return SizedBox(
+                        // width: iconWidth,
+                        child: TextButton(
+                          onPressed: () => sendPressed(_emailIdController.text),
+                          child:
+                              const Text('전송', style: TextStyle(fontSize: 16)),
+                        ),
+                      );
+                    }),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xffff6c3e)),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0xffff6c3e)),
-                    borderRadius: BorderRadius.circular(15),
+                ),
+
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // 인증코드 입력 및 제출 필드
+                TextField(
+                  controller: _verifyCodeController,
+                  decoration: InputDecoration(
+                    hintText: '인증코드 입력',
+                    suffixIcon: SizedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          // 타이머가 들어갈 자리
+                          if (_timerVisible)
+                            Text(
+                              '${_secondsLeft ~/ 60}:${_secondsLeft % 60}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                // fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
+                            ),
+                          TextButton(
+                            onPressed: () =>
+                                verifyPressed(_verifyCodeController.text),
+                            child: const Text('인증',
+                                style: TextStyle(fontSize: 16)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xffff6c3e)),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                 ),
-              ),
 
-              // 타이머
-              const SizedBox(
-                height: 20,
-              ),
+                // 타이머
+                const SizedBox(
+                  height: 20,
+                ),
 
-              /* 타이머 테스트용
+                /* 타이머 테스트용
               ElevatedButton(
                 onPressed: () {
                   startTimer();
@@ -185,7 +174,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                 child: const Text('타이머 시작'),
               ),
               */
-            ])));
+              ]))),
+    );
   }
 
   void startTimer() {
