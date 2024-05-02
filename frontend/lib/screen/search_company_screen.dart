@@ -107,9 +107,11 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
     return companyList.map((company) {
       String companyName = company['name'];
       String logoInfo = company['logoUrl'];
+      String domain = company['domain'];
       return CompanyItem(
         companyName: companyName,
         logoInfo: logoInfo,
+        domain: domain,
       );
     }).toList();
   }

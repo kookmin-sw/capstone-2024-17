@@ -6,12 +6,14 @@ class CompanyItem extends StatelessWidget {
   // final int id;
   final String companyName;
   final String logoInfo;
+  final String domain;
 
   const CompanyItem({
     super.key,
     // required this.id,
     required this.companyName,
     required this.logoInfo,
+    required this.domain,
   });
 
   @override
@@ -27,6 +29,7 @@ class CompanyItem extends StatelessWidget {
                   builder: (context) => VerifyCompanyScreen(
                         companyName: companyName,
                         logoImage: logoImage,
+                        domain: domain,
                       )));
         });
       },

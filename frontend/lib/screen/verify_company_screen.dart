@@ -7,11 +7,13 @@ import 'package:frontend/widgets/rounded_img.dart';
 class VerifyCompanyScreen extends StatefulWidget {
   final String companyName;
   final Image logoImage;
+  final String domain;
 
   const VerifyCompanyScreen({
     super.key,
     required this.companyName,
     required this.logoImage,
+    required this.domain,
   });
 
   @override
@@ -21,7 +23,6 @@ class VerifyCompanyScreen extends StatefulWidget {
 class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   final TextEditingController _emailIdController = TextEditingController();
   final TextEditingController _verifyCodeController = TextEditingController();
-  String domain = '';
   String sentEmailAddress = '';
   bool _timerVisible = false;
   int timeLimit = 180;
@@ -33,7 +34,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   @override
   void initState() {
     super.initState();
-    setDomain();
   }
 
   @override
@@ -96,7 +96,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                   ),
 
                   // 회사 도메인
-                  Text("_______$domain", style: const TextStyle(fontSize: 16)),
+                  Text("_______${widget.domain}",
+                      style: const TextStyle(fontSize: 16)),
                   const SizedBox(
                     height: 20,
                   ),
@@ -205,7 +206,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   // 전송 버튼 클릭 시
   void sendPressed(email) async {
-    if (!email.endsWith(domain)) {
+    if (!email.endsWith(widget.domain)) {
       showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
       return;
     }
@@ -230,12 +231,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showAlertDialog(context, '에러: $error');
     }
     return;
-  }
-
-  // 도메인 설정
-  void setDomain() {
-    // 넘겨받은 도메인 set하기!
-    domain = '@kookmin.ac.kr'; // 임시 도메인
   }
 
   // 인증코드 입력 후 인증버튼 클릭 시
