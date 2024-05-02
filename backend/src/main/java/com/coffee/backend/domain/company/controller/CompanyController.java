@@ -50,16 +50,13 @@ public class CompanyController {
     /**
      * 회사 인증 코드가 유효한지 확인하는 api
      */
-    @GetMapping("/email/verification")
+    @PostMapping("/email/verification")
     public ResponseEntity<ApiResponse<EmailVerificationResponse>> verificationEmail(@AuthenticationPrincipal User user,
                                                                                     @RequestBody EmailVerificationRequest emailVerificationRequest) {
         EmailVerificationResponse response = companyService.verifiedCode(
                 user,
                 emailVerificationRequest.getEmail(),
                 emailVerificationRequest.getAuthCode());
-
-//        userService.setUserEmail()
-
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

@@ -1,11 +1,11 @@
 package com.coffee.backend.domain.company.service;
 
-import com.coffee.backend.domain.storage.service.StorageService;
 import com.coffee.backend.domain.company.dto.CompanyDto;
 import com.coffee.backend.domain.company.dto.EmailVerificationResponse;
 import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.company.repository.CompanyRepository;
 import com.coffee.backend.domain.mail.service.MailService;
+import com.coffee.backend.domain.storage.service.StorageService;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.service.UserService;
 import com.coffee.backend.exception.CustomException;
@@ -38,9 +38,19 @@ public class CompanyService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
+    public Company findCompanyByDomain(String domain) {
+        return companyRepository.findByDomain(domain).orElseThrow(() -> {
+            log.info("domain {} not found", domain);
+            throw new CustomException(ErrorCode.COMPANY_NOT_FOUND);
+        });
+    }
+
 
     public void sendCodeToEmail(String loginId, String toEmail) {
         userService.checkDuplicatedEmail(toEmail);
+
+        String domain = toEmail.split("@")[1];
+
         String title = "커리어 한잔 이메일 인증 코드";
         String authCode = this.createCode();
         String content = "<h1>회원님의 커리어 한잔 이메일 인증 코드</h1>" +
@@ -68,8 +78,8 @@ public class CompanyService {
             }
             return builder.toString();
         } catch (NoSuchAlgorithmException e) {
-            log.debug("MemberService.createCode() exception occur");
-            throw new CustomException(ErrorCode.NO_SUCH_ALGORITHM); // TODO exception 수정
+            log.debug("CompanyService.createCode() exception occur");
+            throw new CustomException(ErrorCode.NO_SUCH_ALGORITHM);
         }
     }
 
@@ -81,6 +91,9 @@ public class CompanyService {
         if (authResult) {
             redisTemplate.delete(AUTH_CODE_PREFIX + email);
             userService.setUserEmail(user, email); // 인증 성공 시 이메일 변경
+            String domain = email.split("@")[1];
+            Company company = this.findCompanyByDomain(domain);
+            userService.setUserCompany(user, company); // 인증 성공 시 회사 연결
         }
         return new EmailVerificationResponse(authResult);
     }
@@ -90,6 +103,7 @@ public class CompanyService {
         return companyList.stream().map(company -> {
             CompanyDto companyDto = new CompanyDto();
             companyDto.setName(company.getName());
+            companyDto.setDomain(company.getDomain());
             companyDto.setLogoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename()));
             return companyDto;
         }).toList();
