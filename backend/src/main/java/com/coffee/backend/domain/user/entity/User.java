@@ -24,7 +24,7 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "company_id", insertable = false, updatable = false)
+    @JoinColumn(name = "company_id")
     private Company company;
 
 //    @ManyToOne
@@ -37,7 +37,4 @@ public class User {
     private String userUUID;
     private String introduction;
     private String deviceToken;
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company companyId;
 }
