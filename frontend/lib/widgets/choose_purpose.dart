@@ -61,8 +61,8 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              int senderId = 20;
-              int receiverId = 21;
+              int senderId = 31;
+              int receiverId = 32;
               print("selectedindex는 여기 $_selectedIndex");
 
               try {
@@ -73,13 +73,17 @@ class ChoosePurpose extends StatelessWidget {
 
                 if (response['success'] == true) {
                   try {
+                    print(response['data']['matchId']);
+                    print(response['data']['senderId']);
+                    print(response['data']['receiverId']);
+                    print("-------------");
                     Map<String, dynamic> inforesponse = await matchInfoRequest(
                         response['data']['matchId'],
                         response['data']['senderId'],
                         response['data']['receiverId']);
 
                     print("info Response: $inforesponse");
-                    reqlistpara = inforesponse['data']['matchId'];
+                    // reqlistpara = inforesponse['data']['matchId'];
                   } catch (e) {
                     print("matchInfoRequest Error: $e");
                   }

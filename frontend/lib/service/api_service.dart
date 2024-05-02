@@ -1,9 +1,11 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:frontend/model/user_model.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const baseUrl = "http://52.79.248.128:8080";
+const storage = FlutterSecureStorage();
+
 const userToken =
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
 
@@ -42,12 +44,15 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
 Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+
+  print("token = $token");
   try {
     final response = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $userToken",
+        "Authorization": "Bearer $token",
       },
       body: jsonEncode({
         'senderId': senderId,
@@ -71,18 +76,23 @@ Future<Map<String, dynamic>> matchInfoRequest(
     String matchId, int senderId, int receiverId) async {
   final url = Uri.parse(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  print("info token = $token");
+
   try {
     final response = await http.get(
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $userToken",
+        "Authorization": "Bearer $token",
       },
     );
-
+    print("처리중");
     if (response.statusCode == 200) {
+      print("O1");
       return json.decode(response.body);
     } else {
+      print("O2");
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (e) {
