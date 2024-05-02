@@ -3,7 +3,7 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - '#18-cicd'
+      - 'develop'
     paths:
       - 'backend/**'
       - '.github/workflows/main.yml'
@@ -56,7 +56,7 @@ jobs:
 
     - name: Send Portainer restart spring-container Trigger
       run: |
-        curl -X POST http://3.38.153.215:19000/api/webhooks/0e5f2d4c-beba-4d4b-8d4e-785000b03623
+        curl -X POST ${{ secrets.PORTAINER_WEBHOOK_LINK }}
         
     - name: Clean up Gradle Cache
       run: ./gradlew clean
