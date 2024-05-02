@@ -24,7 +24,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
             ? titleWidget
             : Text(
                 title!,
-                style: const TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 22),
               ),
         centerTitle: true,
         toolbarHeight: 100,
