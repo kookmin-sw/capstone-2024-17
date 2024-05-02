@@ -1,5 +1,6 @@
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
@@ -16,6 +17,9 @@ import 'package:provider/provider.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:frontend/screen/cafe_details.dart';
+
+// 유저 토큰 저장하는 스토리지
+const storage = FlutterSecureStorage();
 
 // 웹소켓(stomp) 관련 변수
 StompClient? stompClient;
@@ -71,6 +75,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  String? userToken;
   int _selectedIndex = 0;
 
   static final List<Widget> _screenOptions = [
@@ -83,6 +88,15 @@ class _MyAppState extends State<MyApp> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 유저 토큰 가져오기
+    storage.read(key: 'authToken').then((token) {
+      userToken = token;
     });
   }
 
@@ -102,48 +116,50 @@ class _MyAppState extends State<MyApp> {
           splashColor: Colors.transparent, // 스플래시 효과 제거
           highlightColor: Colors.transparent, // 하이라이트 효과 제거
         ),
-        home: Scaffold(
-          body: _screenOptions.elementAt(_selectedIndex),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            iconSize: 26,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.map_outlined,
+        home: (userToken == null)
+            ? const LoginScreen()
+            : Scaffold(
+                body: _screenOptions.elementAt(_selectedIndex),
+                bottomNavigationBar: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  iconSize: 26,
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.map_outlined,
+                      ),
+                      label: '지도',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.coffee_outlined,
+                      ),
+                      activeIcon: Icon(
+                        Icons.coffee_rounded,
+                      ),
+                      label: '커피챗',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.forum_outlined,
+                      ),
+                      label: '채팅',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.person_outlined,
+                      ),
+                      label: 'MY',
+                    ),
+                  ],
+                  currentIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: const Color(0xffff6c3e),
                 ),
-                label: '지도',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.coffee_outlined,
-                ),
-                activeIcon: Icon(
-                  Icons.coffee_rounded,
-                ),
-                label: '커피챗',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.forum_outlined,
-                ),
-                label: '채팅',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person_outlined,
-                ),
-                label: 'MY',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            unselectedItemColor: Colors.black,
-            selectedItemColor: const Color(0xffff6c3e),
-          ),
-        ), // 첫 화면으로 띄우고 싶은 스크린 넣기
+              ), // 첫 화면으로 띄우고 싶은 스크린 넣기
         routes: <String, WidgetBuilder>{
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),
