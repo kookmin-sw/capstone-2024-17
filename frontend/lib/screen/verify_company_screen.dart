@@ -121,7 +121,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                 ),
 
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
 
                 // 인증코드 입력 및 제출 필드
@@ -163,9 +163,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                   ),
                 ),
 
-                // 타이머
                 const SizedBox(
-                  height: 20,
+                  height: 30,
                 ),
 
                 // 인증 성공 시 보이는 column
