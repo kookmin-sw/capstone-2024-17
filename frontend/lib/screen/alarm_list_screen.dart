@@ -1,49 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
-final List<alarmEvent> events = [
-  alarmEvent(
+final List<AlarmEvent> events = [
+  AlarmEvent(
     message: "00님이 커피챗 요청을 수락했습니다.",
     time: DateTime.now(),
     type: "accept",
   ),
-  alarmEvent(
+  AlarmEvent(
     message: "00님이 커피챗 요청을 거절했습니다.",
     time: DateTime.now(),
     type: "reject",
   ),
-  alarmEvent(
+  AlarmEvent(
     message: "00님이 커피챗 요청을 보냈습니다.",
     time: DateTime.now(),
     type: "send",
   ),
-  alarmEvent(
+  AlarmEvent(
     message: "오프라인으로 전환되었습니다.",
     time: DateTime.now(),
     type: "offline",
   ),
 ];
 
-class alarm_list extends StatefulWidget {
-  const alarm_list({super.key});
+class AlarmList extends StatefulWidget {
+  const AlarmList({super.key});
 
   @override
-  _alarm_listWidgetState createState() => _alarm_listWidgetState();
+  AlarmListWidgetState createState() => AlarmListWidgetState();
 }
 
-class alarmEvent {
+class AlarmEvent {
   final String message;
   final DateTime time;
   final String type; // 이벤트 유형: accept, reject, send, offline
 
-  alarmEvent({
+  AlarmEvent({
     required this.message,
     required this.time,
     required this.type,
   });
 }
 
-class _alarm_listWidgetState extends State<alarm_list> {
+class AlarmListWidgetState extends State<AlarmList> {
   @override
   void initState() {
     super.initState();
