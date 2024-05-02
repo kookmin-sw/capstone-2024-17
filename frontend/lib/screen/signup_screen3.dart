@@ -26,6 +26,7 @@ class _SignupScreen3State extends State<SignupScreen3> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: const TopAppBar(
           title: "회원가입",
         ),
