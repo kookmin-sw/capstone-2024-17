@@ -133,10 +133,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: <Widget>[
                   // 안내
                   const Row(children: <Widget>[
-                    Text("아래의 서비스 이용약관을 읽고 동의해주세요.",
-                        style: TextStyle(
-                          fontSize: 20,
-                        )),
+                    Flexible(
+                        child: Text("아래의 서비스 이용약관을 읽고 동의해주세요.",
+                            overflow: TextOverflow.visible,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ))),
                   ]),
 
                   // 공백
