@@ -1,3 +1,4 @@
+import 'package:frontend/screen/test_screen.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:frontend/service/stomp_service.dart';
@@ -74,7 +75,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        home: const Placeholder(), // 첫 화면으로 띄우고 싶은 스크린 넣기
+        home: const TestScreen(), // 첫 화면으로 띄우고 싶은 스크린 넣기
         routes: <String, WidgetBuilder>{
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),
