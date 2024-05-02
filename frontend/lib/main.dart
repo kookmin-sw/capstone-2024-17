@@ -4,12 +4,14 @@ import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/screen/coffeechat_req_list.dart';
+import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
-import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/screen/login_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -61,8 +63,28 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _screenOptions = [
+    const Google_Map(),
+    const CoffeechatReqList(),
+    const Center(child: Text('채팅')), // 임시 채팅 스크린
+    const UserScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +98,52 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        home: const Placeholder(), // 첫 화면으로 띄우고 싶은 스크린 넣기
+        theme: ThemeData(
+          splashColor: Colors.transparent, // 스플래시 효과 제거
+          highlightColor: Colors.transparent, // 하이라이트 효과 제거
+        ),
+        home: Scaffold(
+          body: _screenOptions.elementAt(_selectedIndex),
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            iconSize: 26,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.map_outlined,
+                ),
+                label: '지도',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.coffee_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.coffee_rounded,
+                ),
+                label: '커피챗',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.forum_outlined,
+                ),
+                label: '채팅',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.person_outlined,
+                ),
+                label: 'MY',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: const Color(0xffff6c3e),
+          ),
+        ), // 첫 화면으로 띄우고 싶은 스크린 넣기
         routes: <String, WidgetBuilder>{
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),

@@ -205,7 +205,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         ]),
                       ),
                     ])),
-
                     // 저장 버튼
                     BottomTextButton(
                       text: '저장하기',
@@ -219,7 +218,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   ],
                 )))
       ])),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 }

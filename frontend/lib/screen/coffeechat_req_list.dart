@@ -77,7 +77,6 @@ class CoffeechatReqList extends StatelessWidget {
             ),
           ],
         ),
-        bottomNavigationBar: BottomAppBar(),
       ),
     );
   }

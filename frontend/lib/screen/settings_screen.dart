@@ -102,7 +102,6 @@ class SettingsScreen extends StatelessWidget {
                   '앱 버전: 1.0.0',
                 ),
               ]))),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 
