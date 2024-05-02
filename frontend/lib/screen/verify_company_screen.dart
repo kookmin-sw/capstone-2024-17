@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/rounded_img.dart';
@@ -31,6 +32,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   late Timer _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     setState(() {});
   });
+  bool isVerified = false;
 
   @override
   void initState() {
@@ -166,6 +168,32 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                   height: 20,
                 ),
 
+                // 인증 성공 시 보이는 column
+                Visibility(
+                    visible: isVerified,
+                    child: Column(children: <Widget>[
+                      const Text('인증 완료!',
+                          style: TextStyle(
+                            color: Color(0xffff6c3e),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          )),
+                      TextButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PositionSelectScreen(
+                                        lastPosition: null,
+                                      )),
+                            );
+                          },
+                          label: const Icon(Icons.keyboard_double_arrow_right),
+                          icon: const Text('직무 등록',
+                              style: TextStyle(fontSize: 14)))
+                    ])),
+
                 /* 타이머 테스트용
               ElevatedButton(
                 onPressed: () {
@@ -234,6 +262,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
           await verification(sentEmailAddress, verifyCode);
       if (res['success']) {
         // 요청 성공
+        isVerified = true;
         showAlertDialog(context, "회사 인증이 완료되었습니다.");
       } else {
         // 요청 실패
