@@ -1,0 +1,63 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - '#18-cicd'
+    paths:
+      - 'backend/**'
+      - '.github/workflows/main.yml'
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+        working-directory: ./backend
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      working-directory: ./backend
+
+    - name: Build with Gradle
+      run: ./gradlew build
+      working-directory: ./backend
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: spring-app-artifacts
+        path: build/libs/*.jar
+
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v3
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
+
+    - name: Send Portainer restart spring-container Trigger
+      run: |
+        curl -X POST http://3.38.153.215:19000/api/webhooks/0e5f2d4c-beba-4d4b-8d4e-785000b03623
+        
+    - name: Clean up Gradle Cache
+      run: ./gradlew clean
+      working-directory: ./backend      
