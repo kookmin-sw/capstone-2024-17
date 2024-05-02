@@ -32,19 +32,6 @@ const List<Map<String, dynamic>> sampleUserList = [
   },
 ];
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(home: CoffeechatReqList());
-  }
-}
-
 class CoffeechatReqList extends StatelessWidget {
   const CoffeechatReqList({super.key});
 
