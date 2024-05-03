@@ -77,30 +77,32 @@ class _MyAppState extends State<MyApp> {
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       userToken = token;
-    });
 
-    if (userToken != null) {
-      // http post 요청
-      getAllUsers(userToken!, sampleCafeList).then((value) {
-        allUsers = value;
-      });
-      // 웹소켓(stomp) 연결
-      stompClient = StompClient(
-        config: StompConfig.sockJS(
-          url: socketUrl,
-          onConnect: (_) {
-            print("websocket connected !!");
-            subCafeList(
-                stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
-          },
-          beforeConnect: () async {
-            print('waiting to connect websocket...');
-          },
-          onWebSocketError: (dynamic error) => print(error.toString()),
-        ),
-      );
-      stompClient!.activate();
-    }
+      // 로그인된 상태이면
+      if (userToken != null) {
+        // http post 요청
+        getAllUsers(userToken!, sampleCafeList).then((value) {
+          allUsers = value;
+        });
+
+        // 웹소켓(stomp) 연결
+        stompClient = StompClient(
+          config: StompConfig.sockJS(
+            url: socketUrl,
+            onConnect: (_) {
+              print("websocket connected !!");
+              subCafeList(
+                  stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
+            },
+            beforeConnect: () async {
+              print('waiting to connect websocket...');
+            },
+            onWebSocketError: (dynamic error) => print(error.toString()),
+          ),
+        );
+        stompClient!.activate();
+      }
+    });
   }
 
   @override
