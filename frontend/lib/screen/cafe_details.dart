@@ -57,10 +57,13 @@ class CafeDetails extends StatefulWidget {
 
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
+  TabController? tabController;
   Timer? _timer;
+
   final String ImageId = "";
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
+  List<UserModel>? userList;
 
   void _startTimer() {
     print("타이머 시작");
@@ -105,9 +108,6 @@ class _CafeDetailsState extends State<CafeDetails>
       print('Error: $e');
     }
   }
-
-  TabController? tabController;
-  List<UserModel>? userList;
 
   void waitForUserList(String cafeId) async {
     // Null error 방지
