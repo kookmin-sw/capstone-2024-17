@@ -18,6 +18,9 @@ public class CustomMapper {
     public UserDto toUserDto(User user) {
         return mapper.typeMap(User.class, UserDto.class)
                 .setPostConverter(context -> {
+                    context.getDestination()
+                            .setPosition(context.getSource().getPosition().getName());
+
                     Company company = context.getSource().getCompany();
                     if (company != null) {
                         var dto = CompanyDto.builder()

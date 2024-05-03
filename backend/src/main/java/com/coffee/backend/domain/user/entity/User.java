@@ -2,6 +2,8 @@ package com.coffee.backend.domain.user.entity;
 
 import com.coffee.backend.domain.company.entity.Company;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,11 +28,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
-
-//    @ManyToOne
-//    @JoinColumn(name = "position_id")
-//    private Position position;
-
+    @Enumerated(EnumType.ORDINAL)
+    private Position position;
     private String nickname;
     private String email;
     private String phone;
