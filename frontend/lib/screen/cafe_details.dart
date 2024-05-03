@@ -109,26 +109,15 @@ class _CafeDetailsState extends State<CafeDetails>
     }
   }
 
-  void waitForUserList(String cafeId) async {
-    // Null error 방지
-    List<UserModel>? userListResult = await getUserList(cafeId);
-    if (userListResult != null) {
-      userList = userListResult;
-      setState(() {});
-    } else {
-      print("getUserList returned null");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
     tabController!.addListener(() {
-      // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
+      // 사용자 보기 탭 클릭 시
       if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId); //위도 경도로 사용자 요청?
+        // 사용자 목록 업데이트 ?
       }
     });
   }
@@ -242,6 +231,4 @@ class _CafeDetailsState extends State<CafeDetails>
       ),
     );
   }
-
-  getUserList(String cafeId) {}
 }
