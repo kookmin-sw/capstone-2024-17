@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/service/stomp_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,6 +12,7 @@ import 'package:frontend/model/user_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
+import 'package:stomp_dart_client/stomp.dart';
 
 const List<Map<String, dynamic>> sampleUserList = [
   {
@@ -57,6 +59,7 @@ class CafeDetails extends StatefulWidget {
 
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
+  late StompClient stompClient;
   TabController? tabController;
   Timer? _timer;
 
@@ -130,6 +133,7 @@ class _CafeDetailsState extends State<CafeDetails>
 
   @override
   Widget build(BuildContext context) {
+    stompClient = Provider.of<StompClient>(context);
     userList =
         Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
 
@@ -225,6 +229,11 @@ class _CafeDetailsState extends State<CafeDetails>
             text: "이 카페를 내 위치로 설정하기",
             handlePressed: () {
               _startTimer();
+              addUserInCafe(
+                stompClient,
+                "test",
+                widget.cafeId,
+              );
             },
           ),
         ],
