@@ -33,6 +33,9 @@ dependencies {
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    // flyway
+    implementation 'org.flywaydb:flyway-mysql'
+
     // s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
