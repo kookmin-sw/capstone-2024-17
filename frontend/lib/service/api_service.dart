@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/user_model.dart';
 
-const storage = FlutterSecureStorage();
-const baseUrl = "http://43.203.218.27:8080";
+const baseUrl = "http://3.36.123.200:8080";
 const storage = FlutterSecureStorage();
 const userToken =
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
@@ -78,6 +77,27 @@ Future<Map<String, dynamic>> login(
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
     Map<String, dynamic> jsonData = jsonDecode(res.body);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 유저 정보 get
+Future<Map<String, dynamic>> getUserDetail() async {
+  final url = Uri.parse('$baseUrl/auth/detail');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
