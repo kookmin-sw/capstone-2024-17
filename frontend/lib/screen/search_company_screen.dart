@@ -24,19 +24,19 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
       'name': '국민대',
       'logoUrl':
           'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png',
-      'domain': '@kookmin.ac.kr'
+      'domain': 'kookmin.ac.kr'
     },
     {
       'name': 'NAVER',
       'logoUrl':
           'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png',
-      'domain': '@naver.com'
+      'domain': 'naver.com'
     },
     {
       'name': 'Google',
       'logoUrl':
           'https://images.unsplash.com/photo-1572059002053-8cc5ad2f4a38?q=80&w=2680&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'domain': '@gmail.com'
+      'domain': 'gmail.com'
     },
     */
   ];

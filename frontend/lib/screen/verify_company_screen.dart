@@ -86,7 +86,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                     ),
 
                     // 회사 도메인
-                    Text("_______${widget.domain}",
+                    Text("_______@${widget.domain}",
                         style: const TextStyle(fontSize: 16)),
                     const SizedBox(
                       height: 20,
@@ -223,7 +223,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   // 전송 버튼 클릭 시
   void sendPressed(email) async {
-    if (!email.endsWith(widget.domain)) {
+    if (!email.endsWith('@${widget.domain}')) {
       showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
       return;
     }
