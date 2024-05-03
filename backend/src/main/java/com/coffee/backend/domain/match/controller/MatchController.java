@@ -40,7 +40,12 @@ public class MatchController {
 
     @GetMapping("/request/info")
     public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(
-            @Valid @ModelAttribute MatchInfoDto dto) {
+            @RequestParam String matchId, @RequestParam Long senderId, @RequestParam Long receiverId) {
+        MatchInfoDto dto = new MatchInfoDto();
+        dto.setMatchId(matchId);
+        dto.setSenderId(senderId);
+        dto.setReceiverId(receiverId);
+        
         MatchInfoResponseDto response = matchService.getMatchRequestInfo(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
