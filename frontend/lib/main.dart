@@ -119,51 +119,52 @@ class _MyAppState extends State<MyApp> {
           splashColor: Colors.transparent, // 스플래시 효과 제거
           highlightColor: Colors.transparent, // 하이라이트 효과 제거
         ),
-        home: (userToken == null)
-            ? const LoginScreen()
-            : Scaffold(
-                body: _screenOptions.elementAt(_selectedIndex),
-                bottomNavigationBar: BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
-                  iconSize: 26,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.map_outlined,
-                      ),
-                      label: '지도',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.coffee_outlined,
-                      ),
-                      activeIcon: Icon(
-                        Icons.coffee_rounded,
-                      ),
-                      label: '커피챗',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.forum_outlined,
-                      ),
-                      label: '채팅',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.person_outlined,
-                      ),
-                      label: 'MY',
-                    ),
-                  ],
-                  currentIndex: _selectedIndex,
-                  onTap: _onItemTapped,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: const Color(0xffff6c3e),
-                ),
-              ), // 첫 화면으로 띄우고 싶은 스크린 넣기
+        initialRoute: '/', // 첫 화면으로 띄우고 싶은 스크린 넣기
         routes: <String, WidgetBuilder>{
+          '/': (BuildContext context) => (userToken == null)
+              ? const LoginScreen()
+              : Scaffold(
+                  body: _screenOptions.elementAt(_selectedIndex),
+                  bottomNavigationBar: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    iconSize: 26,
+                    items: const [
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.map_outlined,
+                        ),
+                        label: '지도',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.coffee_outlined,
+                        ),
+                        activeIcon: Icon(
+                          Icons.coffee_rounded,
+                        ),
+                        label: '커피챗',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.forum_outlined,
+                        ),
+                        label: '채팅',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.person_outlined,
+                        ),
+                        label: 'MY',
+                      ),
+                    ],
+                    currentIndex: _selectedIndex,
+                    onTap: _onItemTapped,
+                    showSelectedLabels: false,
+                    showUnselectedLabels: false,
+                    unselectedItemColor: Colors.black,
+                    selectedItemColor: const Color(0xffff6c3e),
+                  ),
+                ),
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),
           '/user': (BuildContext context) => const UserScreen(),
