@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:frontend/model/user_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-const baseUrl = "http://52.79.248.128:8080";
+const baseUrl = "http://3.36.123.200:8080";
 const storage = FlutterSecureStorage();
 
 const userToken =
