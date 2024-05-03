@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -105,7 +107,7 @@ class _CafeDetailsState extends State<CafeDetails>
   }
 
   TabController? tabController;
-  List<UserModel> userList = [];
+  List<UserModel>? userList;
 
   void waitForUserList(String cafeId) async {
     // Null error 방지
@@ -139,6 +141,9 @@ class _CafeDetailsState extends State<CafeDetails>
 
   @override
   Widget build(BuildContext context) {
+    userList =
+        Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
+
     return Scaffold(
       appBar: TopAppBar(
         title: widget.cafeName,
@@ -205,7 +210,7 @@ class _CafeDetailsState extends State<CafeDetails>
                   ListView.builder(
                     itemCount: sampleUserList.length,
                     itemBuilder: (context, index) {
-                      return userList.isEmpty
+                      return (userList == null || userList!.isEmpty)
                           ? UserItem(
                               type: "cafeUser",
                               nickname: sampleUserList[index]["nickname"],
@@ -216,10 +221,10 @@ class _CafeDetailsState extends State<CafeDetails>
                             )
                           : UserItem(
                               type: "cafeUser",
-                              nickname: userList[index].nickname,
-                              company: userList[index].companyName,
-                              position: userList[index].positionName,
-                              introduction: userList[index].introduction,
+                              nickname: userList![index].nickname,
+                              company: userList![index].companyName,
+                              position: userList![index].positionName,
+                              introduction: userList![index].introduction,
                             );
                     },
                   ),
