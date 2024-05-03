@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/user_model.dart';
 
+const storage = FlutterSecureStorage();
 const baseUrl = "http://43.203.218.27:8080";
 const storage = FlutterSecureStorage();
 const userToken =
@@ -146,6 +147,80 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
       body: data,
     );
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 키워드로 회사 검색
+Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
+  const endpointUrl = '$baseUrl/company/search';
+  String queryString = Uri(queryParameters: {
+    'keyword': companyKeyword,
+  }).query;
+  final url = '$endpointUrl?$queryString';
+  try {
+    http.Response res = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 이메일 전송
+Future<Map<String, dynamic>> verificationRequest(String email) async {
+  final url = Uri.parse('$baseUrl/email/verification-request');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  print('토큰: $token');
+  final data = jsonEncode({
+    'email': email,
+  });
+  try {
+    http.Response res = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: data,
+    );
+    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    print(jsonData);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 인증코드로 인증
+Future<Map<String, dynamic>> verification(String email, String authCode) async {
+  final url = Uri.parse('$baseUrl/email/verification');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'email': email,
+    'authCode': authCode,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    print(jsonData);
     return jsonData;
   } catch (error) {
     print('error: $error');

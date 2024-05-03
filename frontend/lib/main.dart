@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/chat_screen.dart';
+import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/map_place.dart';
@@ -166,6 +167,8 @@ class _MyAppState extends State<MyApp> {
           '/user': (BuildContext context) => const UserScreen(),
           '/chatroomlist': (BuildContext context) => const ChatroomListScreen(),
           '/cafe': (BuildContext context) => const CafeDetails(),
+          '/searchcompany': (BuildContext context) =>
+              const SearchCompanyScreen(),
         },
       ),
     );

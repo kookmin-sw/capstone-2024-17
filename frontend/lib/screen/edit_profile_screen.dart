@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/position_select_screen.dart';
+import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -119,7 +120,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                           width: 10,
                                         ),
                                         TextButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const SearchCompanyScreen()),
+                                              );
+                                            },
                                             style: TextButton.styleFrom(
                                               minimumSize: Size.zero,
                                               padding: EdgeInsets.zero,
