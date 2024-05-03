@@ -52,7 +52,7 @@ public class MatchService {
         Map<String, String> matchInfo = Map.of(
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
-                "requestTypeId", dto.getRequestTypeId().toString(),
+                "requestTypeId", dto.getRequestTypeId(),
                 "status", "pending"
         );
 
@@ -81,7 +81,7 @@ public class MatchService {
         receiverInfo.setCompany(company);
 
         String key = "matchId:" + dto.getMatchId();
-        Long requestTypeId = getLongId(redisTemplate.opsForHash().get(key, "requestTypeId"));
+        String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
 
         MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
         matchInfo.setReceiverInfo(receiverInfo);
