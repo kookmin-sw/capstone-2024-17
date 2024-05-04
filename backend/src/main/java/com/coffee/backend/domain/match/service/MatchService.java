@@ -3,9 +3,9 @@ package com.coffee.backend.domain.match.service;
 import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
-import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
@@ -218,6 +218,13 @@ public class MatchService {
     public Review saveReview(ReviewDto dto) {
         User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
+        int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
+        double oldCoffeeBean = receiver.getCoffeeBean();
+        double newCoffeeBean = oldCoffeeBean + (dto.getRating() * 0.1) * numberOfReviews;
+
+        receiver.setCoffeeBean(newCoffeeBean);
+        userRepository.save(receiver);
 
         Review review = new Review();
         review.setSender(sender);
