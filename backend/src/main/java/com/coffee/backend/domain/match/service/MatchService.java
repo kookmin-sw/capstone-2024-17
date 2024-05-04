@@ -216,6 +216,10 @@ public class MatchService {
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
+        if (dto.getRating() < 1 || dto.getRating() > 5) {
+            throw new CustomException(ErrorCode.VALUE_ERROR);
+        }
+
         User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
 
