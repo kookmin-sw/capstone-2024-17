@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -92,6 +93,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         } else if (_passwordController.text == '') {
                           showAlertDialog(context, '비밀번호를 입력해주세요.');
                         } else {
+                          // (테스트) 디바이스 토큰을 발급
+                          String? fcmToken =
+                              await FirebaseMessaging.instance.getToken();
+                          print('!!!디바이스 토큰!!!!!: $fcmToken');
                           try {
                             waitLogin(
                               context,
