@@ -86,10 +86,11 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                     ? () {
                         Navigator.pop(context); // 현재 화면 닫기
 
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Google_Map()));
+                        // 일단 주석 처리
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const Google_Map()));
                       }
                     : null, // selectedIndex가 0 이상인 경우에만 클릭 가능하도록 설정
                 child: Text(
