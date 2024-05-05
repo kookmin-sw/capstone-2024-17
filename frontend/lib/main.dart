@@ -28,14 +28,6 @@ const socketUrl = "http://3.36.108.21:8080/ws";
 // 주변 카페에 있는 모든 유저 목록
 Map<String, List<UserModel>>? allUsers;
 
-const List<String> sampleCafeList = [
-  "cafe-1",
-  "cafe-2",
-  "cafe-3",
-  "cafe-4",
-  "cafe-5",
-];
-
 void main() async {
   await dotenv.load();
   KakaoSdk.init(
