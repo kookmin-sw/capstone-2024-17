@@ -23,7 +23,7 @@ const storage = FlutterSecureStorage();
 
 // 웹소켓(stomp) 관련 변수
 StompClient? stompClient;
-const socketUrl = "http://3.36.123.200:8080/ws";
+const socketUrl = "http://3.36.108.21:8080/ws";
 
 // 주변 카페에 있는 모든 유저 목록
 Map<String, List<UserModel>>? allUsers;

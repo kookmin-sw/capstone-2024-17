@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/user_model.dart';
 
-const baseUrl = "http://3.36.123.200:8080";
+const baseUrl = "http://3.36.108.21:8080";
 const storage = FlutterSecureStorage();
 
 // 주변 카페에 있는 모든 유저 목록 받아오기 - http post 요청
