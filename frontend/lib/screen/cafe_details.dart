@@ -229,11 +229,38 @@ class _CafeDetailsState extends State<CafeDetails>
             text: "이 카페를 내 위치로 설정하기",
             handlePressed: () {
               _startTimer();
-              addUserInCafe(
-                stompClient,
-                "test",
-                widget.cafeId,
-              );
+
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("카페 지정"),
+                      content: Text("${widget.cafeName}을(를) 내 위치로 지정하겠습니까?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            _stopTimer();
+                            Navigator.pop(context);
+
+                            // 카페에 유저 추가 pub 요청
+                            addUserInCafe(
+                              stompClient,
+                              "test",
+                              widget.cafeId,
+                            );
+                          },
+                          child: const Text("확인"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _stopTimer();
+                            Navigator.pop(context);
+                          },
+                          child: const Text("취소"),
+                        ),
+                      ],
+                    );
+                  });
             },
           ),
         ],
