@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MatchInfoResponseDto {
-    private Long requestTypeId;
+    private String requestTypeId;
     private Long senderId;
     private Long receiverId;
     private ReceiverInfoDto receiverInfo;

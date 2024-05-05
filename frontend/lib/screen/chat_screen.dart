@@ -130,13 +130,30 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage() async {
+    // 유저 아이디 가져오긱: 토큰이 만료되면 더이상 채팅을 못하게 됨
+    int senderId;
+    Map<String, dynamic> res = await getUserDetail();
+    print(res);
+    if (res['success']) {
+      // 요청 성공
+      // 아이디 저장
+      senderId = res['data']['userId'];
+    } else {
+      // 실패: 예외처리
+      print('로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+      showAlertDialog(
+        context,
+        '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})',
+      );
+      return;
+    }
+
+    // 메시지 전송
     final message = _sendingMsgController.text;
     if (message != '') {
       if (stompClient != null) {
-        // 메시지 전송
         token = (await storage.read(key: 'authToken')) ?? '';
-        final data = jsonEncode(
-            {"senderId": 1, "content": message}); // senderId는 임시로 고정!!
+        final data = jsonEncode({"senderId": senderId, "content": message});
         stompClient!.send(
           destination: '/pub/chatroom/${widget.chatroomId.toString()}',
           headers: {

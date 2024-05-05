@@ -19,12 +19,14 @@ public class CustomMapper {
         return mapper.typeMap(User.class, UserDto.class)
                 .setPostConverter(context -> {
                     Company company = context.getSource().getCompany();
-                    var dto = CompanyDto.builder()
-                            .name(company.getName())
-                            .domain(company.getDomain())
-                            .logoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename()))
-                            .build();
-                    context.getDestination().setCompany(dto);
+                    if (company != null) {
+                        var dto = CompanyDto.builder()
+                                .name(company.getName())
+                                .domain(company.getDomain())
+                                .logoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename()))
+                                .build();
+                        context.getDestination().setCompany(dto);
+                    }
                     return context.getDestination();
                 })
                 .map(user);
