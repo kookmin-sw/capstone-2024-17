@@ -6,6 +6,7 @@ import com.coffee.backend.domain.auth.dto.SignUpDto;
 import com.coffee.backend.domain.redis.exception.RedisOperationException;
 import com.coffee.backend.domain.redis.service.TokenStorageService;
 import com.coffee.backend.domain.user.dto.UserDto;
+import com.coffee.backend.domain.user.entity.Position;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
@@ -42,6 +43,7 @@ public class AuthService {
         User user = mapper.map(dto, User.class);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setUserUUID(UUID.randomUUID().toString());
+        user.setPosition(Position.P00);
 
         User savedUser = userRepository.save(user);
         return customMapper.toUserDto(savedUser);
