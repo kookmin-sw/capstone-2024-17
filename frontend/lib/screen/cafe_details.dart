@@ -190,7 +190,7 @@ class _CafeDetailsState extends State<CafeDetails>
             ),
           ),
           BottomTextButton(
-            text: "이 카페를 내 위치로 설정하기",
+            text: "이 카페를 내 위치로 지정하기",
             handlePressed: () {
               _startTimer();
 
