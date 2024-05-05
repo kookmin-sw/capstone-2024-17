@@ -54,9 +54,9 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
 
-    # - name: Send Portainer restart spring-container Trigger
-    #   run: |
-    #     curl -X POST ${{ secrets.PORTAINER_WEBHOOK_LINK }}
+    - name: Send Portainer restart spring-container Trigger
+      run: |
+        curl -X POST ${{ secrets.PORTAINER_WEBHOOK_LINK }}
         
     - name: Clean up Gradle Cache
       run: ./gradlew clean

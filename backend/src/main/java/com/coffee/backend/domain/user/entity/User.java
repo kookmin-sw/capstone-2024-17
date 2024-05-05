@@ -25,6 +25,7 @@ public class User {
     private Long kakaoId;
     private String loginId;
     private String password;
+    private double coffeeBean = 46.0;
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
