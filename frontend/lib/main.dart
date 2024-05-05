@@ -57,9 +57,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String? userToken;
   int _selectedIndex = 0;
+  late List<String> cafeList; // 주변 카페 리스트
 
   static final List<Widget> _screenOptions = [
-    const Google_Map(),
+    Google_Map(updateCafesCallback: updateCafeList),
     const CoffeechatReqList(),
     const ChatroomListScreen(),
     const UserScreen(),
@@ -71,37 +72,42 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void updateCafeList(List<String> cafeList) {
+    setState(() {
+      this.cafeList = cafeList;
+    });
+
+    // 로그인된 상태이면 - 유저 목록 post, sub 요청
+    if (userToken != null) {
+      // http post 요청
+      getAllUsers(userToken!, cafeList).then((value) {
+        allUsers = value;
+      });
+
+      // 웹소켓(stomp) 연결
+      stompClient = StompClient(
+        config: StompConfig.sockJS(
+          url: socketUrl,
+          onConnect: (_) {
+            print("websocket connected !!");
+            subCafeList(stompClient!, cafeList, allUsers!); // 주변 모든 카페에 sub 요청
+          },
+          beforeConnect: () async {
+            print('waiting to connect websocket...');
+          },
+          onWebSocketError: (dynamic error) => print(error.toString()),
+        ),
+      );
+      stompClient!.activate();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       userToken = token;
-
-      // 로그인된 상태이면
-      if (userToken != null) {
-        // http post 요청
-        getAllUsers(userToken!, sampleCafeList).then((value) {
-          allUsers = value;
-        });
-
-        // 웹소켓(stomp) 연결
-        stompClient = StompClient(
-          config: StompConfig.sockJS(
-            url: socketUrl,
-            onConnect: (_) {
-              print("websocket connected !!");
-              subCafeList(
-                  stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
-            },
-            beforeConnect: () async {
-              print('waiting to connect websocket...');
-            },
-            onWebSocketError: (dynamic error) => print(error.toString()),
-          ),
-        );
-        stompClient!.activate();
-      }
     });
   }
 

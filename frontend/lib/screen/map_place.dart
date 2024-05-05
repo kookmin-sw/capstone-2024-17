@@ -13,7 +13,8 @@ import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
 
 class Google_Map extends StatefulWidget {
-  const Google_Map({super.key});
+  final Function updateCafesCallback;
+  const Google_Map({super.key, required this.updateCafesCallback});
 
   @override
   _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
@@ -120,10 +121,14 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   // cafe 마커표시하고 누르면 cafe 이름보여줌
   void _setMarkers(List<dynamic> places, latitude, longitude) async {
     final Set<Marker> localMarkers = {};
+    List<String> cafeList = [];
+
     print("debug print");
     print(places);
 
     for (var place in places) {
+      cafeList.add(place['id']);
+
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon = await _createMarkerImage(
           place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
@@ -212,6 +217,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     setState(() {
       _markers = localMarkers;
     });
+
+    widget.updateCafesCallback(cafeList);
   }
 
   // 반경 원 그리기
