@@ -59,12 +59,7 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   late List<String> cafeList; // 주변 카페 리스트
 
-  static final List<Widget> _screenOptions = [
-    Google_Map(updateCafesCallback: updateCafeList),
-    const CoffeechatReqList(),
-    const ChatroomListScreen(),
-    const UserScreen(),
-  ];
+  static late final List<Widget> _screenOptions;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -109,6 +104,14 @@ class _MyAppState extends State<MyApp> {
     storage.read(key: 'authToken').then((token) {
       userToken = token;
     });
+
+    // 화면 리스트 초기화
+    _screenOptions = [
+      Google_Map(updateCafesCallback: updateCafeList),
+      const CoffeechatReqList(),
+      const ChatroomListScreen(),
+      const UserScreen(),
+    ];
   }
 
   @override
