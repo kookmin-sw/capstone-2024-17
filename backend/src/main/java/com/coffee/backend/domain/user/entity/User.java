@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "user")
@@ -24,11 +25,11 @@ public class User {
     private Long kakaoId;
     private String loginId;
     private String password;
-
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
     @Enumerated(EnumType.ORDINAL)
+    @ColumnDefault(value = "0")
     private Position position;
     private String nickname;
     private String email;
