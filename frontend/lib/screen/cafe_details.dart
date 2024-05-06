@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/service/stomp_service.dart';
-import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,6 +8,7 @@ import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:geolocator/geolocator.dart';
@@ -203,50 +203,27 @@ class _CafeDetailsState extends State<CafeDetails>
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return Dialog(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            width: 300,
-                            height: 200,
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 18,
-                                ),
-                                Text(
-                                  "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                                const Expanded(child: SizedBox()),
-                                BottomTwoButtonsSmall(
-                                  first: "확인",
-                                  second: "취소",
-                                  handleFirstClick: () {
-                                    _stopTimer();
+                        return YesOrNoDialog(
+                          content: "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?",
+                          firstButton: "확인",
+                          secondButton: "취소",
+                          handleFirstClick: () {
+                            _stopTimer();
 
-                                    // 카페에 유저 추가 pub 요청
-                                    addUserInCafe(
-                                      stompClient,
-                                      "test",
-                                      widget.cafeId,
-                                    );
+                            // 카페에 유저 추가 pub 요청
+                            addUserInCafe(
+                              stompClient,
+                              "test",
+                              widget.cafeId,
+                            );
 
-                                    myCafe.setMyCafe(
-                                      cafeId: widget.cafeId,
-                                      latitude: widget.cafeDetailsArguments[6],
-                                      longitude: widget.cafeDetailsArguments[7],
-                                    );
-                                  },
-                                  handleSecondClick: _stopTimer,
-                                ),
-                              ],
-                            ),
-                          ),
+                            myCafe.setMyCafe(
+                              cafeId: widget.cafeId,
+                              latitude: widget.cafeDetailsArguments[6],
+                              longitude: widget.cafeDetailsArguments[7],
+                            );
+                          },
+                          handleSecondClick: _stopTimer,
                         );
                       },
                     );
