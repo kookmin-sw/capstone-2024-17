@@ -338,24 +338,26 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                   color: Colors.white70), // 아이콘과 색상 설정
             ),
           ),
-          Positioned(
-            bottom: 110,
-            right: 16,
-            child: ElevatedButton(
-              onPressed: () {
-                print('Button clicked!');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black12, // 배경 색상 설정
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
-              ),
-              child: const Text(
-                "위치 OFF",
-                style: TextStyle(color: Colors.white), // 폰트 색상 설정
-              ),
-            ),
-          ),
+          (myCafe.cafeId == null)
+              ? Container()
+              : Positioned(
+                  bottom: 110,
+                  right: 16,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print('Button clicked!');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black12, // 배경 색상 설정
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
+                    ),
+                    child: const Text(
+                      "위치 OFF",
+                      style: TextStyle(color: Colors.white), // 폰트 색상 설정
+                    ),
+                  ),
+                ),
         ],
       ),
     );
