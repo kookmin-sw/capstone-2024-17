@@ -33,7 +33,12 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="request , index: ${requests}" class="align-middle">
+
+                        <tr th:if="${paging.isEmpty()}">
+                            <td th:text="|Company Request| +' not ' + |found|"></td>
+                        </tr>
+
+                        <tr th:each="request , index: ${paging.content}" class="align-middle">
                             <td>
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-person m-1"></i>
