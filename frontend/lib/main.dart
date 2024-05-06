@@ -12,6 +12,7 @@ import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
@@ -26,18 +27,10 @@ const storage = FlutterSecureStorage();
 
 // 웹소켓(stomp) 관련 변수
 StompClient? stompClient;
-const socketUrl = "http://3.36.123.200:8080/ws";
+const socketUrl = "http://3.36.108.21:8080/ws";
 
 // 주변 카페에 있는 모든 유저 목록
 Map<String, List<UserModel>>? allUsers;
-
-const List<String> sampleCafeList = [
-  "cafe-1",
-  "cafe-2",
-  "cafe-3",
-  "cafe-4",
-  "cafe-5",
-];
 
 void main() async {
   // firebase 초기화
@@ -45,27 +38,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // http post 요청
-  allUsers = await getAllUsers(sampleCafeList);
-
-  // 웹소켓(stomp) 연결
-  stompClient = StompClient(
-    config: StompConfig.sockJS(
-      url: socketUrl,
-      onConnect: (_) {
-        print("websocket connected !!");
-        subCafeList(
-            stompClient!, sampleCafeList, allUsers!); // 주변 모든 카페에 sub 요청
-      },
-      beforeConnect: () async {
-        print('waiting to connect websocket...');
-      },
-      onWebSocketError: (dynamic error) => print(error.toString()),
-    ),
-  );
-  stompClient!.activate();
-
   await dotenv.load();
   KakaoSdk.init(
     nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY'],
@@ -86,18 +58,44 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String? userToken;
   int _selectedIndex = 0;
+  late List<String> cafeList; // 주변 카페 리스트
 
-  static final List<Widget> _screenOptions = [
-    const Google_Map(),
-    const CoffeechatReqList(),
-    const ChatroomListScreen(),
-    const UserScreen(),
-  ];
+  static late final List<Widget> _screenOptions;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void updateCafeList(List<String> cafeList) {
+    setState(() {
+      this.cafeList = cafeList;
+    });
+
+    // 로그인된 상태이면 - 유저 목록 post, sub 요청
+    if (userToken != null) {
+      // http post 요청
+      getAllUsers(userToken!, cafeList).then((value) {
+        allUsers = value;
+      });
+
+      // 웹소켓(stomp) 연결
+      stompClient = StompClient(
+        config: StompConfig.sockJS(
+          url: socketUrl,
+          onConnect: (_) {
+            print("websocket connected !!");
+            subCafeList(stompClient!, cafeList, allUsers!); // 주변 모든 카페에 sub 요청
+          },
+          beforeConnect: () async {
+            print('waiting to connect websocket...');
+          },
+          onWebSocketError: (dynamic error) => print(error.toString()),
+        ),
+      );
+      stompClient!.activate();
+    }
   }
 
   @override
@@ -107,6 +105,14 @@ class _MyAppState extends State<MyApp> {
     storage.read(key: 'authToken').then((token) {
       userToken = token;
     });
+
+    // 화면 리스트 초기화
+    _screenOptions = [
+      Google_Map(updateCafesCallback: updateCafeList),
+      const CoffeechatReqList(),
+      const ChatroomListScreen(),
+      const UserScreen(),
+    ];
   }
 
   @override
@@ -119,57 +125,61 @@ class _MyAppState extends State<MyApp> {
         Provider(
           create: (_) => stompClient,
         ),
+        ChangeNotifierProvider(
+          create: (_) => MyCafeModel(),
+        ),
       ],
       child: MaterialApp(
         theme: ThemeData(
           splashColor: Colors.transparent, // 스플래시 효과 제거
           highlightColor: Colors.transparent, // 하이라이트 효과 제거
         ),
-        home: (userToken == null)
-            ? const LoginScreen()
-            : Scaffold(
-                body: _screenOptions.elementAt(_selectedIndex),
-                bottomNavigationBar: BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
-                  iconSize: 26,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.map_outlined,
-                      ),
-                      label: '지도',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.coffee_outlined,
-                      ),
-                      activeIcon: Icon(
-                        Icons.coffee_rounded,
-                      ),
-                      label: '커피챗',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.forum_outlined,
-                      ),
-                      label: '채팅',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.person_outlined,
-                      ),
-                      label: 'MY',
-                    ),
-                  ],
-                  currentIndex: _selectedIndex,
-                  onTap: _onItemTapped,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: const Color(0xffff6c3e),
-                ),
-              ), // 첫 화면으로 띄우고 싶은 스크린 넣기
+        initialRoute: '/', // 첫 화면으로 띄우고 싶은 스크린 넣기
         routes: <String, WidgetBuilder>{
+          '/': (BuildContext context) => (userToken == null)
+              ? const LoginScreen()
+              : Scaffold(
+                  body: _screenOptions.elementAt(_selectedIndex),
+                  bottomNavigationBar: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    iconSize: 26,
+                    items: const [
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.map_outlined,
+                        ),
+                        label: '지도',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.coffee_outlined,
+                        ),
+                        activeIcon: Icon(
+                          Icons.coffee_rounded,
+                        ),
+                        label: '커피챗',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.forum_outlined,
+                        ),
+                        label: '채팅',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.person_outlined,
+                        ),
+                        label: 'MY',
+                      ),
+                    ],
+                    currentIndex: _selectedIndex,
+                    onTap: _onItemTapped,
+                    showSelectedLabels: false,
+                    showUnselectedLabels: false,
+                    unselectedItemColor: Colors.black,
+                    selectedItemColor: const Color(0xffff6c3e),
+                  ),
+                ),
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),
           '/user': (BuildContext context) => const UserScreen(),

@@ -18,12 +18,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @Slf4j
 public class CafeController {
     private final CafePublisher cafePublisher;
@@ -45,26 +45,6 @@ public class CafeController {
     @PostMapping("/cafe/get-users")
     public ResponseEntity<Map<String, List<CafeUserProfileDto>>> getCafeUsers(@AuthenticationPrincipal User user,
                                                                               @RequestBody CafeListDto dto) {
-        List<String> cafeList = dto.getCafeList();
-        Map<String, List<CafeUserProfileDto>> cafeUsersMap = new HashMap<>(); //반환값
-
-        for (String cafeId : cafeList) {
-            List<CafeUserProfileDto> userProfileDtoList = cafeService.getUserProfilesFromRedisAndDB(cafeId);
-            cafeUsersMap.put(cafeId, userProfileDtoList);
-        }
-        return ResponseEntity.ok(cafeUsersMap);
-    }
-
-    // POSTMAN 테스트 용 (카페 선택)
-    @PostMapping("test/cafe/update") // pcafe/update
-    public void publishCafeUpdate(@RequestBody CafeDto dto) throws JsonProcessingException {
-        log.info("Message Catch!!");
-        cafePublisher.updateCafeChoice(dto);
-    }
-
-    // POSTMAN 테스트 용 (get-users)
-    @PostMapping("test/cafe/get-users")
-    public ResponseEntity<Map<String, List<CafeUserProfileDto>>> redisTest(@RequestBody CafeListDto dto) {
         List<String> cafeList = dto.getCafeList();
         Map<String, List<CafeUserProfileDto>> cafeUsersMap = new HashMap<>(); //반환값
 

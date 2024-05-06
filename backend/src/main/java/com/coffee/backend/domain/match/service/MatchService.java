@@ -3,9 +3,9 @@ package com.coffee.backend.domain.match.service;
 import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
-import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
@@ -52,7 +52,7 @@ public class MatchService {
         Map<String, String> matchInfo = Map.of(
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
-                "requestTypeId", dto.getRequestTypeId().toString(),
+                "requestTypeId", dto.getRequestTypeId(),
                 "status", "pending"
         );
 
@@ -81,7 +81,7 @@ public class MatchService {
         receiverInfo.setCompany(company);
 
         String key = "matchId:" + dto.getMatchId();
-        Long requestTypeId = getLongId(redisTemplate.opsForHash().get(key, "requestTypeId"));
+        String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
 
         MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
         matchInfo.setReceiverInfo(receiverInfo);
@@ -216,8 +216,27 @@ public class MatchService {
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
+        if (dto.getRating() < 1 || dto.getRating() > 5) {
+            throw new CustomException(ErrorCode.VALUE_ERROR);
+        }
+
         User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
+        int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
+        double oldCoffeeBean = receiver.getCoffeeBean();
+
+        double baseline = 46.0;
+        double ratio = 0.1;
+        double standard = 4.0;
+
+        // 46 + (평점 합계 + (새로운 평점 - 기준 평점) * 반영 비율) / (평점 개수 + 1)
+        double newCoffeeBean =
+                baseline + ((oldCoffeeBean - baseline) * numberOfReviews + (dto.getRating() - standard) * ratio) /
+                        (numberOfReviews + 1);
+
+        receiver.setCoffeeBean(newCoffeeBean);
+        userRepository.save(receiver);
 
         Review review = new Review();
         review.setSender(sender);
