@@ -12,7 +12,7 @@ class UserItem extends StatelessWidget {
   final String company;
   final String position;
   final String introduction;
-  final int rating;
+  final double rating;
 
   const UserItem({
     super.key,
@@ -92,7 +92,7 @@ class ReqDialog extends StatefulWidget {
   final String company;
   final String position;
   final String introduction;
-  final int rating;
+  final double rating;
 
   ReqDialog({
     Key? key,
@@ -139,7 +139,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final String company;
   final String position;
   final String introduction;
-  final int rating;
+  final double rating;
 
   const ReceivedReqDialog({
     super.key,

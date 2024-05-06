@@ -18,7 +18,7 @@ class UserDetailsModal extends StatelessWidget {
   final String position;
   final String introduction;
   final Function handleChangeDialog;
-  final int rating;
+  final double rating;
 
   @override
   Widget build(BuildContext context) {

@@ -13,28 +13,28 @@ const List<Map<String, dynamic>> sampleUserList = [
     "companyName": "채연컴퍼니",
     "positionName": "집사",
     "introduction": "안녕하세요 뽕순이입니다 뽕",
-    "rating": 10,
+    "rating": 10.0,
   },
   {
     "nickname": "담",
     "companyName": "네카라쿠배당토",
     "positionName": "웹 프론트엔드",
     "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
-    "rating": 20,
+    "rating": 20.0,
   },
   {
     "nickname": "잠온다",
     "companyName": "구글",
     "positionName": "데이터 엔지니어",
     "introduction": "잠오니까 요청하지 마세요. 감사합니다.",
-    "rating": 30,
+    "rating": 30.0,
   },
   {
     "nickname": "내가제일잘나가",
     "companyName": "꿈의직장",
     "positionName": "풀스택",
     "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<",
-    "rating": 40,
+    "rating": 40.0,
   },
 ];
 
@@ -48,14 +48,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: CoffeechatReqList(matchId: 'example'));
+    return const MaterialApp(
+        home: CoffeechatReqList(
+      matchId: '',
+      receiverNickname: '',
+      receiverCompany: '',
+      receiverPosition: '',
+      receiverIntroduction: '',
+      receiverRating: 0.0,
+      Question: '',
+    ));
   }
 }
 
 class CoffeechatReqList extends StatelessWidget {
   final String? matchId;
+  final String receiverNickname;
+  final String receiverCompany;
+  final String receiverPosition;
+  final String receiverIntroduction;
+  final double receiverRating;
+  final String Question;
 
-  const CoffeechatReqList({Key? key, this.matchId}) : super(key: key);
+  const CoffeechatReqList({
+    Key? key,
+    this.matchId,
+    required this.receiverNickname,
+    required this.receiverCompany,
+    required this.receiverPosition,
+    required this.receiverIntroduction,
+    required this.receiverRating,
+    required this.Question,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +114,16 @@ class CoffeechatReqList extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(children: [
-                SentReq(matchId: matchId),
-                ReceivedReq(),
+                SentReq(
+                  matchId: matchId,
+                  nickname: receiverNickname,
+                  company: receiverCompany,
+                  position: receiverPosition,
+                  introduction: receiverIntroduction,
+                  rating: receiverRating,
+                  question: Question,
+                ),
+                ReceivedReq(), // 이 부분은 나중에 수정해줘야 합니다.
               ]),
             ),
           ],
@@ -104,8 +136,23 @@ class CoffeechatReqList extends StatelessWidget {
 
 class SentReq extends StatelessWidget {
   final String? matchId;
+  final String nickname;
+  final String company;
+  final String position;
+  final String introduction;
+  final double rating;
+  final String question;
 
-  const SentReq({Key? key, this.matchId}) : super(key: key);
+  const SentReq({
+    Key? key,
+    this.matchId,
+    required this.nickname,
+    required this.company,
+    required this.position,
+    required this.introduction,
+    required this.rating,
+    required this.question,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -119,42 +166,43 @@ class SentReq extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.grey, width: 1),
           ),
-          child: const UserDetails(
-            nickname: "goodnavers",
-            company: "네이버",
-            position: "데이터 엔지니어링",
-            introduction:
-                "안녕하세요, goodnavers 입니다. 편하게 커피챗 걸어주세요. 어쩌고 저쩌고 블라블라블라블라블라블라블라블라블라",
-            rating: 10,
+          child: UserDetails(
+            nickname: nickname,
+            company: company,
+            position: position,
+            introduction: introduction,
+            rating: rating,
           ),
         ),
-        const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
-        const Expanded(child: SizedBox()),
-        const Text(
+        ColorTextContainer(text: "# $question"),
+        Expanded(child: SizedBox()),
+        Text(
           "자동 취소까지 남은 시간\n09:59",
           textAlign: TextAlign.center,
         ),
         BottomTextButton(
-            text: "요청 취소하기",
-            handlePressed: () async {
-              if (matchId != null) {
-                try {
-                  Map<String, dynamic> response =
-                      await matchCancelRequest(matchId!);
-                  if (response['success'] == 'true') {
-                    print("정상적으로 삭제됨");
+          text: "요청 취소하기",
+          handlePressed: () async {
+            if (matchId != null) {
+              try {
+                Map<String, dynamic> response =
+                    await matchCancelRequest(matchId!);
+                if (response['success'] == 'true') {
+                  print("정상적으로 삭제됨");
 
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            //우선 구굴맵으로 이동
-                            builder: (context) => Google_Map()));
-                  }
-                } catch (e) {
-                  print(e);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Google_Map(),
+                    ),
+                  );
                 }
+              } catch (e) {
+                print(e);
               }
-            }),
+            }
+          },
+        ),
       ],
     );
   }

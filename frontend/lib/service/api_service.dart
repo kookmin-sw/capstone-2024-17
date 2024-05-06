@@ -3,14 +3,15 @@ import 'package:http/http.dart' as http;
 import 'package:frontend/model/user_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-const baseUrl = "http://3.36.123.200:8080";
+const baseUrl = "http://3.36.108.21:8080";
 const storage = FlutterSecureStorage();
 
 const userToken =
     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxMzU5OTA5NiwiaWQiOjF9.HSC3z5gus1gM0DavxjZdhVBZSlUCGhgEbjIYS2-bKng";
 
 // 주변 카페에 있는 모든 유저 목록 받아오기 - http post 요청
-Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
+Future<Map<String, List<UserModel>>> getAllUsers(
+    List<String> cafeList, List<String> sampleCafeList) async {
   try {
     final url = Uri.parse("$baseUrl/cafe/get-users");
     final response = await http.post(
@@ -40,34 +41,43 @@ Future<Map<String, List<UserModel>>> getAllUsers(List<String> cafeList) async {
   }
 }
 
-// 매칭 요청
+//매칭 요청
 Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
-  final token = (await storage.read(key: 'authToken')) ?? '';
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDczMzU0OCwiaWQiOjF9.er3qIiS_7vMfRScPDTc-sTSOScstX00eTa77qF8u7xw";
+  }
+  print("userToken$userToken");
 
-  print("token = $token");
-  try {
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: jsonEncode({
-        'senderId': senderId,
-        'receiverId': receiverId,
-        "requestTypeId": requestTypeId
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to send match request: ${response.statusCode}');
+  if (userToken != null) {
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $userToken",
+        },
+        body: jsonEncode({
+          'senderId': senderId,
+          'receiverId': receiverId,
+          'requestTypeId': requestTypeId
+        }),
+      );
+      print(response);
+      if (response.statusCode == 200) {
+        print("200");
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to send match request: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw e;
     }
-  } catch (e) {
-    throw e;
+  } else {
+    throw Exception('User token is null');
   }
 }
 
@@ -76,15 +86,19 @@ Future<Map<String, dynamic>> matchInfoRequest(
     String matchId, int senderId, int receiverId) async {
   final url = Uri.parse(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
-  final token = (await storage.read(key: 'authToken')) ?? '';
-  print("info token = $token");
 
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDczMzU0OCwiaWQiOjF9.er3qIiS_7vMfRScPDTc-sTSOScstX00eTa77qF8u7xw";
+  }
+  print("userToken$userToken");
   try {
     final response = await http.get(
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
+        "Authorization": "Bearer $userToken",
       },
     );
     print("처리중");

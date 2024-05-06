@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
+import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 
@@ -61,10 +62,8 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              int senderId = 31;
-              int receiverId = 32;
-              print("selectedindex는 여기 $_selectedIndex");
-
+              int senderId = 1;
+              int receiverId = 2;
               try {
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId, _selectedIndex);
@@ -73,16 +72,19 @@ class ChoosePurpose extends StatelessWidget {
 
                 if (response['success'] == true) {
                   try {
-                    print(response['data']['matchId']);
-                    print(response['data']['senderId']);
-                    print(response['data']['receiverId']);
-                    print("-------------");
                     Map<String, dynamic> inforesponse = await matchInfoRequest(
                         response['data']['matchId'],
                         response['data']['senderId'],
                         response['data']['receiverId']);
 
                     print("info Response: $inforesponse");
+                    // nickname = inforesponse['data']['nickname'];
+                    // company = inforesponse['data']['company'];
+                    // introduction = inforesponse['data']['introduction'];
+                    // rating = inforesponse['data']['rating'];
+
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Matching()));
                     // reqlistpara = inforesponse['data']['matchId'];
                   } catch (e) {
                     print("matchInfoRequest Error: $e");

@@ -16,7 +16,7 @@ class UserDetails extends StatelessWidget {
   final String company;
   final String position;
   final String introduction;
-  final int rating;
+  final double rating;
 
   @override
   Widget build(BuildContext context) {

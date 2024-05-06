@@ -4,7 +4,7 @@ class UserModel {
   String companyName;
   String positionName;
   String introduction;
-  int rating;
+  double rating;
 
   UserModel.fromJson(Map<String, dynamic> json)
       : loginId = json['loginId'],
