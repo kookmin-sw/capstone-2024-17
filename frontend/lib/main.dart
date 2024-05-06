@@ -59,7 +59,15 @@ class _MyAppState extends State<MyApp> {
 
   static final List<Widget> _screenOptions = [
     const Google_Map(),
-    const CoffeechatReqList(),
+    const CoffeechatReqList(
+      receiverNickname: '',
+      receiverRating: 0.0,
+      receiverIntroduction: '',
+      receiverPosition: '',
+      receiverCompany: '',
+      Question: '',
+      matchId: '',
+    ),
     // const ChatroomListScreen(),
     const UserScreen(),
   ];
