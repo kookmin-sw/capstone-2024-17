@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
 
@@ -21,6 +23,8 @@ class Google_Map extends StatefulWidget {
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
+  late MyCafeModel myCafe;
+
   @override
   void initState() {
     super.initState();
@@ -274,6 +278,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   @override
   Widget build(BuildContext context) {
+    myCafe = Provider.of<MyCafeModel>(context);
+
     return CupertinoPageScaffold(
       child: Stack(
         children: [
