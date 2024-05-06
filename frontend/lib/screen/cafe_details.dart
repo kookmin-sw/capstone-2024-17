@@ -9,6 +9,7 @@ import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
@@ -40,7 +41,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
   List<UserModel>? userList;
-  Map<String, String>? myCafe;
+  late MyCafeModel myCafe;
 
   void _startTimer() {
     print("타이머 시작");
@@ -110,7 +111,7 @@ class _CafeDetailsState extends State<CafeDetails>
     stompClient = Provider.of<StompClient>(context);
     userList =
         Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
-    myCafe = Provider.of<Map<String, String>?>(context);
+    myCafe = Provider.of<MyCafeModel>(context);
 
     return Scaffold(
       appBar: TopAppBar(
@@ -191,7 +192,7 @@ class _CafeDetailsState extends State<CafeDetails>
               ),
             ),
           ),
-          (myCafe != null && myCafe!["cafeId"] == widget.cafeId)
+          (myCafe.cafeId == widget.cafeId)
               ? Container()
               : BottomTextButton(
                   text: "이 카페를 내 위치로 지정하기",
@@ -218,13 +219,11 @@ class _CafeDetailsState extends State<CafeDetails>
                                   widget.cafeId,
                                 );
 
-                                myCafe = {
-                                  "cafeId": widget.cafeId,
-                                  "latitude":
-                                      widget.cafeDetailsArguments[6], // 위도
-                                  "longitude":
-                                      widget.cafeDetailsArguments[7], // 경도
-                                };
+                                myCafe.setMyCafe(
+                                  cafeId: widget.cafeId,
+                                  latitude: widget.cafeDetailsArguments[6],
+                                  longitude: widget.cafeDetailsArguments[7],
+                                );
                               },
                               child: const Text("확인"),
                             ),

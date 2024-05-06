@@ -10,6 +10,7 @@ import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
@@ -51,7 +52,6 @@ class _MyAppState extends State<MyApp> {
   String? userToken;
   int _selectedIndex = 0;
   late List<String> cafeList; // 주변 카페 리스트
-  Map<String, String>? myCafe; // 내 위치로 지정된 카페 (카페 ID, 위도, 경도)
 
   static late final List<Widget> _screenOptions;
 
@@ -118,8 +118,12 @@ class _MyAppState extends State<MyApp> {
         Provider(
           create: (_) => stompClient,
         ),
-        Provider(
-          create: (_) => myCafe,
+        ChangeNotifierProvider(
+          create: (_) => MyCafeModel(
+            cafeId: "",
+            latitude: "",
+            longitude: "",
+          ),
         ),
       ],
       child: MaterialApp(
