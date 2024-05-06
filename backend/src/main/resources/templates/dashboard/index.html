@@ -38,8 +38,9 @@
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-person m-1"></i>
                                     <div>
-                                        <div th:text="${request.user}" class="h6 mb-0 lh-1">Requested User
-                                        </div>
+                                        <span th:text="|#| + ${request.user.getUserId()} + | | + ${request.user.getLoginId()}"
+                                              class="h6 mb-0 lh-1">Requested User
+                                        </span>
                                     </div>
                                 </div>
                             </td>
