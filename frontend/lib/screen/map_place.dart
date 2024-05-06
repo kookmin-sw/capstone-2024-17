@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:frontend/service/stomp_service.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
@@ -24,6 +27,7 @@ class Google_Map extends StatefulWidget {
 
 class _GoogleMapWidgetState extends State<Google_Map> {
   late MyCafeModel myCafe;
+  late StompClient stompClient;
 
   @override
   void initState() {
@@ -282,6 +286,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   @override
   Widget build(BuildContext context) {
     myCafe = Provider.of<MyCafeModel>(context);
+    stompClient = Provider.of<StompClient>(context);
 
     return CupertinoPageScaffold(
       child: Stack(
@@ -345,7 +350,24 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                   right: 16,
                   child: ElevatedButton(
                     onPressed: () {
-                      print('Button clicked!');
+                      print('위치 공유 끄기 버튼 클릭 !!');
+
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return YesOrNoDialog(
+                            content: "위치 공유를 끄겠습니까?",
+                            firstButton: "확인",
+                            secondButton: "취소",
+                            handleFirstClick: () {
+                              deleteUserInCafe(
+                                  stompClient, "test", myCafe.cafeId!);
+                              myCafe.clearMyCafe();
+                            },
+                            handleSecondClick: () {},
+                          );
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black12, // 배경 색상 설정
