@@ -28,16 +28,14 @@ class FCM {
   forgroundNotification() {
     // onMessage: 메시지가 도착했을 때 발생하는 이벤트
     FirebaseMessaging.onMessage.listen(
-      (message) async {
-        // (메시지에는 notification 메시지, data 메시지가 있다)
-        if (message.notification != null) {
-          messageStreamController.sink.add({
-            'title': message.notification!.title,
-            'body': message.notification!.body,
-            'senttime': message.sentTime,
-            'senderId': message.senderId,
-          });
-        }
+      (RemoteMessage message) async {
+        // (메시지에는 notification 메시지, data 메시지가 있다
+        messageStreamController.sink.add({
+          'title': message.data['title'],
+          'body': message.data['body'],
+          'sentTime': message.sentTime,
+          'senderId': message.senderId,
+        });
       },
     );
   }
@@ -45,15 +43,13 @@ class FCM {
   // 앱이 background 상태일 경우를 위한 메소드
   backgroundNotification() {
     FirebaseMessaging.onMessageOpenedApp.listen(
-      (message) async {
-        if (message.notification != null) {
-          messageStreamController.sink.add({
-            'title': message.notification!.title,
-            'body': message.notification!.body,
-            'senttime': message.sentTime,
-            'senderId': message.senderId,
-          });
-        }
+      (RemoteMessage message) async {
+        messageStreamController.sink.add({
+          'title': message.data['title'],
+          'body': message.data['body'],
+          'sentTime': message.sentTime,
+          'senderId': message.senderId,
+        });
       },
     );
   }
@@ -65,14 +61,12 @@ class FCM {
         await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
-      if (initialMessage.notification != null) {
-        messageStreamController.sink.add({
-          'title': initialMessage.notification!.title,
-          'body': initialMessage.notification!.body,
-          'senttime': initialMessage.sentTime,
-          'senderId': initialMessage.senderId,
-        });
-      }
+      messageStreamController.sink.add({
+        'title': initialMessage.data['title'],
+        'body': initialMessage.data['body'],
+        'sentTime': initialMessage.sentTime,
+        'senderId': initialMessage.senderId,
+      });
     }
   }
 

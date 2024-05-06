@@ -44,7 +44,7 @@ class AlarmListWidgetState extends State<AlarmList> {
             AlarmEvent(
                 messageTitle: msg['title'],
                 messageBody: msg['body'],
-                time: msg['senttime'],
+                time: msg['sentTime'],
                 type: 'accept'));
       });
     });
