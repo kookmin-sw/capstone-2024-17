@@ -24,7 +24,6 @@ jobs:
 
     - name: Decode and Save Firebase Config
       run: |
-        mkdir -p ./backend/src/main/resources/firebase
         echo "${{ secrets.FIREBASE_CONFIG_BASE64 }}" | base64 -d > ./backend/src/main/resources/firebase/firebase-secret-key.json
 
     - name: Grant execute permission for gradlew
