@@ -59,9 +59,9 @@ public class MatchService {
         redisTemplate.opsForHash().putAll("matchId:" + matchId, matchInfo);
         redisTemplate.expire("matchId:" + matchId, 600, TimeUnit.SECONDS);
 
-//        // 알림
-//        User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
-//        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
+        // 알림
+        User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
 
         // 10분동안 락 설정
         redisTemplate.opsForValue().set(lockKey, "Locked", 600, TimeUnit.SECONDS);
@@ -107,9 +107,9 @@ public class MatchService {
         Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
         Long receiverId = getLongId(receiver);
 
-//        // 알림
-//        User toUser = userRepository.findByUserId(senderId).orElseThrow();
-//        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
+        // 알림
+        User toUser = userRepository.findByUserId(senderId).orElseThrow();
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
 
         MatchDto match = new MatchDto();
         match.setMatchId(dto.getMatchId());
@@ -131,9 +131,9 @@ public class MatchService {
         Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
         Long receiverId = getLongId(receiver);
 
-//        // 알림
-//        User toUser = userRepository.findByUserId(senderId).orElseThrow();
-//        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
+        // 알림
+        User toUser = userRepository.findByUserId(senderId).orElseThrow();
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
 
         redisTemplate.delete(key);
 
