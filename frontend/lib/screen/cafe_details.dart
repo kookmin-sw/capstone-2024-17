@@ -221,7 +221,7 @@ class _CafeDetailsState extends State<CafeDetails>
                               deleteUserInCafe(
                                 stompClient,
                                 "test",
-                                widget.cafeId,
+                                myCafe.cafeId!,
                               );
                             }
                             // 카페에 유저 추가 pub 요청
