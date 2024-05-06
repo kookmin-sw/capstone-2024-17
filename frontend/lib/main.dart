@@ -119,11 +119,7 @@ class _MyAppState extends State<MyApp> {
           create: (_) => stompClient,
         ),
         ChangeNotifierProvider(
-          create: (_) => MyCafeModel(
-            cafeId: "",
-            latitude: "",
-            longitude: "",
-          ),
+          create: (_) => MyCafeModel(),
         ),
       ],
       child: MaterialApp(

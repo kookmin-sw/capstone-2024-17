@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyCafeModel extends ChangeNotifier {
-  String cafeId;
-  String latitude;
-  String longitude;
+  String? cafeId;
+  String? latitude;
+  String? longitude;
 
   MyCafeModel({
-    required this.cafeId,
-    required this.latitude,
-    required this.longitude,
+    this.cafeId,
+    this.latitude,
+    this.longitude,
   });
 
   void setMyCafe({
