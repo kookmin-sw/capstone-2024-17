@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   String? userToken;
   int _selectedIndex = 0;
   late List<String> cafeList; // 주변 카페 리스트
+  List<String>? myCafe; // 내 위치로 지정된 카페 (카페 ID, 위도, 경도)
 
   static late final List<Widget> _screenOptions;
 
@@ -116,6 +117,9 @@ class _MyAppState extends State<MyApp> {
         ),
         Provider(
           create: (_) => stompClient,
+        ),
+        Provider(
+          create: (_) => myCafe,
         ),
       ],
       child: MaterialApp(

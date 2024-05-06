@@ -40,6 +40,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
   List<UserModel>? userList;
+  List<String>? myCafe;
 
   void _startTimer() {
     print("타이머 시작");
@@ -109,6 +110,7 @@ class _CafeDetailsState extends State<CafeDetails>
     stompClient = Provider.of<StompClient>(context);
     userList =
         Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
+    myCafe = Provider.of<List<String>>(context);
 
     return Scaffold(
       appBar: TopAppBar(
@@ -212,6 +214,12 @@ class _CafeDetailsState extends State<CafeDetails>
                               "test",
                               widget.cafeId,
                             );
+
+                            myCafe = [
+                              widget.cafeId,
+                              widget.cafeDetailsArguments[6], // 위도
+                              widget.cafeDetailsArguments[7], // 경도
+                            ];
                           },
                           child: const Text("확인"),
                         ),
