@@ -1,28 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/notification.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
-final List<AlarmEvent> events = [
-  AlarmEvent(
-    message: "00님이 커피챗 요청을 수락했습니다.",
-    time: DateTime.now(),
-    type: "accept",
-  ),
-  AlarmEvent(
-    message: "00님이 커피챗 요청을 거절했습니다.",
-    time: DateTime.now(),
-    type: "reject",
-  ),
-  AlarmEvent(
-    message: "00님이 커피챗 요청을 보냈습니다.",
-    time: DateTime.now(),
-    type: "send",
-  ),
-  AlarmEvent(
-    message: "오프라인으로 전환되었습니다.",
-    time: DateTime.now(),
-    type: "offline",
-  ),
-];
+final List<AlarmEvent> events = [];
 
 class AlarmList extends StatefulWidget {
   const AlarmList({super.key});
@@ -32,20 +12,42 @@ class AlarmList extends StatefulWidget {
 }
 
 class AlarmEvent {
-  final String message;
+  final String messageTitle;
+  final String messageBody;
   final DateTime time;
   final String type; // 이벤트 유형: accept, reject, send, offline
 
   AlarmEvent({
-    required this.message,
+    required this.messageTitle,
+    required this.messageBody,
     required this.time,
     required this.type,
   });
 }
 
 class AlarmListWidgetState extends State<AlarmList> {
+  String? title;
+  String? body;
+  DateTime? datetime;
+
   @override
   void initState() {
+    final fcm = FCM();
+    fcm.setNotifications(); // 알림 설정
+
+    fcm.messageStreamController.stream.listen((msg) {
+      print('[alarmList content] $msg');
+      setState(() {
+        // 받은 알림을 맨 앞에 추가
+        events.insert(
+            0,
+            AlarmEvent(
+                messageTitle: msg['title'],
+                messageBody: msg['body'],
+                time: msg['senttime'],
+                type: 'accept'));
+      });
+    });
     super.initState();
   }
 
@@ -78,7 +80,7 @@ class AlarmListWidgetState extends State<AlarmList> {
                         title: Padding(
                           padding: EdgeInsets.only(
                               top: index == 0 ? 0.0 : 5.0, left: 5.0),
-                          child: Text(event.message),
+                          child: Text(event.messageBody),
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0, 0),
