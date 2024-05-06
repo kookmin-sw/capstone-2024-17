@@ -180,13 +180,31 @@ class _CafeDetailsState extends State<CafeDetails>
                   ListView.builder(
                     itemCount: userList!.length,
                     itemBuilder: (context, index) {
-                      return UserItem(
-                        type: "cafeUser",
-                        nickname: userList![index].nickname,
-                        company: userList![index].companyName,
-                        position: userList![index].positionName,
-                        introduction: userList![index].introduction,
-                      );
+                      return userList.isEmpty
+                          ? UserItem(
+                              type: "cafeUser",
+                              nickname: sampleUserList[index]["nickname"],
+                              company: sampleUserList[index]["companyName"],
+                              position: sampleUserList[index]["positionName"],
+                              introduction: sampleUserList[index]
+                                  ["introduction"],
+                              rating: sampleUserList[index]["rating"],
+                            )
+                          : UserItem(
+                              type: "cafeUser",
+                              nickname: userList[index].nickname,
+                              company: userList[index].companyName,
+                              position: userList[index].positionName,
+                              introduction: userList[index].introduction,
+                              rating: userList[index].rating,
+                            );
+//                       return UserItem(
+//                         type: "cafeUser",
+//                         nickname: userList![index].nickname,
+//                         company: userList![index].companyName,
+//                         position: userList![index].positionName,
+//                         introduction: userList![index].introduction,
+//                       );
                     },
                   ),
                 ],

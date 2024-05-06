@@ -2,7 +2,6 @@ import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/stomp_service.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
@@ -51,6 +50,21 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String? userToken;
   int _selectedIndex = 0;
+
+  static final List<Widget> _screenOptions = [
+    const Google_Map(),
+    const CoffeechatReqList(
+      receiverNickname: '',
+      receiverRating: 0.0,
+      receiverIntroduction: '',
+      receiverPosition: '',
+      receiverCompany: '',
+      Question: '',
+      matchId: '',
+    ),
+    // const ChatroomListScreen(),
+    const UserScreen(),
+  ];
   late List<String> cafeList; // 주변 카페 리스트
 
   static late final List<Widget> _screenOptions;
@@ -176,7 +190,7 @@ class _MyAppState extends State<MyApp> {
           '/signup': (BuildContext context) => const SignupScreen(),
           '/signin': (BuildContext context) => const LoginScreen(),
           '/user': (BuildContext context) => const UserScreen(),
-          '/chatroomlist': (BuildContext context) => const ChatroomListScreen(),
+          // '/chatroomlist': (BuildContext context) => const ChatroomListScreen(),
           '/cafe': (BuildContext context) => const CafeDetails(),
           '/searchcompany': (BuildContext context) =>
               const SearchCompanyScreen(),
