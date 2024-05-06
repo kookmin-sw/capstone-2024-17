@@ -1,26 +1,28 @@
 package com.coffee.backend.domain.fcm.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
+@RequiredArgsConstructor
 public class FcmPushMessageDto {
-    private Message message;
+    private final boolean validateOnly;
+    private final Message message;
 
-    @Builder
-    @AllArgsConstructor
     @Getter
+    @Setter
+    @RequiredArgsConstructor
     public static class Message {
-        private Notification notification;
-        private String targetToken;
+        private Data data;
+        private String token;
     }
 
-    @Builder
-    @AllArgsConstructor
     @Getter
-    public static class Notification {
+    @Setter
+    @RequiredArgsConstructor
+    public static class Data {
         private String title;
         private String body;
     }

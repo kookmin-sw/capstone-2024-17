@@ -23,4 +23,5 @@ public class UserDto {
     private String phone;
     private String userUUID;
     private String introduction;
+    private String deviceToken;
 }
