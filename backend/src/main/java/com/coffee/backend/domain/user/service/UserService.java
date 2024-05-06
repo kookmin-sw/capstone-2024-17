@@ -2,10 +2,13 @@ package com.coffee.backend.domain.user.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeUserDto;
 import com.coffee.backend.domain.company.entity.Company;
+import com.coffee.backend.domain.user.dto.UserDto;
+import com.coffee.backend.domain.user.entity.Position;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
+import com.coffee.backend.utils.CustomMapper;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final CustomMapper customMapper;
 
     public User getByUserId(Long userId) {
         Optional<User> user = userRepository.findById(userId);
@@ -56,5 +60,15 @@ public class UserService {
     public void setUserCompany(User user, Company company) {
         user.setCompany(company);
         userRepository.save(user);
+    }
+
+    public UserDto updateUserPosition(User user, String position) {
+        user.setPosition(Position.of(position));
+        return customMapper.toUserDto(userRepository.save(user));
+    }
+
+    public UserDto updateUserIntroduction(User user, String introduction) {
+        user.setIntroduction(introduction);
+        return customMapper.toUserDto(userRepository.save(user));
     }
 }
