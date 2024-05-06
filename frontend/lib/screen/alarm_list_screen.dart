@@ -58,46 +58,44 @@ class AlarmListWidgetState extends State<AlarmList> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: const TopAppBar(
-          title: "알림 목록",
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: events.length,
-                itemBuilder: (context, index) {
-                  final event = events[index];
-                  final time =
-                      '${event.time.year}-${event.time.month.toString().padLeft(2, '0')}-${event.time.day.toString().padLeft(2, '0')} ${event.time.hour.toString().padLeft(2, '0')}:${event.time.minute.toString().padLeft(2, '0')}:${event.time.second.toString().padLeft(2, '0')}'; // 날짜와 시간을 문자열로 변환
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        title: Padding(
-                          padding: EdgeInsets.only(
-                              top: index == 0 ? 0.0 : 5.0, left: 5.0),
-                          child: Text(event.messageBody),
-                        ),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0, 0),
-                          child: Text(
-                            time,
-                            style: const TextStyle(color: Colors.grey),
-                          ),
+    return Scaffold(
+      appBar: const TopAppBar(
+        title: "알림 목록",
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: events.length,
+              itemBuilder: (context, index) {
+                final event = events[index];
+                final time =
+                    '${event.time.year}-${event.time.month.toString().padLeft(2, '0')}-${event.time.day.toString().padLeft(2, '0')} ${event.time.hour.toString().padLeft(2, '0')}:${event.time.minute.toString().padLeft(2, '0')}:${event.time.second.toString().padLeft(2, '0')}'; // 날짜와 시간을 문자열로 변환
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Padding(
+                        padding: EdgeInsets.only(
+                            top: index == 0 ? 0.0 : 5.0, left: 5.0),
+                        child: Text(event.messageBody),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0, 0),
+                        child: Text(
+                          time,
+                          style: const TextStyle(color: Colors.grey),
                         ),
                       ),
-                      const Divider(), //리스트 구분줄
-                    ],
-                  );
-                },
-              ),
+                    ),
+                    const Divider(), //리스트 구분줄
+                  ],
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

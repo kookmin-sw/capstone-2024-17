@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -318,7 +319,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             right: 10,
             child: ElevatedButton(
               onPressed: () {
-                print('Button clicked!');
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const AlarmList()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepOrange, // 배경 색상 설정
