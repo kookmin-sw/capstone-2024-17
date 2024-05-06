@@ -120,7 +120,11 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   if (matchId == '') {
     matchId = '7044e6c6-b521-4764-bc40-9127dc14d74d';
   }
-
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  }
   try {
     final response = await http.delete(
       url,
