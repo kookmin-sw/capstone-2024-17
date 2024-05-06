@@ -10,6 +10,7 @@ import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
@@ -116,6 +117,9 @@ class _MyAppState extends State<MyApp> {
         ),
         Provider(
           create: (_) => stompClient,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MyCafeModel(),
         ),
       ],
       child: MaterialApp(

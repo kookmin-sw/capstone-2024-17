@@ -8,7 +8,9 @@ import 'package:frontend/widgets/cafe_info.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
@@ -40,6 +42,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
   List<UserModel>? userList;
+  late MyCafeModel myCafe;
 
   void _startTimer() {
     print("타이머 시작");
@@ -109,6 +112,7 @@ class _CafeDetailsState extends State<CafeDetails>
     stompClient = Provider.of<StompClient>(context);
     userList =
         Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
+    myCafe = Provider.of<MyCafeModel>(context);
 
     return Scaffold(
       appBar: TopAppBar(
@@ -189,44 +193,56 @@ class _CafeDetailsState extends State<CafeDetails>
               ),
             ),
           ),
-          BottomTextButton(
-            text: "이 카페를 내 위치로 지정하기",
-            handlePressed: () {
-              _startTimer();
+          (myCafe.cafeId == widget.cafeId)
+              ? Container()
+              : BottomTextButton(
+                  text: "이 카페를 내 위치로 지정하기",
+                  handlePressed: () {
+                    _startTimer();
 
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text("카페 지정"),
-                      content: Text("${widget.cafeName}을(를) 내 위치로 지정하겠습니까?"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        bool setOrChange = myCafe.cafeId == null ? true : false;
+                        String content = setOrChange
+                            ? "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?"
+                            : "${widget.cafeName}을(를) 내 위치로 표시하도록 변경하겠습니까?";
+
+                        return YesOrNoDialog(
+                          content: content,
+                          firstButton: "확인",
+                          secondButton: "취소",
+                          handleFirstClick: () {
                             _stopTimer();
-                            Navigator.pop(context);
 
+                            // 지정 카페 변경인 경우
+                            if (!setOrChange) {
+                              // 기존 카페에서 유저 삭제 pub 요청
+                              deleteUserInCafe(
+                                stompClient,
+                                "test",
+                                myCafe.cafeId!,
+                              );
+                            }
                             // 카페에 유저 추가 pub 요청
                             addUserInCafe(
                               stompClient,
                               "test",
                               widget.cafeId,
                             );
+
+                            myCafe.setMyCafe(
+                              cafeId: widget.cafeId,
+                              latitude: widget.cafeDetailsArguments[6],
+                              longitude: widget.cafeDetailsArguments[7],
+                            );
                           },
-                          child: const Text("확인"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            _stopTimer();
-                            Navigator.pop(context);
-                          },
-                          child: const Text("취소"),
-                        ),
-                      ],
+                          handleSecondClick: _stopTimer,
+                        );
+                      },
                     );
-                  });
-            },
-          ),
+                  },
+                ),
         ],
       ),
     );
