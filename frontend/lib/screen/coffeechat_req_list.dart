@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
 }
 
 class CoffeechatReqList extends StatelessWidget {
-  final String? matchId;
+  final String matchId;
   final String receiverNickname;
   final String receiverCompany;
   final String receiverPosition;
@@ -73,7 +73,7 @@ class CoffeechatReqList extends StatelessWidget {
 
   const CoffeechatReqList({
     Key? key,
-    this.matchId,
+    required this.matchId,
     required this.receiverNickname,
     required this.receiverCompany,
     required this.receiverPosition,
@@ -84,7 +84,7 @@ class CoffeechatReqList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultTabController(
+    return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: TopAppBar(
@@ -180,12 +180,12 @@ class SentReq extends StatelessWidget {
                 if (response['success'] == 'true') {
                   print("정상적으로 삭제됨");
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Google_Map(),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => Google_Map(updateCafesCallback: ''),
+                  //   ),
+                  // );
                 }
               } catch (e) {
                 print(e);
