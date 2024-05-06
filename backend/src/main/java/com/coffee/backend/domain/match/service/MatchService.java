@@ -1,16 +1,21 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
+import com.coffee.backend.domain.match.dto.MatchInfoDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
+import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.repository.ReviewRepository;
+import com.coffee.backend.domain.user.dto.ReceiverInfoDto;
+import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -28,10 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final FcmService fcmService;
+    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ModelMapper mapper;
-    private final ObjectMapper objectMapper;
-    private final UserRepository userRepository;
 
     private static final String LOCK_KEY_PREFIX = "lock:senderId:";
 
@@ -48,6 +52,7 @@ public class MatchService {
         Map<String, String> matchInfo = Map.of(
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
+                "requestTypeId", dto.getRequestTypeId(),
                 "status", "pending"
         );
 
@@ -64,8 +69,26 @@ public class MatchService {
         MatchDto match = mapper.map(dto, MatchDto.class);
         match.setMatchId(matchId);
         match.setStatus("pending");
-
         return match;
+    }
+
+    // 매칭 요청 정보
+    public MatchInfoResponseDto getMatchRequestInfo(MatchInfoDto dto) {
+        User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
+        ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+        Company company = receiver.getCompany();
+        receiverInfo.setCompany(company);
+
+        String key = "matchId:" + dto.getMatchId();
+        String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
+
+        MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
+        matchInfo.setReceiverInfo(receiverInfo);
+        matchInfo.setSenderId(dto.getSenderId());
+        matchInfo.setReceiverId(dto.getReceiverId());
+        matchInfo.setRequestTypeId(requestTypeId);
+        return matchInfo;
     }
 
     // 매칭 요청 수락
@@ -77,6 +100,7 @@ public class MatchService {
         String key = "matchId:" + dto.getMatchId();
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
+        redisTemplate.opsForHash().put(key + "-info", "status", "matching");
 
         Object sender = redisTemplate.opsForHash().get(key, "senderId");
         Long senderId = getLongId(sender);
@@ -174,11 +198,49 @@ public class MatchService {
         return id;
     }
 
+    public MatchStatusDto finishMatch(MatchIdDto dto) {
+        String key = "matchId:" + dto.getMatchId() + "-info";
+        redisTemplate.delete(key);
+
+        MatchStatusDto match = new MatchStatusDto();
+        match.setMatchId(dto.getMatchId());
+        match.setStatus("finished");
+        return match;
+    }
+
+    public Boolean isMatching(MatchIdDto dto) {
+        String key = "matchId:" + dto.getMatchId() + "-info";
+        Object status = redisTemplate.opsForHash().get(key, "status");
+        return status != null; // true
+    }
+
     @Transactional
     public Review saveReview(ReviewDto dto) {
+        if (dto.getRating() < 1 || dto.getRating() > 5) {
+            throw new CustomException(ErrorCode.VALUE_ERROR);
+        }
+
+        User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
+        User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
+        int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
+        double oldCoffeeBean = receiver.getCoffeeBean();
+
+        double baseline = 46.0;
+        double ratio = 0.1;
+        double standard = 4.0;
+
+        // 46 + (평점 합계 + (새로운 평점 - 기준 평점) * 반영 비율) / (평점 개수 + 1)
+        double newCoffeeBean =
+                baseline + ((oldCoffeeBean - baseline) * numberOfReviews + (dto.getRating() - standard) * ratio) /
+                        (numberOfReviews + 1);
+
+        receiver.setCoffeeBean(newCoffeeBean);
+        userRepository.save(receiver);
+
         Review review = new Review();
-        review.setSenderId(dto.getSenderId());
-        review.setReceiverId(dto.getReceiverId());
+        review.setSender(sender);
+        review.setReceiver(receiver);
         review.setRating(dto.getRating());
         review.setComment(dto.getComment());
         review.setCreatedAt(new Date());

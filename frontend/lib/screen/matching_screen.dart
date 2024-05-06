@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Matching(),
-    );
-  }
-}
-
 class Matching extends StatefulWidget {
-  const Matching({Key? key}) : super(key: key);
+  const Matching({super.key});
 
   @override
   _MatchingWidgetState createState() => _MatchingWidgetState();
@@ -33,13 +18,13 @@ class _MatchingWidgetState extends State<Matching> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(250, 131, 88, 1.0), // 배경색 설정
+      backgroundColor: const Color.fromRGBO(250, 131, 88, 1.0), // 배경색 설정
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 0.0, bottom: 0),
+            const Padding(
+              padding: EdgeInsets.only(top: 0.0, bottom: 0),
               child: Text(
                 '커피챗 진행중 • • • ', // 텍스트
                 style: TextStyle(fontSize: 33, fontWeight: FontWeight.bold),
@@ -56,11 +41,11 @@ class _MatchingWidgetState extends State<Matching> {
                     height: 400,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 58, right: 0), // 패딩 설정
+                    padding: const EdgeInsets.only(top: 58, right: 0), // 패딩 설정
                     child: Container(
                       width: 310, // 원의 너비
                       height: 310, // 원의 높이
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle, // 원 모양 설정
                         color: Color.fromRGBO(255, 201, 186, 1.0),
                       ),
@@ -69,8 +54,8 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      '${company1} X ${company2}', // 회사 이름이 길어졌을 때 논의 필요
-                      style: TextStyle(
+                      '$company1 X $company2', // 회사 이름이 길어졌을 때 논의 필요
+                      style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
@@ -82,13 +67,13 @@ class _MatchingWidgetState extends State<Matching> {
                     child: Container(
                       width: 140,
                       height: 140,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/${imgpath1}', // 이미지의 경로
+                          'assets/$imgpath1', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -102,13 +87,13 @@ class _MatchingWidgetState extends State<Matching> {
                     child: Container(
                       width: 140,
                       height: 140,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/${imgpath2}', // 이미지의 경로
+                          'assets/$imgpath2', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -130,14 +115,14 @@ class _MatchingWidgetState extends State<Matching> {
                         context, "커피챗 종료", "커피챗을 종료하고 나가시겠습니까?");
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                         vertical: 15, horizontal: 20), // 버튼의 내부 패딩 설정
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)), // 버튼의 모양 설정
                     backgroundColor:
-                        Color.fromRGBO(75, 30, 8, 1.0), // 버튼의 배경색 설정
+                        const Color.fromRGBO(75, 30, 8, 1.0), // 버튼의 배경색 설정
                   ),
-                  child: Text(
+                  child: const Text(
                     '커피챗 종료',
                     style: TextStyle(
                         fontSize: 25, color: Colors.white), // 버튼 텍스트의 스타일 설정

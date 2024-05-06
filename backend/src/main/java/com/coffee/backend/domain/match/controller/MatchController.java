@@ -1,20 +1,27 @@
 package com.coffee.backend.domain.match.controller;
 
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
+import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
+import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
 import com.coffee.backend.utils.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -28,6 +35,18 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchDto>> sendMatchRequest(@RequestBody MatchRequestDto dto) {
         log.info("Request Message Catch!!");
         MatchDto response = matchService.sendMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/request/info")
+    public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(
+            @RequestParam String matchId, @RequestParam Long senderId, @RequestParam Long receiverId) {
+        MatchInfoDto dto = new MatchInfoDto();
+        dto.setMatchId(matchId);
+        dto.setSenderId(senderId);
+        dto.setReceiverId(receiverId);
+        
+        MatchInfoResponseDto response = matchService.getMatchRequestInfo(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -49,6 +68,20 @@ public class MatchController {
     public ResponseEntity<ApiResponse<MatchDto>> cancelMatchRequest(@RequestBody MatchIdDto dto) {
         log.info("Cancel Message Catch!!");
         MatchDto response = matchService.cancelMatchRequest(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/finish")
+    public ResponseEntity<ApiResponse<MatchStatusDto>> finishMatch(@RequestBody MatchIdDto dto) {
+        log.info("Finish Message Catch!!");
+        MatchStatusDto response = matchService.finishMatch(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/isMatching")
+    public ResponseEntity<ApiResponse<Boolean>> isMatching(@RequestBody MatchIdDto dto) {
+        log.info("Check if isMathing");
+        Boolean response = matchService.isMatching(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

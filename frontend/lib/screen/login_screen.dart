@@ -8,6 +8,7 @@ import 'package:frontend/widgets/kakao_login_widget.dart';
 
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,20 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '로그인',
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
+        resizeToAvoidBottomInset: false,
+        appBar: const TopAppBar(
+          title: "로그인",
         ),
         body: Container(
             alignment: Alignment.center,
@@ -158,9 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       showAlertDialog(context, res['message']);
-      // 유저 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
+      // 메인 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
       Future.delayed(Duration.zero, () {
-        Navigator.pushNamedAndRemoveUntil(context, '/user', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       });
     } else {
       // 실패

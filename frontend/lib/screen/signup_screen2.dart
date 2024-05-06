@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/screen/signup_screen3.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class WarningLabel extends StatelessWidget {
   const WarningLabel({
@@ -65,21 +65,9 @@ class _SignupScreen2State extends State<SignupScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '회원가입',
-            // textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
+        resizeToAvoidBottomInset: false,
+        appBar: const TopAppBar(
+          title: "회원가입",
         ),
         body: Container(
             alignment: Alignment.center,
@@ -91,10 +79,12 @@ class _SignupScreen2State extends State<SignupScreen2> {
                   Column(children: <Widget>[
                     // 안내
                     const Row(children: <Widget>[
-                      Text("사용할 아이디와 비밀번호를 입력해주세요.",
-                          style: TextStyle(
-                            fontSize: 20,
-                          )),
+                      Flexible(
+                          child: Text("사용할 아이디와 비밀번호를 입력해주세요.",
+                              overflow: TextOverflow.visible,
+                              style: TextStyle(
+                                fontSize: 20,
+                              ))),
                     ]),
 
                     //  공백
@@ -104,8 +94,8 @@ class _SignupScreen2State extends State<SignupScreen2> {
 
                     // 입력창 컨테이너
                     Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 30), // 마진 추가,
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: 0), // 마진 추가,
                         child: Column(children: <Widget>[
                           // 입력창
                           IconedTextfield(

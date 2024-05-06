@@ -10,6 +10,7 @@ import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
+import com.coffee.backend.utils.CustomMapper;
 import io.lettuce.core.RedisException;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
@@ -27,8 +28,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final ModelMapper mapper;
+    private final CustomMapper customMapper;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final TokenStorageService tokenStorageService;
+
+    public UserDto detail(User user) {
+        return customMapper.toUserDto(user);
+    }
 
     public UserDto signUp(SignUpDto dto) {
         validateLoginIdNotDuplicated(dto.getLoginId());
@@ -38,7 +44,7 @@ public class AuthService {
         user.setUserUUID(UUID.randomUUID().toString());
 
         User savedUser = userRepository.save(user);
-        return mapper.map(savedUser, UserDto.class);
+        return customMapper.toUserDto(savedUser);
     }
 
     public AuthDto signIn(SignInDto dto) {

@@ -4,9 +4,7 @@ services:
     env_file:
       - .env
     container_name: spring-container
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: hyeesw/spring-app
     ports:
       - "8080:8080"
     depends_on:
@@ -46,6 +44,20 @@ services:
       - "6379:6379"
     networks:
       - backend-network
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce
+    ports:
+      - "18000:8000"
+      - "19000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+
+volumes:
+  portainer_data:
 
 networks:
   backend-network:

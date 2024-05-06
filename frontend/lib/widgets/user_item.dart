@@ -172,9 +172,11 @@ class ReceivedReqDialog extends StatelessWidget {
             ),
             const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
             const Expanded(child: SizedBox()),
-            const BottomTwoButtons(
+            BottomTwoButtons(
               first: "수락",
               second: "거절",
+              handleFirstClick: () {},
+              handleSecondClick: () {},
             ),
           ],
         ),

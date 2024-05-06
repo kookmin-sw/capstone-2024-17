@@ -1,63 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/service/stomp_service.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/model/user_model.dart';
-import 'package:frontend/service/api_service.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CafeDetails(
-        cafeId: "1",
-        cafeName: "스타벅스 국민대점",
-        cafeDetailsArguments: ['정보 없음'],
-      ), // 임시로 cafeId, cafeName 지정
-    );
-  }
-}
-
-const List<Map<String, dynamic>> sampleUserList = [
-  {
-    "nickname": "뽕순이",
-    "companyName": "채연컴퍼니",
-    "positionName": "집사",
-    "introduction": "안녕하세요 뽕순이입니다 뽕",
-    "rating": 10.0,
-  },
-  {
-    "nickname": "담",
-    "companyName": "네카라쿠배당토",
-    "positionName": "웹 프론트엔드",
-    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
-    "rating": 20.0,
-  },
-  {
-    "nickname": "잠온다",
-    "companyName": "구글",
-    "positionName": "데이터 엔지니어",
-    "introduction": "잠오니까 요청하지 마세요. 감사합니다.",
-    "rating": 30.0,
-  },
-  {
-    "nickname": "내가제일잘나가",
-    "companyName": "꿈의직장",
-    "positionName": "풀스택",
-    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<",
-    "rating": 40.0,
-  },
-];
+import 'package:stomp_dart_client/stomp.dart';
 
 class CafeDetails extends StatefulWidget {
   final String cafeId;
@@ -77,14 +34,19 @@ class CafeDetails extends StatefulWidget {
 
 class _CafeDetailsState extends State<CafeDetails>
     with SingleTickerProviderStateMixin {
+  late StompClient stompClient;
+  TabController? tabController;
   Timer? _timer;
+
   final String ImageId = "";
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
+  List<UserModel>? userList;
+  late MyCafeModel myCafe;
 
   void _startTimer() {
     print("타이머 시작");
-    _timer = Timer.periodic(Duration(minutes: 20), (Timer timer) async {
+    _timer = Timer.periodic(const Duration(minutes: 20), (Timer timer) async {
       final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
 
@@ -126,29 +88,15 @@ class _CafeDetailsState extends State<CafeDetails>
     }
   }
 
-  TabController? tabController;
-  List<UserModel> userList = [];
-
-  void waitForUserList(String cafeId) async {
-    // Null error 방지
-    List<UserModel>? userListResult = await getUserList(cafeId);
-    if (userListResult != null) {
-      userList = userListResult;
-      setState(() {});
-    } else {
-      print("getUserList returned null");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
     tabController!.addListener(() {
-      // 사용자 보기 탭 클릭 시, 서버에 해당 카페에 있는 유저 목록 get 요청
+      // 사용자 보기 탭 클릭 시
       if (tabController!.index == 1) {
-        waitForUserList(widget.cafeId); //위도 경도로 사용자 요청?
+        // 사용자 목록 업데이트 ?
       }
     });
   }
@@ -161,21 +109,14 @@ class _CafeDetailsState extends State<CafeDetails>
 
   @override
   Widget build(BuildContext context) {
+    stompClient = Provider.of<StompClient>(context);
+    userList =
+        Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
+    myCafe = Provider.of<MyCafeModel>(context);
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: AppBar(
-          title: Text(
-            widget.cafeName,
-            style: const TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          backgroundColor: Colors.white,
-          elevation: 1.0,
-          shadowColor: Colors.black,
-          leading: const Icon(Icons.arrow_back_ios),
-          leadingWidth: 70,
-        ),
+      appBar: TopAppBar(
+        title: widget.cafeName,
       ),
       body: Column(
         children: [
@@ -237,7 +178,7 @@ class _CafeDetailsState extends State<CafeDetails>
                     businessHours: widget.cafeDetailsArguments[8],
                   ),
                   ListView.builder(
-                    itemCount: sampleUserList.length,
+                    itemCount: userList!.length,
                     itemBuilder: (context, index) {
                       return userList.isEmpty
                           ? UserItem(
@@ -257,23 +198,71 @@ class _CafeDetailsState extends State<CafeDetails>
                               introduction: userList[index].introduction,
                               rating: userList[index].rating,
                             );
+//                       return UserItem(
+//                         type: "cafeUser",
+//                         nickname: userList![index].nickname,
+//                         company: userList![index].companyName,
+//                         position: userList![index].positionName,
+//                         introduction: userList![index].introduction,
+//                       );
                     },
                   ),
                 ],
               ),
             ),
           ),
-          BottomTextButton(
-            text: "이 카페를 내 위치로 설정하기",
-            handlePressed: () {
-              _startTimer();
-            },
-          ),
+          (myCafe.cafeId == widget.cafeId)
+              ? Container()
+              : BottomTextButton(
+                  text: "이 카페를 내 위치로 지정하기",
+                  handlePressed: () {
+                    _startTimer();
+
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        bool setOrChange = myCafe.cafeId == null ? true : false;
+                        String content = setOrChange
+                            ? "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?"
+                            : "${widget.cafeName}을(를) 내 위치로 표시하도록 변경하겠습니까?";
+
+                        return YesOrNoDialog(
+                          content: content,
+                          firstButton: "확인",
+                          secondButton: "취소",
+                          handleFirstClick: () {
+                            _stopTimer();
+
+                            // 지정 카페 변경인 경우
+                            if (!setOrChange) {
+                              // 기존 카페에서 유저 삭제 pub 요청
+                              deleteUserInCafe(
+                                stompClient,
+                                "test",
+                                myCafe.cafeId!,
+                              );
+                            }
+                            // 카페에 유저 추가 pub 요청
+                            addUserInCafe(
+                              stompClient,
+                              "test",
+                              widget.cafeId,
+                            );
+
+                            myCafe.setMyCafe(
+                              cafeId: widget.cafeId,
+                              latitude: widget.cafeDetailsArguments[6],
+                              longitude: widget.cafeDetailsArguments[7],
+                            );
+                          },
+                          handleSecondClick: _stopTimer,
+                        );
+                      },
+                    );
+                  },
+                ),
         ],
       ),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
-
-  getUserList(String cafeId) {}
 }

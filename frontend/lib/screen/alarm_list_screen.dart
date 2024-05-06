@@ -1,63 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
-void main() async {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const CupertinoApp(
-      home: alarm_list(),
-    );
-  }
-}
-
-final List<alarmEvent> events = [
-  alarmEvent(
+final List<AlarmEvent> events = [
+  AlarmEvent(
     message: "00님이 커피챗 요청을 수락했습니다.",
     time: DateTime.now(),
     type: "accept",
   ),
-  alarmEvent(
+  AlarmEvent(
     message: "00님이 커피챗 요청을 거절했습니다.",
     time: DateTime.now(),
     type: "reject",
   ),
-  alarmEvent(
+  AlarmEvent(
     message: "00님이 커피챗 요청을 보냈습니다.",
     time: DateTime.now(),
     type: "send",
   ),
-  alarmEvent(
+  AlarmEvent(
     message: "오프라인으로 전환되었습니다.",
     time: DateTime.now(),
     type: "offline",
   ),
 ];
 
-class alarm_list extends StatefulWidget {
-  const alarm_list({Key? key}) : super(key: key);
+class AlarmList extends StatefulWidget {
+  const AlarmList({super.key});
 
   @override
-  _alarm_listWidgetState createState() => _alarm_listWidgetState();
+  AlarmListWidgetState createState() => AlarmListWidgetState();
 }
 
-class alarmEvent {
+class AlarmEvent {
   final String message;
   final DateTime time;
   final String type; // 이벤트 유형: accept, reject, send, offline
 
-  alarmEvent({
+  AlarmEvent({
     required this.message,
     required this.time,
     required this.type,
   });
 }
 
-class _alarm_listWidgetState extends State<alarm_list> {
+class AlarmListWidgetState extends State<AlarmList> {
   @override
   void initState() {
     super.initState();
@@ -72,17 +58,12 @@ class _alarm_listWidgetState extends State<alarm_list> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: const TopAppBar(
+          title: "알림 목록",
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: 100.0, bottom: 0), // top 패딩 적용
-              child: Text(
-                '이벤트 목록',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: events.length,
@@ -103,11 +84,11 @@ class _alarm_listWidgetState extends State<alarm_list> {
                           padding: const EdgeInsets.fromLTRB(5.0, 5.0, 0, 0),
                           child: Text(
                             time,
-                            style: TextStyle(color: Colors.grey),
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ),
                       ),
-                      Divider(), //리스트 구분줄
+                      const Divider(), //리스트 구분줄
                     ],
                   );
                 },

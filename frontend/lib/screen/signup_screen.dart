@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/screen/signup_screen2.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class ExpansionLabeledCheckbox extends StatelessWidget {
   const ExpansionLabeledCheckbox({
@@ -119,21 +119,8 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text(
-            '회원가입',
-            // textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24),
-          ),
-          toolbarHeight: 100,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
+        appBar: const TopAppBar(
+          title: "회원가입",
         ),
         body: Container(
           alignment: Alignment.center,
@@ -146,10 +133,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: <Widget>[
                   // 안내
                   const Row(children: <Widget>[
-                    Text("아래의 서비스 이용약관을 읽고 동의해주세요.",
-                        style: TextStyle(
-                          fontSize: 20,
-                        )),
+                    Flexible(
+                        child: Text("아래의 서비스 이용약관을 읽고 동의해주세요.",
+                            overflow: TextOverflow.visible,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ))),
                   ]),
 
                   // 공백
@@ -159,7 +148,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
                   // 약관 체크박스 컨테이너
                   Container(
-                      // margin: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), // 마진 추가
                       child: Column(children: <Widget>[
                     ExpansionLabeledCheckbox(
                       label: '(필수) 이용약관 동의',

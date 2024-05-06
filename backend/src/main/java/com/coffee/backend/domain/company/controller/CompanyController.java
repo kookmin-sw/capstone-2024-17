@@ -13,7 +13,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
 @RestController
 public class CompanyController {
     private final CompanyService companyService;
@@ -50,16 +48,13 @@ public class CompanyController {
     /**
      * 회사 인증 코드가 유효한지 확인하는 api
      */
-    @GetMapping("/email/verification")
+    @PostMapping("/email/verification")
     public ResponseEntity<ApiResponse<EmailVerificationResponse>> verificationEmail(@AuthenticationPrincipal User user,
                                                                                     @RequestBody EmailVerificationRequest emailVerificationRequest) {
         EmailVerificationResponse response = companyService.verifiedCode(
                 user,
                 emailVerificationRequest.getEmail(),
                 emailVerificationRequest.getAuthCode());
-
-//        userService.setUserEmail()
-
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

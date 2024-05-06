@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class OptionItem extends StatelessWidget {
   final String optionName;
@@ -60,20 +61,8 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          '설정',
-          style: TextStyle(fontSize: 24),
-        ),
-        toolbarHeight: 100,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back),
-        ),
+      appBar: const TopAppBar(
+        title: "환경설정",
       ),
       body: Center(
           child: Container(
@@ -113,7 +102,6 @@ class SettingsScreen extends StatelessWidget {
                   '앱 버전: 1.0.0',
                 ),
               ]))),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 

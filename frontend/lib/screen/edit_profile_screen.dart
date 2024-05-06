@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/position_select_screen.dart';
+import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/top_appbar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String nickname;
@@ -48,225 +51,193 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          '프로필 수정',
-          style: TextStyle(fontSize: 24),
-        ),
-        toolbarHeight: 100,
-        // 저장하지 않고 나가는 경우 경고창 표시해야됨
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: const Icon(Icons.arrow_back),
-        ),
+      resizeToAvoidBottomInset: false,
+      appBar: const TopAppBar(
+        title: "프로필 수정",
       ),
       body: Center(
-          child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-            Expanded(
-                child: Container(
-                    // alignment: Alignment.center,
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // 유저 정보 컨테이너
-                        Container(
-                            child: Column(children: <Widget>[
-                          // 유저 프로필
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              children: <Widget>[
-                                Image.network(
-                                  widget.logoInfo,
-                                  scale: 4,
-                                ),
-                                const SizedBox(
-                                  width: 30,
-                                ),
-                                Flexible(
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                      TextField(
-                                        decoration: InputDecoration(
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 10),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                                color: Color(0xffff6c3e)),
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          hintText: '닉네임',
-                                        ),
-                                        controller: _nicknameController,
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Flexible(
-                                              child: Text(
-                                                widget.companyName,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            TextButton(
-                                                onPressed: () {},
-                                                style: TextButton.styleFrom(
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero,
-                                                  tapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                ),
-                                                child: const Text('수정')),
-                                          ]),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Flexible(
-                                              child: Text(
-                                                widget.position,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            TextButton(
-                                                onPressed: () {},
-                                                style: TextButton.styleFrom(
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero,
-                                                  tapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                ),
-                                                child: const Text('수정')),
-                                          ])
-                                    ])),
-                              ],
+          child: Column(children: <Widget>[
+        Expanded(
+            child: Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 15,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    // 유저 정보 컨테이너
+                    Container(
+                        child: Column(children: <Widget>[
+                      // 유저 프로필
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          children: <Widget>[
+                            Image.network(
+                              widget.logoInfo,
+                              scale: 4,
                             ),
-                          ),
-
-                          // 유저 커피온도
-                          Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(children: <Widget>[
-                                const Row(
-                                  children: <Widget>[Text('나의 커피온도')],
-                                ),
-                                Row(children: <Widget>[
-                                  Expanded(
-                                    child: BigThermometer(
-                                        temperature: widget.temperature),
-                                  )
-                                ]),
-                              ])),
-
-                          // 유저 자기소개
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(children: <Widget>[
-                              const Row(
-                                children: <Widget>[Text('자기소개')],
-                              ),
-                              const SizedBox(height: 10),
-                              Row(children: <Widget>[
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 90,
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.all(10),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Color(0xffff6c3e)),
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        hintText: '자기소개 입력',
+                            const SizedBox(
+                              width: 30,
+                            ),
+                            Flexible(
+                                child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      controller: _introductionController,
-                                      maxLines: null,
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Color(0xffff6c3e)),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      hintText: '닉네임',
                                     ),
+                                    controller: _nicknameController,
                                   ),
-                                ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Flexible(
+                                          child: Text(
+                                            widget.companyName,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const SearchCompanyScreen()),
+                                              );
+                                            },
+                                            style: TextButton.styleFrom(
+                                              minimumSize: Size.zero,
+                                              padding: EdgeInsets.zero,
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                            child: const Text('수정')),
+                                      ]),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Flexible(
+                                          child: Text(
+                                            widget.position,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PositionSelectScreen(
+                                                            lastPosition: widget
+                                                                .position)),
+                                              );
+                                            },
+                                            style: TextButton.styleFrom(
+                                              minimumSize: Size.zero,
+                                              padding: EdgeInsets.zero,
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                            child: const Text('수정')),
+                                      ])
+                                ])),
+                          ],
+                        ),
+                      ),
 
-                                /*
-                                Expanded(
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    height: 90,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey, width: 0.6),
+                      // 유저 커피온도
+                      Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(children: <Widget>[
+                            const Row(
+                              children: <Widget>[Text('나의 커피온도')],
+                            ),
+                            Row(children: <Widget>[
+                              Expanded(
+                                child: BigThermometer(
+                                    temperature: widget.temperature),
+                              )
+                            ]),
+                          ])),
+
+                      // 유저 자기소개
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(children: <Widget>[
+                          const Row(
+                            children: <Widget>[Text('자기소개')],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(children: <Widget>[
+                            Expanded(
+                              child: SizedBox(
+                                height: 90,
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.all(10),
+                                    border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Scrollbar(
-                                      controller: _scrollController,
-                                      thumbVisibility: true,
-                                      child: SingleChildScrollView(
-                                        controller: _scrollController,
-                                        scrollDirection: Axis.vertical,
-                                        child: Text(
-                                          widget.introduction,
-                                          // textAlign: TextAlign.left,
-                                        ),
-                                      ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Color(0xffff6c3e)),
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
+                                    hintText: '자기소개 입력',
                                   ),
-                                ),*/
-                              ]),
-                            ]),
-                          ),
-                        ])),
+                                  controller: _introductionController,
+                                  maxLines: null,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ]),
+                      ),
+                    ])),
 
-                        // 저장 버튼
-                        BottomTextButton(
-                          text: '저장하기',
-                          handlePressed: () {
-                            // 저장하는 코드
-                            // 유저페이지로 이동
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/user', (route) => false);
-                          },
-                        ),
-                      ],
-                    )))
-          ])),
+                    // 저장 버튼
+                    BottomTextButton(
+                      text: '저장하기',
+                      handlePressed: () {
+                        // 저장하는 코드
+                        // 유저페이지로 이동
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/user', (route) => false);
+                      },
+                    ),
+                  ],
+                )))
+      ])),
       bottomNavigationBar: const BottomAppBar(),
     );
   }
