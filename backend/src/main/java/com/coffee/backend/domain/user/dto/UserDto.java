@@ -17,9 +17,11 @@ public class UserDto {
     private String loginId;
     private Long kakaoId;
     private CompanyDto company;
+    private String position;
     private String nickname;
     private String email;
     private String phone;
     private String userUUID;
     private String introduction;
+    private String deviceToken;
 }

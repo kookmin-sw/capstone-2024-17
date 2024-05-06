@@ -9,12 +9,14 @@ class UserDetails extends StatelessWidget {
     required this.company,
     required this.position,
     required this.introduction,
+    required this.rating,
   });
 
   final String nickname;
   final String company;
   final String position;
   final String introduction;
+  final double rating;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +55,8 @@ class UserDetails extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        const Thermometer(
-          proportion: 0.7,
+        Thermometer(
+          proportion: rating * 0.01,
         ),
         Container(
           width: 280,
