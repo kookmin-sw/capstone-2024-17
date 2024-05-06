@@ -235,7 +235,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         center: LatLng(position.latitude, position.longitude), // (위도, 경도)
         radius: 500, // 반경
         fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
-        strokeColor: const Color.fromRGBO(246, 82, 16, 1), // 테두리 색상
+        strokeColor: (myCafe.cafeId != null)
+            ? const Color.fromRGBO(246, 82, 16, 1)
+            : Colors.grey, // 테두리 색상
         strokeWidth: 3, // 테두리 두께
       )
     };
@@ -254,8 +256,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
     // 마커 아이콘을 그리는 코드
     final paint = Paint()
-      ..color =
-          const Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
+      ..color = (myCafe.cafeId != null)
+          ? const Color.fromRGBO(246, 82, 16, 0.9)
+          : Colors.grey; //red, green, blue, opacity
     canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
