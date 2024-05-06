@@ -123,7 +123,7 @@ class CoffeechatReqList extends StatelessWidget {
                   rating: receiverRating,
                   question: Question,
                 ),
-                ReceivedReq(), // 이 부분은 나중에 수정해줘야 합니다.
+                ReceivedReq(), // 이 부분은 나중에 수정 필요
               ]),
             ),
           ],

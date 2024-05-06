@@ -7,6 +7,12 @@ import 'package:frontend/widgets/button/modal_button.dart';
 String reqlistpara = '';
 int requestTypeId = 0;
 int _selectedIndex = 0; // 선택된 인덱스를 저장할 변수
+List<String> purpose = [
+  "당신의 회사가 궁금해요",
+  "당신의 업무가 궁금해요",
+  "같이 개발 이야기 나눠요",
+  "점심시간 함께 산책해요"
+];
 
 class ChoosePurpose extends StatelessWidget {
   const ChoosePurpose({
@@ -62,37 +68,46 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              int senderId = 1;
-              int receiverId = 2;
-              try {
-                Map<String, dynamic> response =
-                    await matchRequest(senderId, receiverId, _selectedIndex);
-
-                print("Response: $response");
-
-                if (response['success'] == true) {
-                  try {
-                    Map<String, dynamic> inforesponse = await matchInfoRequest(
-                        response['data']['matchId'],
-                        response['data']['senderId'],
-                        response['data']['receiverId']);
-
-                    print("info Response: $inforesponse");
-                    // nickname = inforesponse['data']['nickname'];
-                    // company = inforesponse['data']['company'];
-                    // introduction = inforesponse['data']['introduction'];
-                    // rating = inforesponse['data']['rating'];
-
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Matching()));
-                    // reqlistpara = inforesponse['data']['matchId'];
-                  } catch (e) {
-                    print("matchInfoRequest Error: $e");
-                  }
-                }
-              } catch (e) {
-                print("matchRequest Error: $e");
-              }
+              int senderId = 10;
+              int receiverId = 20;
+              // try {
+              //   Map<String, dynamic> response =
+              //       await matchRequest(senderId, receiverId, _selectedIndex);
+              //
+              //   print("Response: $response");
+              //
+              //   if (response['success'] == true) {
+              //     try {
+              //       Map<String, dynamic> inforesponse = await matchInfoRequest(
+              //           response['data']['matchId'],
+              //           response['data']['senderId'],
+              //           response['data']['receiverId']);
+              //
+              //       print("info Response: $inforesponse");
+              //       var nickname = inforesponse['data']['nickname'];
+              //       var company = inforesponse['data']['company'];
+              //       // var position = inforesponse['data']['position'];
+              //       var introduction = inforesponse['data']['introduction'];
+              //       double rating = inforesponse['data']['rating'];
+              //
+              //       // Navigator.push(
+              //       //     context,
+              //       //     MaterialPageRoute(
+              //       //         builder: (context) => CoffeechatReqList(
+              //       //             receiverNickname: nickname,
+              //       //             receiverCompany: company,
+              //       //             receiverPosition: 'Position',
+              //       //             receiverIntroduction: introduction,
+              //       //             receiverRating: rating,
+              //       //             Question: purpose[_selectedIndex])));
+              //       // reqlistpara = inforesponse['data']['matchId'];
+              //     } catch (e) {
+              //       print("matchInfoRequest Error: $e");
+              //     }
+              //   }
+              // } catch (e) {
+              //   print("matchRequest Error: $e");
+              // }
             },
           )
         ],
