@@ -203,13 +203,27 @@ class _CafeDetailsState extends State<CafeDetails>
                     showDialog(
                       context: context,
                       builder: (context) {
+                        bool setOrChange = myCafe.cafeId == null ? true : false;
+                        String content = setOrChange
+                            ? "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?"
+                            : "${widget.cafeName}을(를) 내 위치로 표시하도록 변경하겠습니까?";
+
                         return YesOrNoDialog(
-                          content: "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?",
+                          content: content,
                           firstButton: "확인",
                           secondButton: "취소",
                           handleFirstClick: () {
                             _stopTimer();
 
+                            // 지정 카페 변경인 경우
+                            if (!setOrChange) {
+                              // 기존 카페에서 유저 삭제 pub 요청
+                              deleteUserInCafe(
+                                stompClient,
+                                "test",
+                                widget.cafeId,
+                              );
+                            }
                             // 카페에 유저 추가 pub 요청
                             addUserInCafe(
                               stompClient,
