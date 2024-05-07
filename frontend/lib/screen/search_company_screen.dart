@@ -1,3 +1,4 @@
+import 'package:frontend/screen/add_company_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter/material.dart';
 // import 'package:frontend/screen/verify_company_screen.dart';
@@ -90,6 +91,19 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
                   ),
                 ),
               ),
+
+              TextButton(
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddCompanyScreen(),
+                    ),
+                  )
+                },
+                child: const Text('내가 다니는 회사가 없어요!',
+                    style: TextStyle(decoration: TextDecoration.underline)),
+              )
             ])));
   }
 
