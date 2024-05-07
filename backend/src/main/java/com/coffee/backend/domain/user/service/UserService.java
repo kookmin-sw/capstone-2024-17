@@ -44,9 +44,9 @@ public class UserService {
                 .loginId(user.getLoginId())
                 .nickname(user.getNickname())
                 .company(Optional.ofNullable(user.getCompany()).map(Company::getName).orElse("무소속"))
-                .position(Optional.ofNullable(user.getPosition()).map(Position::getName).orElse("무직"))
-                .introduction(Optional.ofNullable(user.getIntroduction()).orElse("기본 소개"))
-                .coffeeBean(String.valueOf(user.getCoffeeBean()))
+                .position(user.getPosition().getName())
+                .introduction(Optional.ofNullable(user.getIntroduction()).orElse("기본소개"))
+                .coffeeBean(String.format("%.1f", user.getCoffeeBean()))
                 .build();
     }
 
