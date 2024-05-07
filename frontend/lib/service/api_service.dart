@@ -251,6 +251,7 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
 Future<Map<String, dynamic>> addCompany(
     String companyName, String bno, String domain) async {
   final url = Uri.parse('$baseUrl/company/request');
+  final token = (await storage.read(key: 'authToken')) ?? '';
   final data = jsonEncode({
     'name': companyName,
     'domain': domain,
@@ -258,7 +259,12 @@ Future<Map<String, dynamic>> addCompany(
   });
   try {
     http.Response res = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: data);
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data);
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
