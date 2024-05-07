@@ -104,6 +104,28 @@ Future<Map<String, dynamic>> getUserDetail() async {
   }
 }
 
+// 유저 delete
+Future<Map<String, dynamic>> deleteUser() async {
+  final url = Uri.parse('$baseUrl/auth/delete');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  print(token);
+  try {
+    http.Response res = await http.delete(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
 Future<Map<String, dynamic>> getChatroomlist() async {
   final url = Uri.parse('$baseUrl/chatroom/list');
