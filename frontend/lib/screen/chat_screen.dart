@@ -9,6 +9,8 @@ import 'package:frontend/widgets/chat_date.dart';
 import 'package:frontend/widgets/chat_item.dart';
 import 'package:frontend/main.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
+import 'package:stomp_dart_client/stomp.dart';
 
 class ChatScreen extends StatefulWidget {
   final int chatroomId;
@@ -27,6 +29,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late StompClient stompClient;
   final storage = const FlutterSecureStorage();
   List<Map<String, dynamic>> chats = [];
   final TextEditingController _sendingMsgController = TextEditingController();
@@ -42,29 +45,29 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void subscribeChatroom() async {
-    if (stompClient != null) {
-      token = (await storage.read(key: 'authToken')) ?? '';
-      stompClient!.subscribe(
-          destination: '/sub/chatroom/${widget.chatroomId}',
-          headers: {
-            "Content-Type": "application/json",
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-          callback: (frame) {
-            // print('sub 성공!');
-            // print(frame.body);
-            Map<String, dynamic> jsonData = jsonDecode(frame.body!);
-            setState(() {
-              chats.add(jsonData);
-            });
+    token = (await storage.read(key: 'authToken')) ?? '';
+    stompClient.subscribe(
+        destination: '/sub/chatroom/${widget.chatroomId}',
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        callback: (frame) {
+          // print('sub 성공!');
+          // print(frame.body);
+          Map<String, dynamic> jsonData = jsonDecode(frame.body!);
+          setState(() {
+            chats.add(jsonData);
           });
-    }
+        });
     return;
   }
 
   @override
   Widget build(BuildContext context) {
+    stompClient = Provider.of<StompClient>(context);
+
     // addPostFrameCallback: 렌더링된 후 즉시 실행
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -151,22 +154,20 @@ class _ChatScreenState extends State<ChatScreen> {
     // 메시지 전송
     final message = _sendingMsgController.text;
     if (message != '') {
-      if (stompClient != null) {
-        token = (await storage.read(key: 'authToken')) ?? '';
-        final data = jsonEncode({"senderId": senderId, "content": message});
-        stompClient!.send(
-          destination: '/pub/chatroom/${widget.chatroomId.toString()}',
-          headers: {
-            "Content-Type": "application/json",
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-          body: data,
-        );
-        // print('pub 성공!');
-        _sendingMsgController.clear();
-        setState(() {});
-      }
+      token = (await storage.read(key: 'authToken')) ?? '';
+      final data = jsonEncode({"senderId": senderId, "content": message});
+      stompClient.send(
+        destination: '/pub/chatroom/${widget.chatroomId.toString()}',
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data,
+      );
+      // print('pub 성공!');
+      _sendingMsgController.clear();
+      setState(() {});
     }
   }
 
