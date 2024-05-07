@@ -285,6 +285,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     myCafe = Provider.of<MyCafeModel>(context);
     stompClient = Provider.of<StompClient>(context);
 
@@ -346,8 +348,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
           (myCafe.cafeId == null)
               ? Container()
               : Positioned(
-                  bottom: 110,
-                  right: 16,
+                  width: 140,
+                  bottom: 100,
+                  left: (screenSize.width / 2) - 70,
                   child: ElevatedButton(
                     onPressed: () {
                       print('위치 공유 끄기 버튼 클릭 !!');
@@ -370,12 +373,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black12, // 배경 색상 설정
+                      backgroundColor: Colors.black, // 배경 색상 설정
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
                     ),
                     child: const Text(
-                      "위치 OFF",
+                      "위치 공유 OFF",
                       style: TextStyle(color: Colors.white), // 폰트 색상 설정
                     ),
                   ),
