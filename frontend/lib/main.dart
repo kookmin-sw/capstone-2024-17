@@ -23,8 +23,7 @@ import 'package:frontend/screen/cafe_details.dart';
 // 유저 토큰 저장하는 스토리지
 const storage = FlutterSecureStorage();
 
-// 웹소켓(stomp) 관련 변수
-StompClient? stompClient;
+// 웹소켓(stomp) URL
 const socketUrl = "http://3.36.108.21:8080/ws";
 
 // 주변 카페에 있는 모든 유저 목록
@@ -50,6 +49,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String? userToken;
+  late StompClient stompClient;
   int _selectedIndex = 0;
   late List<String> cafeList; // 주변 카페 리스트
 
@@ -73,21 +73,8 @@ class _MyAppState extends State<MyApp> {
         allUsers = value;
       });
 
-      // 웹소켓(stomp) 연결
-      stompClient = StompClient(
-        config: StompConfig.sockJS(
-          url: socketUrl,
-          onConnect: (_) {
-            print("websocket connected !!");
-            subCafeList(stompClient!, cafeList, allUsers!); // 주변 모든 카페에 sub 요청
-          },
-          beforeConnect: () async {
-            print('waiting to connect websocket...');
-          },
-          onWebSocketError: (dynamic error) => print(error.toString()),
-        ),
-      );
-      stompClient!.activate();
+      // 주변 모든 카페에 sub 요청
+      subCafeList(stompClient, cafeList, allUsers!);
     }
   }
 
@@ -97,6 +84,21 @@ class _MyAppState extends State<MyApp> {
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       userToken = token;
+
+      // 웹소켓(stomp) 연결
+      stompClient = StompClient(
+        config: StompConfig.sockJS(
+          url: socketUrl,
+          onConnect: (_) {
+            print("websocket connected !!");
+          },
+          beforeConnect: () async {
+            print('waiting to connect websocket...');
+          },
+          onWebSocketError: (dynamic error) => print(error.toString()),
+        ),
+      );
+      stompClient.activate();
     });
 
     // 화면 리스트 초기화
