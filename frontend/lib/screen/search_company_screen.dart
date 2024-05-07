@@ -16,6 +16,7 @@ class SearchCompanyScreen extends StatefulWidget {
 class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   final TextEditingController _companyKeywordController =
       TextEditingController();
+  final ScrollController _searchResultScrollController = ScrollController();
   // List<Map<String, dynamic>> companyList = [];
   // 검색 이전: 테스트를 위한 임의의 데이터
   List<Map<String, dynamic>> companyList = [
@@ -70,18 +71,23 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
                 height: 10,
               ),
 
+              // 검색 결과
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  children: companyList.isEmpty
-                      ? [
-                          Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.all(60),
-                            child: const Text('검색 결과가 없습니다.'),
-                          ),
-                        ]
-                      : _buildCompanyItems(),
+                child: Scrollbar(
+                  controller: _searchResultScrollController,
+                  thumbVisibility: true,
+                  child: ListView(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    children: companyList.isEmpty
+                        ? [
+                            Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.all(60),
+                              child: const Text('검색 결과가 없습니다.'),
+                            ),
+                          ]
+                        : _buildCompanyItems(),
+                  ),
                 ),
               ),
             ])));
