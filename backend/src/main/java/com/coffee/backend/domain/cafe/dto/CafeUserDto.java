@@ -1,18 +1,19 @@
 package com.coffee.backend.domain.cafe.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CafeUserDto {
     private String loginId;
     private String nickname;
+    private String company;
+    private String position;
     private String introduction;
-
-    public CafeUserDto(String loginId, String nickname, String introduction) {
-        this.loginId = loginId;
-        this.nickname = nickname;
-        this.introduction = introduction;
-    }
+    private String coffeeBean;
 }

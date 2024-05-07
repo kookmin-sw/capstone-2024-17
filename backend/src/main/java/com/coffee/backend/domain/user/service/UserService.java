@@ -34,14 +34,22 @@ public class UserService {
 
     // 특정 카페에 접속한 사용자 list에 보일 User 데이터 조회
     public CafeUserDto getCafeUserInfoByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId)
-                .map(user -> new CafeUserDto(user.getLoginId(), user.getNickname(),
-                        user.getEmail())) // TODO : email을 introduction으로 교체
+        User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> {
                     log.info("id = {} 인 사용자가 존재하지 않습니다", loginId);
                     return new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
+
+        return CafeUserDto.builder()
+                .loginId(user.getLoginId())
+                .nickname(user.getNickname())
+                .company(Optional.ofNullable(user.getCompany()).map(Company::getName).orElse("무소속"))
+                .position(Optional.ofNullable(user.getPosition()).map(Position::getName).orElse("무직"))
+                .introduction(Optional.ofNullable(user.getIntroduction()).orElse("기본 소개"))
+                .coffeeBean(String.valueOf(user.getCoffeeBean()))
+                .build();
     }
+
 
     public void checkDuplicatedEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);

@@ -2,7 +2,7 @@ package com.coffee.backend.domain.cafe.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeDto;
 import com.coffee.backend.domain.cafe.dto.CafeSubDto;
-import com.coffee.backend.domain.cafe.dto.CafeUserProfileDto;
+import com.coffee.backend.domain.cafe.dto.CafeUserDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,9 @@ public class CafePublisher {
         }
         String cafeDtoJson = new ObjectMapper().writeValueAsString(dto);
         // 해당 user의 전체 정보를 조회
-        CafeUserProfileDto cafeUserProfileDto = cafeService.getUserInfoFromDB(loginId);
-        CafeSubDto cafeSubDto = new CafeSubDto(dto, cafeUserProfileDto);
+        CafeUserDto cafeUserDto = cafeService.getUserInfoFromDB(loginId);
+        CafeSubDto cafeSubDto = CafeSubDto.builder().type(type).loginId(loginId).cafeId(cafeId).cafeUserDto(cafeUserDto)
+                .build();
         sendingOperations.convertAndSend("/sub/cafe/" + cafeId, cafeSubDto);
     }
 }
