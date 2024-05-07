@@ -97,10 +97,14 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
     } else if (_domainController.text == '') {
       showAlertDialog(context, '사내메일 도메인을 입력해주세요.');
       return;
+    } else if (!RegExp('@[a-zA-Z0-9-]+.[a-zA-Z]+')
+        .hasMatch(_domainController.text)) {
+      showAlertDialog(context, '도메인 형식이 올바르지 않습니다.');
+      return;
     }
     try {
       waitAddCompany(context, _companyNameController.text, _bnoController.text,
-          _domainController.text);
+          _domainController.text.substring(1)); // 첫 문자 '@' 제외하고 요청
     } catch (error) {
       showAlertDialog(context, '요청 실패: $error');
     }
