@@ -38,4 +38,12 @@ public class User {
     private String userUUID;
     private String introduction;
     private String deviceToken;
+
+    // TODO : flyaway 설정 이후 default company로 설정 (company DB에 무소속 회사 정보가 있어야 함)
+//    @PrePersist
+//    private void prePersist() {
+//        if (company == null) {
+//            company = Company.getDefault();
+//        }
+//    }
 }
