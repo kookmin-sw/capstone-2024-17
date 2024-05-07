@@ -42,7 +42,7 @@ Future<Map<String, List<UserModel>>> getAllUsers(
 
 //매칭 요청
 Future<Map<String, dynamic>> matchRequest(
-    int senderId, int receiverId, int requestTypeId) async {
+    int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
   String? userToken = await storage.read(key: 'authToken');
   if (userToken == null) {
@@ -50,6 +50,15 @@ Future<Map<String, dynamic>> matchRequest(
         "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDczMzU0OCwiaWQiOjF9.er3qIiS_7vMfRScPDTc-sTSOScstX00eTa77qF8u7xw";
   }
   print("userToken$userToken");
+
+  int senderId = 0;
+  Map<String, dynamic> res = await getUserDetail();
+  print(res);
+  if (res['success']) {
+    senderId = res['data']['userId'];
+  } else {
+    print('로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+  }
 
   if (userToken != null) {
     try {
