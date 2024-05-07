@@ -14,7 +14,7 @@ class AddCompanyScreen extends StatefulWidget {
 
 class _AddCompanyScreenState extends State<AddCompanyScreen> {
   final TextEditingController _companyNameController = TextEditingController();
-  final TextEditingController _taxNumberController = TextEditingController();
+  final TextEditingController _bnoController = TextEditingController();
   final TextEditingController _domainController = TextEditingController();
 
   @override
@@ -58,7 +58,7 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
                       IconedTextfield(
                         icon: null,
                         hintText: '사업자 등록번호',
-                        controller: _taxNumberController,
+                        controller: _bnoController,
                         isSecret: false,
                       ),
                       const SizedBox(
@@ -77,19 +77,19 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
 
               // 추가요청 버튼
               BottomTextButton(
-                  text: '회사 추가 요청하기', handlePressed: addRequestPressed),
+                  text: '회사 추가 요청하기', handlePressed: addCompanyPressed),
             ],
           ),
         ),
         bottomNavigationBar: const BottomAppBar());
   }
 
-  void addRequestPressed() {
-    // 회원가입 진행
+  void addCompanyPressed() {
+    // 회사 추가 요청
     if (_companyNameController.text == '') {
       showAlertDialog(context, '회사명을 입력해주세요.');
       return;
-    } else if (_taxNumberController.text == '') {
+    } else if (_bnoController.text == '') {
       showAlertDialog(context, '사업자 등록번호를 입력해주세요.');
       return;
     } else if (_domainController.text == '') {
@@ -97,21 +97,18 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
       return;
     }
     try {
-      waitAddRequest(context, _companyNameController.text,
-          _taxNumberController.text, _domainController.text);
+      waitAddCompany(context, _companyNameController.text, _bnoController.text,
+          _domainController.text);
     } catch (error) {
       showAlertDialog(context, '요청 실패: $error');
     }
   }
 }
 
-void waitAddRequest(BuildContext context, String companyName, String taxNumber,
-    String domain) async {
-  print('추가요청 pressed: $companyName, $taxNumber, $domain');
-  // 요청 코드
-  /*
-  Map<String, dynamic> res =
-      await addRequest(companyName, taxNumber, domainController);
+void waitAddCompany(
+    BuildContext context, String companyName, String bno, String domain) async {
+  print('추가요청 pressed: $companyName, $bno, $domain');
+  Map<String, dynamic> res = await addCompany(companyName, bno, domain);
   if (res['success'] == true) {
     // 요청 성공
     print(res);
@@ -121,5 +118,4 @@ void waitAddRequest(BuildContext context, String companyName, String taxNumber,
     showAlertDialog(
         context, '회사 추가요청 실패: ${res['message']}(${res['statusCode']})');
   }
-  */
 }

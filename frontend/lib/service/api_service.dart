@@ -246,3 +246,24 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
     throw Error();
   }
 }
+
+// 회사 등록
+Future<Map<String, dynamic>> addCompany(
+    String companyName, String bno, String domain) async {
+  final url = Uri.parse('$baseUrl/company/request');
+  final data = jsonEncode({
+    'name': companyName,
+    'domain': domain,
+    'bno': bno,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    print(jsonData);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
