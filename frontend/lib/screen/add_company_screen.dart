@@ -23,62 +23,64 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
         appBar: const TopAppBar(
           title: "회사 추가 요청",
         ),
-        body: Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  // 안내
-                  const Row(children: <Widget>[
-                    Flexible(
-                      child: Text("재직 중인 회사의 정보를 입력하세요.",
-                          overflow: TextOverflow.visible,
-                          style: TextStyle(
-                            fontSize: 20,
-                          )),
-                    ),
-                  ]),
-
-                  // 입력창 컨테이너
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 30),
-                    child: Column(children: <Widget>[
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '회사명',
-                        controller: _companyNameController,
-                        isSecret: false,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '사업자 등록번호',
-                        controller: _bnoController,
-                        isSecret: false,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '사내메일 도메인  ex) @kookmin.ac.kr',
-                        controller: _domainController,
-                        isSecret: false,
+        body: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    // 안내
+                    const Row(children: <Widget>[
+                      Flexible(
+                        child: Text("재직 중인 회사의 정보를 입력하세요.",
+                            overflow: TextOverflow.visible,
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
                       ),
                     ]),
-                  ),
-                ],
-              ),
 
-              // 추가요청 버튼
-              BottomTextButton(
-                  text: '회사 추가 요청하기', handlePressed: addCompanyPressed),
-            ],
+                    // 입력창 컨테이너
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 30),
+                      child: Column(children: <Widget>[
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '회사명',
+                          controller: _companyNameController,
+                          isSecret: false,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '사업자 등록번호',
+                          controller: _bnoController,
+                          isSecret: false,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '사내메일 도메인  ex) @kookmin.ac.kr',
+                          controller: _domainController,
+                          isSecret: false,
+                        ),
+                      ]),
+                    ),
+                  ],
+                ),
+
+                // 추가요청 버튼
+                BottomTextButton(
+                    text: '회사 추가 요청하기', handlePressed: addCompanyPressed),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: const BottomAppBar());
