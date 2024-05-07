@@ -110,8 +110,12 @@ class _CafeDetailsState extends State<CafeDetails>
   @override
   Widget build(BuildContext context) {
     stompClient = Provider.of<StompClient>(context);
-    userList =
-        Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
+    userList = Provider.of<Map<String, List<UserModel>>?>(context)
+                ?.containsKey(widget.cafeId) ==
+            true
+        ? Provider.of<Map<String, List<UserModel>>?>(context)![widget.cafeId]
+        : null;
+    userList ??= [];
     myCafe = Provider.of<MyCafeModel>(context);
 
     return Scaffold(
