@@ -26,4 +26,12 @@ public class FcmPushMessageDto {
         private String title;
         private String body;
     }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Notification {
+        private String title;
+        private String body;
+    }
 }
