@@ -98,7 +98,6 @@ class SettingsScreen extends StatelessWidget {
                       onPressed: () async {
                         try {
                           Map<String, dynamic> res = await deleteUser();
-                          print(res);
                           if (res['success'] == true) {
                             // 요청 성공
                             showAlertDialog(context, '탈퇴되었습니다.)');
