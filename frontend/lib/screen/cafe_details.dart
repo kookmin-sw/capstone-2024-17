@@ -41,6 +41,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final String ImageId = "";
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
+  Map<String, List<UserModel>>? allUsers;
   List<UserModel>? userList;
   late MyCafeModel myCafe;
 
@@ -110,8 +111,8 @@ class _CafeDetailsState extends State<CafeDetails>
   @override
   Widget build(BuildContext context) {
     stompClient = Provider.of<StompClient>(context);
-    userList =
-        Provider.of<Map<String, List<UserModel>>>(context)[widget.cafeId];
+    allUsers = Provider.of<Map<String, List<UserModel>>?>(context);
+    userList = (allUsers != null) ? allUsers![widget.cafeId] : null;
     myCafe = Provider.of<MyCafeModel>(context);
 
     return Scaffold(
