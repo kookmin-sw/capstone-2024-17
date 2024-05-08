@@ -84,35 +84,35 @@ class ChoosePurpose extends StatelessWidget {
                     await matchRequest(senderId, receiverId, _selectedIndex);
 
                 print(response);
-                //   if (response['success'] == true) {
-                //     try {
-                //       Map<String, dynamic> inforesponse = await matchInfoRequest(
-                //           response['data']['matchId'],
-                //           response['data']['senderId'],
-                //           response['data']['receiverId']);
-                //
-                //       print("info Response: $inforesponse");
-                //       var nickname = inforesponse['data']['nickname'];
-                //       var company = inforesponse['data']['company'];
-                //       // var position = inforesponse['data']['position'];
-                //       var introduction = inforesponse['data']['introduction'];
-                //       double rating = inforesponse['data']['rating'];
-                //
-                //       // Navigator.push(
-                //       //     context,
-                //       //     MaterialPageRoute(
-                //       //         builder: (context) => CoffeechatReqList(
-                //       //             receiverNickname: nickname,
-                //       //             receiverCompany: company,
-                //       //             receiverPosition: 'Position',
-                //       //             receiverIntroduction: introduction,
-                //       //             receiverRating: rating,
-                //       //             Question: purpose[_selectedIndex])));
-                //       // reqlistpara = inforesponse['data']['matchId'];
-                //     } catch (e) {
-                //       print("matchInfoRequest Error: $e");
-                //     }
-                //   }
+                if (response['success'] == true) {
+                  try {
+                    Map<String, dynamic> inforesponse = await matchInfoRequest(
+                        response['data']['matchId'],
+                        response['data']['senderId'],
+                        response['data']['receiverId']);
+
+                    print("info Response: $inforesponse");
+                    var nickname = inforesponse['data']['nickname'];
+                    var company = inforesponse['data']['company'];
+                    // var position = inforesponse['data']['position'];
+                    var introduction = inforesponse['data']['introduction'];
+                    double rating = inforesponse['data']['rating'] ?? 0.0;
+
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => CoffeechatReqList(
+                    //             receiverNickname: nickname,
+                    //             receiverCompany: company,
+                    //             receiverPosition: 'Position',
+                    //             receiverIntroduction: introduction,
+                    //             receiverRating: rating,
+                    //             Question: purpose[_selectedIndex])));
+                    // reqlistpara = inforesponse['data']['matchId'];
+                  } catch (e) {
+                    print("matchInfoRequest Error: $e");
+                  }
+                }
               } catch (e) {
                 print("matchRequest Error: $e");
               }
