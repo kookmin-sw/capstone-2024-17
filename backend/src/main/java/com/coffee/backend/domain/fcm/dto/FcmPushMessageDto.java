@@ -16,6 +16,7 @@ public class FcmPushMessageDto {
     @RequiredArgsConstructor
     public static class Message {
         private Data data;
+        private Notification notification;
         private String token;
     }
 
@@ -23,6 +24,14 @@ public class FcmPushMessageDto {
     @Setter
     @RequiredArgsConstructor
     public static class Data {
+        private String title;
+        private String body;
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Notification {
         private String title;
         private String body;
     }
