@@ -59,8 +59,8 @@ Future<Map<String, dynamic>> matchRequest(
   } else {
     print('로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
   }
-  senderId = 5;
-  receiverId = 6;
+
+  receiverId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
 
   if (userToken != null) {
     try {
