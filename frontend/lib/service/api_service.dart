@@ -47,9 +47,11 @@ Future<Map<String, dynamic>> matchRequest(
   String? userToken = await storage.read(key: 'authToken');
   if (userToken == null) {
     userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDczMzU0OCwiaWQiOjF9.er3qIiS_7vMfRScPDTc-sTSOScstX00eTa77qF8u7xw";
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
   }
-  print("userToken$userToken");
+
+  senderId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
+  receiverId = 7;
 
   if (userToken != null) {
     try {
@@ -65,12 +67,18 @@ Future<Map<String, dynamic>> matchRequest(
           'requestTypeId': requestTypeId
         }),
       );
-      print(response);
+
+      final responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
-        print("200");
-        return json.decode(response.body);
+        if (responseData['success']) {
+          return responseData;
+        } else {
+          throw Exception(
+              '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+        }
       } else {
-        throw Exception('Failed to send match request: ${response.statusCode}');
+        throw Exception('서버 오류: ${response.statusCode}');
       }
     } catch (e) {
       throw e;
