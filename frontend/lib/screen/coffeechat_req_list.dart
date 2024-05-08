@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -220,7 +221,7 @@ class _SentReqState extends State<SentReq> {
           text: "요청 취소하기",
           handlePressed: () async {
             if (widget.matchId != null) {
-              showAlertDialogYesNoNoPop(
+              showAlertDialogYesNo(
                   context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
             }
           },
@@ -252,43 +253,4 @@ class ReceivedReq extends StatelessWidget {
       ),
     );
   }
-}
-
-showAlertDialogYesNoNoPop(
-    // pop 되면 안되기 때문에 + 다음으로 실행할 함수가 있어서 로직이 다름.
-    BuildContext context,
-    String title,
-    String message,
-    Function()? handleYes) {
-  // Set up the buttons
-  Widget yesButton = TextButton(
-    onPressed: () {
-      Navigator.of(context).pop(); // Close screen
-      handleYes!(); // handleRequestCancel 호출
-    },
-    child: const Text('예'),
-  );
-
-  Widget noButton = TextButton(
-    onPressed: () => Navigator.of(context).pop(), // Close dialog
-    child: const Text('아니오'),
-  );
-
-  // Set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: Text(title),
-    content: Text(message),
-    actions: [
-      yesButton,
-      noButton,
-    ],
-  );
-
-  // Show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
 }
