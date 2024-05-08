@@ -126,7 +126,6 @@ Future<Map<String, dynamic>> matchInfoRequest(
 //match cancel 요청
 Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/cancel');
-  print("api 들어왔고 matchId=>$matchId");
 
   String? userToken = await storage.read(key: 'authToken');
   if (userToken == null) {

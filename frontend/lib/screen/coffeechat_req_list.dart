@@ -42,6 +42,7 @@ const List<Map<String, dynamic>> sampleUserList = [
     "rating": 40.0,
   },
 ];
+bool timerend = false;
 
 void main() async {
   await dotenv.load();
@@ -154,14 +155,19 @@ class SentReq extends StatefulWidget {
 }
 
 class _SentReqState extends State<SentReq> {
-  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 10 * 1;
-  // DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10 minutes
+  late int _endTime;
+
+  @override
+  void initState() {
+    super.initState();
+    timerend = false;
+    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 10 * 2; // 20초 후
+  }
 
   Future<void> handleRequestCancel() async {
     try {
       Map<String, dynamic> response = await matchCancelRequest(widget.matchId!);
 
-      //boolean 값이므로 'true'로 비교하면 안 됨.
       if (response['success'] == true) {
         print("정상적으로 삭제됨");
         Navigator.push(
@@ -174,6 +180,11 @@ class _SentReqState extends State<SentReq> {
     } catch (e) {
       print(e);
     }
+  }
+
+  void showAlertDialogWithContext(BuildContext context) {
+    showAlertDialog(
+        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.", handleRequestCancel);
   }
 
   @override
@@ -199,7 +210,13 @@ class _SentReqState extends State<SentReq> {
         ColorTextContainer(text: "# ${widget.question}"),
         Expanded(child: SizedBox(height: 10)),
         CountdownTimer(
-          endTime: endTime,
+          endTime: _endTime,
+          onEnd: () {
+            // 카운트다운 타이머가 끝났을 때
+            if (!timerend) {
+              showAlertDialogWithContext(context);
+            }
+          },
           widgetBuilder: (_, CurrentRemainingTime? time) {
             if (time == null) {
               return Text('남은 시간: 00:00');
@@ -207,13 +224,9 @@ class _SentReqState extends State<SentReq> {
             int minutes = time.min ?? 0;
             int seconds = time.sec ?? 0;
             return Text(
-                '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-                style: TextStyle(fontSize: 20, color: Colors.black));
-          },
-          onEnd: () {
-            // 매칭 제한 시간이 끝났을 때
-            showAlertDialog(context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.",
-                handleRequestCancel);
+              '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+              style: TextStyle(fontSize: 20, color: Colors.black),
+            );
           },
         ),
         SizedBox(height: 10),
@@ -223,6 +236,7 @@ class _SentReqState extends State<SentReq> {
             if (widget.matchId != null) {
               showAlertDialogYesNo(
                   context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
+              timerend = true;
             }
           },
         ),
