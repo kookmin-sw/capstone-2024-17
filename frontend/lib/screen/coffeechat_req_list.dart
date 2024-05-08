@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -154,6 +157,27 @@ class _SentReqState extends State<SentReq> {
   int endTime =
       DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10 minutes
 
+  Future<void> handleRequestCancel(String txt) async {
+    try {
+      showAlertDialog(context, "매칭을 종료합니다.");
+
+      Map<String, dynamic> response = await matchCancelRequest(widget.matchId!);
+
+      //boolean 값이므로 'true'로 비교하면 안 됨.
+      if (response['success'] == true) {
+        print("정상적으로 삭제됨");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AlarmList()),
+        );
+      } else {
+        print(response);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -188,21 +212,31 @@ class _SentReqState extends State<SentReq> {
                 '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
                 style: TextStyle(fontSize: 20, color: Colors.black));
           },
+          onEnd: () {
+            // 매칭 제한 시간이 끝났을 때
+
+            handleRequestCancel("매칭 제한 시간이 끝났습니다. ");
+          },
         ),
         SizedBox(height: 10),
         BottomTextButton(
           text: "요청 취소하기",
           handlePressed: () async {
             if (widget.matchId != null) {
-              try {
-                Map<String, dynamic> response =
-                    await matchCancelRequest(widget.matchId!);
-                if (response['success'] == 'true') {
-                  print("정상적으로 삭제됨");
-                }
-              } catch (e) {
-                print(e);
-              }
+              showAlertDialogYesNo(context, "매칭 취소", "매칭을 종료하시겠습니까?");
+              Widget yesButton = TextButton(
+                onPressed: () {
+                  // "예"를 선택한 경우
+                  handleRequestCancel(
+                      "매칭을 취소하셨습니다. "); // handleRequestCancel 호출
+                },
+                child: const Text('예'),
+              );
+
+              Widget noButton = TextButton(
+                onPressed: null,
+                child: const Text('아니오'),
+              );
             }
           },
         ),
