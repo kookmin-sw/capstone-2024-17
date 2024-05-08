@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/service/api_service.dart';
@@ -7,6 +8,7 @@ import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 const List<Map<String, dynamic>> sampleUserList = [
   {
@@ -124,7 +126,7 @@ class CoffeechatReqList extends StatelessWidget {
   }
 }
 
-class SentReq extends StatelessWidget {
+class SentReq extends StatefulWidget {
   final String? matchId;
   final String nickname;
   final String company;
@@ -145,6 +147,14 @@ class SentReq extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SentReqState createState() => _SentReqState();
+}
+
+class _SentReqState extends State<SentReq> {
+  int endTime =
+      DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10 minutes
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -157,35 +167,38 @@ class SentReq extends StatelessWidget {
             border: Border.all(color: Colors.grey, width: 1),
           ),
           child: UserDetails(
-            nickname: nickname,
-            company: company,
-            position: position,
-            introduction: introduction,
-            rating: rating,
+            nickname: widget.nickname,
+            company: widget.company,
+            position: widget.position,
+            introduction: widget.introduction,
+            rating: widget.rating,
           ),
         ),
-        ColorTextContainer(text: "# $question"),
-        Expanded(child: SizedBox()),
-        Text(
-          "자동 취소까지 남은 시간\n09:59",
-          textAlign: TextAlign.center,
+        ColorTextContainer(text: "# ${widget.question}"),
+        Expanded(child: SizedBox(height: 10)),
+        CountdownTimer(
+          endTime: endTime,
+          widgetBuilder: (_, CurrentRemainingTime? time) {
+            if (time == null) {
+              return Text('남은 시간: 00:00');
+            }
+            int minutes = time.min ?? 0;
+            int seconds = time.sec ?? 0;
+            return Text(
+                '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+                style: TextStyle(fontSize: 20, color: Colors.black));
+          },
         ),
+        SizedBox(height: 10),
         BottomTextButton(
           text: "요청 취소하기",
           handlePressed: () async {
-            if (matchId != null) {
+            if (widget.matchId != null) {
               try {
                 Map<String, dynamic> response =
-                    await matchCancelRequest(matchId!);
+                    await matchCancelRequest(widget.matchId!);
                 if (response['success'] == 'true') {
                   print("정상적으로 삭제됨");
-
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Google_Map(updateCafesCallback: ''),
-                  //   ),
-                  // );
                 }
               } catch (e) {
                 print(e);
