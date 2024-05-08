@@ -68,46 +68,44 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              int senderId = 10;
-              int receiverId = 20;
-              // try {
-              //   Map<String, dynamic> response =
-              //       await matchRequest(senderId, receiverId, _selectedIndex);
-              //
-              //   print("Response: $response");
-              //
-              //   if (response['success'] == true) {
-              //     try {
-              //       Map<String, dynamic> inforesponse = await matchInfoRequest(
-              //           response['data']['matchId'],
-              //           response['data']['senderId'],
-              //           response['data']['receiverId']);
-              //
-              //       print("info Response: $inforesponse");
-              //       var nickname = inforesponse['data']['nickname'];
-              //       var company = inforesponse['data']['company'];
-              //       // var position = inforesponse['data']['position'];
-              //       var introduction = inforesponse['data']['introduction'];
-              //       double rating = inforesponse['data']['rating'];
-              //
-              //       // Navigator.push(
-              //       //     context,
-              //       //     MaterialPageRoute(
-              //       //         builder: (context) => CoffeechatReqList(
-              //       //             receiverNickname: nickname,
-              //       //             receiverCompany: company,
-              //       //             receiverPosition: 'Position',
-              //       //             receiverIntroduction: introduction,
-              //       //             receiverRating: rating,
-              //       //             Question: purpose[_selectedIndex])));
-              //       // reqlistpara = inforesponse['data']['matchId'];
-              //     } catch (e) {
-              //       print("matchInfoRequest Error: $e");
-              //     }
-              //   }
-              // } catch (e) {
-              //   print("matchRequest Error: $e");
-              // }
+              int senderId = 5;
+              int receiverId = 6;
+              try {
+                Map<String, dynamic> response =
+                    await matchRequest(senderId, receiverId, _selectedIndex);
+
+                //   if (response['success'] == true) {
+                //     try {
+                //       Map<String, dynamic> inforesponse = await matchInfoRequest(
+                //           response['data']['matchId'],
+                //           response['data']['senderId'],
+                //           response['data']['receiverId']);
+                //
+                //       print("info Response: $inforesponse");
+                //       var nickname = inforesponse['data']['nickname'];
+                //       var company = inforesponse['data']['company'];
+                //       // var position = inforesponse['data']['position'];
+                //       var introduction = inforesponse['data']['introduction'];
+                //       double rating = inforesponse['data']['rating'];
+                //
+                //       // Navigator.push(
+                //       //     context,
+                //       //     MaterialPageRoute(
+                //       //         builder: (context) => CoffeechatReqList(
+                //       //             receiverNickname: nickname,
+                //       //             receiverCompany: company,
+                //       //             receiverPosition: 'Position',
+                //       //             receiverIntroduction: introduction,
+                //       //             receiverRating: rating,
+                //       //             Question: purpose[_selectedIndex])));
+                //       // reqlistpara = inforesponse['data']['matchId'];
+                //     } catch (e) {
+                //       print("matchInfoRequest Error: $e");
+                //     }
+                //   }
+              } catch (e) {
+                print("matchRequest Error: $e");
+              }
             },
           )
         ],

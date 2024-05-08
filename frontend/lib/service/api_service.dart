@@ -42,12 +42,12 @@ Future<Map<String, List<UserModel>>> getAllUsers(
 
 //매칭 요청
 Future<Map<String, dynamic>> matchRequest(
-    int receiverId, int requestTypeId) async {
+    int receiverId, int requestTypeId, int selectedIndex) async {
   final url = Uri.parse('$baseUrl/match/request');
   String? userToken = await storage.read(key: 'authToken');
   if (userToken == null) {
     userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDczMzU0OCwiaWQiOjF9.er3qIiS_7vMfRScPDTc-sTSOScstX00eTa77qF8u7xw";
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
   }
   print("userToken$userToken");
 
@@ -59,6 +59,8 @@ Future<Map<String, dynamic>> matchRequest(
   } else {
     print('로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
   }
+  senderId = 5;
+  receiverId = 6;
 
   if (userToken != null) {
     try {
@@ -74,13 +76,30 @@ Future<Map<String, dynamic>> matchRequest(
           'requestTypeId': requestTypeId
         }),
       );
-      print(response);
+
+      final responseData = json.decode(response.body);
+
+      // HTTP 응답 코드 확인
       if (response.statusCode == 200) {
-        print("200");
-        return json.decode(response.body);
+        // 응답 데이터 처리
+        if (responseData['success']) {
+          // 매칭 요청이 성공했을 때 반환할 데이터가 있는지 확인
+          return responseData;
+        } else {
+          // 매칭 요청이 실패했을 때의 처리
+          throw Exception(
+              '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+        }
       } else {
-        throw Exception('Failed to send match request: ${response.statusCode}');
+        // 서버에서 오류가 발생한 경우 처리
+        throw Exception('서버 오류: ${response.statusCode}');
       }
+      // if (response.statusCode == 200) {
+      //   print("200");
+      //   return ;
+      // } else {
+      //   throw Exception('Failed to send match request: ${response.statusCode}');
+      // }
     } catch (e) {
       throw e;
     }

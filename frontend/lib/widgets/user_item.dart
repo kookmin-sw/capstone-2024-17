@@ -87,6 +87,7 @@ class UserItem extends StatelessWidget {
   }
 }
 
+// 보낸 요청 상세보기 모달
 class ReqDialog extends StatefulWidget {
   final String nickname;
   final String company;
