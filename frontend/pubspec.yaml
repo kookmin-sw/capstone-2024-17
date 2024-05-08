@@ -48,6 +48,7 @@ dependencies:
   latlong2: ^0.9.1
   google_maps_webservice: ^0.0.20-nullsafety.5
   stomp_dart_client: ^1.0.3
+  flutter_countdown_timer: ^4.1.0
 
 dev_dependencies:
   flutter_test:
