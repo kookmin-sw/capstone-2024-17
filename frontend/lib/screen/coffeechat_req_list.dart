@@ -3,6 +3,7 @@ import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -152,8 +153,8 @@ class SentReq extends StatefulWidget {
 }
 
 class _SentReqState extends State<SentReq> {
-  int endTime =
-      DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 1; // 10 minutes
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 10 * 1;
+  // DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10 minutes
 
   Future<void> handleRequestCancel() async {
     try {
@@ -210,7 +211,8 @@ class _SentReqState extends State<SentReq> {
           },
           onEnd: () {
             // 매칭 제한 시간이 끝났을 때
-            handleRequestCancel();
+            showAlertDialog(context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.",
+                handleRequestCancel);
           },
         ),
         SizedBox(height: 10),
