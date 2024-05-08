@@ -99,7 +99,8 @@ Future<Map<String, dynamic>> matchInfoRequest(
     userToken =
         "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
   }
-  print("userToken$userToken");
+  print("userToken = $userToken");
+
   try {
     final response = await http.get(
       url,
@@ -108,6 +109,7 @@ Future<Map<String, dynamic>> matchInfoRequest(
         "Authorization": "Bearer $userToken",
       },
     );
+
     print("처리중");
     if (response.statusCode == 200) {
       print("O1");
