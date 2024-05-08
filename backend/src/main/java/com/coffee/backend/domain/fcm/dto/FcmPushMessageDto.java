@@ -16,6 +16,7 @@ public class FcmPushMessageDto {
     @RequiredArgsConstructor
     public static class Message {
         private Data data;
+        private Notification notification;
         private String token;
     }
 
