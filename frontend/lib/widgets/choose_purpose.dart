@@ -68,12 +68,22 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              int senderId = 5;
-              int receiverId = 6;
+              int senderId = 6;
+              int receiverId = 7;
               try {
+                //로그인 한 유저의 senderId 가져오기
+                Map<String, dynamic> res = await getUserDetail();
+                if (res['success']) {
+                  senderId = res['data']['userId'];
+                } else {
+                  print(
+                      '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+                }
+
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId, _selectedIndex);
 
+                print(response);
                 //   if (response['success'] == true) {
                 //     try {
                 //       Map<String, dynamic> inforesponse = await matchInfoRequest(
