@@ -2,6 +2,10 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:frontend/service/stomp_service.dart';
+import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -9,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
 
@@ -21,6 +26,9 @@ class Google_Map extends StatefulWidget {
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
+  late MyCafeModel myCafe;
+  late StompClient stompClient;
+
   @override
   void initState() {
     super.initState();
@@ -231,7 +239,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         center: LatLng(position.latitude, position.longitude), // (위도, 경도)
         radius: 500, // 반경
         fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
-        strokeColor: const Color.fromRGBO(246, 82, 16, 1), // 테두리 색상
+        strokeColor: (myCafe.cafeId != null)
+            ? const Color.fromRGBO(246, 82, 16, 1)
+            : Colors.grey, // 테두리 색상
         strokeWidth: 3, // 테두리 두께
       )
     };
@@ -250,8 +260,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
     // 마커 아이콘을 그리는 코드
     final paint = Paint()
-      ..color =
-          const Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
+      ..color = (myCafe.cafeId != null)
+          ? const Color.fromRGBO(246, 82, 16, 0.9)
+          : Colors.grey; //red, green, blue, opacity
     canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
@@ -274,6 +285,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
+    myCafe = Provider.of<MyCafeModel>(context);
+    stompClient = Provider.of<StompClient>(context);
+
     return CupertinoPageScaffold(
       child: Stack(
         children: [
@@ -329,24 +345,44 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                   color: Colors.white70), // 아이콘과 색상 설정
             ),
           ),
-          Positioned(
-            bottom: 110,
-            right: 16,
-            child: ElevatedButton(
-              onPressed: () {
-                print('Button clicked!');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black12, // 배경 색상 설정
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
-              ),
-              child: const Text(
-                "위치 OFF",
-                style: TextStyle(color: Colors.white), // 폰트 색상 설정
-              ),
-            ),
-          ),
+          (myCafe.cafeId == null)
+              ? Container()
+              : Positioned(
+                  width: 140,
+                  bottom: 100,
+                  left: (screenSize.width / 2) - 70,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print('위치 공유 끄기 버튼 클릭 !!');
+
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return YesOrNoDialog(
+                            content: "위치 공유를 끄겠습니까?",
+                            firstButton: "확인",
+                            secondButton: "취소",
+                            handleFirstClick: () {
+                              deleteUserInCafe(
+                                  stompClient, "test", myCafe.cafeId!);
+                              myCafe.clearMyCafe();
+                            },
+                            handleSecondClick: () {},
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black, // 배경 색상 설정
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
+                    ),
+                    child: const Text(
+                      "위치 공유 OFF",
+                      style: TextStyle(color: Colors.white), // 폰트 색상 설정
+                    ),
+                  ),
+                ),
         ],
       ),
     );

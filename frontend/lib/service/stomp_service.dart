@@ -6,6 +6,11 @@ import 'package:stomp_dart_client/stomp.dart';
 // cafe list의 각 cafe에 sub 요청
 void subCafeList(StompClient stompClient, List<String> cafeList,
     Map<String, List<UserModel>> allUsers) {
+  if (!stompClient.connected) {
+    print("stompClient is not connected !!");
+    return;
+  }
+
   for (final cafeId in cafeList) {
     stompClient.subscribe(
       destination: '/sub/cafe/$cafeId',
@@ -33,6 +38,11 @@ void subCafeList(StompClient stompClient, List<String> cafeList,
 // cafe 업데이트(추가, 삭제) pub 요청
 void pubCafe(
     StompClient stompClient, String type, String loginId, String cafeId) {
+  if (!stompClient.connected) {
+    print("stompClient is not connected !!");
+    return;
+  }
+
   stompClient.send(
     destination: '/pub/cafe/update',
     body: jsonEncode({
