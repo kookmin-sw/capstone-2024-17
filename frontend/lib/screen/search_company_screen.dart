@@ -101,7 +101,7 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
                     ),
                   )
                 },
-                child: const Text('내가 다니는 회사가 없어요!',
+                child: const Text('재직 중인 회사가 없어요!',
                     style: TextStyle(decoration: TextDecoration.underline)),
               )
             ])));
