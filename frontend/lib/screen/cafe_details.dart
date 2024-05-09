@@ -10,6 +10,7 @@ import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -72,7 +73,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final String ImageId = "";
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
-  List<UserModel>? userList;
+  late List<UserModel> userList;
   late MyCafeModel myCafe;
 
   void _startTimer() {
@@ -141,12 +142,7 @@ class _CafeDetailsState extends State<CafeDetails>
   @override
   Widget build(BuildContext context) {
     stompClient = Provider.of<StompClient>(context);
-    userList = Provider.of<Map<String, List<UserModel>>?>(context)
-                ?.containsKey(widget.cafeId) ==
-            true
-        ? Provider.of<Map<String, List<UserModel>>?>(context)![widget.cafeId]
-        : null;
-    userList ??= [];
+    userList = Provider.of<AllUsersModel>(context).getUserList(widget.cafeId);
     myCafe = Provider.of<MyCafeModel>(context);
 
     return Scaffold(
@@ -226,26 +222,16 @@ class _CafeDetailsState extends State<CafeDetails>
                   //   },
                   // ),
                   ListView.builder(
-                    itemCount: sampleUserList.length,
+                    itemCount: userList.length,
                     itemBuilder: (context, index) {
-                      return userList!.isEmpty
-                          ? UserItem(
-                              type: "cafeUser",
-                              nickname: sampleUserList[index]["nickname"],
-                              company: sampleUserList[index]["companyName"],
-                              position: sampleUserList[index]["positionName"],
-                              introduction: sampleUserList[index]
-                                  ["introduction"],
-                              rating: sampleUserList[index]["rating"],
-                            )
-                          : UserItem(
-                              type: "cafeUser",
-                              nickname: userList![index].nickname,
-                              company: userList![index].companyName,
-                              position: userList![index].positionName,
-                              introduction: userList![index].introduction,
-                              rating: userList![index].rating,
-                            );
+                      return UserItem(
+                        type: "cafeUser",
+                        nickname: userList[index].nickname,
+                        company: userList[index].company,
+                        position: userList[index].position,
+                        introduction: userList[index].introduction,
+                        rating: userList![index].rating,
+                      );
                     },
                   ),
                 ],

@@ -1,16 +1,16 @@
 class UserModel {
   final String loginId;
   String nickname;
-  String companyName;
-  String positionName;
+  String company;
+  String position;
   String introduction;
   double rating;
 
   UserModel.fromJson(Map<String, dynamic> json)
       : loginId = json['loginId'],
         nickname = json['nickname'],
-        companyName = json['companyName'],
-        positionName = json['positionName'],
+        company = json['company'],
+        position = json['position'],
         introduction = json['introduction'],
-        rating = json['rating'];
+        rating = double.parse(json['coffeeBean']);
 }
