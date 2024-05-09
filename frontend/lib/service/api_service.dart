@@ -45,46 +45,40 @@ Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
-  }
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
   senderId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
   receiverId = 7;
 
-  if (userToken != null) {
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $userToken",
-        },
-        body: jsonEncode({
-          'senderId': senderId,
-          'receiverId': receiverId,
-          'requestTypeId': requestTypeId
-        }),
-      );
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'requestTypeId': requestTypeId
+      }),
+    );
 
-      final responseData = json.decode(response.body);
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
-      if (response.statusCode == 200) {
-        if (responseData['success']) {
-          return responseData;
-        } else {
-          throw Exception(
-              '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
-        }
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData;
       } else {
-        throw Exception('서버 오류: ${response.statusCode}');
+        throw Exception(
+            '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
       }
-    } catch (e) {
-      throw e;
+    } else {
+      throw Exception('서버 오류: ${response.statusCode}');
     }
-  } else {
-    throw Exception('User token is null');
+  } catch (e) {
+    throw Error();
   }
 }
 
@@ -95,10 +89,8 @@ Future<Map<String, dynamic>> matchInfoRequest(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
   print("userToken = $userToken");
 
   try {
@@ -113,13 +105,13 @@ Future<Map<String, dynamic>> matchInfoRequest(
     print("처리중");
     if (response.statusCode == 200) {
       print("O1");
-      return json.decode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       print("O2");
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (e) {
-    throw e;
+    throw Error();
   }
 }
 
@@ -128,10 +120,8 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/cancel');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
 
   try {
     final response = await http.delete(
@@ -146,12 +136,12 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (e) {
-    throw e;
+    throw Error();
   }
 }
 
@@ -169,7 +159,7 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
   try {
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
@@ -191,7 +181,7 @@ Future<Map<String, dynamic>> login(
   try {
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -303,7 +293,7 @@ Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
         "Content-Type": "application/json",
       },
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -329,7 +319,7 @@ Future<Map<String, dynamic>> verificationRequest(String email) async {
       },
       body: data,
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
@@ -354,7 +344,7 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
           'Authorization': 'Bearer $token'
         },
         body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
