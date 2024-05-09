@@ -54,6 +54,9 @@ public class UserService {
     public void checkDuplicatedEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
+            if (user.get().getEmail().equals(email)) {
+                return; // 자기 자신 email이면 duplication 아님
+            }
             log.debug("userService.checkDuplicatedEmail exception occur email: {}", email);
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
