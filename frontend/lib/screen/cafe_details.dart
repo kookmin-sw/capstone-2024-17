@@ -184,8 +184,8 @@ class _CafeDetailsState extends State<CafeDetails>
                       return UserItem(
                         type: "cafeUser",
                         nickname: userList![index].nickname,
-                        company: userList![index].companyName,
-                        position: userList![index].positionName,
+                        company: userList![index].company,
+                        position: userList![index].position,
                         introduction: userList![index].introduction,
                         rating: 0.0,
                       );

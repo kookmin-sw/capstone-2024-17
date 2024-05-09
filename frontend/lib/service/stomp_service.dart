@@ -21,8 +21,7 @@ void subCafeList(StompClient stompClient, List<String> cafeList,
         // 카페에 사용자 add
         if (result["type"] == "add") {
           print("add user in cafe $cafeId");
-          allUsers[cafeId]!
-              .add(UserModel.fromJson(result["cafeUserProfileDto"]));
+          allUsers[cafeId]!.add(UserModel.fromJson(result["cafeUserDto"]));
         }
         // 카페에서 사용자 delete
         else if (result["type"] == "delete") {
