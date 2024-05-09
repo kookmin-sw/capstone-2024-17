@@ -25,6 +25,7 @@ spring:
 
   flyway:
     enabled: true
+    baselineOnMigrate: true
 
   profiles:
     include: jwt,db
