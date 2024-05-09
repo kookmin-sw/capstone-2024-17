@@ -3,9 +3,9 @@ package com.coffee.backend.domain.match.service;
 import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
-import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
+import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
@@ -52,16 +52,16 @@ public class MatchService {
         Map<String, String> matchInfo = Map.of(
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
-                "requestTypeId", dto.getRequestTypeId().toString(),
+                "requestTypeId", dto.getRequestTypeId(),
                 "status", "pending"
         );
 
         redisTemplate.opsForHash().putAll("matchId:" + matchId, matchInfo);
         redisTemplate.expire("matchId:" + matchId, 600, TimeUnit.SECONDS);
 
-//        // 알림
-//        User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
-//        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
+        // 알림
+        User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
 
         // 10분동안 락 설정
         redisTemplate.opsForValue().set(lockKey, "Locked", 600, TimeUnit.SECONDS);
@@ -81,7 +81,7 @@ public class MatchService {
         receiverInfo.setCompany(company);
 
         String key = "matchId:" + dto.getMatchId();
-        Long requestTypeId = getLongId(redisTemplate.opsForHash().get(key, "requestTypeId"));
+        String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
 
         MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
         matchInfo.setReceiverInfo(receiverInfo);
@@ -107,9 +107,9 @@ public class MatchService {
         Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
         Long receiverId = getLongId(receiver);
 
-//        // 알림
-//        User toUser = userRepository.findByUserId(senderId).orElseThrow();
-//        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
+        // 알림
+        User toUser = userRepository.findByUserId(senderId).orElseThrow();
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
 
         MatchDto match = new MatchDto();
         match.setMatchId(dto.getMatchId());
@@ -131,9 +131,9 @@ public class MatchService {
         Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
         Long receiverId = getLongId(receiver);
 
-//        // 알림
-//        User toUser = userRepository.findByUserId(senderId).orElseThrow();
-//        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
+        // 알림
+        User toUser = userRepository.findByUserId(senderId).orElseThrow();
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
 
         redisTemplate.delete(key);
 
@@ -216,8 +216,27 @@ public class MatchService {
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
+        if (dto.getRating() < 1 || dto.getRating() > 5) {
+            throw new CustomException(ErrorCode.VALUE_ERROR);
+        }
+
         User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+
+        int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
+        double oldCoffeeBean = receiver.getCoffeeBean();
+
+        double baseline = 46.0;
+        double ratio = 0.1;
+        double standard = 4.0;
+
+        // 46 + (평점 합계 + (새로운 평점 - 기준 평점) * 반영 비율) / (평점 개수 + 1)
+        double newCoffeeBean =
+                baseline + ((oldCoffeeBean - baseline) * numberOfReviews + (dto.getRating() - standard) * ratio) /
+                        (numberOfReviews + 1);
+
+        receiver.setCoffeeBean(newCoffeeBean);
+        userRepository.save(receiver);
 
         Review review = new Review();
         review.setSender(sender);

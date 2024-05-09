@@ -14,7 +14,7 @@ class AddCompanyScreen extends StatefulWidget {
 
 class _AddCompanyScreenState extends State<AddCompanyScreen> {
   final TextEditingController _companyNameController = TextEditingController();
-  final TextEditingController _taxNumberController = TextEditingController();
+  final TextEditingController _bnoController = TextEditingController();
   final TextEditingController _domainController = TextEditingController();
 
   @override
@@ -23,95 +23,98 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
         appBar: const TopAppBar(
           title: "회사 추가 요청",
         ),
-        body: Container(
-          alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  // 안내
-                  const Row(children: <Widget>[
-                    Flexible(
-                      child: Text("재직 중인 회사의 정보를 입력하세요.",
-                          overflow: TextOverflow.visible,
-                          style: TextStyle(
-                            fontSize: 20,
-                          )),
-                    ),
-                  ]),
-
-                  // 입력창 컨테이너
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 30),
-                    child: Column(children: <Widget>[
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '회사명',
-                        controller: _companyNameController,
-                        isSecret: false,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '사업자 등록번호',
-                        controller: _taxNumberController,
-                        isSecret: false,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      IconedTextfield(
-                        icon: null,
-                        hintText: '사내메일 도메인  ex) @kookmin.ac.kr',
-                        controller: _domainController,
-                        isSecret: false,
+        body: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    // 안내
+                    const Row(children: <Widget>[
+                      Flexible(
+                        child: Text("재직 중인 회사의 정보를 입력하세요.",
+                            overflow: TextOverflow.visible,
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
                       ),
                     ]),
-                  ),
-                ],
-              ),
 
-              // 추가요청 버튼
-              BottomTextButton(
-                  text: '회사 추가 요청하기', handlePressed: addRequestPressed),
-            ],
+                    // 입력창 컨테이너
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 30),
+                      child: Column(children: <Widget>[
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '회사명',
+                          controller: _companyNameController,
+                          isSecret: false,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '사업자 등록번호',
+                          controller: _bnoController,
+                          isSecret: false,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconedTextfield(
+                          icon: null,
+                          hintText: '사내메일 도메인  ex) @kookmin.ac.kr',
+                          controller: _domainController,
+                          isSecret: false,
+                        ),
+                      ]),
+                    ),
+                  ],
+                ),
+
+                // 추가요청 버튼
+                BottomTextButton(
+                    text: '회사 추가 요청하기', handlePressed: addCompanyPressed),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: const BottomAppBar());
   }
 
-  void addRequestPressed() {
-    // 회원가입 진행
+  void addCompanyPressed() {
+    // 회사 추가 요청
     if (_companyNameController.text == '') {
       showAlertDialog(context, '회사명을 입력해주세요.');
       return;
-    } else if (_taxNumberController.text == '') {
+    } else if (_bnoController.text == '') {
       showAlertDialog(context, '사업자 등록번호를 입력해주세요.');
       return;
     } else if (_domainController.text == '') {
       showAlertDialog(context, '사내메일 도메인을 입력해주세요.');
       return;
+    } else if (!RegExp('@[a-zA-Z0-9-]+.[a-zA-Z]+')
+        .hasMatch(_domainController.text)) {
+      showAlertDialog(context, '도메인 형식이 올바르지 않습니다.');
+      return;
     }
     try {
-      waitAddRequest(context, _companyNameController.text,
-          _taxNumberController.text, _domainController.text);
+      waitAddCompany(context, _companyNameController.text, _bnoController.text,
+          _domainController.text.substring(1)); // 첫 문자 '@' 제외하고 요청
     } catch (error) {
       showAlertDialog(context, '요청 실패: $error');
     }
   }
 }
 
-void waitAddRequest(BuildContext context, String companyName, String taxNumber,
-    String domain) async {
-  print('추가요청 pressed: $companyName, $taxNumber, $domain');
-  // 요청 코드
-  /*
-  Map<String, dynamic> res =
-      await addRequest(companyName, taxNumber, domainController);
+void waitAddCompany(
+    BuildContext context, String companyName, String bno, String domain) async {
+  print('추가요청 pressed: $companyName, $bno, $domain');
+  Map<String, dynamic> res = await addCompany(companyName, bno, domain);
   if (res['success'] == true) {
     // 요청 성공
     print(res);
@@ -121,5 +124,4 @@ void waitAddRequest(BuildContext context, String companyName, String taxNumber,
     showAlertDialog(
         context, '회사 추가요청 실패: ${res['message']}(${res['statusCode']})');
   }
-  */
 }

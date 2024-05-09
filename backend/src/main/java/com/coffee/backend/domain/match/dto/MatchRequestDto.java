@@ -8,5 +8,5 @@ import lombok.Setter;
 public class MatchRequestDto {
     private Long senderId;
     private Long receiverId;
-    private Long requestTypeId;
+    private String requestTypeId;
 }

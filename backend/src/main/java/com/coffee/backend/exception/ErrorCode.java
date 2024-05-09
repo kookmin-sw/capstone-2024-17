@@ -13,6 +13,8 @@ public enum ErrorCode {
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT, "1409", "로그인 ID가 중복됩니다"),
     DELETE_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "1500", "사용자 탈퇴 처리 중 오류가 발생했습니다."),
 
+    ILLEGAL_ARGUMENT_POSITION(HttpStatus.NOT_FOUND, "2404", "잘못 된 직무를 입력했습니다."),
+
     FCM_ACCESS_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "5500", "FCM 액세스 토큰을 가져오는 중 오류가 발생했습니다."),
     FCM_MESSAGE_FORMAT_ERROR(HttpStatus.BAD_REQUEST, "5400", "FCM 메시지 포맷이 잘못되었습니다."),
     FCM_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "5501", "FCM 메시지 전송 중 오류가 발생했습니다."),
@@ -26,7 +28,9 @@ public enum ErrorCode {
     REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "7404", "해당 요청 정보를 찾을 수 없습니다."),
     REQUEST_EXPIRED(HttpStatus.UNAUTHORIZED, "7401", "요청이 만료되었습니다."),
 
-    COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "8404", "해당 COMPANY를 찾을 수 없습니다.");
+    COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "8404", "해당 COMPANY를 찾을 수 없습니다."),
+
+    VALUE_ERROR(HttpStatus.BAD_REQUEST, "9400", "잘못된 값이 입력되었습니다.");
 
     private final HttpStatus status;
     private final String code;

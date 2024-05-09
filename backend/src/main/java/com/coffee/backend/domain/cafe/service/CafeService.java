@@ -1,7 +1,6 @@
 package com.coffee.backend.domain.cafe.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeUserDto;
-import com.coffee.backend.domain.cafe.dto.CafeUserProfileDto;
 import com.coffee.backend.domain.user.service.UserService;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +48,7 @@ public class CafeService {
     }
 
 
-    public List<CafeUserProfileDto> getUserProfilesFromRedisAndDB(String cafeId) {
+    public List<CafeUserDto> getUserProfilesFromRedisAndDB(String cafeId) {
         // cafeId 를 가진 유저를 redis 에서 싹 조회
         Set<Object> userSet = getUserListFromRedis(cafeId);
 
@@ -66,9 +65,7 @@ public class CafeService {
         return redisTemplate.opsForSet().members(cafeChoiceKey);
     }
 
-    public CafeUserProfileDto getUserInfoFromDB(String userId) {
-        CafeUserDto cafeUserDto = userService.getCafeUserInfoByLoginId(userId); // userId로 User entity 조회
-        // TODO : Company entity, Position entity 조회해서 cafeUserDto에 추가
-        return new CafeUserProfileDto(cafeUserDto, "임시 company", "임시 position");
+    public CafeUserDto getUserInfoFromDB(String userId) {
+        return userService.getCafeUserInfoByLoginId(userId); // userId로 User entity 조회
     }
 }

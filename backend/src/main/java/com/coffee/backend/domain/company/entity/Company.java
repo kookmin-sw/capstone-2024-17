@@ -29,4 +29,9 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "logo_file_id")
     private UploadFile logo;
+
+    // TODO : flyaway 설정 이후 default company로 설정 (company DB에 무소속 회사 정보가 있어야 함)
+//    public static Company getDefault() {
+//        return Company.builder().companyId(0L).name("무소속").domain("coffee.com").bno("0").build();
+//    }
 }

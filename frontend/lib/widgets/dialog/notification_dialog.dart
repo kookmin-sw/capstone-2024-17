@@ -104,6 +104,8 @@ class NotificationDialog extends StatelessWidget {
                     : BottomTwoButtonsSmall(
                         first: firstButton,
                         second: secondButton!,
+                        handleFirstClick: () {},
+                        handleSecondClick: () {},
                       ),
               ],
             ),
