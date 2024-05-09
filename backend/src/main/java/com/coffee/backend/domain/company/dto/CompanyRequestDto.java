@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.company.dto;
 
+import com.coffee.backend.domain.user.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,5 +11,5 @@ public class CompanyRequestDto {
     private String name;
     private String domain;
     private String bno;
-    private String user;
+    private UserDto user;
 }
