@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/screen/map_place.dart';
+import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 const List<Map<String, dynamic>> sampleUserList = [
   {
@@ -38,6 +42,7 @@ const List<Map<String, dynamic>> sampleUserList = [
     "rating": 40.0,
   },
 ];
+bool timerend = false;
 
 void main() async {
   await dotenv.load();
@@ -50,15 +55,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        home: CoffeechatReqList(
-      matchId: '',
-      receiverNickname: '',
-      receiverCompany: '',
-      receiverPosition: '',
-      receiverIntroduction: '',
-      receiverRating: 0.0,
-      Question: '',
-    ));
+      home: CoffeechatReqList(
+        matchId: '',
+        receiverNickname: '',
+        receiverCompany: '',
+        receiverPosition: '',
+        receiverIntroduction: '',
+        receiverRating: 0.0,
+        Question: '',
+      ),
+    );
   }
 }
 
@@ -124,7 +130,7 @@ class CoffeechatReqList extends StatelessWidget {
   }
 }
 
-class SentReq extends StatelessWidget {
+class SentReq extends StatefulWidget {
   final String? matchId;
   final String nickname;
   final String company;
@@ -145,6 +151,43 @@ class SentReq extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SentReqState createState() => _SentReqState();
+}
+
+class _SentReqState extends State<SentReq> {
+  late int _endTime;
+
+  @override
+  void initState() {
+    super.initState();
+    timerend = false;
+    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 10 * 2; // 20초 후
+  }
+
+  Future<void> handleRequestCancel() async {
+    try {
+      Map<String, dynamic> response = await matchCancelRequest(widget.matchId!);
+
+      if (response['success'] == true) {
+        print("정상적으로 삭제됨");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AlarmList()),
+        );
+      } else {
+        print(response);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void showAlertDialogWithContext(BuildContext context) {
+    showAlertDialog(
+        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.", handleRequestCancel);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -157,39 +200,43 @@ class SentReq extends StatelessWidget {
             border: Border.all(color: Colors.grey, width: 1),
           ),
           child: UserDetails(
-            nickname: nickname,
-            company: company,
-            position: position,
-            introduction: introduction,
-            rating: rating,
+            nickname: widget.nickname,
+            company: widget.company,
+            position: widget.position,
+            introduction: widget.introduction,
+            rating: widget.rating,
           ),
         ),
-        ColorTextContainer(text: "# $question"),
-        Expanded(child: SizedBox()),
-        Text(
-          "자동 취소까지 남은 시간\n09:59",
-          textAlign: TextAlign.center,
+        ColorTextContainer(text: "# ${widget.question}"),
+        Expanded(child: SizedBox(height: 10)),
+        CountdownTimer(
+          endTime: _endTime,
+          onEnd: () {
+            // 카운트다운 타이머가 끝났을 때
+            if (!timerend) {
+              showAlertDialogWithContext(context);
+            }
+          },
+          widgetBuilder: (_, CurrentRemainingTime? time) {
+            if (time == null) {
+              return Text('남은 시간: 00:00');
+            }
+            int minutes = time.min ?? 0;
+            int seconds = time.sec ?? 0;
+            return Text(
+              '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+              style: TextStyle(fontSize: 20, color: Colors.black),
+            );
+          },
         ),
+        SizedBox(height: 10),
         BottomTextButton(
           text: "요청 취소하기",
           handlePressed: () async {
-            if (matchId != null) {
-              try {
-                Map<String, dynamic> response =
-                    await matchCancelRequest(matchId!);
-                if (response['success'] == 'true') {
-                  print("정상적으로 삭제됨");
-
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Google_Map(updateCafesCallback: ''),
-                  //   ),
-                  // );
-                }
-              } catch (e) {
-                print(e);
-              }
+            if (widget.matchId != null) {
+              showAlertDialogYesNo(
+                  context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
+              timerend = true;
             }
           },
         ),
