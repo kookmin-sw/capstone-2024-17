@@ -79,4 +79,9 @@ public class UserService {
         user.setIntroduction(introduction);
         return customMapper.toUserDto(userRepository.save(user));
     }
+
+    public UserDto resetCompany(User user) {
+        user.setCompany(null);
+        return customMapper.toUserDto(userRepository.save(user));
+    }
 }
