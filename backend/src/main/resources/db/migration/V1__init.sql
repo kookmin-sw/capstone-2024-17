@@ -23,6 +23,8 @@ CREATE TABLE user
     login_id     VARCHAR(255),
     kakao_id     BIGINT,
     password     VARCHAR(255),
+    coffee_bean  double  default 46 not null,
+    position     tinyint default 0  null,
     email        VARCHAR(255),
     nickname     VARCHAR(255),
     phone        VARCHAR(255),
