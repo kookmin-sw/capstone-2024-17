@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/matching_screen.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
 import 'package:frontend/widgets/user_details.dart';
@@ -176,7 +178,48 @@ class ReceivedReqDialog extends StatelessWidget {
             BottomTwoButtons(
               first: "수락",
               second: "거절",
-              handleFirstClick: () {},
+              handleFirstClick: () async {
+                try {
+                  //로그인 한 유저의 senderId 가져오기
+                  Map<String, dynamic> res = await getUserDetail();
+                  if (!res['success']) {
+                    print(
+                        '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+                  }
+
+                  Map<String, dynamic> response =
+                      await matchAcceptRequest('matchId'); // 받은 요청에서 가져와야 함.
+
+                  print(response);
+
+                  // if (response['success'] == true) {
+                  //   try {
+                  //     Map<String, dynamic> inforesponse =
+                  //         await matchInfoRequest(
+                  //             response['data']['matchId'],
+                  //             response['data']['senderId'],
+                  //             response['data']['receiverId']);
+                  //
+                  //     print("info Response: $inforesponse");
+                  //     var nickname =
+                  //         inforesponse['data']['nickname'] ?? "nickname";
+                  //     var company =
+                  //         inforesponse['data']['company'] ?? "company";
+                  //     // var position = inforesponse['data']['position'] ?? "position"; // 아직 백엔드 딴에서 리턴 X 나중에 수정 필요
+                  //     var introduction = inforesponse['data']['introduction'] ??
+                  //         "introduction";
+                  //     double rating = inforesponse['data']['rating'] ?? 0.0;
+                  //
+                  //     Navigator.push(context,
+                  //         MaterialPageRoute(builder: (context) => Matching()));
+                  //   } catch (e) {
+                  //     print("matchInfoRequest Error: $e");
+                  //   }
+                  // }
+                } catch (e) {
+                  print("matchRequest Error: $e");
+                }
+              },
               handleSecondClick: () {},
             ),
           ],

@@ -80,8 +80,8 @@ Future<Map<String, dynamic>> matchRequest(
       } else {
         throw Exception('서버 오류: ${response.statusCode}');
       }
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      throw Error();
     }
   } else {
     throw Exception('User token is null');
@@ -118,8 +118,9 @@ Future<Map<String, dynamic>> matchInfoRequest(
       print("O2");
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
-  } catch (e) {
-    throw e;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
   }
 }
 
@@ -150,8 +151,42 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
     } else {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
-  } catch (e) {
-    throw e;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+//match accept  요청
+Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
+  final url = Uri.parse('$baseUrl/match/accept');
+
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  }
+
+  try {
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match accept: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('error: $error');
+    throw Error();
   }
 }
 

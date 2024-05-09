@@ -43,7 +43,9 @@ class CompanyItem extends StatelessWidget {
                 padding: const EdgeInsets.all(5),
                 child: RoundedImg(image: logoImage, size: 50),
               ),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               Expanded(
                 child: Text(
                   companyName,
