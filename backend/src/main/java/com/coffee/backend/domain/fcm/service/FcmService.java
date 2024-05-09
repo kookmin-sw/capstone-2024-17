@@ -72,8 +72,8 @@ public class FcmService {
         data.setBody(body);
 
         Notification notification = new Notification();
-        data.setTitle(title);
-        data.setBody(body);
+        notification.setTitle(title);
+        notification.setBody(body);
 
         Message message = new Message();
         message.setData(data);
