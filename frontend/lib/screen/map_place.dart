@@ -101,7 +101,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       "X-Goog-Api-Key": "${dotenv.env['googleApiKey']}",
       "Accept-Language": "ko",
       "X-Goog-FieldMask":
-          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating,places.photos"
+          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.formattedAddress,places.regularOpeningHours,places.internationalPhoneNumber,places.photos"
     };
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
