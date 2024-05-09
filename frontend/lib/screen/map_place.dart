@@ -66,6 +66,22 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     _controller = controller;
   }
 
+  @override
+  void didChangeDependencies() {
+    //변경 사항 파악
+    super.didChangeDependencies();
+    _mapLoad();
+  }
+
+  Future<void> _mapLoad() async {
+    //현재 위치 기반으로 반경 원, 마커 다시 그림
+    // getcurrentlocation으로 갈 시에 지도가 아닌 화면에서 camera position을 지정 => error.
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _setCircle(LatLng(position.latitude, position.longitude));
+    _searchcafes(LatLng(position.latitude, position.longitude));
+  }
+
   // 현재 위치로 이동
   Future<void> _getCurrentLocation() async {
     final position = await Geolocator.getCurrentPosition(
