@@ -3,6 +3,7 @@ package com.coffee.backend.domain.fcm.service;
 import com.coffee.backend.domain.fcm.dto.FcmPushMessageDto;
 import com.coffee.backend.domain.fcm.dto.FcmPushMessageDto.Data;
 import com.coffee.backend.domain.fcm.dto.FcmPushMessageDto.Message;
+import com.coffee.backend.domain.fcm.dto.FcmPushMessageDto.Notification;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -70,8 +71,13 @@ public class FcmService {
         data.setTitle(title);
         data.setBody(body);
 
+        Notification notification = new Notification();
+        data.setTitle(title);
+        data.setBody(body);
+
         Message message = new Message();
         message.setData(data);
+        message.setNotification(notification);
         message.setToken(targetToken);
 
         FcmPushMessageDto fcmPushMessageDto = new FcmPushMessageDto(false, message);
