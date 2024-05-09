@@ -24,4 +24,5 @@ public class UserDto {
     private String userUUID;
     private String introduction;
     private String deviceToken;
+    private Double coffeeBean;
 }
