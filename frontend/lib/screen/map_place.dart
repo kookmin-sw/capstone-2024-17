@@ -113,7 +113,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
 
-    int maxC = 5; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
+    int maxC = 0; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
     double radius = 500;
     double lat = position.latitude;
     double log = position.longitude;
