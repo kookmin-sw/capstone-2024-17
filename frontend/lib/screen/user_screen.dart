@@ -23,7 +23,7 @@ class _UserScreenState extends State<UserScreen> {
   String logoInfo =
       'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
   String companyName = '미인증';
-  String position = '';
+  String position = '선택안함';
   int temperature = 0;
   String introduction = '';
   late ScrollController _scrollController;
