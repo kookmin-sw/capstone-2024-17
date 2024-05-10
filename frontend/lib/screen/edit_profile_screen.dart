@@ -114,6 +114,26 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                           width: 10,
                                         ),
                                         TextButton(
+                                            onPressed: () async {
+                                              Map<String, dynamic> res =
+                                                  await resetCompany();
+                                              if (res['success'] == true) {
+                                                showAlertDialog(context,
+                                                    '초기화 성공: ${res['message']}(${res['code']})');
+                                              } else {
+                                                showAlertDialog(context,
+                                                    '초기화 실패: ${res['message']}(${res['code']})');
+                                              }
+                                            },
+                                            style: TextButton.styleFrom(
+                                              minimumSize: Size.zero,
+                                              padding: EdgeInsets.zero,
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                            child: const Text('초기화')),
+                                        TextButton(
                                             onPressed: () {
                                               Navigator.push(
                                                 context,
