@@ -159,9 +159,8 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
   }
 
   void savePressed() {
-    // 직무 저장 요청
-    // 요청 성공 시 프로필 수정화면까지 pop: Navigator.of(context).popUntil((route) => EditProfileScreen());
-    // editprofileScreen은 파라미터로 넘겨받지 말고 프로필 요청 한번 더 하는 걸로 수정할 것
+    // 직무 저장 요청하기
+    // Navigator.of(context).popUntil((route) => route is EditProfileScreen); // 안됨
     print('저장버튼 클릭됨');
   }
 }
