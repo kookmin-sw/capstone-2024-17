@@ -83,6 +83,17 @@ public class UserService {
         return customMapper.toUserDto(userRepository.save(user));
     }
 
+
+    public void updateUserSessionId(Long userId, String sessionId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> {
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
+                    return new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+        user.setSessionId(sessionId);
+        userRepository.save(user);
+    }
+  
     public UserDto resetCompany(User user) {
         user.setCompany(null);
         return customMapper.toUserDto(userRepository.save(user));
