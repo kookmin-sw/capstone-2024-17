@@ -79,4 +79,24 @@ public class UserService {
         user.setIntroduction(introduction);
         return customMapper.toUserDto(userRepository.save(user));
     }
+
+    public void updateUserSessionId(String loginId, String sessionId) {
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> {
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", loginId);
+                    return new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+        user.setSessionId(sessionId);
+        userRepository.save(user);
+    }
+
+    public void clearSessionAndCafeIdBySessionId(String sessionId) {
+        User user = userRepository.findBySessionId(sessionId).orElseThrow(() -> {
+            log.info("해당 sessionId = {} 를 갖는 사용자가 존재하지 않습니다.", sessionId);
+            return new CustomException(ErrorCode.USER_NOT_FOUND);
+        });
+        // null 로 초기화
+        user.setSessionId(null);
+        user.setCafeId(null);
+    }
 }
