@@ -14,17 +14,18 @@ public class CafePublisher {
     private final CafeService cafeService;
     private final SimpMessageSendingOperations sendingOperations;
 
-    public void updateCafeChoice(CafeDto dto) throws JsonProcessingException, IllegalArgumentException {
+    public void updateCafeChoice(String sessionId, CafeDto dto)
+            throws JsonProcessingException, IllegalArgumentException {
         String type = dto.getType();
         String loginId = dto.getLoginId();
         String cafeId = dto.getCafeId();
 
         switch (type) {
             case "add":
-                cafeService.addCafeChoice(cafeId, loginId);
+                cafeService.addCafeChoice(cafeId, loginId, sessionId);
                 break;
             case "delete":
-                cafeService.deleteCafeChoice(cafeId, loginId);
+                cafeService.deleteCafeChoice(cafeId, loginId, sessionId);
                 break;
             default:
                 throw new IllegalArgumentException(

@@ -23,7 +23,7 @@ public class CafeService {
     private final UserRepository userRepository;
 
     //redis에 add 하는 메소드
-    public void addCafeChoice(String cafeId, String loginId) {
+    public void addCafeChoice(String cafeId, String loginId, String sessionId) {
         System.out.println("addCafeChoice() 진입");
         /*
         Redis에 아래 형식으로 저장됨
@@ -42,7 +42,7 @@ public class CafeService {
     }
 
     //redis에서 delete 하는 메소드
-    public void deleteCafeChoice(String cafeId, String loginId) {
+    public void deleteCafeChoice(String cafeId, String loginId, String sessionId) {
         System.out.println("deleteCafeChoice() 진입");
         final String cafeChoiceKey = "cafe:" + cafeId;
 
@@ -56,6 +56,7 @@ public class CafeService {
         // 해당 User cafeId null 로 바꾸기
         userRepository.findByLoginId(loginId).ifPresent(user -> {
             user.setCafeId(null);
+            user.setSessionId(null);
             userRepository.save(user);
         });
     }
