@@ -29,7 +29,11 @@ class FCM {
     // onMessage: 메시지가 도착했을 때 발생하는 이벤트
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
-        // (메시지에는 notification 메시지, data 메시지가 있다
+        print('[forground]: ${message.data}');
+        print('[forground]: ${message.sentTime}');
+        print('[forground]: ${message.notification}');
+        print('[forground]: ${message.notification!.title}');
+        print('[forground]: ${message.notification!.body}');
         messageStreamController.sink.add({
           'title': message.data['title'],
           'body': message.data['body'],
@@ -44,6 +48,11 @@ class FCM {
   backgroundNotification() {
     FirebaseMessaging.onMessageOpenedApp.listen(
       (RemoteMessage message) async {
+        print('[background]: ${message.data}');
+        print('[background]: ${message.sentTime}');
+        print('[background]: ${message.notification}');
+        print('[background]: ${message.notification!.title}');
+        print('[background]: ${message.notification!.body}');
         messageStreamController.sink.add({
           'title': message.data['title'],
           'body': message.data['body'],
@@ -61,6 +70,11 @@ class FCM {
         await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
+      print('[terminate]: ${initialMessage.data}');
+      print('[terminate]: ${initialMessage.sentTime}');
+      print('[terminate]: ${initialMessage.notification}');
+      print('[terminate]: ${initialMessage.notification!.title}');
+      print('[terminate]: ${initialMessage.notification!.body}');
       messageStreamController.sink.add({
         'title': initialMessage.data['title'],
         'body': initialMessage.data['body'],
