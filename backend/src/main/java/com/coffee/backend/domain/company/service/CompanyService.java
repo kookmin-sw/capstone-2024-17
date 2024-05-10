@@ -48,8 +48,8 @@ public class CompanyService {
 
     public void sendCodeToEmail(String loginId, String toEmail) {
         userService.checkDuplicatedEmail(toEmail);
-
         String domain = toEmail.split("@")[1];
+        this.findCompanyByDomain(domain);
 
         String title = "커리어 한잔 이메일 인증 코드";
         String authCode = this.createCode();
