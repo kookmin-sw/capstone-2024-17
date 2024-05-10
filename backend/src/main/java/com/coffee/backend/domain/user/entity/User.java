@@ -38,4 +38,5 @@ public class User {
     private String userUUID;
     private String introduction;
     private String deviceToken;
+    private String cafeId;
 }
