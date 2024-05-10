@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:frontend/firebase_options.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -28,6 +30,11 @@ const storage = FlutterSecureStorage();
 const socketUrl = "http://3.36.108.21:8080/ws";
 
 void main() async {
+  // firebase 초기화
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await dotenv.load();
   KakaoSdk.init(
     nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY'],

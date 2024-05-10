@@ -26,7 +26,7 @@ public class CafeService {
     private final UserRepository userRepository;
 
     //redis에 add 하는 메소드
-    public void addCafeChoice(String cafeId, String loginId, String sessionId) {
+    public void addCafeChoice(String cafeId, Long userId, String sessionId) {
         System.out.println("addCafeChoice() 진입");
         /*
         Redis에 아래 형식으로 저장됨
@@ -37,16 +37,18 @@ public class CafeService {
         String cafeChoiceKey = "cafe:" + cafeId;
 
         // 이미 해당 카페에 존재하는 사용자인지 확인
-        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, loginId);
+        String userIdStr = String.valueOf(userId); // Long 타입을 String으로 변환
+        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, userIdStr);
         if (Boolean.TRUE.equals(isMember)) {
             throw new IllegalArgumentException(
-                    "Add Exception: " + "'" + loginId + "'" + " 는 " + cafeId + "' 카페에 이미 속해 있습니다.");
+                    "Add Exception: " + "'" + userId + "'" + " 는 " + cafeId + "' 카페에 이미 속해 있습니다.");
         }
 
         // 카페 ID에 해당하는 세트에 사용자 추가
-        redisTemplate.opsForSet().add(cafeChoiceKey, loginId);
-        // UserDB에 카페 id 저장
-        userRepository.findByLoginId(loginId).ifPresent(user -> {
+        redisTemplate.opsForSet().add(cafeChoiceKey, userIdStr); 
+      
+        // UserDB에 cafeId, sessionId 저장
+        userRepository.findByUserId(userId).ifPresent(user -> {
             user.setCafeId(cafeId);
             user.setSessionId(sessionId);
             userRepository.save(user);
@@ -54,17 +56,17 @@ public class CafeService {
     }
 
     // redis 카페선택 삭제, UserDB에 cafeId, sessionId null 로 초기화
-    public void deleteCafeChoice(String cafeId, String loginId, String sessionId) {
+    public void deleteCafeChoice(String cafeId, Long userId, String sessionId) {
         System.out.println("deleteCafeChoice() 진입");
         final String cafeChoiceKey = "cafe:" + cafeId;
 
         // 카페 ID에 해당하는 세트에서 사용자 ID 찾기
-        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, loginId);
+        String userIdStr = String.valueOf(userId); // Long 타입을 String으로 변환
+        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, userIdStr);
         if (Boolean.TRUE.equals(isMember)) {
-            redisTemplate.opsForSet().remove(cafeChoiceKey, loginId);
+            redisTemplate.opsForSet().remove(cafeChoiceKey, userIdStr);
         } else {
-            throw new IllegalArgumentException(
-                    "Delete Exception: " + "'" + loginId + "'" + " 는 " + cafeId + "' 카페에 속해 있지 않습니다.");
+            throw new IllegalArgumentException("User ID '" + userId + "' 는 '" + cafeId + "' 카페에 속해 있지 않습니다.");
         }
         // 해당 User cafeId, sessionId null 로 초기화
         userRepository.findByLoginId(loginId).ifPresent(user -> {
@@ -81,7 +83,7 @@ public class CafeService {
         // 각 userId로 DB에서 User entity, (Company entity, position entity) 를 조회
         return Optional.ofNullable(userSet).orElse(Collections.emptySet()).stream()
                 .filter(Objects::nonNull) // null 값 제거
-                .map(userId -> getUserInfoFromDB((String) userId))
+                .map(user -> getUserInfoFromDB(Long.parseLong(user.toString()))) // String ID를 Long으로 안전하게 변환
                 .collect(Collectors.toList());
     }
 
@@ -91,7 +93,7 @@ public class CafeService {
         return redisTemplate.opsForSet().members(cafeChoiceKey);
     }
 
-    public CafeUserDto getUserInfoFromDB(String userId) {
+    public CafeUserDto getUserInfoFromDB(Long userId) {
         return userService.getCafeUserInfoByLoginId(userId); // userId로 User entity 조회
     }
 

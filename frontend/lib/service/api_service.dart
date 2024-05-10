@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -148,6 +149,9 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
+  // 디바이스 토큰을 발급
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  // print('!!!디바이스 토큰!!!!!: $fcmToken');
   final url = Uri.parse('$baseUrl/auth/signUp');
   final data = jsonEncode({
     'loginId': loginId,
@@ -155,6 +159,7 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
     'nickname': nickname,
     'email': email,
     'phone': phone,
+    'deviceToken': fcmToken,
   });
   try {
     http.Response res = await http.post(url,
@@ -200,6 +205,50 @@ Future<Map<String, dynamic>> getUserDetail() async {
         "Content-Type": "application/json",
         'Accept': 'application/json',
         'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 자기소개 업데이트
+Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
+  final url = Uri.parse('$baseUrl/user/introduction/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'introduction': introduction,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 회사 초기화
+Future<Map<String, dynamic>> resetCompany() async {
+  final url = Uri.parse('$baseUrl/user/company/reset');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
       },
     );
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
