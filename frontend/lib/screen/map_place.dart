@@ -34,7 +34,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   void initState() {
     super.initState();
 
-    // 휴대폰 test 버전 -------
     LocationPermission().then((_) {
       Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -42,13 +41,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         _getCurrentLocation();
       });
     });
-
-    // ----------------------------
-
-    //좌표 고정 버전 ------------------------
-    // LocationPermission();
-    // _setCircle(LatLng(37.611035490773, 126.99457310622));
-    // _searchcafes(LatLng(37.611035490773, 126.99457310622));
   }
 
   late GoogleMapController _controller;
@@ -75,9 +67,24 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     _controller = controller;
   }
 
+  @override
+  void didChangeDependencies() {
+    //변경 사항 파악
+    super.didChangeDependencies();
+    _mapLoad();
+  }
+
+  Future<void> _mapLoad() async {
+    //현재 위치 기반으로 반경 원, 마커 다시 그림
+    // getcurrentlocation으로 갈 시에 지도가 아닌 화면에서 camera position을 지정 => error.
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _setCircle(LatLng(position.latitude, position.longitude));
+    _searchcafes(LatLng(position.latitude, position.longitude));
+  }
+
   // 현재 위치로 이동
   Future<void> _getCurrentLocation() async {
-    print("현재 위치로 이동");
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
@@ -102,12 +109,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       "X-Goog-Api-Key": "${dotenv.env['googleApiKey']}",
       "Accept-Language": "ko",
       "X-Goog-FieldMask":
-          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating,places.photos"
+          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.formattedAddress,places.regularOpeningHours,places.internationalPhoneNumber,places.photos"
     };
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
 
-    int maxC = 5; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
+    int maxC = 0; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
     double radius = 500;
     double lat = position.latitude;
     double log = position.longitude;
@@ -118,11 +125,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         body: json.encode(body));
 
     if (response.statusCode == 200) {
-      debugPrint("Response Body: ${response.body}");
+      // debugPrint("Response Body: ${response.body}"); // 주석 해제시 api 요청의 결과(response)를 볼 수 있음.
       final data = json.decode(response.body);
       _setMarkers(data['places'], position.latitude, position.longitude);
     } else {
-      print("실패");
+      // print("실패");
       throw Exception('Failed to load cafe');
     }
   }
@@ -132,8 +139,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     final Set<Marker> localMarkers = {};
     List<String> cafeList = [];
 
-    print("debug print");
-    print(places);
+    // print("debug print");
+    // print(places);
 
     for (var place in places) {
       cafeList.add(place['id']);
