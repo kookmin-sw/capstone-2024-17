@@ -89,14 +89,4 @@ public class UserService {
         user.setSessionId(sessionId);
         userRepository.save(user);
     }
-
-    public void clearSessionAndCafeIdBySessionId(String sessionId) {
-        User user = userRepository.findBySessionId(sessionId).orElseThrow(() -> {
-            log.info("sessionId = {} 를 갖는 사용자가 존재하지 않습니다.", sessionId);
-            return new CustomException(ErrorCode.USER_NOT_FOUND);
-        });
-        // null 로 초기화
-        user.setSessionId(null);
-        user.setCafeId(null);
-    }
 }

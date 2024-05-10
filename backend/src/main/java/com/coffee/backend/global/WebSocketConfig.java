@@ -1,6 +1,6 @@
 package com.coffee.backend.global;
 
-import com.coffee.backend.domain.user.service.UserService;
+import com.coffee.backend.domain.cafe.service.CafeService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -17,7 +17,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @EnableWebSocketMessageBroker
 @AllArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    private final UserService userService;
+    private final CafeService cafeService;
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry registry) {
@@ -37,6 +37,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void onSessionDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headerAccessor.getSessionId();
-        userService.clearSessionAndCafeIdBySessionId(sessionId);
+        cafeService.clearSessionAndCafeIdBySessionId(sessionId); // 세션 ID, cafeId null
     }
 }
