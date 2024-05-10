@@ -47,13 +47,16 @@ services:
 
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce
+    image: portainer/portainer-ee:latest  # Business Edition
     ports:
       - "18000:8000"
       - "19000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+    environment:
+      - PORTAINER_ARGS=--ssl --sslcert /certs/portainer.crt --sslkey /certs/portainer.key --tunnel-port=8000 --tunnel-certificate /certs/portainer.crt --tunnel-key /certs/portainer.key
+      - PORTAINER_ENCRYPTION_KEY=${PORTAINER_ENCRYPTION_KEY}
     restart: always
 
 volumes:

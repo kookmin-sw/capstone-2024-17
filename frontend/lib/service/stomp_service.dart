@@ -1,11 +1,17 @@
 import 'dart:convert';
 
+import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:stomp_dart_client/stomp.dart';
 
 // cafe list의 각 cafe에 sub 요청
-void subCafeList(StompClient stompClient, List<String> cafeList,
-    Map<String, List<UserModel>> allUsers) {
+void subCafeList(
+    StompClient stompClient, List<String> cafeList, AllUsersModel allUsers) {
+  if (!stompClient.connected) {
+    print("stompClient is not connected !!");
+    return;
+  }
+
   for (final cafeId in cafeList) {
     stompClient.subscribe(
       destination: '/sub/cafe/$cafeId',
@@ -16,14 +22,12 @@ void subCafeList(StompClient stompClient, List<String> cafeList,
         // 카페에 사용자 add
         if (result["type"] == "add") {
           print("add user in cafe $cafeId");
-          allUsers[cafeId]!
-              .add(UserModel.fromJson(result["cafeUserProfileDto"]));
+          allUsers.addUser(cafeId, UserModel.fromJson(result["cafeUserDto"]));
         }
         // 카페에서 사용자 delete
         else if (result["type"] == "delete") {
           print("delete user in cafe $cafeId");
-          allUsers[cafeId]!
-              .removeWhere((user) => user.loginId == result["loginId"]);
+          allUsers.deleteUser(cafeId, result["loginId"]);
         }
       },
     );
@@ -33,6 +37,11 @@ void subCafeList(StompClient stompClient, List<String> cafeList,
 // cafe 업데이트(추가, 삭제) pub 요청
 void pubCafe(
     StompClient stompClient, String type, String loginId, String cafeId) {
+  if (!stompClient.connected) {
+    print("stompClient is not connected !!");
+    return;
+  }
+
   stompClient.send(
     destination: '/pub/cafe/update',
     body: jsonEncode({

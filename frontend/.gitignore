@@ -50,6 +50,7 @@ app.*.map.json
 *.env
 /lib/cafe_filtering_test.dart
 /lib/screen/map_test.dart
+/lib/screen/test_screen.dart
 /android/app/google-services.json
 /ios/Runner/GoogleService-Info.plist
 firebase.json
