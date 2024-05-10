@@ -49,6 +49,8 @@ dependencies:
   google_maps_webservice: ^0.0.20-nullsafety.5
   stomp_dart_client: ^1.0.3
   flutter_countdown_timer: ^4.1.0
+  firebase_core: ^2.30.1
+  firebase_messaging: ^14.9.1
 
 dev_dependencies:
   flutter_test:

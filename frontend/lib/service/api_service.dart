@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -148,6 +149,9 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
+  // 디바이스 토큰을 발급
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  // print('!!!디바이스 토큰!!!!!: $fcmToken');
   final url = Uri.parse('$baseUrl/auth/signUp');
   final data = jsonEncode({
     'loginId': loginId,
@@ -155,6 +159,7 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
     'nickname': nickname,
     'email': email,
     'phone': phone,
+    'deviceToken': fcmToken,
   });
   try {
     http.Response res = await http.post(url,
