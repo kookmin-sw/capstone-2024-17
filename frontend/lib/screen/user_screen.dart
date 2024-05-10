@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
+import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -18,8 +20,9 @@ class _UserScreenState extends State<UserScreen> {
   String? token;
   bool isLogined = false;
   String nickname = '';
-  String logoInfo = '';
-  String companyName = '';
+  String logoInfo =
+      'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
+  String companyName = '미인증';
   String position = '';
   int temperature = 0;
   String introduction = '';
@@ -201,14 +204,7 @@ class _UserScreenState extends State<UserScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditProfileScreen(
-                                  nickname: nickname,
-                                  logoInfo: logoInfo,
-                                  companyName: companyName,
-                                  position: position,
-                                  temperature: temperature,
-                                  introduction: introduction,
-                                ),
+                                builder: (context) => const EditProfileScreen(),
                               ),
                             );
                           },
@@ -261,15 +257,28 @@ class _UserScreenState extends State<UserScreen> {
 
   Future<void> setProfile(String? token) async {
     // 토큰으로 프로필 get하는 코드
-    // 임의의 프로필
-    nickname = '뿡순이';
-    logoInfo =
-        'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
-    companyName = '쿠팡';
-    position = '웹 풀스택';
-    temperature = 46;
-    introduction =
-        '긴 텍스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ';
+    Map<String, dynamic> res = await getUserDetail();
+    if (res['success'] == true) {
+      // 요청 성공
+      print(res);
+      nickname = res['data']['nickname'];
+      if (res['data']['company'] != null) {
+        logoInfo = res['data']['company']['logoUrl'];
+        companyName = res['data']['company']['name'];
+      }
+
+      position = res['data']['position'];
+      temperature = res['data']['coffeeBean'].round(); // 반올림
+      introduction = res['data']['introduction'] ?? '';
+      print(res['data']);
+
+      setState(() {}); // 상태 갱신
+    } else {
+      // 요청 실패
+      showAlertDialog(
+          context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
+    }
+
     return;
   }
 }

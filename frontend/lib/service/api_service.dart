@@ -215,6 +215,29 @@ Future<Map<String, dynamic>> getUserDetail() async {
   }
 }
 
+// 자기소개 업데이트
+Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
+  final url = Uri.parse('$baseUrl/user/introduction/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'introduction': introduction,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
 Future<Map<String, dynamic>> getChatroomlist() async {
   final url = Uri.parse('$baseUrl/chatroom/list');
