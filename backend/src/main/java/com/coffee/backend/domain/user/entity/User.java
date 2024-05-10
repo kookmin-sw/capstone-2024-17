@@ -39,4 +39,5 @@ public class User {
     private String introduction;
     private String deviceToken;
     private String cafeId;
+    private String sessionId; //websocket 세션 id
 }
