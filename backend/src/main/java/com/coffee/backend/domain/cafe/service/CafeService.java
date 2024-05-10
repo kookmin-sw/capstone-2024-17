@@ -21,7 +21,7 @@ public class CafeService {
     private final UserService userService;
 
     //redis에 add 하는 메소드
-    public void addCafeChoice(String cafeId, String loginId) {
+    public void addCafeChoice(String cafeId, Long userId) {
         System.out.println("addCafeChoice() 진입");
         /*
         Redis에 아래 형식으로 저장됨
@@ -30,20 +30,22 @@ public class CafeService {
             value = set(user1, user2, user3)
          */
         String cafeChoiceKey = "cafe:" + cafeId;
-        redisTemplate.opsForSet().add(cafeChoiceKey, loginId); // 카페 ID에 해당하는 세트에 사용자 ID 추가
+        String userIdStr = String.valueOf(userId); // Long 타입을 String으로 변환
+        redisTemplate.opsForSet().add(cafeChoiceKey, userIdStr); // 카페 ID에 해당하는 세트에 사용자 ID 추가
     }
 
     //redis에서 delete 하는 메소드
-    public void deleteCafeChoice(String cafeId, String loginId) {
+    public void deleteCafeChoice(String cafeId, Long userId) {
         System.out.println("deleteCafeChoice() 진입");
         final String cafeChoiceKey = "cafe:" + cafeId;
 
         // 카페 ID에 해당하는 세트에서 사용자 ID 찾기
-        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, loginId);
+        String userIdStr = String.valueOf(userId); // Long 타입을 String으로 변환
+        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, userIdStr);
         if (Boolean.TRUE.equals(isMember)) {
-            redisTemplate.opsForSet().remove(cafeChoiceKey, loginId);
+            redisTemplate.opsForSet().remove(cafeChoiceKey, userIdStr);
         } else {
-            throw new IllegalArgumentException("User ID '" + loginId + "' 는 '" + cafeId + "' 카페에 속해 있지 않습니다.");
+            throw new IllegalArgumentException("User ID '" + userId + "' 는 '" + cafeId + "' 카페에 속해 있지 않습니다.");
         }
     }
 
@@ -55,7 +57,7 @@ public class CafeService {
         // 각 userId로 DB에서 User entity, (Company entity, position entity) 를 조회
         return Optional.ofNullable(userSet).orElse(Collections.emptySet()).stream()
                 .filter(Objects::nonNull) // null 값 제거
-                .map(userId -> getUserInfoFromDB((String) userId))
+                .map(user -> getUserInfoFromDB(Long.parseLong(user.toString()))) // String ID를 Long으로 안전하게 변환
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +67,7 @@ public class CafeService {
         return redisTemplate.opsForSet().members(cafeChoiceKey);
     }
 
-    public CafeUserDto getUserInfoFromDB(String userId) {
+    public CafeUserDto getUserInfoFromDB(Long userId) {
         return userService.getCafeUserInfoByLoginId(userId); // userId로 User entity 조회
     }
 }

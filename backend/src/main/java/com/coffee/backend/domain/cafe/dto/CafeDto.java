@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class CafeDto {
     private String type; // add, delete
-    private String loginId;
+    private Long userId;
     private String cafeId;
 }
