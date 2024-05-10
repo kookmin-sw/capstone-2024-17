@@ -71,10 +71,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           children: <Widget>[
-                            Image.network(
-                              logoInfo,
-                              scale: 4,
-                            ),
+                            Image.network(logoInfo, width: 100, height: 100),
                             const SizedBox(
                               width: 30,
                             ),
