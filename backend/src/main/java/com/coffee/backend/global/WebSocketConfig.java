@@ -18,13 +18,6 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @AllArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final UserService userService;
-    private final UserHandshakeInterceptor userHandshakeInterceptor;
-
-//    @Autowired
-//    public WebSocketConfig(UserService userService, UserHandshakeInterceptor userHandshakeInterceptor) {
-//        this.userService = userService;
-//        this.userHandshakeInterceptor = userHandshakeInterceptor;
-//    }
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry registry) {
@@ -36,7 +29,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
-                .addInterceptors(userHandshakeInterceptor) // userId 추출을 위해 인터셉터 추가
                 .withSockJS();
     }
 
