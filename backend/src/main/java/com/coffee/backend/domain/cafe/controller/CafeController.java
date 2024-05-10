@@ -9,6 +9,7 @@ import com.coffee.backend.domain.cafe.service.CafePublisher;
 import com.coffee.backend.domain.cafe.service.CafeService;
 import com.coffee.backend.domain.user.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class CafeController {
     /pub/cafe/update로 메시지 발행
     */
     @MessageMapping("/cafe/update") // pub/cafe/update
-    public void publishCafeUpdate(@AuthenticationPrincipal User user, @Payload CafeDto dto,
+    public void publishCafeUpdate(@AuthenticationPrincipal User user, @Payload @Valid CafeDto dto,
                                   SimpMessageHeaderAccessor headerAccessor)
             throws JsonProcessingException {
         String sessionId = headerAccessor.getSessionId(); // 웹소켓 session id
