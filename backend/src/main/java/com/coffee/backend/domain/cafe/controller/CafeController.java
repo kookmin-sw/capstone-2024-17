@@ -40,7 +40,6 @@ public class CafeController {
                                   SimpMessageHeaderAccessor headerAccessor)
             throws JsonProcessingException {
         String sessionId = headerAccessor.getSessionId(); // 웹소켓 session id
-        System.out.println("!!!!! 연결시 sessionId: " + sessionId);
         log.info("Message Catch!!");
         cafePublisher.updateCafeChoice(sessionId, dto);
     }

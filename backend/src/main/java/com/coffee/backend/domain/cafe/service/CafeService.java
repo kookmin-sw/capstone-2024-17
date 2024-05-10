@@ -35,9 +35,17 @@ public class CafeService {
             value = set(user1, user2, user3)
          */
         String cafeChoiceKey = "cafe:" + cafeId;
-        redisTemplate.opsForSet().add(cafeChoiceKey, loginId); // 카페 ID에 해당하는 세트에 사용자 ID 추가
-        System.out.println("왜 저장이 안되냐 : " + sessionId);
-        // 해당 UserDB에 카페 id 저장
+
+        // 이미 해당 카페에 존재하는 사용자인지 확인
+        Boolean isMember = redisTemplate.opsForSet().isMember(cafeChoiceKey, loginId);
+        if (Boolean.TRUE.equals(isMember)) {
+            throw new IllegalArgumentException(
+                    "Add Exception: " + "'" + loginId + "'" + " 는 " + cafeId + "' 카페에 이미 속해 있습니다.");
+        }
+
+        // 카페 ID에 해당하는 세트에 사용자 추가
+        redisTemplate.opsForSet().add(cafeChoiceKey, loginId);
+        // UserDB에 카페 id 저장
         userRepository.findByLoginId(loginId).ifPresent(user -> {
             user.setCafeId(cafeId);
             user.setSessionId(sessionId);
@@ -55,7 +63,8 @@ public class CafeService {
         if (Boolean.TRUE.equals(isMember)) {
             redisTemplate.opsForSet().remove(cafeChoiceKey, loginId);
         } else {
-            throw new IllegalArgumentException("User ID '" + loginId + "' 는 '" + cafeId + "' 카페에 속해 있지 않습니다.");
+            throw new IllegalArgumentException(
+                    "Delete Exception: " + "'" + loginId + "'" + " 는 " + cafeId + "' 카페에 속해 있지 않습니다.");
         }
         // 해당 User cafeId, sessionId null 로 초기화
         userRepository.findByLoginId(loginId).ifPresent(user -> {
@@ -64,7 +73,6 @@ public class CafeService {
             userRepository.save(user);
         });
     }
-
 
     public List<CafeUserDto> getUserProfilesFromRedisAndDB(String cafeId) {
         // cafeId 를 가진 유저를 redis 에서 싹 조회
