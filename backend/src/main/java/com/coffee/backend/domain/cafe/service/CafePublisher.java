@@ -25,7 +25,7 @@ public class CafePublisher {
                 cafeService.addCafeChoice(cafeId, userId, sessionId);
                 break;
             case "delete":
-                cafeService.deleteCafeChoice(cafeId, userId, sessionId);
+                cafeService.deleteCafeChoice(cafeId, userId);
                 break;
             default:
                 throw new IllegalArgumentException(

@@ -33,7 +33,7 @@ public class UserService {
     }
 
     // 특정 카페에 접속한 사용자 list에 보일 User 데이터 조회
-    public CafeUserDto getCafeUserInfoByLoginId(Long userId) {
+    public CafeUserDto getCafeUserInfoByUserId(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> {
                     log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
@@ -93,7 +93,7 @@ public class UserService {
         user.setSessionId(sessionId);
         userRepository.save(user);
     }
-  
+
     public UserDto resetCompany(User user) {
         user.setCompany(null);
         return customMapper.toUserDto(userRepository.save(user));
