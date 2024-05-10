@@ -1,6 +1,7 @@
 package com.coffee.backend.domain.cafe.service;
 
 import com.coffee.backend.domain.cafe.dto.CafeUserDto;
+import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.domain.user.service.UserService;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class CafeService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     //redis에 add 하는 메소드
     public void addCafeChoice(String cafeId, String loginId) {
@@ -31,6 +33,12 @@ public class CafeService {
          */
         String cafeChoiceKey = "cafe:" + cafeId;
         redisTemplate.opsForSet().add(cafeChoiceKey, loginId); // 카페 ID에 해당하는 세트에 사용자 ID 추가
+
+        // 해당 UserDB에 카페 id 저장
+        userRepository.findByLoginId(loginId).ifPresent(user -> {
+            user.setCafeId(cafeId);
+            userRepository.save(user);
+        });
     }
 
     //redis에서 delete 하는 메소드
@@ -45,6 +53,11 @@ public class CafeService {
         } else {
             throw new IllegalArgumentException("User ID '" + loginId + "' 는 '" + cafeId + "' 카페에 속해 있지 않습니다.");
         }
+        // 해당 User cafeId null 로 바꾸기
+        userRepository.findByLoginId(loginId).ifPresent(user -> {
+            user.setCafeId(null);
+            userRepository.save(user);
+        });
     }
 
 
