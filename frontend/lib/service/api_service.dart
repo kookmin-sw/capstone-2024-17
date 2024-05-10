@@ -237,6 +237,27 @@ Future<Map<String, dynamic>> getChatroomlist() async {
   }
 }
 
+// 직무리스트 가져오기
+Future<Map<String, dynamic>> getPositionlist() async {
+  final url = Uri.parse('$baseUrl/user/position/list');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 해당 채팅방의 채팅 목록을 get
 Future<Map<String, dynamic>> getChatList(int chatroomId) async {
   const endpointUrl = '$baseUrl/message/list';
