@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +43,10 @@ public class UserController {
     public ResponseEntity<ApiResponse<List<String>>> positionList() {
         return ResponseEntity.ok(
                 ApiResponse.success(Arrays.stream(Position.values()).map(position -> position.getName()).toList()));
+    }
+
+    @PutMapping("/company/reset")
+    public ResponseEntity<ApiResponse<UserDto>> resetCompany(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(ApiResponse.success(userService.resetCompany(user)));
     }
 }

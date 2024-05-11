@@ -33,15 +33,15 @@ public class UserService {
     }
 
     // 특정 카페에 접속한 사용자 list에 보일 User 데이터 조회
-    public CafeUserDto getCafeUserInfoByLoginId(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
+    public CafeUserDto getCafeUserInfoByUserId(Long userId) {
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> {
-                    log.info("id = {} 인 사용자가 존재하지 않습니다", loginId);
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
                     return new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
 
         return CafeUserDto.builder()
-                .loginId(user.getLoginId())
+                .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .company(Optional.ofNullable(user.getCompany()).map(Company::getName).orElse("무소속"))
                 .position(user.getPosition().getName())
@@ -54,6 +54,9 @@ public class UserService {
     public void checkDuplicatedEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
+            if (user.get().getEmail().equals(email)) {
+                return; // 자기 자신 email이면 duplication 아님
+            }
             log.debug("userService.checkDuplicatedEmail exception occur email: {}", email);
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
@@ -77,6 +80,22 @@ public class UserService {
 
     public UserDto updateUserIntroduction(User user, String introduction) {
         user.setIntroduction(introduction);
+        return customMapper.toUserDto(userRepository.save(user));
+    }
+
+
+    public void updateUserSessionId(Long userId, String sessionId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> {
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
+                    return new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+        user.setSessionId(sessionId);
+        userRepository.save(user);
+    }
+
+    public UserDto resetCompany(User user) {
+        user.setCompany(null);
         return customMapper.toUserDto(userRepository.save(user));
     }
 }

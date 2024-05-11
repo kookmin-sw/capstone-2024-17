@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CafeSubDto {
     private String type; // add, delete
-    private String loginId;
+    private Long userId;
     private String cafeId;
     private CafeUserDto cafeUserDto;
 }
