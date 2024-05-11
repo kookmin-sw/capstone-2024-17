@@ -32,22 +32,8 @@ class AlarmListWidgetState extends State<AlarmList> {
 
   @override
   void initState() {
-    final fcm = FCM();
-    fcm.setNotifications(); // 알림 설정
-
-    fcm.messageStreamController.stream.listen((msg) {
-      print('[alarmList content] $msg');
-      setState(() {
-        // 받은 알림을 맨 앞에 추가
-        events.insert(
-            0,
-            AlarmEvent(
-                messageTitle: msg['title'],
-                messageBody: msg['body'],
-                time: msg['sentTime'],
-                type: 'accept'));
-      });
-    });
+    readNotificationLogFileContents()
+        .then((str) => {print(str)}); // 임시: 알림 기록 콘솔에 출력
     super.initState();
   }
 
