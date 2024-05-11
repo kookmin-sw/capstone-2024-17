@@ -230,7 +230,7 @@ class _CafeDetailsState extends State<CafeDetails>
                         company: userList[index].company,
                         position: userList[index].position,
                         introduction: userList[index].introduction,
-                        rating: userList![index].rating,
+                        rating: userList[index].rating,
                       );
                     },
                   ),
