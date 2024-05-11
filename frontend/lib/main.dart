@@ -89,7 +89,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
-      userToken = token;
+      setState(() {
+        userToken = token;
+      });
 
       // 웹소켓(stomp) 연결
       stompClient = StompClient(
