@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CafeUserDto {
-    private String loginId;
+    private Long userId;
     private String nickname;
     private String company;
     private String position;

@@ -17,15 +17,15 @@ public class CafePublisher {
 
     public void updateCafeChoice(CafeDto dto) throws JsonProcessingException, IllegalArgumentException {
         String type = dto.getType();
-        String loginId = dto.getLoginId();
+        Long userId = dto.getUserId();
         String cafeId = dto.getCafeId();
 
         switch (type) {
             case "add":
-                cafeService.addCafeChoice(cafeId, loginId);
+                cafeService.addCafeChoice(cafeId, userId);
                 break;
             case "delete":
-                cafeService.deleteCafeChoice(cafeId, loginId);
+                cafeService.deleteCafeChoice(cafeId, userId);
                 break;
             default:
                 throw new IllegalArgumentException(
@@ -33,8 +33,8 @@ public class CafePublisher {
         }
         String cafeDtoJson = new ObjectMapper().writeValueAsString(dto);
         // 해당 user의 전체 정보를 조회
-        CafeUserDto cafeUserDto = cafeService.getUserInfoFromDB(loginId);
-        CafeSubDto cafeSubDto = CafeSubDto.builder().type(type).loginId(loginId).cafeId(cafeId).cafeUserDto(cafeUserDto)
+        CafeUserDto cafeUserDto = cafeService.getUserInfoFromDB(userId);
+        CafeSubDto cafeSubDto = CafeSubDto.builder().type(type).userId(userId).cafeId(cafeId).cafeUserDto(cafeUserDto)
                 .build();
         sendingOperations.convertAndSend("/sub/cafe/" + cafeId, cafeSubDto);
     }
