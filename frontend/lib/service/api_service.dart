@@ -302,6 +302,29 @@ Future<Map<String, dynamic>> getPositionlist() async {
   }
 }
 
+// 직무 저장 요청
+Future<Map<String, dynamic>> updatePosition(String position) async {
+  final url = Uri.parse('$baseUrl/user/position/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'position': position,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 해당 채팅방의 채팅 목록을 get
 Future<Map<String, dynamic>> getChatList(int chatroomId) async {
   const endpointUrl = '$baseUrl/message/list';
