@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
 
 // 백그라운드에서 수신된 메시지를 처리하기 위한 콜백 함수
 Future<void> onBackgroundMessage(RemoteMessage message) async {
@@ -107,7 +108,7 @@ Future<File> saveMessageDataLogToFile(
     "body": body,
     "sentTime": sentTime.toString(),
   };
-  return file.writeAsString('\n${log.toString()}', mode: FileMode.append);
+  return file.writeAsString('\n${json.encode(log)}', mode: FileMode.append);
 }
 
 Future<void> updateNotificationLogFile(String userUUID) async {

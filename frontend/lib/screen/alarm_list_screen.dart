@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/notification.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'dart:convert';
 
 final List<AlarmEvent> events = [];
 
@@ -32,9 +33,8 @@ class AlarmListWidgetState extends State<AlarmList> {
 
   @override
   void initState() {
-    readNotificationLogFileContents()
-        .then((str) => {print(str)}); // 임시: 알림 기록 콘솔에 출력
     super.initState();
+    loadNotifications();
   }
 
   @override
@@ -84,5 +84,29 @@ class AlarmListWidgetState extends State<AlarmList> {
         ],
       ),
     );
+  }
+
+  Future<void> loadNotifications() async {
+    final contents = await readNotificationLogFileContents();
+    if (contents == null) return;
+    final lines = contents.split('\n');
+    lines.removeAt(0); // 첫 번째 줄은 UUID이므로 제거
+    setState(() {
+      // 기존의 events 리스트 초기화
+      events.clear();
+      // 각 줄을 AlarmEvent 객체로 만들어 events 리스트에 추가
+      for (var line in lines.reversed) {
+        final notification = json.decode(line);
+        final title = notification['title'];
+        final body = notification['body'];
+        final time = DateTime.parse(notification['sentTime']);
+        events.add(AlarmEvent(
+          messageTitle: title,
+          messageBody: body,
+          time: time,
+          type: '', // 타입은 여기에 추가해야 함
+        ));
+      }
+    });
   }
 }
