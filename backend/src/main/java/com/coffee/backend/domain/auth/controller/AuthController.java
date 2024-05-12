@@ -40,6 +40,8 @@ public class AuthController {
     public ResponseEntity<ApiResponse<UserDto>> signUp(
             @Valid @RequestBody SignUpDto dto
     ) {
+        DtoLogger.requestBody(dto);
+
         UserDto userDto = authService.signUp(dto);
         return ResponseEntity.ok(ApiResponse.success(userDto));
     }
@@ -48,7 +50,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<AuthDto>> signIn(
             @Valid @RequestBody SignInDto dto
     ) {
-        DtoLogger.logDto(dto); //request 출력
+        DtoLogger.requestBody(dto);
 
         AuthDto authDto = authService.signIn(dto);
         return ResponseEntity.ok(ApiResponse.success(authDto));
@@ -59,6 +61,9 @@ public class AuthController {
             @AuthenticationPrincipal User user,
             @RequestBody DeleteUserDto dto
     ) {
+        DtoLogger.user(user);
+        DtoLogger.requestBody(dto);
+
         boolean isDeleted = authService.deleteUserByUserUUID(dto.getUserUUID());
         if (isDeleted) {
             return ResponseEntity.ok(ApiResponse.success(true));
@@ -69,6 +74,8 @@ public class AuthController {
 
     @PostMapping("/kakaoSignIn")
     public ResponseEntity<ApiResponse<AuthDto>> kakaoLogin(@RequestBody KakaoRequestDto dto) {
+        DtoLogger.requestBody(dto);
+
         KakaoUserInfoDto userInfoDto = kakaoLoginService.getUserInfo(dto.getAccessToken());
         AuthDto authDto = kakaoLoginService.signIn(userInfoDto);
         return ResponseEntity.ok(ApiResponse.success(authDto));
@@ -76,6 +83,9 @@ public class AuthController {
 
     @GetMapping("/detail")
     public ResponseEntity<ApiResponse<UserDto>> detail(@AuthenticationPrincipal User user) {
+        DtoLogger.user(user);
+        DtoLogger.user(user);
+
         return ResponseEntity.ok(ApiResponse.success(authService.detail(user)));
     }
 }

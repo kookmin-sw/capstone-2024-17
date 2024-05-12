@@ -7,6 +7,7 @@ import com.coffee.backend.domain.company.dto.EmailVerificationRequest;
 import com.coffee.backend.domain.company.dto.EmailVerificationResponse;
 import com.coffee.backend.domain.company.service.CompanyService;
 import com.coffee.backend.domain.user.entity.User;
+import com.coffee.backend.global.DtoLogger;
 import com.coffee.backend.utils.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -31,6 +32,8 @@ public class CompanyController {
      */
     @GetMapping("/company/search")
     public ResponseEntity<ApiResponse<List<CompanyDto>>> searchCompany(@RequestParam String keyword) {
+        DtoLogger.requestParam("keyword", keyword);
+
         List<CompanyDto> companyList = companyService.searchCompany(keyword);
         return ResponseEntity.ok(ApiResponse.success(companyList));
     }
@@ -40,8 +43,11 @@ public class CompanyController {
      */
     @PostMapping("/email/verification-request")
     public ResponseEntity<ApiResponse<String>> sendMessage(@AuthenticationPrincipal User user,
-                                                           @RequestBody @Valid EmailRequest emailRequest) {
-        companyService.sendCodeToEmail(user.getLoginId(), emailRequest.getEmail());
+                                                           @RequestBody @Valid EmailRequest dto) {
+        DtoLogger.user(user);
+        DtoLogger.requestBody(dto);
+
+        companyService.sendCodeToEmail(user.getLoginId(), dto.getEmail());
         return ResponseEntity.ok(ApiResponse.success("Email sent"));
     }
 
@@ -50,11 +56,14 @@ public class CompanyController {
      */
     @PostMapping("/email/verification")
     public ResponseEntity<ApiResponse<EmailVerificationResponse>> verificationEmail(@AuthenticationPrincipal User user,
-                                                                                    @RequestBody EmailVerificationRequest emailVerificationRequest) {
+                                                                                    @RequestBody EmailVerificationRequest dto) {
+        DtoLogger.user(user);
+        DtoLogger.requestBody(dto);
+
         EmailVerificationResponse response = companyService.verifiedCode(
                 user,
-                emailVerificationRequest.getEmail(),
-                emailVerificationRequest.getAuthCode());
+                dto.getEmail(),
+                dto.getAuthCode());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

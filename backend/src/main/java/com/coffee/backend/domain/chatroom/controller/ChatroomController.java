@@ -6,6 +6,7 @@ import com.coffee.backend.domain.chatroom.dto.ChatroomResponse;
 import com.coffee.backend.domain.chatroom.dto.ChatroomResponses;
 import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.user.entity.User;
+import com.coffee.backend.global.DtoLogger;
 import com.coffee.backend.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,9 @@ public class ChatroomController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<ChatroomResponse>> createChatroom(@AuthenticationPrincipal User user,
                                                                         @RequestParam("senderUUID") String senderUUID) {
-        // SenderUUID: 매칭요청을 보낸 사람 UUID
+        DtoLogger.user(user);
+        DtoLogger.requestParam("senderUUID", senderUUID); // SenderUUID: 매칭요청을 보낸 사람 UUID
+
         ChatroomCreationDto dto = new ChatroomCreationDto(senderUUID, user.getUserId());
         ChatroomResponse response = chatroomService.createChatroom(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
@@ -36,6 +39,8 @@ public class ChatroomController {
     //    내가 속한 채팅방 리스트
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<ChatroomResponses>> getChatrooms(@AuthenticationPrincipal User user) {
+        DtoLogger.user(user);
+
         ChatroomResponses chatroomResponses = chatroomService.getChatrooms(user);
         return ResponseEntity.ok(ApiResponse.success(chatroomResponses));
     }
