@@ -37,19 +37,4 @@ public class DtoLogger {
         logMessage.append("Request : {").append(key).append(" : ").append(valueType).append("}");
         logger.trace(logMessage.toString());
     }
-
-    public static void user(Object user) {
-        StringBuilder logMessage = new StringBuilder();
-        String userIdValue = "";
-        try {
-            Field userIdField = user.getClass().getDeclaredField("userId"); // "userId" 필드에 접근
-            userIdField.setAccessible(true); // private 필드라면 접근 가능하게 설정
-            Object value = userIdField.get(user); // 필드의 값을 가져옴
-            userIdValue = String.valueOf(value); // Object를 String으로 변환
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Failed to access userId field", e);
-        }
-        logMessage.append("Request : {User ID: ").append(userIdValue).append("}");
-        logger.trace(logMessage.toString());
-    }
 }

@@ -15,6 +15,11 @@ public class LoggingInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 요청 Endpoint 로깅
         logger.trace("URL : {}", request.getRequestURI());
+
+        // User Authentication 이 request 로 들어온 경우
+        if (request.getHeader("authorization") != null) {
+            logger.trace("Authorization Token : {User}");
+        }
         return true;
     }
 }
