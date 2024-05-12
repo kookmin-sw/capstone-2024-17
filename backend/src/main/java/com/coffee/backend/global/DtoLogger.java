@@ -12,10 +12,14 @@ public class DtoLogger {
         Class<?> clazz = dto.getClass();
         Field[] fields = clazz.getDeclaredFields(); // 모든 필드를 가져옴
         StringBuilder logMessage = new StringBuilder();
-        logMessage.append(clazz.getSimpleName()).append(" {");
 
+        // log 커스텀
+        String dtoName = dto.getClass().getSimpleName();
+        logMessage.append(dtoName).append(" {");
         for (Field field : fields) {
-            field.setAccessible(true); // private 필드 접근 가능하도록 설정
+            field.setAccessible(true); // private 필드 접근 허용
+
+            // log
             String key = field.getName();
             String valueType = field.getType().getSimpleName();
             logMessage.append(key).append(": ").append(valueType).append(", ");
@@ -25,6 +29,6 @@ public class DtoLogger {
             logMessage.setLength(logMessage.length() - 2); // 마지막 콤마 제거
         }
         logMessage.append("}");
-        logger.info(logMessage.toString());
+        logger.trace(logMessage.toString());
     }
 }

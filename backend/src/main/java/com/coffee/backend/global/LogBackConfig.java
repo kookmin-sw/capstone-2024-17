@@ -16,10 +16,12 @@ import org.springframework.context.annotation.Configuration;
 public class LogBackConfig {
     private final LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
     // 커스텀 영역
-    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %logger{35} - %blue(%msg%n)";
+    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %replace(%logger){'com.coffee.', ''} - %blue(%msg%n)";
+//    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %logger{50} - %blue(%msg%n)";
+
 
     private void createLoggers(ConsoleAppender<ILoggingEvent> appender) {
-        createLogger("com.coffee.backend", TRACE, true, appender);  // backend 패키지 TRACE 레벨로 로깅
+        createLogger("com.coffee.backend", TRACE, false, appender);  // backend 패키지 TRACE 레벨로 로깅
     }
 
 

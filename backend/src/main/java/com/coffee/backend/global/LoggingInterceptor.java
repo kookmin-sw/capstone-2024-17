@@ -14,7 +14,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 요청 Endpoint 로깅
-        logger.trace("!!! URL : {}", request.getRequestURI());
+        logger.trace("URL : {}", request.getRequestURI());
         return true;
     }
 }
