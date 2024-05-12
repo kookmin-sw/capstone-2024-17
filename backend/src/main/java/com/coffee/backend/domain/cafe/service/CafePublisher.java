@@ -5,9 +5,11 @@ import com.coffee.backend.domain.cafe.dto.CafeSubDto;
 import com.coffee.backend.domain.cafe.dto.CafeUserDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CafePublisher {
@@ -16,6 +18,7 @@ public class CafePublisher {
 
     public void updateCafeChoice(String sessionId, CafeDto dto)
             throws JsonProcessingException, IllegalArgumentException {
+        log.trace("updateCafeChoice()");
         String type = dto.getType();
         Long userId = dto.getUserId();
         String cafeId = dto.getCafeId();

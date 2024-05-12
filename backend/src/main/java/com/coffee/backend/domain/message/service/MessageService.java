@@ -11,8 +11,10 @@ import com.coffee.backend.domain.user.service.UserService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageService {
@@ -21,10 +23,12 @@ public class MessageService {
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일/HH:mm");
 
     public List<Message> getMessages(Chatroom chatRoom) {
+        log.trace("getMessages()");
         return messageRepository.findAllByChatroom(chatRoom).stream().toList();
     }
 
     public MessageResponse convertMessageResponse(Message message, Long userId) {
+        log.trace("convertMessageResponse()");
         UserDto userInfo = new UserDto();
         userInfo.setNickname(userService.getByUserId(userId).getNickname());
 
@@ -35,6 +39,7 @@ public class MessageService {
     }
 
     public MessageResponses convertMessageResponses(List<Message> messages) {
+        log.trace("convertMessageResponses()");
         return new MessageResponses(messages.stream().map(m -> {
                     UserDto userInfo = new UserDto();
                     userInfo.setNickname(userService.getByUserId(m.getSenderId()).getNickname());
@@ -49,6 +54,7 @@ public class MessageService {
     }
 
     public Message saveMessage(Chatroom chatroom, MessageDto messageDto) {
+        log.trace("saveMessage()");
         Message message = new Message();
         message.setSenderId(messageDto.getSenderId());
         message.setContent(messageDto.getContent());
@@ -60,6 +66,7 @@ public class MessageService {
      * 채팅방의 가장 최근 메시지의 String content를 반환함
      */
     public String getRecentMessageContent(Chatroom chatroom) {
+        log.trace("getRecentMessageContent()");
         List<Message> messages = messageRepository.findAllByChatroom(chatroom);
         if (!messages.isEmpty()) {
             return messages.get(messages.size() - 1).getContent();
