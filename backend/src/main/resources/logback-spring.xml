@@ -13,9 +13,6 @@
         </encoder>
     </appender>
 
-    <!-- 특정 패키지의 로그 레벨 설정 -->
-    <logger name="com.coffee.backend" level="DEBUG"/>
-
     <!-- 기본 로그 레벨 설정 및 Appender 연결 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

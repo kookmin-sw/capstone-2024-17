@@ -16,14 +16,12 @@ import org.springframework.context.annotation.Configuration;
 public class LogBackConfig {
     private final LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
     // 커스텀 영역
-    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %logger{35} - %yellow(%msg%n)";
+    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %logger{35} - %blue(%msg%n)";
 
     private void createLoggers(ConsoleAppender<ILoggingEvent> appender) {
-//        createLogger("root", INFO, true, appender);
-        createLogger("com.coffee.backend", TRACE, true, appender);  // 이제 backend 패키지 로그를 자세히 기록
-        createLogger("com.coffee.backend.*.controller", TRACE, false, appender); // 컨트롤러에서 HTTP 요청과 응답 로깅
-        createLogger("com.coffee.backend.*.service", TRACE, false, appender);    // 서비스 메소드 진입 로깅
+        createLogger("com.coffee.backend", TRACE, true, appender);  // backend 패키지 TRACE 레벨로 로깅
     }
+
 
     @Bean
     public ConsoleAppender<ILoggingEvent> logConfig() {
@@ -35,7 +33,7 @@ public class LogBackConfig {
     private void createLogger(String loggerName, Level logLevel, Boolean additive,
                               ConsoleAppender<ILoggingEvent> appender) {
         Logger logger = logCtx.getLogger(loggerName);
-        logger.setAdditive(additive);
+        logger.setAdditive(false); //로그 이벤트가 루트 로거까지 전파되지 않도록
         logger.setLevel(logLevel);
         logger.addAppender(appender);
     }
