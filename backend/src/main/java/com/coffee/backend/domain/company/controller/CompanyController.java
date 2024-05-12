@@ -44,7 +44,6 @@ public class CompanyController {
     @PostMapping("/email/verification-request")
     public ResponseEntity<ApiResponse<String>> sendMessage(@AuthenticationPrincipal User user,
                                                            @RequestBody @Valid EmailRequest dto) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         companyService.sendCodeToEmail(user.getLoginId(), dto.getEmail());
@@ -57,7 +56,6 @@ public class CompanyController {
     @PostMapping("/email/verification")
     public ResponseEntity<ApiResponse<EmailVerificationResponse>> verificationEmail(@AuthenticationPrincipal User user,
                                                                                     @RequestBody EmailVerificationRequest dto) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         EmailVerificationResponse response = companyService.verifiedCode(

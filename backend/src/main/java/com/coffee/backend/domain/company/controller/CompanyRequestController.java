@@ -27,7 +27,6 @@ public class CompanyRequestController {
     public ResponseEntity<ApiResponse<CompanyRequestRequest>> createCompanyRequest(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody CompanyRequestRequest dto) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         return ResponseEntity.ok(ApiResponse.success(companyRequestService.saveRequest(user, dto)));

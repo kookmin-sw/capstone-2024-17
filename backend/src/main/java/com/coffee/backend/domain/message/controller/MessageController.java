@@ -38,7 +38,6 @@ public class MessageController {
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<MessageResponses>> getMessageList(@AuthenticationPrincipal User user,
                                                                         @RequestParam(name = "chatroom_id") Long chatroomId) {
-        DtoLogger.user(user);
         DtoLogger.requestParam("chatroomId", chatroomId);
 
         // 채팅방 존재, 접근권한 확인
@@ -56,7 +55,6 @@ public class MessageController {
     public void sendAndSaveMessage(@DestinationVariable Long chatroomId, @RequestBody MessageDto dto) {
         DtoLogger.requestBody(dto);
 
-        System.out.println("message!");
         // 메시지 저장
         Chatroom chatroom = chatroomRepository.findById(chatroomId).orElseThrow();
         Message message = messageService.saveMessage(chatroom, dto);

@@ -31,7 +31,6 @@ public class UserController {
     @PostMapping("/position/update")
     public ResponseEntity<ApiResponse<UserDto>> position(@AuthenticationPrincipal User user,
                                                          @RequestBody PositionUpdateRequest dto) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         return ResponseEntity.ok(ApiResponse.success(userService.updateUserPosition(user, dto.getPosition())));
@@ -40,7 +39,6 @@ public class UserController {
     @PostMapping("/introduction/update")
     public ResponseEntity<ApiResponse<UserDto>> position(@AuthenticationPrincipal User user,
                                                          @RequestBody IntroductionUpdateRequest dto) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         return ResponseEntity.ok(ApiResponse.success(userService.updateUserIntroduction(user, dto.getIntroduction())));
@@ -54,7 +52,6 @@ public class UserController {
 
     @PutMapping("/company/reset")
     public ResponseEntity<ApiResponse<UserDto>> resetCompany(@AuthenticationPrincipal User user) {
-        DtoLogger.user(user);
 
         return ResponseEntity.ok(ApiResponse.success(userService.resetCompany(user)));
     }

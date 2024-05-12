@@ -61,7 +61,6 @@ public class AuthController {
             @AuthenticationPrincipal User user,
             @RequestBody DeleteUserDto dto
     ) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         boolean isDeleted = authService.deleteUserByUserUUID(dto.getUserUUID());
@@ -83,9 +82,6 @@ public class AuthController {
 
     @GetMapping("/detail")
     public ResponseEntity<ApiResponse<UserDto>> detail(@AuthenticationPrincipal User user) {
-        DtoLogger.user(user);
-        DtoLogger.user(user);
-
         return ResponseEntity.ok(ApiResponse.success(authService.detail(user)));
     }
 }

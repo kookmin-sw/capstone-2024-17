@@ -42,7 +42,6 @@ public class CafeController {
                                   SimpMessageHeaderAccessor headerAccessor)
             throws JsonProcessingException {
         // TODO : 웹소켓 url log 확인
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         String sessionId = headerAccessor.getSessionId(); // 웹소켓 session id
@@ -54,7 +53,6 @@ public class CafeController {
     @PostMapping("/cafe/get-users")
     public ResponseEntity<Map<String, List<CafeUserDto>>> getCafeUsers(@AuthenticationPrincipal User user,
                                                                        @RequestBody CafeListDto dto) {
-        DtoLogger.user(user);
         DtoLogger.requestBody(dto);
 
         List<String> cafeList = dto.getCafeList();
