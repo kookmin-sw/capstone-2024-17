@@ -14,7 +14,7 @@ public class DtoLogger {
         String dtoName = dto.getClass().getSimpleName();
         Field[] fields = clazz.getDeclaredFields(); // 모든 필드를 가져옴
         // log 커스텀
-        logMessage.append("Request : ");
+        logMessage.append("RequestBody : ");
         logMessage.append(dtoName).append(" {");
         for (Field field : fields) {
             field.setAccessible(true); // private 필드 접근 허용
@@ -34,7 +34,7 @@ public class DtoLogger {
     public static void requestParam(String key, Object value) {
         StringBuilder logMessage = new StringBuilder();
         String valueType = value.getClass().getSimpleName();
-        logMessage.append("Request : {").append(key).append(" : ").append(valueType).append("}");
+        logMessage.append("RequestParam : {").append(key).append(" : ").append(valueType).append("}");
         logger.trace(logMessage.toString());
     }
 }
