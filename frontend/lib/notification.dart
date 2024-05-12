@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
+import 'package:permission_handler/permission_handler.dart';
 
 // 백그라운드에서 수신된 메시지를 처리하기 위한 콜백 함수
 Future<void> onBackgroundMessage(RemoteMessage message) async {
@@ -21,7 +22,14 @@ class FCM {
       StreamController<Map<String, dynamic>>.broadcast();
 
   // 알림 설정
-  setNotifications() {
+  setNotifications() async {
+    PermissionStatus status = await Permission.notification.request();
+    if (status.isDenied) {
+      print('사용자가 알림 권한을 거부했습니다.');
+    } else if (status.isGranted) {
+      print('사용자가 알림 권한을 허용했습니다.');
+    }
+
     FirebaseMessaging.onBackgroundMessage(
         onBackgroundMessage); // 백그라운드 메시지 처리 함수를 등록
 
