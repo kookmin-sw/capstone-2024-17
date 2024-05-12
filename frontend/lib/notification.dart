@@ -7,6 +7,9 @@ import 'package:path_provider/path_provider.dart';
 // 백그라운드에서 수신된 메시지를 처리하기 위한 콜백 함수
 Future<void> onBackgroundMessage(RemoteMessage message) async {
   await Firebase.initializeApp(); // 백그라운드일 때 firebase 초기화
+  // file에 저장
+  await saveMessageDataLogToFile(
+      message.data['title'], message.data['body'], message.sentTime!);
 }
 
 // FCM 관련 기능을 관리하는 클래스
@@ -31,24 +34,16 @@ class FCM {
     // onMessage: 메시지가 도착했을 때 발생하는 이벤트
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
+        // file에 저장
+        await saveMessageDataLogToFile(
+            message.data['title'], message.data['body'], message.sentTime!);
         if (message.notification != null) {
-          /*
-        print('[forground data]: ${message.data}');
-        print(
-            '[forground notification]: body: ${message.notification!.body}, title: ${message.notification!.title}');
-        print('[forground sentTime]: ${message.sentTime}');
-        */
-
           messageStreamController.sink.add({
             'title': message.data['title'],
             'body': message.data['body'],
             'sentTime': message.sentTime,
             'senderId': message.senderId,
           });
-
-          // file에 저장
-          await saveNotificationLogToFile(message.notification!.title!,
-              message.notification!.body!, message.sentTime!);
         } else {
           print('message.notification is null');
         }
@@ -67,9 +62,6 @@ class FCM {
             'sentTime': message.sentTime,
             'senderId': message.senderId,
           });
-
-          await saveNotificationLogToFile(message.notification!.title!,
-              message.notification!.body!, message.sentTime!);
         } else {
           print('message.notification is null');
         }
@@ -91,9 +83,6 @@ class FCM {
           'sentTime': initialMessage.sentTime,
           'senderId': initialMessage.senderId,
         });
-
-        await saveNotificationLogToFile(initialMessage.notification!.title!,
-            initialMessage.notification!.body!, initialMessage.sentTime!);
       } else {
         print('initialMessage.notification is null');
       }
@@ -105,20 +94,20 @@ class FCM {
   dispose() {
     messageStreamController.close();
   }
+}
 
-  // /data/user/0/com.example.frontend/app_flutter의 notification.txt에 저장함
-  Future<File> saveNotificationLogToFile(
-      String title, String body, DateTime sentTime) async {
-    final directory = await getApplicationDocumentsDirectory();
-    // print(directory.path);
-    final file = File('${directory.path}/notification.txt');
-    Map<String, String> log = {
-      "title": title,
-      "body": body,
-      "sentTime": sentTime.toString(),
-    };
-    return file.writeAsString('\n${log.toString()}', mode: FileMode.append);
-  }
+// /data/user/0/com.example.frontend/app_flutter의 notification.txt에 저장함
+Future<File> saveMessageDataLogToFile(
+    String title, String body, DateTime sentTime) async {
+  final directory = await getApplicationDocumentsDirectory();
+  // print(directory.path);
+  final file = File('${directory.path}/notification.txt');
+  Map<String, String> log = {
+    "title": title,
+    "body": body,
+    "sentTime": sentTime.toString(),
+  };
+  return file.writeAsString('\n${log.toString()}', mode: FileMode.append);
 }
 
 Future<void> updateNotificationLogFile(String userUUID) async {
