@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const baseUrl = "http://3.36.108.21:8080";
 const storage = FlutterSecureStorage();
@@ -39,9 +41,117 @@ Future<Map<String, List<UserModel>>> getAllUsers(
   }
 }
 
+//매칭 요청
+Future<Map<String, dynamic>> matchRequest(
+    int senderId, int receiverId, int requestTypeId) async {
+  final url = Uri.parse('$baseUrl/match/request');
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
+
+  senderId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
+  receiverId = 7;
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'requestTypeId': requestTypeId
+      }),
+    );
+
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData;
+      } else {
+        throw Exception(
+            '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+      }
+    } else {
+      throw Exception('서버 오류: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
+//매칭 info 요청
+Future<Map<String, dynamic>> matchInfoRequest(
+    String matchId, int senderId, int receiverId) async {
+  final url = Uri.parse(
+      '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
+
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  print("userToken = $userToken");
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    print("처리중");
+    if (response.statusCode == 200) {
+      print("O1");
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      print("O2");
+      throw Exception('Failed to get match info: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
+//match cancel 요청
+Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
+  final url = Uri.parse('$baseUrl/match/cancel');
+
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+
+  try {
+    final response = await http.delete(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Failed to get match info: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
+  // 디바이스 토큰을 발급
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  // print('!!!디바이스 토큰!!!!!: $fcmToken');
   final url = Uri.parse('$baseUrl/auth/signUp');
   final data = jsonEncode({
     'loginId': loginId,
@@ -49,11 +159,12 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
     'nickname': nickname,
     'email': email,
     'phone': phone,
+    'deviceToken': fcmToken,
   });
   try {
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
@@ -75,7 +186,7 @@ Future<Map<String, dynamic>> login(
   try {
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -133,6 +244,50 @@ Future<Map<String, dynamic>> deleteUser() async {
   } else {
     // UUID 가져오기 실패
     print('유저 정보 get 도중 에러 발생');
+    throw Error();
+  }
+}
+
+// 자기소개 업데이트
+Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
+  final url = Uri.parse('$baseUrl/user/introduction/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'introduction': introduction,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 회사 초기화
+Future<Map<String, dynamic>> resetCompany() async {
+  final url = Uri.parse('$baseUrl/user/company/reset');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
     throw Error();
   }
 }
@@ -220,7 +375,7 @@ Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
         "Content-Type": "application/json",
       },
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -246,7 +401,7 @@ Future<Map<String, dynamic>> verificationRequest(String email) async {
       },
       body: data,
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
@@ -271,7 +426,34 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
           'Authorization': 'Bearer $token'
         },
         body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    print(jsonData);
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 회사 등록
+Future<Map<String, dynamic>> addCompany(
+    String companyName, String bno, String domain) async {
+  final url = Uri.parse('$baseUrl/company/request');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'name': companyName,
+    'domain': domain,
+    'bno': bno,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {

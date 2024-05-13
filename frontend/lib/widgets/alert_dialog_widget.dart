@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-showAlertDialog(BuildContext context, String message) {
+showAlertDialog(BuildContext context, String message,
+    [Function()? onOKPressed]) {
   // set up the button
   Widget okButton = TextButton(
     child: const Text("OK"),
     onPressed: () {
       Navigator.of(context).pop();
+      if (onOKPressed != null) {
+        onOKPressed();
+      }
     },
   );
 

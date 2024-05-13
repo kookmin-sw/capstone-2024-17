@@ -154,8 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } else {
       // 실패
-      showAlertDialog(
-          context, '로그인 실패: ${res['message']}(${res['statusCode']})');
+      showAlertDialog(context, '로그인 실패: ${res['message']}(${res['code']})');
     }
   }
 }

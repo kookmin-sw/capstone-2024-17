@@ -2,6 +2,11 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:frontend/service/stomp_service.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -9,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
 
@@ -21,11 +27,13 @@ class Google_Map extends StatefulWidget {
 }
 
 class _GoogleMapWidgetState extends State<Google_Map> {
+  late MyCafeModel myCafe;
+  late StompClient stompClient;
+
   @override
   void initState() {
     super.initState();
 
-    // 휴대폰 test 버전 -------
     LocationPermission().then((_) {
       Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -33,13 +41,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         _getCurrentLocation();
       });
     });
-
-    // ----------------------------
-
-    //좌표 고정 버전 ------------------------
-    // LocationPermission();
-    // _setCircle(LatLng(37.611035490773, 126.99457310622));
-    // _searchcafes(LatLng(37.611035490773, 126.99457310622));
   }
 
   late GoogleMapController _controller;
@@ -66,9 +67,24 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     _controller = controller;
   }
 
+  @override
+  void didChangeDependencies() {
+    //변경 사항 파악
+    super.didChangeDependencies();
+    _mapLoad();
+  }
+
+  Future<void> _mapLoad() async {
+    //현재 위치 기반으로 반경 원, 마커 다시 그림
+    // getcurrentlocation으로 갈 시에 지도가 아닌 화면에서 camera position을 지정 => error.
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _setCircle(LatLng(position.latitude, position.longitude));
+    _searchcafes(LatLng(position.latitude, position.longitude));
+  }
+
   // 현재 위치로 이동
   Future<void> _getCurrentLocation() async {
-    print("현재 위치로 이동");
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
@@ -93,12 +109,12 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       "X-Goog-Api-Key": "${dotenv.env['googleApiKey']}",
       "Accept-Language": "ko",
       "X-Goog-FieldMask":
-          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.delivery,places.formattedAddress,places.addressComponents,places.regularOpeningHours,places.internationalPhoneNumber,places.nationalPhoneNumber,places.rating,places.photos"
+          "places.location,places.id,places.displayName,places.dineIn,places.takeout,places.formattedAddress,places.regularOpeningHours,places.internationalPhoneNumber,places.photos"
     };
     MapDTO map = MapDTO();
     List<String> inc = ["cafe"];
 
-    int maxC = 5; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
+    int maxC = 0; //카페 개수 제한 //0으로 하면 그냥 다 나옴.. 사실상 최소 개수?
     double radius = 500;
     double lat = position.latitude;
     double log = position.longitude;
@@ -109,11 +125,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         body: json.encode(body));
 
     if (response.statusCode == 200) {
-      debugPrint("Response Body: ${response.body}");
+      // debugPrint("Response Body: ${response.body}"); // 주석 해제시 api 요청의 결과(response)를 볼 수 있음.
       final data = json.decode(response.body);
       _setMarkers(data['places'], position.latitude, position.longitude);
     } else {
-      print("실패");
+      // print("실패");
       throw Exception('Failed to load cafe');
     }
   }
@@ -123,8 +139,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     final Set<Marker> localMarkers = {};
     List<String> cafeList = [];
 
-    print("debug print");
-    print(places);
+    // print("debug print");
+    // print(places);
 
     for (var place in places) {
       cafeList.add(place['id']);
@@ -231,7 +247,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         center: LatLng(position.latitude, position.longitude), // (위도, 경도)
         radius: 500, // 반경
         fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
-        strokeColor: const Color.fromRGBO(246, 82, 16, 1), // 테두리 색상
+        strokeColor: (myCafe.cafeId != null)
+            ? const Color.fromRGBO(246, 82, 16, 1)
+            : Colors.grey, // 테두리 색상
         strokeWidth: 3, // 테두리 두께
       )
     };
@@ -250,8 +268,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
     // 마커 아이콘을 그리는 코드
     final paint = Paint()
-      ..color =
-          const Color.fromRGBO(246, 82, 16, 0.9); //red, green, blue, opacity
+      ..color = (myCafe.cafeId != null)
+          ? const Color.fromRGBO(246, 82, 16, 0.9)
+          : Colors.grey; //red, green, blue, opacity
     canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
@@ -274,6 +293,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
+    myCafe = Provider.of<MyCafeModel>(context);
+    stompClient = Provider.of<StompClient>(context);
+
     return CupertinoPageScaffold(
       child: Stack(
         children: [
@@ -318,7 +342,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             right: 10,
             child: ElevatedButton(
               onPressed: () {
-                print('Button clicked!');
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const AlarmList()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepOrange, // 배경 색상 설정
@@ -329,24 +354,44 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                   color: Colors.white70), // 아이콘과 색상 설정
             ),
           ),
-          Positioned(
-            bottom: 110,
-            right: 16,
-            child: ElevatedButton(
-              onPressed: () {
-                print('Button clicked!');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black12, // 배경 색상 설정
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
-              ),
-              child: const Text(
-                "위치 OFF",
-                style: TextStyle(color: Colors.white), // 폰트 색상 설정
-              ),
-            ),
-          ),
+          (myCafe.cafeId == null)
+              ? Container()
+              : Positioned(
+                  width: 140,
+                  bottom: 100,
+                  left: (screenSize.width / 2) - 70,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print('위치 공유 끄기 버튼 클릭 !!');
+
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return YesOrNoDialog(
+                            content: "위치 공유를 끄겠습니까?",
+                            firstButton: "확인",
+                            secondButton: "취소",
+                            handleFirstClick: () {
+                              deleteUserInCafe(
+                                  stompClient, "test", myCafe.cafeId!);
+                              myCafe.clearMyCafe();
+                            },
+                            handleSecondClick: () {},
+                          );
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black, // 배경 색상 설정
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)), //테두리 둥글기 설정
+                    ),
+                    child: const Text(
+                      "위치 공유 OFF",
+                      style: TextStyle(color: Colors.white), // 폰트 색상 설정
+                    ),
+                  ),
+                ),
         ],
       ),
     );

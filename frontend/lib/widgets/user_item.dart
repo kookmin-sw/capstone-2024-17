@@ -12,6 +12,7 @@ class UserItem extends StatelessWidget {
   final String company;
   final String position;
   final String introduction;
+  final double rating;
 
   const UserItem({
     super.key,
@@ -20,13 +21,13 @@ class UserItem extends StatelessWidget {
     required this.company,
     required this.position,
     required this.introduction,
+    required this.rating,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // 클릭 시 유저 상세보기 or 받은요청 상세보기 모달 띄우기
         showDialog(
           context: context,
           builder: (context) {
@@ -36,6 +37,7 @@ class UserItem extends StatelessWidget {
                 company: company,
                 position: position,
                 introduction: introduction,
+                rating: rating,
               );
             } else if (type == "receivedReqUser") {
               return ReceivedReqDialog(
@@ -43,6 +45,7 @@ class UserItem extends StatelessWidget {
                 company: company,
                 position: position,
                 introduction: introduction,
+                rating: rating, // 여기에서 rating을 전달합니다.
               );
             } else {
               return Container();
@@ -84,19 +87,22 @@ class UserItem extends StatelessWidget {
   }
 }
 
+// 보낸 요청 상세보기 모달
 class ReqDialog extends StatefulWidget {
   final String nickname;
   final String company;
   final String position;
   final String introduction;
+  final double rating;
 
-  const ReqDialog({
-    super.key,
+  ReqDialog({
+    Key? key,
     required this.nickname,
     required this.company,
     required this.position,
     required this.introduction,
-  });
+    required this.rating,
+  }) : super(key: key);
 
   @override
   State<ReqDialog> createState() => _ReqDialogState();
@@ -121,6 +127,7 @@ class _ReqDialogState extends State<ReqDialog> {
               company: widget.company,
               position: widget.position,
               introduction: widget.introduction,
+              rating: widget.rating,
               handleChangeDialog: handleChangeDialog,
             ),
     );
@@ -133,6 +140,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final String company;
   final String position;
   final String introduction;
+  final double rating;
 
   const ReceivedReqDialog({
     super.key,
@@ -140,6 +148,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.company,
     required this.position,
     required this.introduction,
+    required this.rating,
   });
 
   @override
@@ -160,6 +169,7 @@ class ReceivedReqDialog extends StatelessWidget {
               company: company,
               position: position,
               introduction: introduction,
+              rating: rating,
             ),
             const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
             const Expanded(child: SizedBox()),

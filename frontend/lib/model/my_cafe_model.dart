@@ -21,4 +21,11 @@ class MyCafeModel extends ChangeNotifier {
     this.longitude = longitude;
     notifyListeners();
   }
+
+  void clearMyCafe() {
+    cafeId = null;
+    latitude = null;
+    longitude = null;
+    notifyListeners();
+  }
 }
