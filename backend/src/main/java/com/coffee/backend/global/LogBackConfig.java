@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class LogBackConfig {
     private final LoggerContext logCtx = (LoggerContext) LoggerFactory.getILoggerFactory();
     // 커스텀 영역
-    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %replace(%logger){'com.coffee.', ''} - %blue(%msg%n)";
+    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}) %cyan(%5level) %magenta(%method) %replace(%logger){'com.coffee.', ''} - %blue(%msg%n)";
 //    private final static String pattern = "%green(%d{yyyy-MM-dd HH:mm:ss}) %cyan(%5level) %magenta(%method) %logger{50} - %blue(%msg%n)";
 
 
