@@ -9,6 +9,7 @@ import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 
 class UserItem extends StatelessWidget {
+  final int receiverId;
   final String type;
   final String nickname;
   final String company;
@@ -18,6 +19,7 @@ class UserItem extends StatelessWidget {
 
   const UserItem({
     super.key,
+    required this.receiverId,
     required this.type,
     required this.nickname,
     required this.company,
@@ -40,6 +42,7 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating,
+                receiverId: receiverId,
               );
             } else if (type == "receivedReqUser") {
               return ReceivedReqDialog(
@@ -48,6 +51,7 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating, // 여기에서 rating을 전달합니다.
+                receiverId: receiverId,
               );
             } else {
               return Container();
@@ -96,6 +100,7 @@ class ReqDialog extends StatefulWidget {
   final String position;
   final String introduction;
   final double rating;
+  final int receiverId;
 
   ReqDialog({
     Key? key,
@@ -104,18 +109,22 @@ class ReqDialog extends StatefulWidget {
     required this.position,
     required this.introduction,
     required this.rating,
+    required this.receiverId,
   }) : super(key: key);
 
   @override
   State<ReqDialog> createState() => _ReqDialogState();
 }
 
+int receiverId = 0;
+
 class _ReqDialogState extends State<ReqDialog> {
   bool isNext = false;
 
-  handleChangeDialog() {
+  handleChangeDialog(receiverId) {
     setState(() {
       isNext = !isNext;
+      receiverId = receiverId;
     });
   }
 
@@ -130,6 +139,7 @@ class _ReqDialogState extends State<ReqDialog> {
               position: widget.position,
               introduction: widget.introduction,
               rating: widget.rating,
+              receiverId: widget.receiverId,
               handleChangeDialog: handleChangeDialog,
             ),
     );
@@ -143,6 +153,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final String position;
   final String introduction;
   final double rating;
+  final int receiverId;
 
   const ReceivedReqDialog({
     super.key,
@@ -151,6 +162,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.position,
     required this.introduction,
     required this.rating,
+    required this.receiverId,
   });
 
   @override

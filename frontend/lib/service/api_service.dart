@@ -26,6 +26,8 @@ Future<Map<String, List<UserModel>>> getAllUsers(
     Map<String, dynamic> jsonResult =
         jsonDecode(utf8.decode(response.bodyBytes));
 
+    print("!!!!!!jsonResult: $jsonResult");
+
     jsonResult.forEach((cafe, userList) {
       List<Map<String, dynamic>> userMapList =
           userList.cast<Map<String, dynamic>>();
@@ -50,8 +52,7 @@ Future<Map<String, dynamic>> matchRequest(
         "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
   }
 
-  senderId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
-  receiverId = 7;
+  receiverId = 7; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
 
   if (userToken != null) {
     try {

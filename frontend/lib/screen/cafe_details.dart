@@ -187,19 +187,6 @@ class _CafeDetailsState extends State<CafeDetails>
                 controller: tabController,
                 children: [
                   CafeInfo(
-                    // List<String> detailsArguments = [
-                    //   cafeAddress, 0
-                    //   cafeOpen, 1
-                    //   cafeTelephone, 2
-                    //   cafeTakeout, 3
-                    //   cafeDelivery, 4
-                    //   cafeDineIn, 5
-                    //   cafeLatitude, 6
-                    //   cafeLongitude, 7
-                    //   openingHours, 8
-                    //   cafeid, 9
-                    //   photourl, 10
-                    // ];
                     address: widget.cafeDetailsArguments[0],
                     cafeOpen: widget.cafeDetailsArguments[1],
                     cafeTelephone: widget.cafeDetailsArguments[2],
@@ -208,29 +195,17 @@ class _CafeDetailsState extends State<CafeDetails>
                     cafeDineIn: widget.cafeDetailsArguments[5],
                     businessHours: widget.cafeDetailsArguments[8],
                   ),
-                  // ListView.builder(
-                  //   itemCount: userList!.length,
-                  //   itemBuilder: (context, index) {
-                  //     return UserItem(
-                  //       type: "cafeUser",
-                  //       nickname: userList![index].nickname,
-                  //       company: userList![index].companyName,
-                  //       position: userList![index].positionName,
-                  //       introduction: userList![index].introduction,
-                  //       rating: 0.0,
-                  //     );
-                  //   },
-                  // ),
                   ListView.builder(
                     itemCount: userList.length,
                     itemBuilder: (context, index) {
                       return UserItem(
                         type: "cafeUser",
+                        receiverId: userList[index].userId,
                         nickname: userList[index].nickname,
                         company: userList[index].company,
                         position: userList[index].position,
                         introduction: userList[index].introduction,
-                        rating: userList![index].rating,
+                        rating: userList[index].rating,
                       );
                     },
                   ),

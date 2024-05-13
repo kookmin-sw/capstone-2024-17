@@ -257,6 +257,7 @@ class ReceivedReq extends StatelessWidget {
         itemBuilder: (context, index) {
           return UserItem(
             type: "receivedReqUser",
+            receiverId: sampleUserList[index]["userId"], //변경필요
             nickname: sampleUserList[index]["nickname"],
             company: sampleUserList[index]["companyName"],
             position: sampleUserList[index]["positionName"],
