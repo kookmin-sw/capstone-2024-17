@@ -8,17 +8,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.crypto.SecretKey;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +40,12 @@ public class JwtService {
 
     @PostConstruct
     void init() {
+        log.trace("init()");
         key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     public String createAccessToken(final Long userId) {
+        log.trace("createAccessToken()");
         Date now = new Date();
         Map<String, Object> userClaim = new HashMap<>();
         userClaim.put(ID_CLAIM, userId);
@@ -58,6 +59,7 @@ public class JwtService {
     }
 
     public String createRefreshToken() {
+        log.trace("createRefreshToken()");
         Date now = new Date();
 
         return Jwts.builder()
@@ -68,6 +70,7 @@ public class JwtService {
     }
 
     public boolean validateToken(String token) {
+        log.trace("validateToken()");
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -86,6 +89,7 @@ public class JwtService {
     }
 
     public Optional<Long> extractId(String accessToken) {
+        log.trace("extractId()");
         validateToken(accessToken);
 
         try {

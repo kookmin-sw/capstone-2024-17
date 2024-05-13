@@ -7,6 +7,7 @@ import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.Position;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.service.UserService;
+import com.coffee.backend.global.DtoLogger;
 import com.coffee.backend.utils.ApiResponse;
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +31,16 @@ public class UserController {
     @PostMapping("/position/update")
     public ResponseEntity<ApiResponse<UserDto>> position(@AuthenticationPrincipal User user,
                                                          @RequestBody PositionUpdateRequest dto) {
+        DtoLogger.requestBody(dto);
+
         return ResponseEntity.ok(ApiResponse.success(userService.updateUserPosition(user, dto.getPosition())));
     }
 
     @PostMapping("/introduction/update")
     public ResponseEntity<ApiResponse<UserDto>> position(@AuthenticationPrincipal User user,
                                                          @RequestBody IntroductionUpdateRequest dto) {
+        DtoLogger.requestBody(dto);
+
         return ResponseEntity.ok(ApiResponse.success(userService.updateUserIntroduction(user, dto.getIntroduction())));
     }
 
@@ -47,6 +52,7 @@ public class UserController {
 
     @PutMapping("/company/reset")
     public ResponseEntity<ApiResponse<UserDto>> resetCompany(@AuthenticationPrincipal User user) {
+
         return ResponseEntity.ok(ApiResponse.success(userService.resetCompany(user)));
     }
 }

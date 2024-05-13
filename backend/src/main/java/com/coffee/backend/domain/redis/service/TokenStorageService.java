@@ -1,11 +1,12 @@
 package com.coffee.backend.domain.redis.service;
 
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenStorageService {
@@ -16,6 +17,7 @@ public class TokenStorageService {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void storeToken(String userUUID, String token) {
+        log.trace("storeToken()");
         redisTemplate.opsForValue().set(userUUID, token, TOKEN_EXPIRATION_TIME, TOKEN_EXPIRATION_TIME_UNIT);
     }
 }

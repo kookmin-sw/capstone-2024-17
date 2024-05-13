@@ -27,6 +27,7 @@ public class StorageService {
 
     // MultipartFile 을 S3에 업로드하고 UploadFile 레코드 save 한 뒤 반환
     public UploadFile uploadFile(MultipartFile file) {
+        log.trace("uploadFile()");
         if (file == null || file.isEmpty()) {
             return null; // TODO exception handling
         }
@@ -48,16 +49,19 @@ public class StorageService {
     }
 
     public String getFileUrl(String fileName) {
+        log.trace("getFileUrl()");
         return s3Client.getUrl(bucket, fileName).toString();
     }
 
     public String deleteFile(String fileName) {
+        log.trace("deleteFile()");
         s3Client.deleteObject(bucket, fileName);
         return fileName + " removed ...";
     }
 
 
     private File convertMultiPartFileToFile(MultipartFile file) {
+        log.trace("convertMultiPartFileToFile()");
         File convertedFile = new File(file.getOriginalFilename());
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
@@ -68,7 +72,7 @@ public class StorageService {
     }
 
     private static String getFileExtension(String originalFileName) {
+        log.trace("getFileExtension()");
         return originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
     }
-
 }
