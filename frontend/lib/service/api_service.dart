@@ -215,6 +215,39 @@ Future<Map<String, dynamic>> getUserDetail() async {
   }
 }
 
+// 유저 delete: 유저 정보 get(임시)해서 가져온 userUUID로 진행
+Future<Map<String, dynamic>> deleteUser() async {
+  final url = Uri.parse('$baseUrl/auth/delete');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  Map<String, dynamic> res1 = await getUserDetail();
+  if (res1['success'] == true) {
+    final userUUID = res1['data']['userUUID'];
+    final data = jsonEncode({
+      'userUUID': userUUID,
+    });
+    try {
+      http.Response res2 = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data,
+      );
+      Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res2.bodyBytes));
+      return jsonData;
+    } catch (error) {
+      print('error: $error');
+      throw Error();
+    }
+  } else {
+    // UUID 가져오기 실패
+    print('유저 정보 get 도중 에러 발생');
+    throw Error();
+  }
+}
+
 // 자기소개 업데이트
 Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
   final url = Uri.parse('$baseUrl/user/introduction/update');
