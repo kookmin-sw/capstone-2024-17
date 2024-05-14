@@ -113,6 +113,35 @@ Future<Map<String, dynamic>> matchInfoRequest(
   }
 }
 
+//매칭 요청 받은 list
+Future<Map<String, dynamic>> receivedInfoRequest(int receiverId) async {
+  final url = Uri.parse('$baseUrl/match/received/info?receiverId=$receiverId');
+
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  print("userToken = $userToken");
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception(
+          'Failed to get receivedInfoRequest: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
 //match cancel 요청
 Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/cancel');
