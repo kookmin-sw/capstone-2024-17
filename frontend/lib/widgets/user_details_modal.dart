@@ -11,6 +11,7 @@ class UserDetailsModal extends StatelessWidget {
     required this.introduction,
     required this.handleChangeDialog,
     required this.rating,
+    required this.receiverId,
   });
 
   final String nickname;
@@ -19,6 +20,7 @@ class UserDetailsModal extends StatelessWidget {
   final String introduction;
   final Function handleChangeDialog;
   final double rating;
+  final int receiverId;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class UserDetailsModal extends StatelessWidget {
             ),
             ModalButton(
               text: "커피챗 요청하기",
-              handlePressed: handleChangeDialog,
+              handlePressed: handleChangeDialog(receiverId),
             ),
           ],
         ),

@@ -49,8 +49,7 @@ Future<Map<String, dynamic>> matchRequest(
   userToken ??=
       "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
-  senderId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
-  receiverId = 7;
+  receiverId = 7; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
 
   try {
     final response = await http.post(
@@ -141,7 +140,39 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
     } else {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
-  } catch (e) {
+  } catch (error) {
+    throw Error();
+  }
+}
+
+//match accept  요청
+Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
+  final url = Uri.parse('$baseUrl/match/accept');
+
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  }
+
+  try {
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match accept: ${response.statusCode}');
+    }
+  } catch (error) {
     throw Error();
   }
 }
