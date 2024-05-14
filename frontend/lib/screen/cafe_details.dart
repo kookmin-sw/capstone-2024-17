@@ -219,8 +219,6 @@ class _CafeDetailsState extends State<CafeDetails>
               : BottomTextButton(
                   text: "이 카페를 내 위치로 지정하기",
                   handlePressed: () {
-                    _startTimer();
-
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -234,8 +232,6 @@ class _CafeDetailsState extends State<CafeDetails>
                           firstButton: "확인",
                           secondButton: "취소",
                           handleFirstClick: () async {
-                            _stopTimer();
-
                             int userId;
                             Map<String, dynamic> res = await getUserDetail();
                             if (res['success']) {
@@ -262,6 +258,9 @@ class _CafeDetailsState extends State<CafeDetails>
                               userId,
                               widget.cafeId,
                             );
+
+                            // 이 카페에서 5분마다 반경 벗어남 체크
+                            _startTimer();
 
                             myCafe.setMyCafe(
                               cafeId: widget.cafeId,
