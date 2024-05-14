@@ -6,17 +6,22 @@ import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
+import com.coffee.backend.domain.match.dto.MatchListDto;
+import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.repository.ReviewRepository;
 import com.coffee.backend.domain.user.dto.ReceiverInfoDto;
+import com.coffee.backend.domain.user.dto.SenderInfoDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +65,10 @@ public class MatchService {
         redisTemplate.opsForHash().putAll("matchId:" + matchId, matchInfo);
         redisTemplate.expire("matchId:" + matchId, 600, TimeUnit.SECONDS);
 
+        // 수신자 ID에 대한 매칭 ID 리스트에 추가
+        redisTemplate.opsForList().rightPush("receiverId:" + dto.getReceiverId(), matchId);
+        redisTemplate.expire("receiverId:" + dto.getReceiverId(), 600, TimeUnit.SECONDS);
+
         // 알림
         User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
@@ -91,6 +100,31 @@ public class MatchService {
         matchInfo.setReceiverId(dto.getReceiverId());
         matchInfo.setRequestTypeId(requestTypeId);
         return matchInfo;
+    }
+
+    // 받은 요청 정보
+    public List<MatchReceivedInfoDto> getMatchReceivedInfo(MatchListDto dto) {
+        log.trace("getReceivedMatchRequests() for receiverId: {}", dto.getReceiverId());
+
+        List<Object> matchIds = redisTemplate.opsForList().range("receiverId:" + dto.getReceiverId(), 0, -1);
+
+        List<MatchReceivedInfoDto> requests = new ArrayList<>();
+        for (Object matchIdObj : matchIds) {
+            String matchId = (String) matchIdObj;
+            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + matchId);
+
+            Object senderObj = matchInfo.get("senderId");
+            Long senderId = getLongId(senderObj);
+
+            User sender = userRepository.findById(senderId).orElseThrow();
+            SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+
+            MatchReceivedInfoDto res = new MatchReceivedInfoDto();
+            res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
+            res.setSenderInfo(senderInfo);
+            requests.add(res);
+        }
+        return requests;
     }
 
     // 매칭 요청 수락
