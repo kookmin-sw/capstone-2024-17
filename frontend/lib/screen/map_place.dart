@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:frontend/service/stomp_service.dart';
@@ -371,9 +372,19 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                             content: "위치 공유를 끄겠습니까?",
                             firstButton: "확인",
                             secondButton: "취소",
-                            handleFirstClick: () {
+                            handleFirstClick: () async {
+                              int userId;
+                              Map<String, dynamic> res = await getUserDetail();
+                              if (res['success']) {
+                                userId = res['data']['userId'];
+                                print("!!!!유저 아이디: $userId");
+                              } else {
+                                print(
+                                    "!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
+                                return;
+                              }
                               deleteUserInCafe(
-                                  stompClient, "test", myCafe.cafeId!);
+                                  stompClient, userId, myCafe.cafeId!);
                               myCafe.clearMyCafe();
                             },
                             handleSecondClick: () {},
