@@ -23,7 +23,7 @@ class ReqAcceptedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const NotificationDialog(
-      contents: "OO 님이 커피챗 요청을 \n수락했어요!",
+      contents: "커피챗 요청이 \n수락되었어요!",
       firstButton: "확인",
     );
   }
@@ -36,7 +36,7 @@ class ReqDeniedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const NotificationDialog(
-      contents: "OO 님이 커피챗 요청을 \n거절했어요.. :(",
+      contents: "커피챗 요청이 \n거절되었어요.. :(",
       firstButton: "확인",
     );
   }

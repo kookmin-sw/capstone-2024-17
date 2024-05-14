@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:frontend/local_notification.dart';
+import 'package:frontend/widgets/dialog/notification_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -17,19 +19,22 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
 
 // FCM 관련 기능을 관리하는 클래스
 class FCM {
+  final BuildContext context;
+  FCM(this.context);
   // StreamController 생성: 어느 타이밍에 데이터가 들어올 지 모를 때 비동기로 작업을 처리
   // 메시지 내용은 {'title': String?, 'body': String?, 'senttime': DateTime?, 'senderId': String?} 형태
   final messageStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
 
   // 알림 설정
-  setNotifications() async {
-    PermissionStatus status = await Permission.notification.request();
-    if (status.isDenied) {
-      print('사용자가 알림 권한을 거부했습니다.');
-    } else if (status.isGranted) {
-      print('사용자가 알림 권한을 허용했습니다.');
-    }
+  setNotifications() {
+    Permission.notification.request().then((status) => {
+          if (status.isDenied)
+            {print('사용자가 알림 권한을 거부했습니다.')}
+          else if (status.isGranted)
+            {print('사용자가 알림 권한을 허용했습니다.')}
+        });
+
     localNotification_init(); // local notification 설정 초기화
 
     FirebaseMessaging.onBackgroundMessage(
@@ -51,6 +56,36 @@ class FCM {
 
         // local notification을 위해 message를 전달
         // showLocalNotification(message);
+
+        // 이 부분은 작동하는지 테스트 후 수정
+        print(message.data['title']);
+
+        if (message.data['title'] == '커피챗 요청') {
+          print('요청!');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const ArriveRequestNotification();
+            },
+          );
+        } else if (message.data['title'] == '커피챗 매칭 실패') {
+          print('꺼졍');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const ReqDeniedNotification();
+            },
+          );
+        } else if (message.data['title'] == '커피챗 매칭 성공') {
+          print('예에');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const ReqAcceptedNotification();
+            },
+          );
+        }
+
         if (message.notification != null) {
           messageStreamController.sink.add({
             'title': message.data['title'],
