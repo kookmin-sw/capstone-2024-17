@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
@@ -196,19 +197,31 @@ class _CafeDetailsState extends State<CafeDetails>
                     cafeDineIn: widget.cafeDetailsArguments[5],
                     businessHours: widget.cafeDetailsArguments[8],
                   ),
-                  ListView.builder(
-                    itemCount: userList.length,
-                    itemBuilder: (context, index) {
-                      return UserItem(
-                        type: "cafeUser",
-                        userId: userList[index].userId,
-                        nickname: userList[index].nickname,
-                        company: userList[index].company,
-                        position: userList[index].position,
-                        introduction: userList[index].introduction,
-                        rating: userList[index].rating,
-                      );
-                    },
+                  Stack(
+                    children: [
+                      ListView.builder(
+                        itemCount: userList.length,
+                        itemBuilder: (context, index) {
+                          return UserItem(
+                            type: "cafeUser",
+                            userId: userList[index].userId,
+                            nickname: userList[index].nickname,
+                            company: userList[index].company,
+                            position: userList[index].position,
+                            introduction: userList[index].introduction,
+                            rating: userList[index].rating,
+                          );
+                        },
+                      ),
+                      Positioned.fill(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                          child: Container(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
