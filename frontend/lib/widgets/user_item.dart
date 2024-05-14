@@ -120,11 +120,13 @@ int receiverId = 0;
 
 class _ReqDialogState extends State<ReqDialog> {
   bool isNext = false;
+  int receiverId = 0; // receiverId를 state로 추가
 
-  handleChangeDialog(receiverId) {
+  handleChangeDialog(int userId) {
+    // userId를 인자로 추가
     setState(() {
       isNext = !isNext;
-      receiverId = receiverId;
+      receiverId = userId; // userId를 receiverId에 할당
     });
   }
 
@@ -132,7 +134,9 @@ class _ReqDialogState extends State<ReqDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: isNext
-          ? const ChoosePurpose()
+          ? ChoosePurpose(
+              userId: receiverId,
+            ) // receiverId를 ChoosePurpose 위젯에 전달
           : UserDetailsModal(
               nickname: widget.nickname,
               company: widget.company,

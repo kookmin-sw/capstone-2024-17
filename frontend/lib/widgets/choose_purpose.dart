@@ -15,8 +15,11 @@ List<String> purpose = [
 ];
 
 class ChoosePurpose extends StatelessWidget {
+  final int userId; // receiverId 추가
+
   const ChoosePurpose({
     Key? key,
+    required this.userId, // 생성자에 receiverId 추가
   }) : super(key: key);
 
   @override
@@ -68,8 +71,8 @@ class ChoosePurpose extends StatelessWidget {
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              int senderId = 0;
-              int receiverId = 7;
+              final receiverId = userId;
+              int senderId = 0; // 초기화
 
               try {
                 //로그인 한 유저의 senderId 가져오기
