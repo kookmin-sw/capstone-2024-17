@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screen/coffeechat_req_list.dart';
-import 'package:frontend/screen/map_place.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
-import 'package:frontend/main.dart';
+import 'package:provider/provider.dart';
 
 // 커피챗 요청 도착 알림창
 class ArriveRequestNotification extends StatelessWidget {
@@ -75,6 +74,7 @@ class NotificationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -110,20 +110,7 @@ class NotificationDialog extends StatelessWidget {
                         first: navigateButton!,
                         second: backButton,
                         handleFirstClick: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CoffeechatReqList(
-                                matchId: '',
-                                Question: '',
-                                receiverCompany: '',
-                                receiverPosition: '',
-                                receiverIntroduction: '',
-                                receiverRating: 0.0,
-                                receiverNickname: '',
-                              ),
-                            ),
-                          );
+                          selectedIndexProvider.selectedIndex = 1;
                         },
                         handleSecondClick: () {}),
               ],
