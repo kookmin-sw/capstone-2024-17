@@ -251,7 +251,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         radius: 500, // 반경
         fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
         strokeColor: (myCafe.cafeId != null)
-            ? const Color.fromRGBO(246, 82, 16, 1)
+            ? const Color(0xFFFF6C3E)
             : Colors.grey, // 테두리 색상
         strokeWidth: 3, // 테두리 두께
       )
