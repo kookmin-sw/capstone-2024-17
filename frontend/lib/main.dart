@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/notification.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -89,7 +93,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
-      userToken = token;
+      setState(() {
+        userToken = token;
+      });
 
       // 웹소켓(stomp) 연결
       stompClient = StompClient(
@@ -105,6 +111,17 @@ class _MyAppState extends State<MyApp> {
         ),
       );
       stompClient.activate();
+    });
+
+    // 알림 설정
+    final fcm = FCM();
+    fcm.setNotifications();
+    //fcm.messageStreamController.stream.listen((msg) {
+    // print('[alarmList content] $msg');
+    // });
+    // 알림 로그를 저장할 파일 생성
+    getApplicationDocumentsDirectory().then((d) {
+      File('${d.path}/notification.txt');
     });
 
     // 화면 리스트 초기화

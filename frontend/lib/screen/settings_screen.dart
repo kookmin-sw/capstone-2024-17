@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
 class OptionItem extends StatelessWidget {
@@ -93,7 +95,25 @@ class SettingsScreen extends StatelessWidget {
                     const Text('|'),
                     // 회원 탈퇴 버튼
                     TextButton(
-                      onPressed: () async {},
+                      onPressed: () async {
+                        try {
+                          Map<String, dynamic> res = await deleteUser();
+                          if (res['success'] == true) {
+                            // 요청 성공
+                            showAlertDialog(context, '탈퇴되었습니다.)');
+                            await logout(context).then((_) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/user', (route) => false);
+                            });
+                          } else {
+                            // 회원탈퇴 실패
+                            showAlertDialog(context,
+                                '회원탈퇴 실패: ${res['message']}(${res['statusCode']})');
+                          }
+                        } catch (error) {
+                          showAlertDialog(context, '요청 실패: $error');
+                        }
+                      },
                       child: const Text('회원 탈퇴'),
                     ),
                   ],

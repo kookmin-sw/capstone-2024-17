@@ -27,6 +27,7 @@ public class CompanyRequestService {
     private final int PAGE_SIZE = 10;
 
     public CompanyRequestRequest saveRequest(User user, CompanyRequestRequest dto) {
+        log.trace("saveRequest()");
         companyRequestRepository.save(CompanyRequest.builder()
                 .name(dto.getName())
                 .domain(dto.getDomain())
@@ -37,6 +38,7 @@ public class CompanyRequestService {
     }
 
     public void deleteRequest(Long companyRequestId) {
+        log.trace("deleteRequest()");
         companyRequestRepository.delete(companyRequestRepository.findById(companyRequestId).orElseThrow(() -> {
                     log.info("id = {} 인 company_request 가 존재하지 않습니다", companyRequestId);
                     return new CustomException(ErrorCode.COMPANY_REQUEST_NOT_FOUND);
@@ -45,6 +47,7 @@ public class CompanyRequestService {
     }
 
     public Page<CompanyRequestDto> findAllRequests(int page) {
+        log.trace("findAllRequests()");
         Pageable pageRequest = PageRequest.of(page, PAGE_SIZE);
         return companyRequestRepository.findAll(pageRequest)
                 .map(cr -> CompanyRequestDto.builder().id(cr.getCompanyRequestId())

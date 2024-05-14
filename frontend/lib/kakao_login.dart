@@ -1,3 +1,4 @@
+import 'package:frontend/notification.dart';
 import 'package:frontend/social_login.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -23,6 +24,7 @@ class KakaoLogin implements SocialLogin {
         // 요청 성공
         const storage = FlutterSecureStorage();
         await storage.write(key: 'authToken', value: res["data"]["authToken"]);
+        updateNotificationLogFile(res['data']['userUUID']); // 알림 기록 파일 업데이트
       } else {
         // 실패
         print('카카오 로그인 실패: ${res['message']}(${res['code']})');
