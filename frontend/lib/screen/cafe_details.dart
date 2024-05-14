@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
 import 'package:provider/provider.dart';
@@ -213,11 +214,13 @@ class _CafeDetailsState extends State<CafeDetails>
                           );
                         },
                       ),
-                      Positioned.fill(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                          child: Container(
-                            color: Colors.transparent,
+                      ClipRect(
+                        child: Positioned.fill(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              color: Colors.transparent,
+                            ),
                           ),
                         ),
                       ),
