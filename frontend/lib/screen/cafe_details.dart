@@ -128,12 +128,6 @@ class _CafeDetailsState extends State<CafeDetails>
     super.initState();
     getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
-    tabController!.addListener(() {
-      // 사용자 보기 탭 클릭 시
-      if (tabController!.index == 1) {
-        // 사용자 목록 업데이트 ?
-      }
-    });
   }
 
   @override
