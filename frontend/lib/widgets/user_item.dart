@@ -42,7 +42,7 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating,
-                receiverId: receiverId,
+                userId: userId,
               );
             } else if (type == "receivedReqUser") {
               return ReceivedReqDialog(
@@ -51,7 +51,7 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating, // 여기에서 rating을 전달합니다.
-                receiverId: receiverId,
+                userId: userId,
               );
             } else {
               return Container();
@@ -100,7 +100,7 @@ class ReqDialog extends StatefulWidget {
   final String position;
   final String introduction;
   final double rating;
-  final int receiverId;
+  final int userId;
 
   ReqDialog({
     Key? key,
@@ -109,7 +109,7 @@ class ReqDialog extends StatefulWidget {
     required this.position,
     required this.introduction,
     required this.rating,
-    required this.receiverId,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -139,7 +139,7 @@ class _ReqDialogState extends State<ReqDialog> {
               position: widget.position,
               introduction: widget.introduction,
               rating: widget.rating,
-              receiverId: widget.receiverId,
+              userId: widget.userId,
               handleChangeDialog: handleChangeDialog,
             ),
     );
@@ -153,7 +153,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final String position;
   final String introduction;
   final double rating;
-  final int receiverId;
+  final int userId;
 
   const ReceivedReqDialog({
     super.key,
@@ -162,7 +162,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.position,
     required this.introduction,
     required this.rating,
-    required this.receiverId,
+    required this.userId,
   });
 
   @override
