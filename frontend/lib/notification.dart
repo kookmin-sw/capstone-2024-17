@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:frontend/local_notification.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -29,6 +30,7 @@ class FCM {
     } else if (status.isGranted) {
       print('사용자가 알림 권한을 허용했습니다.');
     }
+    localNotification_init(); // local notification 설정 초기화
 
     FirebaseMessaging.onBackgroundMessage(
         onBackgroundMessage); // 백그라운드 메시지 처리 함수를 등록
@@ -46,6 +48,9 @@ class FCM {
         // file에 저장
         await saveMessageDataLogToFile(
             message.data['title'], message.data['body'], message.sentTime!);
+
+        // local notification을 위해 message를 전달
+        // showLocalNotification(message);
         if (message.notification != null) {
           messageStreamController.sink.add({
             'title': message.data['title'],
