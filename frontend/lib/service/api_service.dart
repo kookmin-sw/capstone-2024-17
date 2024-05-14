@@ -26,8 +26,6 @@ Future<Map<String, List<UserModel>>> getAllUsers(
     Map<String, dynamic> jsonResult =
         jsonDecode(utf8.decode(response.bodyBytes));
 
-    print("!!!!!!jsonResult: $jsonResult");
-
     jsonResult.forEach((cafe, userList) {
       List<Map<String, dynamic>> userMapList =
           userList.cast<Map<String, dynamic>>();
