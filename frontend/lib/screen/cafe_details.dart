@@ -214,16 +214,19 @@ class _CafeDetailsState extends State<CafeDetails>
                           );
                         },
                       ),
-                      ClipRect(
-                        child: Positioned.fill(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                              color: Colors.transparent,
+                      (myCafe.cafeId != null)
+                          ? Container()
+                          : ClipRect(
+                              child: Positioned.fill(
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                  child: Container(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ],
