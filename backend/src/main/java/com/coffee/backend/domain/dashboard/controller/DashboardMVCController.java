@@ -2,6 +2,7 @@ package com.coffee.backend.domain.dashboard.controller;
 
 import com.coffee.backend.domain.company.dto.CompanyRequestDto;
 import com.coffee.backend.domain.company.service.CompanyRequestService;
+import com.coffee.backend.global.DtoLogger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ public class DashboardMVCController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, @RequestParam(required = false, defaultValue = "0") int page) {
+        DtoLogger.requestParam("page", page);
+
         Page<CompanyRequestDto> paging = companyRequestService.findAllRequests(page);
         model.addAttribute("paging", paging);
         return "dashboard/index";

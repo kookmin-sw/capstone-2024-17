@@ -1,5 +1,5 @@
 class UserModel {
-  final String loginId;
+  int userId;
   String nickname;
   String company;
   String position;
@@ -7,7 +7,7 @@ class UserModel {
   double rating;
 
   UserModel.fromJson(Map<String, dynamic> json)
-      : loginId = json['loginId'],
+      : userId = json['userId'],
         nickname = json['nickname'],
         company = json['company'],
         position = json['position'],

@@ -20,6 +20,7 @@ public class CafeSubscriber implements MessageListener {
     // redis에서 수신한 메시지를 websocket 구독자에게 전달
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        log.trace("onMessage()");
         try {
             log.info(message.toString());
             CafeDto cafeDto = objectMapper.readValue(message.getBody(),

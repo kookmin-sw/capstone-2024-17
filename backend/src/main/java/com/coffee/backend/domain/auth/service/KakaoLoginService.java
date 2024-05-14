@@ -6,6 +6,7 @@ import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class KakaoLoginService {
@@ -24,6 +26,7 @@ public class KakaoLoginService {
     private final JwtService jwtService;
 
     public KakaoUserInfoDto getUserInfo(String accessToken) {
+        log.trace("getUserInfo()");
         try {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
@@ -47,6 +50,7 @@ public class KakaoLoginService {
 
     @Transactional
     public AuthDto signIn(KakaoUserInfoDto dto) {
+        log.trace("signIn()");
         User user = userRepository.findByKakaoId(dto.getKakaoId())
                 .orElseGet(User::new);
 

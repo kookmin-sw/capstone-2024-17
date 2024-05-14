@@ -16,8 +16,10 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatroomService {
@@ -29,6 +31,7 @@ public class ChatroomService {
 
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreationDto dto) {
+        log.trace("createChatroom()");
 //      TODO?  채팅방 이미 있는지 확인
 //      TODO Exception 수정
         User sender = userRepository.findByUserUUID(dto.getSenderUUID())
@@ -53,6 +56,7 @@ public class ChatroomService {
 
     @Transactional
     public ChatroomResponses getChatrooms(User user) {
+        log.trace("getChatrooms()");
         List<ChatroomResponse> responses = (userChatroomRepository.findAllByUser(user)).stream()
                 .filter(o -> o.getUser().equals(user))
                 .map(UserChatroom::getChatroom)

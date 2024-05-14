@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 사용자 정의 변환어 및 색상 설정 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%green(%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}) %clr(%5level) %magenta(%method) %logger - %yellow(%msg%n)"/>
+
+    <!-- 콘솔 Appender 정의 -->
+    <!--로그 색 설정-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 기본 로그 레벨 설정 및 Appender 연결 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

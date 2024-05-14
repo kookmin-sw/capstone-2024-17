@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
+import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
@@ -15,41 +17,13 @@ class PositionSelectScreen extends StatefulWidget {
 class PositionSelectScreenState extends State<PositionSelectScreen> {
   late ScrollController _scrollController;
   late String selectedPosition;
-
-  List<String> positions = [
-    '서버/백엔드',
-    '프론트엔드',
-    '웹 풀스택',
-    '안드로이드',
-    'iOS',
-    '머신러닝',
-    '인공지능(AI)',
-    '데이터 엔지니어링',
-    'DBA',
-    '모바일 게임',
-    '게임 클라이언트',
-    '게임 서버',
-    '시스템/네트워크',
-    '시스템 소프트웨어',
-    '데브옵스',
-    '인터넷 보안',
-    '임베디드 소프트웨어',
-    '로보틱스 미들웨어',
-    'QA',
-    '사물인터넷(IoT)',
-    '응용 프로그램',
-    '블록체인',
-    '개발PM',
-    '웹 퍼블리싱',
-    '크로스 플랫폼',
-    'VR/AR/3D',
-    'ERP',
-    '그래픽스',
-  ];
+  List<String> positions = [];
 
   @override
   void initState() {
     super.initState();
+    setPositionList();
+
     _scrollController = ScrollController();
     selectedPosition = widget.lastPosition ?? '';
   }
@@ -116,31 +90,7 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                               controller: _scrollController,
                               scrollDirection: Axis.vertical,
                               child: Wrap(
-                                children: positions.map((position) {
-                                  return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 2),
-                                      child: ChoiceChip(
-                                        label: Text(position),
-                                        labelStyle: const TextStyle(),
-                                        padding: const EdgeInsets.all(0),
-                                        selected: selectedPosition == position,
-                                        selectedColor: const Color(0xffff6c3e),
-                                        backgroundColor: Colors.grey[300],
-                                        side: const BorderSide(
-                                            style: BorderStyle.none),
-                                        onSelected: (isSelected) {
-                                          selectedPosition = position;
-
-                                          setState(() {
-                                            if (isSelected) {
-                                              selectedPosition = position;
-                                            }
-                                          });
-                                        },
-                                        showCheckmark: false,
-                                      ));
-                                }).toList(),
+                                children: _buildPositionItems(),
                               ),
                             )),
                       ),
@@ -158,9 +108,56 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
     );
   }
 
-  void savePressed() {
+  List<Widget> _buildPositionItems() {
+    return positions.map((position) {
+      return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          child: ChoiceChip(
+            label: Text(position),
+            labelStyle: const TextStyle(),
+            padding: const EdgeInsets.all(0),
+            selected: selectedPosition == position,
+            selectedColor: const Color(0xffff6c3e),
+            backgroundColor: Colors.grey[300],
+            side: const BorderSide(style: BorderStyle.none),
+            onSelected: (isSelected) {
+              selectedPosition = position;
+
+              setState(() {
+                if (isSelected) {
+                  selectedPosition = position;
+                }
+              });
+            },
+            showCheckmark: false,
+          ));
+    }).toList();
+  }
+
+  void setPositionList() async {
+    Map<String, dynamic> res = await getPositionlist();
+    print(res['data']);
+    if (res['success']) {
+      // 요청 성공
+      setState(() {
+        positions = List<String>.from(res['data']);
+      });
+    } else {
+      // 요청 실패
+      showAlertDialog(context, '직무 리스트를 불러올 수 없습니다.');
+    }
+  }
+
+  void savePressed() async {
     // 직무 저장 요청하기
-    // Navigator.of(context).popUntil((route) => route is EditProfileScreen); // 안됨
-    print('저장버튼 클릭됨');
+    Map<String, dynamic> res = await updatePosition(selectedPosition);
+    // print(res);
+    if (res['success']) {
+      // 직무 저장 성공
+      showAlertDialog(context, '직무가 저장되었습니다!');
+    } else {
+      // 직무 저장 실패
+      showAlertDialog(context, '직무 저장 실패: ${res['message']}(${res['code']})');
+    }
   }
 }

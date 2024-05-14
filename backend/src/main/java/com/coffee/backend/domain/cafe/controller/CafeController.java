@@ -8,6 +8,7 @@ import com.coffee.backend.domain.cafe.dto.CafeUserDto;
 import com.coffee.backend.domain.cafe.service.CafePublisher;
 import com.coffee.backend.domain.cafe.service.CafeService;
 import com.coffee.backend.domain.user.entity.User;
+import com.coffee.backend.global.DtoLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import java.util.HashMap;
@@ -40,6 +41,9 @@ public class CafeController {
     public void publishCafeUpdate(@AuthenticationPrincipal User user, @Payload @Valid CafeDto dto,
                                   SimpMessageHeaderAccessor headerAccessor)
             throws JsonProcessingException {
+        // TODO : 웹소켓 url log 확인
+        DtoLogger.requestBody(dto);
+
         String sessionId = headerAccessor.getSessionId(); // 웹소켓 session id
         log.info("Message Catch!!");
         cafePublisher.updateCafeChoice(sessionId, dto);
@@ -49,6 +53,8 @@ public class CafeController {
     @PostMapping("/cafe/get-users")
     public ResponseEntity<Map<String, List<CafeUserDto>>> getCafeUsers(@AuthenticationPrincipal User user,
                                                                        @RequestBody CafeListDto dto) {
+        DtoLogger.requestBody(dto);
+
         List<String> cafeList = dto.getCafeList();
         Map<String, List<CafeUserDto>> cafeUsersMap = new HashMap<>(); //반환값
 

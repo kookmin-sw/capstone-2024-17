@@ -23,9 +23,8 @@ public class MailService {
     private final JavaMailSender emailSender;
 
 
-    public void sendEmail(String toEmail,
-                          String title,
-                          String text) {
+    public void sendEmail(String toEmail, String title, String text) {
+        log.trace("sendEmail()");
         MimeMessage message = emailSender.createMimeMessage();
         try {
             message.setFrom(new InternetAddress(fromEmail, "커리어 한잔"));

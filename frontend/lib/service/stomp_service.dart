@@ -27,7 +27,7 @@ void subCafeList(
         // 카페에서 사용자 delete
         else if (result["type"] == "delete") {
           print("delete user in cafe $cafeId");
-          allUsers.deleteUser(cafeId, result["loginId"]);
+          allUsers.deleteUser(cafeId, result["userId"]);
         }
       },
     );
@@ -35,8 +35,7 @@ void subCafeList(
 }
 
 // cafe 업데이트(추가, 삭제) pub 요청
-void pubCafe(
-    StompClient stompClient, String type, String loginId, String cafeId) {
+void pubCafe(StompClient stompClient, String type, int userId, String cafeId) {
   if (!stompClient.connected) {
     print("stompClient is not connected !!");
     return;
@@ -46,18 +45,18 @@ void pubCafe(
     destination: '/pub/cafe/update',
     body: jsonEncode({
       "type": type,
-      "loginId": loginId,
+      "userId": userId,
       "cafeId": cafeId,
     }),
   );
 }
 
 // cafe 업데이트 - user 추가
-void addUserInCafe(StompClient stompClient, String loginId, String cafeId) {
-  pubCafe(stompClient, "add", loginId, cafeId);
+void addUserInCafe(StompClient stompClient, int userId, String cafeId) {
+  pubCafe(stompClient, "add", userId, cafeId);
 }
 
 // cafe 업데이트 - user 삭제
-void deleteUserInCafe(StompClient stompClient, String loginId, String cafeId) {
-  pubCafe(stompClient, "delete", loginId, cafeId);
+void deleteUserInCafe(StompClient stompClient, int userId, String cafeId) {
+  pubCafe(stompClient, "delete", userId, cafeId);
 }

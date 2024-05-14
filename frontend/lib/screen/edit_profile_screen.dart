@@ -247,9 +247,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             _introductionController.text);
                         print(res);
                         if (res['success'] == true) {
-                          // 유저페이지로 이동
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/user', (route) => false);
+                          // 유저페이지로 pop
+                          Navigator.pop(context);
                         } else {
                           // 요청 실패
                           showAlertDialog(context,

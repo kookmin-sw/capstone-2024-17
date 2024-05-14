@@ -49,8 +49,7 @@ Future<Map<String, dynamic>> matchRequest(
   userToken ??=
       "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
-  senderId = 6; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
-  receiverId = 7;
+  receiverId = 7; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
 
   try {
     final response = await http.post(
@@ -141,7 +140,39 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
     } else {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
-  } catch (e) {
+  } catch (error) {
+    throw Error();
+  }
+}
+
+//match accept  요청
+Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
+  final url = Uri.parse('$baseUrl/match/accept');
+
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  }
+
+  try {
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match accept: ${response.statusCode}');
+    }
+  } catch (error) {
     throw Error();
   }
 }
@@ -215,6 +246,39 @@ Future<Map<String, dynamic>> getUserDetail() async {
   }
 }
 
+// 유저 delete: 유저 정보 get(임시)해서 가져온 userUUID로 진행
+Future<Map<String, dynamic>> deleteUser() async {
+  final url = Uri.parse('$baseUrl/auth/delete');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  Map<String, dynamic> res1 = await getUserDetail();
+  if (res1['success'] == true) {
+    final userUUID = res1['data']['userUUID'];
+    final data = jsonEncode({
+      'userUUID': userUUID,
+    });
+    try {
+      http.Response res2 = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data,
+      );
+      Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res2.bodyBytes));
+      return jsonData;
+    } catch (error) {
+      print('error: $error');
+      throw Error();
+    }
+  } else {
+    // UUID 가져오기 실패
+    print('유저 정보 get 도중 에러 발생');
+    throw Error();
+  }
+}
+
 // 자기소개 업데이트
 Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
   final url = Uri.parse('$baseUrl/user/introduction/update');
@@ -273,6 +337,50 @@ Future<Map<String, dynamic>> getChatroomlist() async {
         'Authorization': 'Bearer $token'
       },
     );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 직무리스트 가져오기
+Future<Map<String, dynamic>> getPositionlist() async {
+  final url = Uri.parse('$baseUrl/user/position/list');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 직무 저장 요청
+Future<Map<String, dynamic>> updatePosition(String position) async {
+  final url = Uri.parse('$baseUrl/user/position/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'position': position,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {

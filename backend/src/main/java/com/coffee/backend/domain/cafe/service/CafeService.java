@@ -27,7 +27,7 @@ public class CafeService {
 
     //redis에 add 하는 메소드
     public void addCafeChoice(String cafeId, Long userId, String sessionId) {
-        System.out.println("addCafeChoice() 진입");
+        log.trace("addCafeChoice()");
         /*
         Redis에 아래 형식으로 저장됨
             namespace = cafe
@@ -57,7 +57,7 @@ public class CafeService {
 
     // redis 카페선택 삭제, UserDB에 cafeId, sessionId null 로 초기화
     public void deleteCafeChoice(String cafeId, Long userId) {
-        System.out.println("deleteCafeChoice() 진입");
+        log.trace("deleteCafeChoice()");
         final String cafeChoiceKey = "cafe:" + cafeId;
 
         // 카페 ID에 해당하는 세트에서 사용자 ID 찾기
@@ -77,6 +77,7 @@ public class CafeService {
     }
 
     public List<CafeUserDto> getUserProfilesFromRedisAndDB(String cafeId) {
+        log.trace("getUserProfilesFromRedisAndDB()");
         // cafeId 를 가진 유저를 redis 에서 싹 조회
         Set<Object> userSet = getUserListFromRedis(cafeId);
 
@@ -88,16 +89,18 @@ public class CafeService {
     }
 
     public Set<Object> getUserListFromRedis(String cafeId) {
-        System.out.println("getUserListFromRedis() 진입");
+        log.trace("getUserListFromRedis()");
         String cafeChoiceKey = "cafe:" + cafeId;
         return redisTemplate.opsForSet().members(cafeChoiceKey);
     }
 
     public CafeUserDto getUserInfoFromDB(Long userId) {
+        log.trace("getUserInfoFromDB()");
         return userService.getCafeUserInfoByUserId(userId); // userId로 User entity 조회
     }
 
     public void clearSessionAndCafeIdBySessionId(String sessionId) {
+        log.trace("clearSessionAndCafeIdBySessionId()");
         User user = userRepository.findBySessionId(sessionId).orElseThrow(() -> {
             log.info("sessionId = {} 를 갖는 사용자가 존재하지 않습니다.", sessionId);
             return new CustomException(ErrorCode.USER_NOT_FOUND);
