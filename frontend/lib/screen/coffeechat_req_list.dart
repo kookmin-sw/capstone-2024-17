@@ -124,7 +124,14 @@ class CoffeechatReqList extends StatelessWidget {
                   rating: receiverRating,
                   question: Question,
                 ),
-                ReceivedReq(), // 이 부분은 나중에 수정 필요
+                ReceivedReq(
+                  nickname: receiverNickname,
+                  company: receiverCompany,
+                  position: receiverPosition,
+                  introduction: receiverIntroduction,
+                  rating: receiverRating,
+                  question: Question,
+                ), // 이 부분은 나중에 수정 필요
               ]),
             ),
           ],
@@ -250,10 +257,49 @@ class _SentReqState extends State<SentReq> {
 }
 
 class ReceivedReq extends StatelessWidget {
-  const ReceivedReq({super.key});
+  // final String? matchId;
+  final String nickname;
+  final String company;
+  final String position;
+  final String introduction;
+  final double rating;
+  final String question;
+
+  const ReceivedReq({
+    Key? key,
+    // this.matchId,
+    required this.nickname,
+    required this.company,
+    required this.position,
+    required this.introduction,
+    required this.rating,
+    required this.question,
+  }) : super(key: key);
+
+  void receiveList() async {
+    int userId = 0;
+    try {
+      //로그인 한 유저의 senderId 가져오기
+      Map<String, dynamic> res = await getUserDetail();
+      if (res['success']) {
+        userId = res['data']['userId'];
+      } else {
+        print(
+            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+      }
+
+      Map<String, dynamic> response =
+          await receivedInfoRequest(userId); // 받은 요청에서 가져와야 함.
+
+      print(response);
+    } catch (e) {
+      throw Error();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    receiveList();
     return Container(
       padding: const EdgeInsets.all(20),
       child: ListView.builder(
