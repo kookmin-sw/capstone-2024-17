@@ -96,13 +96,22 @@ class ChoosePurpose extends StatelessWidget {
                         response['data']['receiverId']);
 
                     print("info Response: $inforesponse");
-                    var nickname =
-                        inforesponse['data']['nickname'] ?? "nickname";
-                    var company = inforesponse['data']['company'] ?? "company";
-                    // var position = inforesponse['data']['position'] ?? "position"; // 아직 백엔드 딴에서 리턴 X 나중에 수정 필요
-                    var introduction =
-                        inforesponse['data']['introduction'] ?? "introduction";
-                    double rating = inforesponse['data']['rating'] ?? 0.0;
+
+                    var nickname = inforesponse['data']['receiverInfo']
+                            ['nickname'] ??
+                        "nickname";
+                    var company = inforesponse['data']['receiverInfo']
+                            ['company'] ??
+                        "company";
+                    // var position = inforesponse['data']['receiverInfo']['position'] ?? "position"; // 아직 백엔드 딴에서 리턴 X 나중에 수정 필요
+                    var introduction = inforesponse['data']['receiverInfo']
+                            ['introduction'] ??
+                        "introduction";
+                    double rating =
+                        inforesponse['data']['receiverInfo']['rating'] ?? 0.0;
+
+                    int requestType =
+                        int.parse(inforesponse['data']['requestTypeId'] ?? '0');
 
                     Navigator.push(
                         context,
@@ -113,7 +122,7 @@ class ChoosePurpose extends StatelessWidget {
                                   receiverPosition: 'Position',
                                   receiverIntroduction: introduction,
                                   receiverRating: rating,
-                                  Question: purpose[_selectedIndex],
+                                  Question: purpose[requestType],
                                   matchId: response['data']['matchId'],
                                 )));
                   } catch (e) {
