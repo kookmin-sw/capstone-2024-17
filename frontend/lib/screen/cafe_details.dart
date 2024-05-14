@@ -150,7 +150,21 @@ class _CafeDetailsState extends State<CafeDetails>
 
     return Scaffold(
       appBar: TopAppBar(
-        title: widget.cafeName,
+        titleWidget: Row(
+          children: [
+            Text(
+              widget.cafeName,
+              style: const TextStyle(fontSize: 22),
+            ),
+            (myCafe.cafeId != widget.cafeId)
+                ? Container()
+                : const Icon(
+                    Icons.circle,
+                    size: 13,
+                    color: Color(0xFFFF6C3E),
+                  ),
+          ],
+        ),
       ),
       body: Column(
         children: [
