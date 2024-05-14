@@ -14,6 +14,7 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 const List<Map<String, dynamic>> sampleUserList = [
   {
+    "userId": 1,
     "nickname": "뽕순이",
     "companyName": "채연컴퍼니",
     "positionName": "집사",
@@ -21,6 +22,7 @@ const List<Map<String, dynamic>> sampleUserList = [
     "rating": 10.0,
   },
   {
+    "userId": 2,
     "nickname": "담",
     "companyName": "네카라쿠배당토",
     "positionName": "웹 프론트엔드",
@@ -28,6 +30,7 @@ const List<Map<String, dynamic>> sampleUserList = [
     "rating": 20.0,
   },
   {
+    "userId": 3,
     "nickname": "잠온다",
     "companyName": "구글",
     "positionName": "데이터 엔지니어",
@@ -35,6 +38,7 @@ const List<Map<String, dynamic>> sampleUserList = [
     "rating": 30.0,
   },
   {
+    "userId": 4,
     "nickname": "내가제일잘나가",
     "companyName": "꿈의직장",
     "positionName": "풀스택",
