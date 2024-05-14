@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
 import 'package:provider/provider.dart';
 
@@ -232,22 +233,33 @@ class _CafeDetailsState extends State<CafeDetails>
                           content: content,
                           firstButton: "확인",
                           secondButton: "취소",
-                          handleFirstClick: () {
+                          handleFirstClick: () async {
                             _stopTimer();
+
+                            int userId;
+                            Map<String, dynamic> res = await getUserDetail();
+                            if (res['success']) {
+                              userId = res['data']['userId'];
+                              print("!!!!유저 아이디: $userId");
+                            } else {
+                              print(
+                                  "!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
+                              return;
+                            }
 
                             // 지정 카페 변경인 경우
                             if (!setOrChange) {
                               // 기존 카페에서 유저 삭제 pub 요청
                               deleteUserInCafe(
                                 stompClient,
-                                "test",
+                                userId,
                                 myCafe.cafeId!,
                               );
                             }
                             // 카페에 유저 추가 pub 요청
                             addUserInCafe(
                               stompClient,
-                              "test",
+                              userId,
                               widget.cafeId,
                             );
 

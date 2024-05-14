@@ -35,8 +35,7 @@ void subCafeList(
 }
 
 // cafe 업데이트(추가, 삭제) pub 요청
-void pubCafe(
-    StompClient stompClient, String type, String userId, String cafeId) {
+void pubCafe(StompClient stompClient, String type, int userId, String cafeId) {
   if (!stompClient.connected) {
     print("stompClient is not connected !!");
     return;
@@ -53,11 +52,11 @@ void pubCafe(
 }
 
 // cafe 업데이트 - user 추가
-void addUserInCafe(StompClient stompClient, String userId, String cafeId) {
+void addUserInCafe(StompClient stompClient, int userId, String cafeId) {
   pubCafe(stompClient, "add", userId, cafeId);
 }
 
 // cafe 업데이트 - user 삭제
-void deleteUserInCafe(StompClient stompClient, String userId, String cafeId) {
+void deleteUserInCafe(StompClient stompClient, int userId, String cafeId) {
   pubCafe(stompClient, "delete", userId, cafeId);
 }
