@@ -196,11 +196,11 @@ class _CafeDetailsState extends State<CafeDetails>
                     businessHours: widget.cafeDetailsArguments[8],
                   ),
                   ListView.builder(
-                    itemCount: sampleUserList.length,
+                    itemCount: userList.length,
                     itemBuilder: (context, index) {
                       return UserItem(
                         type: "cafeUser",
-                        receiverId: userList[index].userId,
+                        userId: userList[index].userId,
                         nickname: userList[index].nickname,
                         company: userList[index].company,
                         position: userList[index].position,

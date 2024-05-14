@@ -7,7 +7,7 @@ class UserModel {
   double rating;
 
   UserModel.fromJson(Map<String, dynamic> json)
-      : userId = json['userId'], //변경필요
+      : userId = json['userId'],
         nickname = json['nickname'],
         company = json['company'],
         position = json['position'],
