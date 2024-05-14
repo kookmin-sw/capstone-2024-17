@@ -84,6 +84,14 @@ class FCM {
               return const ReqAcceptedNotification();
             },
           );
+        } else {
+          print('오프');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const OfflineNotification();
+            },
+          );
         }
 
         if (message.notification != null) {
