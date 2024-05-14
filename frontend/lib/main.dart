@@ -14,9 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
-import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/model/user_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
@@ -154,9 +152,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // 알림 설정
     final fcm = FCM(context);
     fcm.setNotifications();
-    // fcm.messageStreamController.stream.listen((msg) {
-    // print('[alarmList content] $msg');
-    // });
     // 알림 로그를 저장할 파일 생성
     getApplicationDocumentsDirectory().then((dir) {
       File('${dir.path}/notification.txt');
