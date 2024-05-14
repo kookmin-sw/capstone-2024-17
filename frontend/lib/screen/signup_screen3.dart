@@ -132,7 +132,6 @@ void waitSignup(BuildContext context, String? loginId, String? password,
     Navigator.of(context).pushNamed('/signin');
   } else {
     // 회원가입 실패
-    showAlertDialog(
-        context, '회원가입 실패: ${res['message']}(${res['statusCode']})');
+    showAlertDialog(context, '회원가입 실패: ${res['message']}(${res['code']})');
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -45,45 +46,39 @@ Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
-  }
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
   receiverId = 7; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
 
-  if (userToken != null) {
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $userToken",
-        },
-        body: jsonEncode({
-          'senderId': senderId,
-          'receiverId': receiverId,
-          'requestTypeId': requestTypeId
-        }),
-      );
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'requestTypeId': requestTypeId
+      }),
+    );
 
-      final responseData = json.decode(response.body);
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
-      if (response.statusCode == 200) {
-        if (responseData['success']) {
-          return responseData;
-        } else {
-          throw Exception(
-              '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
-        }
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData;
       } else {
-        throw Exception('서버 오류: ${response.statusCode}');
+        throw Exception(
+            '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
       }
-    } catch (error) {
-      throw Error();
+    } else {
+      throw Exception('서버 오류: ${response.statusCode}');
     }
-  } else {
-    throw Exception('User token is null');
+  } catch (e) {
+    throw Error();
   }
 }
 
@@ -94,10 +89,8 @@ Future<Map<String, dynamic>> matchInfoRequest(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
   print("userToken = $userToken");
 
   try {
@@ -112,13 +105,12 @@ Future<Map<String, dynamic>> matchInfoRequest(
     print("처리중");
     if (response.statusCode == 200) {
       print("O1");
-      return json.decode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       print("O2");
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
-  } catch (error) {
-    print('error: $error');
+  } catch (e) {
     throw Error();
   }
 }
@@ -128,10 +120,8 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/cancel');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
 
   try {
     final response = await http.delete(
@@ -146,12 +136,11 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (error) {
-    print('error: $error');
     throw Error();
   }
 }
@@ -184,7 +173,6 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
       throw Exception('Failed to get match accept: ${response.statusCode}');
     }
   } catch (error) {
-    print('error: $error');
     throw Error();
   }
 }
@@ -192,6 +180,9 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
+  // 디바이스 토큰을 발급
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
+  // print('!!!디바이스 토큰!!!!!: $fcmToken');
   final url = Uri.parse('$baseUrl/auth/signUp');
   final data = jsonEncode({
     'loginId': loginId,
@@ -199,11 +190,12 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
     'nickname': nickname,
     'email': email,
     'phone': phone,
+    'deviceToken': fcmToken,
   });
   try {
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
@@ -225,7 +217,7 @@ Future<Map<String, dynamic>> login(
   try {
     http.Response res = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -254,6 +246,83 @@ Future<Map<String, dynamic>> getUserDetail() async {
   }
 }
 
+// 유저 delete: 유저 정보 get(임시)해서 가져온 userUUID로 진행
+Future<Map<String, dynamic>> deleteUser() async {
+  final url = Uri.parse('$baseUrl/auth/delete');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  Map<String, dynamic> res1 = await getUserDetail();
+  if (res1['success'] == true) {
+    final userUUID = res1['data']['userUUID'];
+    final data = jsonEncode({
+      'userUUID': userUUID,
+    });
+    try {
+      http.Response res2 = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: data,
+      );
+      Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res2.bodyBytes));
+      return jsonData;
+    } catch (error) {
+      print('error: $error');
+      throw Error();
+    }
+  } else {
+    // UUID 가져오기 실패
+    print('유저 정보 get 도중 에러 발생');
+    throw Error();
+  }
+}
+
+// 자기소개 업데이트
+Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
+  final url = Uri.parse('$baseUrl/user/introduction/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'introduction': introduction,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 회사 초기화
+Future<Map<String, dynamic>> resetCompany() async {
+  final url = Uri.parse('$baseUrl/user/company/reset');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 유저의 채팅방 목록 get: 해당 유저는 토큰으로 판단
 Future<Map<String, dynamic>> getChatroomlist() async {
   final url = Uri.parse('$baseUrl/chatroom/list');
@@ -268,6 +337,50 @@ Future<Map<String, dynamic>> getChatroomlist() async {
         'Authorization': 'Bearer $token'
       },
     );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 직무리스트 가져오기
+Future<Map<String, dynamic>> getPositionlist() async {
+  final url = Uri.parse('$baseUrl/user/position/list');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  try {
+    http.Response res = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
+// 직무 저장 요청
+Future<Map<String, dynamic>> updatePosition(String position) async {
+  final url = Uri.parse('$baseUrl/user/position/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'position': position,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
@@ -337,7 +450,7 @@ Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
         "Content-Type": "application/json",
       },
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
     print('error: $error');
@@ -363,7 +476,7 @@ Future<Map<String, dynamic>> verificationRequest(String email) async {
       },
       body: data,
     );
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {
@@ -388,7 +501,7 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
           'Authorization': 'Bearer $token'
         },
         body: data);
-    Map<String, dynamic> jsonData = jsonDecode(res.body);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     print(jsonData);
     return jsonData;
   } catch (error) {

@@ -41,6 +41,7 @@ public class MatchService {
 
     // 매칭 요청
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
+        log.trace("sendMatchRequest()");
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
 
         // 이미 락이 걸려 있는 경우 요청 처리 X
@@ -74,6 +75,7 @@ public class MatchService {
 
     // 매칭 요청 정보
     public MatchInfoResponseDto getMatchRequestInfo(MatchInfoDto dto) {
+        log.trace("getMatchRequestInfo()");
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
 
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
@@ -93,6 +95,7 @@ public class MatchService {
 
     // 매칭 요청 수락
     public MatchDto acceptMatchRequest(MatchIdDto dto) {
+        log.trace("acceptMatchRequest()");
         if (!verifyMatchRequest(dto)) {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }
@@ -121,6 +124,7 @@ public class MatchService {
 
     // 매칭 요청 거절
     public MatchDto declineMatchRequest(MatchIdDto dto) {
+        log.trace("declineMatchRequest()");
         if (!verifyMatchRequest(dto)) {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }
@@ -151,6 +155,7 @@ public class MatchService {
 
     // 매칭 요청 수동 취소
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
+        log.trace("cancelMatchRequest()");
         if (!verifyMatchRequest(dto)) {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }
@@ -177,12 +182,14 @@ public class MatchService {
 
     // 매칭 요청 검증
     private boolean verifyMatchRequest(MatchIdDto dto) {
+        log.trace("verifyMatchRequest()");
         Long ttl = redisTemplate.getExpire("matchId:" + dto.getMatchId());
         return ttl != null && ttl > 0; // true
     }
 
     // Object -> Long 타입 변환
     private Long getLongId(Object result) {
+        log.trace("getLongId()");
         Long id = null;
         if (result != null) {
             if (result instanceof Number) {
@@ -191,7 +198,7 @@ public class MatchService {
                 try {
                     id = Long.parseLong(result.toString());
                 } catch (NumberFormatException e) {
-                    System.err.println("변환 에러: " + e.getMessage());
+                    log.trace("변환 에러: {}", e.getMessage());
                 }
             }
         }
@@ -199,6 +206,7 @@ public class MatchService {
     }
 
     public MatchStatusDto finishMatch(MatchIdDto dto) {
+        log.trace("finishMatch()");
         String key = "matchId:" + dto.getMatchId() + "-info";
         redisTemplate.delete(key);
 
@@ -209,6 +217,7 @@ public class MatchService {
     }
 
     public Boolean isMatching(MatchIdDto dto) {
+        log.trace("isMatching()");
         String key = "matchId:" + dto.getMatchId() + "-info";
         Object status = redisTemplate.opsForHash().get(key, "status");
         return status != null; // true
@@ -216,6 +225,7 @@ public class MatchService {
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
+        log.trace("saveReview()");
         if (dto.getRating() < 1 || dto.getRating() > 5) {
             throw new CustomException(ErrorCode.VALUE_ERROR);
         }

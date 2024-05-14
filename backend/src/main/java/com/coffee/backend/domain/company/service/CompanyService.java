@@ -39,6 +39,7 @@ public class CompanyService {
     private final ObjectMapper objectMapper;
 
     public Company findCompanyByDomain(String domain) {
+        log.trace("findCompanyByDomain()");
         return companyRepository.findByDomain(domain).orElseThrow(() -> {
             log.info("domain {} not found", domain);
             throw new CustomException(ErrorCode.COMPANY_NOT_FOUND);
@@ -47,9 +48,10 @@ public class CompanyService {
 
 
     public void sendCodeToEmail(String loginId, String toEmail) {
+        log.trace("sendCodeToEmail()");
         userService.checkDuplicatedEmail(toEmail);
-
         String domain = toEmail.split("@")[1];
+        this.findCompanyByDomain(domain);
 
         String title = "커리어 한잔 이메일 인증 코드";
         String authCode = this.createCode();
@@ -69,6 +71,7 @@ public class CompanyService {
 
 
     private String createCode() {
+        log.trace("createCode()");
         int lenth = 6;
         try {
             Random random = SecureRandom.getInstanceStrong();
@@ -84,6 +87,7 @@ public class CompanyService {
     }
 
     public EmailVerificationResponse verifiedCode(User user, String email, String authCode) {
+        log.trace("verifiedCode()");
         userService.checkDuplicatedEmail(email);
 
         String redisAuthCode = redisTemplate.opsForValue().get(AUTH_CODE_PREFIX + email);
@@ -99,6 +103,7 @@ public class CompanyService {
     }
 
     public List<CompanyDto> searchCompany(String searchKeyword) {
+        log.trace("searchCompany()");
         List<Company> companyList = companyRepository.findAllByNameContaining(searchKeyword);
         return companyList.stream().map(company -> {
             CompanyDto companyDto = new CompanyDto();
