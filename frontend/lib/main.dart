@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
                   )),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => MyCafeModel()),
+          ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
         ],
         child: MaterialApp(
           theme: ThemeData(
@@ -114,17 +116,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String? userToken;
   late StompClient stompClient;
-  int _selectedIndex = 0;
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
 
   late final List<Widget> _screenOptions;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   void updateCafeList(List<String> cafeList) {
     setState(() {
@@ -186,8 +181,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final selectedIndex = selectedIndexProvider.selectedIndex;
     return Scaffold(
-      body: _screenOptions.elementAt(_selectedIndex),
+      body: _screenOptions.elementAt(selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         iconSize: 26,
@@ -220,8 +217,10 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'MY',
           ),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: selectedIndex,
+        onTap: (index) {
+          selectedIndexProvider.selectedIndex = index;
+        },
         showSelectedLabels: false,
         showUnselectedLabels: false,
         unselectedItemColor: Colors.black,
