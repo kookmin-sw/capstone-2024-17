@@ -1,10 +1,10 @@
 package com.coffee.backend.domain.match.dto;
 
 import lombok.Getter;
-import org.springframework.messaging.handler.annotation.SendTo;
+import lombok.Setter;
 
 @Getter
-@SendTo
+@Setter
 public class MatchIdDto {
     private String matchId;
 }
