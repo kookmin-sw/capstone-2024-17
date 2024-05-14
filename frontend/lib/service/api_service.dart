@@ -177,6 +177,46 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
   }
 }
 
+//커피챗 진행 후 평점 보내기
+Future<Map<String, dynamic>> coffeeBeanReview(
+    int senderId, int receiverId, int rating) async {
+  final url = Uri.parse('$baseUrl/match/review');
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'rating': rating,
+        'comment': '',
+      }),
+    );
+
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData;
+      } else {
+        throw Exception(
+            '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+      }
+    } else {
+      throw Exception('서버 오류: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
