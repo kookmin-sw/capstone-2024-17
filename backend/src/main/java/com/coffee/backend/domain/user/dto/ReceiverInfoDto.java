@@ -9,7 +9,7 @@ import lombok.Setter;
 public class ReceiverInfoDto {
     private String nickname;
     private Company company;
-    //    private String position;
+    private String position;
     private String introduction;
     private String rating;
 }
