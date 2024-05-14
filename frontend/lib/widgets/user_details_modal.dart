@@ -45,7 +45,7 @@ class UserDetailsModal extends StatelessWidget {
             ),
             ModalButton(
               text: "커피챗 요청하기",
-              handlePressed: handleChangeDialog(receiverId),
+              handlePressed: () => handleChangeDialog(receiverId),
             ),
           ],
         ),
