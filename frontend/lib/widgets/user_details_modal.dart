@@ -35,6 +35,7 @@ class UserDetailsModal extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             UserDetails(
               nickname: nickname,
@@ -45,7 +46,7 @@ class UserDetailsModal extends StatelessWidget {
             ),
             ModalButton(
               text: "커피챗 요청하기",
-              handlePressed: handleChangeDialog(receiverId),
+              handlePressed: () => handleChangeDialog(receiverId),
             ),
           ],
         ),

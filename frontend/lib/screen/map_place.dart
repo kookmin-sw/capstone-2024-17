@@ -148,7 +148,9 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon = await _createMarkerImage(
-          place['displayName']['text']); // 여기서 라벨에 텍스트 명 변경가능
+        place['displayName']['text'],
+        place['id'],
+      ); // 여기서 라벨에 텍스트 명 변경가능
 
       localMarkers.add(
         Marker(
@@ -249,7 +251,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
         radius: 500, // 반경
         fillColor: Colors.deepOrange.shade100.withOpacity(0), // 채우기 색상
         strokeColor: (myCafe.cafeId != null)
-            ? const Color.fromRGBO(246, 82, 16, 1)
+            ? const Color(0xFFFF6C3E)
             : Colors.grey, // 테두리 색상
         strokeWidth: 3, // 테두리 두께
       )
@@ -260,7 +262,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   }
 
   // 마커 그리기 함수
-  Future<Uint8List> _createMarkerImage(String label) async {
+  Future<Uint8List> _createMarkerImage(String label, String cafeId) async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
         recorder,
@@ -268,10 +270,16 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             const Offset(160.0, 160.0))); // Canvas 크기를 100x100으로 변경
 
     // 마커 아이콘을 그리는 코드
-    final paint = Paint()
-      ..color = (myCafe.cafeId != null)
-          ? const Color.fromRGBO(246, 82, 16, 0.9)
-          : Colors.grey; //red, green, blue, opacity
+    final paint = Paint();
+    if (myCafe.cafeId == null) {
+      paint.color = Colors.grey; // 오프라인 상태
+    } else {
+      if (myCafe.cafeId == cafeId) {
+        paint.color = const Color(0xFFFF6C3E); // 온라인 - 내 카페
+      } else {
+        paint.color = const Color(0xFFFFAC7E); // 온라인 - 다른 카페
+      }
+    }
     canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)

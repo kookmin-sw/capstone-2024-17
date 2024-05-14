@@ -128,12 +128,6 @@ class _CafeDetailsState extends State<CafeDetails>
     super.initState();
     getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
-    tabController!.addListener(() {
-      // 사용자 보기 탭 클릭 시
-      if (tabController!.index == 1) {
-        // 사용자 목록 업데이트 ?
-      }
-    });
   }
 
   @override
@@ -150,7 +144,21 @@ class _CafeDetailsState extends State<CafeDetails>
 
     return Scaffold(
       appBar: TopAppBar(
-        title: widget.cafeName,
+        titleWidget: Row(
+          children: [
+            Text(
+              widget.cafeName,
+              style: const TextStyle(fontSize: 22),
+            ),
+            (myCafe.cafeId != widget.cafeId)
+                ? Container()
+                : const Icon(
+                    Icons.circle,
+                    size: 13,
+                    color: Color(0xFFFF6C3E),
+                  ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -217,13 +225,10 @@ class _CafeDetailsState extends State<CafeDetails>
                       (myCafe.cafeId != null)
                           ? Container()
                           : ClipRect(
-                              child: Positioned.fill(
-                                child: BackdropFilter(
-                                  filter:
-                                      ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                  child: Container(
-                                    color: Colors.transparent,
-                                  ),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                  color: Colors.transparent,
                                 ),
                               ),
                             ),

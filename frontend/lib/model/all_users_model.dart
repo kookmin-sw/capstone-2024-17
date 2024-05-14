@@ -20,7 +20,7 @@ class AllUsersModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteUser(String cafeId, String userId) {
+  void deleteUser(String cafeId, int userId) {
     allUsers[cafeId]!.removeWhere((user) => user.userId == userId);
     notifyListeners();
   }
