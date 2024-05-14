@@ -1,0 +1,5 @@
+ALTER TABLE user
+    ADD COLUMN cafe_id VARCHAR(255);
+
+ALTER TABLE user
+    ADD COLUMN session_id VARCHAR(255);

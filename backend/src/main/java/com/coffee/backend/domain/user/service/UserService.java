@@ -24,6 +24,7 @@ public class UserService {
     private final CustomMapper customMapper;
 
     public User getByUserId(Long userId) {
+        log.trace("getByUserId()");
         Optional<User> user = userRepository.findById(userId);
 
         return user.orElseThrow(() -> {
@@ -33,15 +34,16 @@ public class UserService {
     }
 
     // 특정 카페에 접속한 사용자 list에 보일 User 데이터 조회
-    public CafeUserDto getCafeUserInfoByLoginId(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
+    public CafeUserDto getCafeUserInfoByUserId(Long userId) {
+        log.trace("getCafeUserInfoByUserId()");
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> {
-                    log.info("id = {} 인 사용자가 존재하지 않습니다", loginId);
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
                     return new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
 
         return CafeUserDto.builder()
-                .loginId(user.getLoginId())
+                .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .company(Optional.ofNullable(user.getCompany()).map(Company::getName).orElse("무소속"))
                 .position(user.getPosition().getName())
@@ -52,31 +54,56 @@ public class UserService {
 
 
     public void checkDuplicatedEmail(String email) {
+        log.trace("checkDuplicatedEmail()");
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
+            if (user.get().getEmail().equals(email)) {
+                return; // 자기 자신 email이면 duplication 아님
+            }
             log.debug("userService.checkDuplicatedEmail exception occur email: {}", email);
             throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
         }
     }
 
     public void setUserEmail(User user, String email) {
+        log.trace("setUserEmail()");
 //        this.checkDuplicatedEmail(email);
         user.setEmail(email);
         userRepository.save(user);
     }
 
     public void setUserCompany(User user, Company company) {
+        log.trace("setUserCompany()");
         user.setCompany(company);
         userRepository.save(user);
     }
 
     public UserDto updateUserPosition(User user, String position) {
+        log.trace("updateUserPosition()");
         user.setPosition(Position.of(position));
         return customMapper.toUserDto(userRepository.save(user));
     }
 
     public UserDto updateUserIntroduction(User user, String introduction) {
+        log.trace("updateUserIntroduction()");
         user.setIntroduction(introduction);
+        return customMapper.toUserDto(userRepository.save(user));
+    }
+
+    public void updateUserSessionId(Long userId, String sessionId) {
+        log.trace("updateUserSessionId()");
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> {
+                    log.info("id = {} 인 사용자가 존재하지 않습니다", userId);
+                    return new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+        user.setSessionId(sessionId);
+        userRepository.save(user);
+    }
+
+    public UserDto resetCompany(User user) {
+        log.trace("resetCompany()");
+        user.setCompany(null);
         return customMapper.toUserDto(userRepository.save(user));
     }
 }

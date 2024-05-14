@@ -34,10 +34,12 @@ public class AuthService {
     private final TokenStorageService tokenStorageService;
 
     public UserDto detail(User user) {
+        log.trace("detail()");
         return customMapper.toUserDto(user);
     }
 
     public UserDto signUp(SignUpDto dto) {
+        log.trace("signUp()");
         validateLoginIdNotDuplicated(dto.getLoginId());
 
         User user = mapper.map(dto, User.class);
@@ -50,6 +52,7 @@ public class AuthService {
     }
 
     public AuthDto signIn(SignInDto dto) {
+        log.trace("signIn()");
         User user = userRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.LOGIN_FAILED));
 
@@ -68,6 +71,7 @@ public class AuthService {
     }
 
     public boolean deleteUserByUserUUID(String userUUID) {
+        log.trace("deleteUserByUserUUID()");
         userRepository.findByUserUUID(userUUID)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -76,12 +80,14 @@ public class AuthService {
     }
 
     private void validateLoginIdNotDuplicated(String loginId) {
+        log.trace("validateLoginIdNotDuplicated()");
         userRepository.findByLoginId(loginId).ifPresent(u -> {
             throw new CustomException(ErrorCode.LOGIN_ID_DUPLICATED);
         });
     }
 
     private void validatePassword(String inputPassword, String storedPassword) {
+        log.trace("validatePassword()");
         if (!passwordEncoder.matches(inputPassword, storedPassword)) {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
         }

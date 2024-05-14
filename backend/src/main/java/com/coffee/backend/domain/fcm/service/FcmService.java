@@ -32,6 +32,7 @@ public class FcmService {
     private static final String API_URL = "https://fcm.googleapis.com/v1/projects/career-cup-d9082/messages:send";
 
     public void sendPushMessageTo(String targetToken, String title, String body) {
+        log.trace("sendPushMessageTo()");
         try {
             String pushMessage = makePushMessage(targetToken, title, body);
 
@@ -39,14 +40,14 @@ public class FcmService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(getAccessToken());
 
-            System.out.println(pushMessage);
-            System.out.println(headers);
+            log.trace("pushMessage: {}", pushMessage);
+            log.trace("headers: {}", headers);
 
             HttpEntity<String> entity = new HttpEntity<>(pushMessage, headers);
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
 
-            System.out.println(response.getStatusCode());
+            log.trace("status code: {}", response.getStatusCode());
         } catch (JsonProcessingException e) {
             throw new CustomException(ErrorCode.FCM_MESSAGE_FORMAT_ERROR);
         } catch (IOException e) {
@@ -58,6 +59,7 @@ public class FcmService {
     }
 
     private String getAccessToken() throws IOException {
+        log.trace("getAccessToken()");
         final GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
@@ -67,13 +69,14 @@ public class FcmService {
     }
 
     private String makePushMessage(String targetToken, String title, String body) throws JsonProcessingException {
+        log.trace("makePushMessage()");
         Data data = new Data();
         data.setTitle(title);
         data.setBody(body);
 
         Notification notification = new Notification();
-        data.setTitle(title);
-        data.setBody(body);
+        notification.setTitle(title);
+        notification.setBody(body);
 
         Message message = new Message();
         message.setData(data);

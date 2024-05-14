@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,14 @@ public class BackendApplication {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return mapper;
+    }
+
+    @Bean
+    public FlywayMigrationStrategy cleanMigrateStrategy() {
+        return flyway -> {
+            flyway.repair();
+            flyway.migrate();
+        };
     }
 
     public static void main(String[] args) {

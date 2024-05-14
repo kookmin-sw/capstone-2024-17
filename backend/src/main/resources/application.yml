@@ -17,12 +17,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        show-sql: true
-        format_sql: true
+      ddl-auto: validate
+  #    properties:
+  #      hibernate:
+  #        dialect: org.hibernate.dialect.MySQL8Dialect
+  #        format_sql: true
+
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
 
   profiles:
     include: jwt,db

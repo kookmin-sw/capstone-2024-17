@@ -161,7 +161,7 @@ class _SentReqState extends State<SentReq> {
   void initState() {
     super.initState();
     timerend = false;
-    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 10 * 2; // 20초 후
+    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10분후
   }
 
   Future<void> handleRequestCancel() async {
