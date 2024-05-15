@@ -120,6 +120,7 @@ public class MatchService {
             SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
 
             MatchReceivedInfoDto res = new MatchReceivedInfoDto();
+            res.setMatchId(matchId);
             res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
             res.setSenderInfo(senderInfo);
             requests.add(res);
