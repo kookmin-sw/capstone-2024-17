@@ -75,10 +75,16 @@ class UserItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(nickname),
-                Text("$company / $position"),
+                Text(
+                  nickname,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "$company / $position",
+                  overflow: TextOverflow.ellipsis,
+                ),
                 SizedBox(
-                  width: 200,
+                  width: 179,
                   child: Text(
                     introduction,
                     overflow: TextOverflow.ellipsis,
