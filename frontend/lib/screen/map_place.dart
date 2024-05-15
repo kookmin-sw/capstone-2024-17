@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/map_request_dto.dart';
 import 'cafe_details.dart';
@@ -30,6 +31,7 @@ class Google_Map extends StatefulWidget {
 class _GoogleMapWidgetState extends State<Google_Map> {
   late MyCafeModel myCafe;
   late StompClient stompClient;
+  late AllUsersModel allUsers;
 
   @override
   void initState() {
@@ -148,7 +150,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon = await _createMarkerImage(
-        place['displayName']['text'],
+        allUsers.getUserList(place['id']).length,
         place['id'],
       ); // 여기서 라벨에 텍스트 명 변경가능
 
@@ -262,7 +264,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   }
 
   // 마커 그리기 함수
-  Future<Uint8List> _createMarkerImage(String label, String cafeId) async {
+  Future<Uint8List> _createMarkerImage(int numUsers, String cafeId) async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
         recorder,
@@ -283,8 +285,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
-    const textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
-    final textSpan = TextSpan(text: label, style: textStyle); // 마진
+    const textStyle = TextStyle(color: Colors.white, fontSize: 50); // 폰트, 크기
+    final textSpan = TextSpan(text: "$numUsers", style: textStyle); // 마진
     final textPainter =
         TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     textPainter.layout();
@@ -306,6 +308,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
 
     myCafe = Provider.of<MyCafeModel>(context);
     stompClient = Provider.of<StompClient>(context);
+    allUsers = Provider.of<AllUsersModel>(context);
 
     return CupertinoPageScaffold(
       child: Stack(
