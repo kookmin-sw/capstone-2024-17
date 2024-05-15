@@ -108,6 +108,10 @@ public class MatchService {
 
         List<Object> matchIds = redisTemplate.opsForList().range("receiverId:" + dto.getReceiverId(), 0, -1);
 
+        if (matchIds == null || matchIds.isEmpty()) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+        }
+
         List<MatchReceivedInfoDto> requests = new ArrayList<>();
         for (Object matchIdObj : matchIds) {
             String matchId = (String) matchIdObj;
@@ -116,7 +120,8 @@ public class MatchService {
             Object senderObj = matchInfo.get("senderId");
             Long senderId = getLongId(senderObj);
 
-            User sender = userRepository.findById(senderId).orElseThrow();
+            User sender = userRepository.findById(senderId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
 
             MatchReceivedInfoDto res = new MatchReceivedInfoDto();
@@ -160,6 +165,7 @@ public class MatchService {
     // 매칭 요청 거절
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
+
         if (!verifyMatchRequest(dto)) {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }
