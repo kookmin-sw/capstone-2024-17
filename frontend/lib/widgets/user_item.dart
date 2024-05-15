@@ -16,6 +16,7 @@ class UserItem extends StatelessWidget {
   final String position;
   final String introduction;
   final double rating;
+  final String matchId;
 
   const UserItem({
     super.key,
@@ -26,6 +27,7 @@ class UserItem extends StatelessWidget {
     required this.position,
     required this.introduction,
     required this.rating,
+    required this.matchId,
   });
 
   @override
@@ -51,7 +53,8 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating, // 여기에서 rating을 전달합니다.
-                userId: userId,
+                receiverId: userId, //여기선 요청 받은 애의 userId를 씀
+                matchId: matchId,
               );
             } else {
               return Container();
@@ -163,7 +166,8 @@ class ReceivedReqDialog extends StatelessWidget {
   final String position;
   final String introduction;
   final double rating;
-  final int userId;
+  final int receiverId;
+  final String matchId;
 
   const ReceivedReqDialog({
     super.key,
@@ -172,7 +176,8 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.position,
     required this.introduction,
     required this.rating,
-    required this.userId,
+    required this.receiverId,
+    required this.matchId,
   });
 
   @override
@@ -201,6 +206,8 @@ class ReceivedReqDialog extends StatelessWidget {
               first: "수락",
               second: "거절",
               handleFirstClick: () async {
+                print(matchId);
+                print(receiverId);
                 try {
                   //로그인 한 유저의 senderId 가져오기
                   Map<String, dynamic> res = await getUserDetail();
