@@ -53,8 +53,7 @@ public class MatchService {
         validateLock(lockKey); // 락 검증
 
         String matchId = UUID.randomUUID().toString();
-        Map<String, String> matchInfo = createMatchInfo(dto, matchId);
-        Map.of(
+        Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
