@@ -106,20 +106,44 @@ public class MatchService {
     public List<MatchReceivedInfoDto> getMatchReceivedInfo(MatchListDto dto) {
         log.trace("getReceivedMatchRequests() for receiverId: {}", dto.getReceiverId());
 
-        List<Object> matchIds = redisTemplate.opsForList().range("receiverId:" + dto.getReceiverId(), 0, -1);
+        List<Object> matchIds;
+        try {
+            matchIds = redisTemplate.opsForList().range("receiverId:" + dto.getReceiverId(), 0, -1);
+        } catch (Exception e) {
+            log.error("Error retrieving match IDs from Redis for receiverId: {}", dto.getReceiverId(), e);
+            throw new CustomException(ErrorCode.REDIS_ACCESS_ERROR);
+        }
+
+        if (matchIds == null || matchIds.isEmpty()) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+        }
 
         List<MatchReceivedInfoDto> requests = new ArrayList<>();
         for (Object matchIdObj : matchIds) {
             String matchId = (String) matchIdObj;
-            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + matchId);
+
+            Map<Object, Object> matchInfo;
+            try {
+                matchInfo = redisTemplate.opsForHash().entries("matchId:" + matchId);
+            } catch (Exception e) {
+                throw new CustomException(ErrorCode.REDIS_ACCESS_ERROR);
+            }
 
             Object senderObj = matchInfo.get("senderId");
             Long senderId = getLongId(senderObj);
 
-            User sender = userRepository.findById(senderId).orElseThrow();
-            SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+            User sender = userRepository.findById(senderId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            SenderInfoDto senderInfo;
+            try {
+                senderInfo = mapper.map(sender, SenderInfoDto.class);
+            } catch (Exception e) {
+                throw new CustomException(ErrorCode.MAPPING_ERROR);
+            }
 
             MatchReceivedInfoDto res = new MatchReceivedInfoDto();
+            res.setMatchId(matchId);
             res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
             res.setSenderInfo(senderInfo);
             requests.add(res);
@@ -159,6 +183,7 @@ public class MatchService {
     // 매칭 요청 거절
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
+
         if (!verifyMatchRequest(dto)) {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }

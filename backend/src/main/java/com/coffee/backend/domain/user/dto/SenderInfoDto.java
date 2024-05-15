@@ -7,8 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SenderInfoDto {
+    private Long userId;
     private String nickname;
     private Company company;
     private String position;
     private String introduction;
+    private String rating;
 }
