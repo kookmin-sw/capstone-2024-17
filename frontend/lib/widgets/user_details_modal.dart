@@ -35,6 +35,7 @@ class UserDetailsModal extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             UserDetails(
               nickname: nickname,

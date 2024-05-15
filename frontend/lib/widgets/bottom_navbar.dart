@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -8,16 +10,10 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final selectedIndex = selectedIndexProvider.selectedIndex;
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       iconSize: 26,
@@ -50,8 +46,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
           label: 'MY',
         ),
       ],
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
+      currentIndex: selectedIndex,
+      onTap: (index) {
+        selectedIndexProvider.selectedIndex = index; // selectedIndex 갱신
+      },
       showSelectedLabels: false,
       showUnselectedLabels: false,
       unselectedItemColor: Colors.black,
