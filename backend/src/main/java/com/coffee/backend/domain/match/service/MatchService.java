@@ -1,12 +1,10 @@
 package com.coffee.backend.domain.match.service;
 
-import com.coffee.backend.domain.company.entity.Company;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
-import com.coffee.backend.domain.match.dto.MatchListDto;
 import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
@@ -23,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -47,26 +46,30 @@ public class MatchService {
     // 매칭 요청
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
         log.trace("sendMatchRequest()");
-        String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
 
-        // 이미 락이 걸려 있는 경우 요청 처리 X
-        if (redisTemplate.opsForValue().get(lockKey) != null) {
-            throw new CustomException(ErrorCode.REQUEST_DUPLICATED);
-        }
+        validateRequest(dto); // 요청 검증
+
+        String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
+        validateLock(lockKey); // 락 검증
 
         String matchId = UUID.randomUUID().toString();
         Map<String, String> matchInfo = Map.of(
+                "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
                 "requestTypeId", dto.getRequestTypeId(),
                 "status", "pending"
         );
 
+        // 매칭 요청 정보
         redisTemplate.opsForHash().putAll("matchId:" + matchId, matchInfo);
         redisTemplate.expire("matchId:" + matchId, 600, TimeUnit.SECONDS);
 
-        // 수신자 ID에 대한 매칭 ID 리스트에 추가
-        redisTemplate.opsForList().rightPush("receiverId:" + dto.getReceiverId(), matchId);
+        // 매칭 요청 리스트를 위한 정보
+        redisTemplate.opsForHash()
+                .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
+        redisTemplate.expire("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), 600,
+                TimeUnit.SECONDS);
 
         // 알림
         User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
@@ -87,8 +90,7 @@ public class MatchService {
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
 
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
-        Company company = receiver.getCompany();
-        receiverInfo.setCompany(company);
+        receiverInfo.setCompany(receiver.getCompany());
 
         String key = "matchId:" + dto.getMatchId();
         String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
@@ -102,34 +104,20 @@ public class MatchService {
     }
 
     // 받은 요청 정보
-    public List<MatchReceivedInfoDto> getMatchReceivedInfo(MatchListDto dto) {
-        log.trace("getReceivedMatchRequests() for receiverId: {}", dto.getReceiverId());
+    public List<MatchReceivedInfoDto> getMatchReceivedInfo(Long receiverId) {
+        log.trace("getReceivedMatchRequests() for receiverId: {}", receiverId);
 
-        List<Object> matchIds = new ArrayList<>();
-        try {
-            matchIds = redisTemplate.opsForList().range("receiverId:" + dto.getReceiverId(), 0, -1);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.REDIS_ACCESS_ERROR);
-        }
-
-        if (matchIds == null || matchIds.isEmpty()) {
+        Set<String> keys = redisTemplate.keys("receiverId:" + receiverId + "-senderId:*");
+        if (keys == null || keys.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
         List<MatchReceivedInfoDto> requests = new ArrayList<>();
-        for (Object matchIdObj : matchIds) {
-            String matchId = (String) matchIdObj;
+        for (String key : keys) {
+            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
+            String matchId = (String) matchInfo.get("matchId");
 
-            Map<Object, Object> matchInfo;
-            try {
-                matchInfo = redisTemplate.opsForHash().entries("matchId:" + matchId);
-            } catch (Exception e) {
-                throw new CustomException(ErrorCode.REDIS_ACCESS_ERROR);
-            }
-
-            Object senderObj = matchInfo.get("senderId");
-            Long senderId = getLongId(senderObj);
-
+            Long senderId = getLongId(matchInfo.get("senderId"));
             User sender = userRepository.findById(senderId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
@@ -155,12 +143,8 @@ public class MatchService {
         redisTemplate.opsForHash().put(key, "status", "accepted");
         redisTemplate.opsForHash().put(key + "-info", "status", "matching");
 
-        Object sender = redisTemplate.opsForHash().get(key, "senderId");
-        Long senderId = getLongId(sender);
-        Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
-        Long receiverId = getLongId(receiver);
-
-        redisTemplate.opsForList().remove("receiverId:" + receiverId, 1, dto.getMatchId());
+        Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
+        Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
         // 알림
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
@@ -171,6 +155,9 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
+
+        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+
         return match;
     }
 
@@ -183,21 +170,16 @@ public class MatchService {
         }
 
         String key = "matchId:" + dto.getMatchId();
-        Object sender = redisTemplate.opsForHash().get(key, "senderId");
-        Long senderId = getLongId(sender);
-        Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
-        Long receiverId = getLongId(receiver);
+        Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
+        Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
         // 알림
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
 
         redisTemplate.delete(key);
-        redisTemplate.opsForList().remove("receiverId:" + receiverId, 1, dto.getMatchId());
-
-        // 락 해제
-        String lockKey = LOCK_KEY_PREFIX + senderId;
-        redisTemplate.delete(lockKey);
+        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
         MatchDto match = new MatchDto();
         match.setMatchId(dto.getMatchId());
@@ -215,17 +197,12 @@ public class MatchService {
         }
 
         String key = "matchId:" + dto.getMatchId();
-        Object sender = redisTemplate.opsForHash().get(key, "senderId");
-        Long senderId = getLongId(sender);
-        Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
-        Long receiverId = getLongId(receiver);
+        Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
+        Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
         redisTemplate.delete(key);
-        redisTemplate.opsForList().remove("receiverId:" + receiverId, 1, dto.getMatchId());
-
-        // 락 해제
-        String lockKey = LOCK_KEY_PREFIX + senderId;
-        redisTemplate.delete(lockKey);
+        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
         MatchDto match = new MatchDto();
         match.setMatchId(dto.getMatchId());
@@ -242,9 +219,41 @@ public class MatchService {
         return ttl != null && ttl > 0; // true
     }
 
+    // 락 검증
+    private void validateLock(String lockKey) {
+        // 이미 락이 걸려 있는 경우 요청 처리 X
+        if (redisTemplate.opsForValue().get(lockKey) != null) {
+            throw new CustomException(ErrorCode.REQUEST_DUPLICATED);
+        }
+    }
+
+    // 유저 검증
+    private void validateRequest(MatchRequestDto dto) {
+        // 본인에게 요청을 보내는 경우 처리 X
+        if (dto.getSenderId().equals(dto.getReceiverId())) {
+            throw new CustomException(ErrorCode.REQUEST_SAME_USER);
+        }
+        // 유저 DB에 없는 유저가 보낼 경우 처리 X
+        if (!userRepository.existsById(dto.getSenderId())) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    // 매칭 정보 생성
+    private Map<String, String> createMatchInfo(MatchRequestDto dto, String matchId) {
+        return Map.of(
+                "matchId", matchId,
+                "senderId", dto.getSenderId().toString(),
+                "receiverId", dto.getReceiverId().toString(),
+                "requestTypeId", dto.getRequestTypeId(),
+                "status", "pending"
+        );
+    }
+
     // Object -> Long 타입 변환
     private Long getLongId(Object result) {
         log.trace("getLongId()");
+
         Long id = null;
         if (result != null) {
             if (result instanceof Number) {
@@ -262,8 +271,8 @@ public class MatchService {
 
     public MatchStatusDto finishMatch(MatchIdDto dto) {
         log.trace("finishMatch()");
-        String key = "matchId:" + dto.getMatchId() + "-info";
-        redisTemplate.delete(key);
+
+        redisTemplate.delete("matchId:" + dto.getMatchId() + "-info");
 
         MatchStatusDto match = new MatchStatusDto();
         match.setMatchId(dto.getMatchId());
@@ -273,6 +282,7 @@ public class MatchService {
 
     public Boolean isMatching(MatchIdDto dto) {
         log.trace("isMatching()");
+
         String key = "matchId:" + dto.getMatchId() + "-info";
         Object status = redisTemplate.opsForHash().get(key, "status");
         return status != null; // true
@@ -281,6 +291,7 @@ public class MatchService {
     @Transactional
     public Review saveReview(ReviewDto dto) {
         log.trace("saveReview()");
+
         if (dto.getRating() < 1 || dto.getRating() > 5) {
             throw new CustomException(ErrorCode.VALUE_ERROR);
         }
