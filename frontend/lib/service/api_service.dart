@@ -114,13 +114,12 @@ Future<Map<String, dynamic>> matchInfoRequest(
 }
 
 //매칭 요청 받은 list
-Future<Map<String, dynamic>> receivedInfoRequest(int receiverId) async {
+Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
   final url = Uri.parse('$baseUrl/match/received/info?receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
   userToken ??=
       "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  print("userToken = $userToken");
 
   try {
     final response = await http.get(
@@ -132,13 +131,24 @@ Future<Map<String, dynamic>> receivedInfoRequest(int receiverId) async {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes));
+      // 응답 데이터가 리스트 형식인지 확인하고, 맞다면 그대로 반환
+      List<dynamic> responseData =
+          jsonDecode(utf8.decode(response.bodyBytes))["data"];
+      print(responseData.runtimeType); // 출력: String
+
+      if (responseData is List) {
+        List<Map<String, dynamic>> resultList =
+            responseData.cast<Map<String, dynamic>>();
+        return resultList;
+      } else {
+        throw Exception('Received data is not in the expected format');
+      }
     } else {
       throw Exception(
           'Failed to get receivedInfoRequest: ${response.statusCode}');
     }
   } catch (e) {
-    throw Error();
+    throw Exception('Error in receivedInfoRequest: $e');
   }
 }
 

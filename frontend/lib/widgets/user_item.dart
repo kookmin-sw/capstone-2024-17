@@ -9,8 +9,8 @@ import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 
 class UserItem extends StatelessWidget {
-  final int userId;
   final String type;
+  final int userId;
   final String nickname;
   final String company;
   final String position;
@@ -19,8 +19,8 @@ class UserItem extends StatelessWidget {
 
   const UserItem({
     super.key,
-    required this.userId,
     required this.type,
+    required this.userId,
     required this.nickname,
     required this.company,
     required this.position,

@@ -12,40 +12,6 @@ import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
-const List<Map<String, dynamic>> sampleUserList = [
-  {
-    "userId": 1,
-    "nickname": "뽕순이",
-    "companyName": "채연컴퍼니",
-    "positionName": "집사",
-    "introduction": "안녕하세요 뽕순이입니다 뽕",
-    "rating": 10.0,
-  },
-  {
-    "userId": 2,
-    "nickname": "담",
-    "companyName": "네카라쿠배당토",
-    "positionName": "웹 프론트엔드",
-    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
-    "rating": 20.0,
-  },
-  {
-    "userId": 3,
-    "nickname": "잠온다",
-    "companyName": "구글",
-    "positionName": "데이터 엔지니어",
-    "introduction": "잠오니까 요청하지 마세요. 감사합니다.",
-    "rating": 30.0,
-  },
-  {
-    "userId": 4,
-    "nickname": "내가제일잘나가",
-    "companyName": "꿈의직장",
-    "positionName": "풀스택",
-    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<",
-    "rating": 40.0,
-  },
-];
 bool timerend = false;
 
 void main() async {
@@ -278,7 +244,7 @@ class ReceivedReq extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> receiveList() async {
     int userId = 0;
-    List<Map<String, dynamic>> resultList = []; // Initialize an empty list
+    List<Map<String, dynamic>> resultList = []; // 리스트로 수정
 
     try {
       Map<String, dynamic> res = await getUserDetail();
@@ -288,19 +254,16 @@ class ReceivedReq extends StatelessWidget {
         print(
             'Unable to fetch user details: ${res["message"]}(${res["statusCode"]})');
       }
-
-      // Get the received request based on the user's ID asynchronously
-      Map<String, dynamic> response = await receivedInfoRequest(userId);
-
-      // If receivedInfoRequest(userId) returns a single map, add it to the resultList
-      if (response.isNotEmpty) {
-        resultList.add(response);
+      try {
+        // receivedInfoRequest 함수로 받은 데이터를 바로 resultList에 추가
+        resultList = await receivedInfoRequest(userId);
+        print(resultList);
+      } catch (e) {
+        print('Error 1: $e');
       }
     } catch (e) {
-      print('Error fetching received requests: $e');
+      print('Error 2: $e');
     }
-    print(resultList);
-
     return resultList;
   }
 
@@ -321,22 +284,22 @@ class ReceivedReq extends StatelessWidget {
             child: ListView.builder(
               itemCount: revList.length,
               itemBuilder: (context, index) {
-                final receivedItem = revList[index];
-                final List<dynamic> senderData = receivedItem["data"];
+                Map<String, dynamic> senderData = revList[index]['senderInfo'];
+                print("senderData = $senderData\n");
 
-                return Column(
-                  children: senderData.map((senderInfo) {
-                    return UserItem(
-                      type: "receivedReqUser",
-                      userId: senderInfo["userId"] ?? 1,
-                      nickname: senderInfo["nickname"] ?? "Unknown",
-                      company: senderInfo["company"] ?? "Unknown",
-                      position: senderInfo["position"] ?? "Unknown",
-                      introduction:
-                          senderInfo["introduction"] ?? "No introduction",
-                      rating: senderInfo["rating"] ?? 0.0,
-                    );
-                  }).toList(),
+                // senderData를 사용하여 UserItem 생성
+                return UserItem(
+                  type: "receivedReqUser",
+                  userId: senderData["userId"] ?? 1,
+                  nickname: senderData["nickname"] ?? "Unknown",
+                  company: senderData["company"] != null
+                      ? senderData["company"]["name"]
+                      : "Unknown",
+                  position: senderData["position"] ?? "Unknown",
+                  introduction: senderData["introduction"] ?? "No introduction",
+                  rating: senderData["rating"] != null
+                      ? double.parse(senderData["rating"])
+                      : 0.0,
                 );
               },
             ),
