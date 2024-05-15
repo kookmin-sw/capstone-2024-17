@@ -214,6 +214,37 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
   }
 }
 
+//match decline  요청
+Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
+  final url = Uri.parse('$baseUrl/match/decline');
+
+  String? userToken = await storage.read(key: 'authToken');
+  if (userToken == null) {
+    userToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+  }
+
+  try {
+    final response = await http.delete(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match delete: ${response.statusCode}');
+    }
+  } catch (error) {
+    throw Error();
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {

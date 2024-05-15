@@ -219,6 +219,7 @@ class _CafeDetailsState extends State<CafeDetails>
                             position: userList[index].position,
                             introduction: userList[index].introduction,
                             rating: userList[index].rating,
+                            matchId: '',
                           );
                         },
                       ),
