@@ -207,7 +207,6 @@ class ReceivedReqDialog extends StatelessWidget {
               second: "거절",
               handleFirstClick: () async {
                 print(matchId);
-                print(receiverId);
                 try {
                   //로그인 한 유저의 senderId 가져오기
                   Map<String, dynamic> res = await getUserDetail();
@@ -217,7 +216,7 @@ class ReceivedReqDialog extends StatelessWidget {
                   }
 
                   Map<String, dynamic> response =
-                      await matchAcceptRequest('matchId'); // 받은 요청에서 가져와야 함.
+                      await matchAcceptRequest(matchId); // 받은 요청에서 가져와야 함.
 
                   print(response);
 
