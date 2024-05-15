@@ -67,7 +67,6 @@ public class MatchService {
 
         // 수신자 ID에 대한 매칭 ID 리스트에 추가
         redisTemplate.opsForList().rightPush("receiverId:" + dto.getReceiverId(), matchId);
-        redisTemplate.expire("receiverId:" + dto.getReceiverId(), 600, TimeUnit.SECONDS);
 
         // 알림
         User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
@@ -106,11 +105,10 @@ public class MatchService {
     public List<MatchReceivedInfoDto> getMatchReceivedInfo(MatchListDto dto) {
         log.trace("getReceivedMatchRequests() for receiverId: {}", dto.getReceiverId());
 
-        List<Object> matchIds;
+        List<Object> matchIds = new ArrayList<>();
         try {
             matchIds = redisTemplate.opsForList().range("receiverId:" + dto.getReceiverId(), 0, -1);
         } catch (Exception e) {
-            log.error("Error retrieving match IDs from Redis for receiverId: {}", dto.getReceiverId(), e);
             throw new CustomException(ErrorCode.REDIS_ACCESS_ERROR);
         }
 
@@ -134,13 +132,7 @@ public class MatchService {
 
             User sender = userRepository.findById(senderId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-            SenderInfoDto senderInfo;
-            try {
-                senderInfo = mapper.map(sender, SenderInfoDto.class);
-            } catch (Exception e) {
-                throw new CustomException(ErrorCode.MAPPING_ERROR);
-            }
+            SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
 
             MatchReceivedInfoDto res = new MatchReceivedInfoDto();
             res.setMatchId(matchId);
@@ -154,12 +146,12 @@ public class MatchService {
     // 매칭 요청 수락
     public MatchDto acceptMatchRequest(MatchIdDto dto) {
         log.trace("acceptMatchRequest()");
+
         if (!verifyMatchRequest(dto)) {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }
 
         String key = "matchId:" + dto.getMatchId();
-
         redisTemplate.opsForHash().put(key, "status", "accepted");
         redisTemplate.opsForHash().put(key + "-info", "status", "matching");
 
