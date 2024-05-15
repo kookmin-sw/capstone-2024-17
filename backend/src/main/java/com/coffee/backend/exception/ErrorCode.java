@@ -15,6 +15,9 @@ public enum ErrorCode {
 
     ILLEGAL_ARGUMENT_POSITION(HttpStatus.NOT_FOUND, "2404", "잘못 된 직무를 입력했습니다."),
 
+    REDIS_ACCESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "3500", "Redis 접근 중 오류가 발생했습니다."),
+
+
     FCM_ACCESS_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "5500", "FCM 액세스 토큰을 가져오는 중 오류가 발생했습니다."),
     FCM_MESSAGE_FORMAT_ERROR(HttpStatus.BAD_REQUEST, "5400", "FCM 메시지 포맷이 잘못되었습니다."),
     FCM_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "5501", "FCM 메시지 전송 중 오류가 발생했습니다."),
@@ -30,7 +33,8 @@ public enum ErrorCode {
 
     COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "8404", "해당 COMPANY를 찾을 수 없습니다."),
 
-    VALUE_ERROR(HttpStatus.BAD_REQUEST, "9400", "잘못된 값이 입력되었습니다.");
+    VALUE_ERROR(HttpStatus.BAD_REQUEST, "9400", "잘못된 값이 입력되었습니다."),
+    MAPPING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9500", "매핑 중 오류가 발생했습니다.");
 
     private final HttpStatus status;
     private final String code;
