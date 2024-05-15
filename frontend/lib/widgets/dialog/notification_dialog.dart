@@ -105,7 +105,12 @@ class NotificationDialog extends StatelessWidget {
                   style: const TextStyle(fontSize: 20),
                 ),
                 (navigateButton == null)
-                    ? ModalButton(text: backButton, handlePressed: () {})
+                    ? ModalButton(
+                        text: backButton,
+                        handlePressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
                     : BottomTwoButtonsSmall(
                         first: navigateButton!,
                         second: backButton,
@@ -176,7 +181,12 @@ class NotificationDialogLong extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 const Expanded(child: SizedBox()),
-                ModalButton(text: button, handlePressed: () {}),
+                ModalButton(
+                  text: button,
+                  handlePressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
               ],
             ),
           ),

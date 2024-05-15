@@ -17,7 +17,6 @@ class ModalButton extends StatelessWidget {
       height: 50,
       child: ElevatedButton(
         onPressed: () {
-          Navigator.pop(context);
           handlePressed();
         },
         style: ElevatedButton.styleFrom(
