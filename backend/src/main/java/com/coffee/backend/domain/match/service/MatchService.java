@@ -168,6 +168,8 @@ public class MatchService {
         Object receiver = redisTemplate.opsForHash().get(key, "receiverId");
         Long receiverId = getLongId(receiver);
 
+        redisTemplate.opsForList().remove("receiverId:" + receiverId, 1, dto.getMatchId());
+
         // 알림
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
@@ -199,6 +201,7 @@ public class MatchService {
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
 
         redisTemplate.delete(key);
+        redisTemplate.opsForList().remove("receiverId:" + receiverId, 1, dto.getMatchId());
 
         // 락 해제
         String lockKey = LOCK_KEY_PREFIX + senderId;
@@ -226,6 +229,7 @@ public class MatchService {
         Long receiverId = getLongId(receiver);
 
         redisTemplate.delete(key);
+        redisTemplate.opsForList().remove("receiverId:" + receiverId, 1, dto.getMatchId());
 
         // 락 해제
         String lockKey = LOCK_KEY_PREFIX + senderId;
