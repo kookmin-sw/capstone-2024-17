@@ -230,24 +230,13 @@ public class MatchService {
     // 유저 검증
     private void validateRequest(MatchRequestDto dto) {
         // 본인에게 요청을 보내는 경우 처리 X
-        if (dto.getSenderId().equals(dto.getReceiverId())) {
-            throw new CustomException(ErrorCode.REQUEST_SAME_USER);
-        }
+//        if (dto.getSenderId().equals(dto.getReceiverId())) {
+//            throw new CustomException(ErrorCode.REQUEST_SAME_USER);
+//        }
         // 유저 DB에 없는 유저가 보낼 경우 처리 X
         if (!userRepository.existsById(dto.getSenderId())) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-    }
-
-    // 매칭 정보 생성
-    private Map<String, String> createMatchInfo(MatchRequestDto dto, String matchId) {
-        return Map.of(
-                "matchId", matchId,
-                "senderId", dto.getSenderId().toString(),
-                "receiverId", dto.getReceiverId().toString(),
-                "requestTypeId", dto.getRequestTypeId(),
-                "status", "pending"
-        );
     }
 
     // Object -> Long 타입 변환
