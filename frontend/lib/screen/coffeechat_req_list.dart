@@ -299,7 +299,7 @@ class ReceivedReq extends StatelessWidget {
                   introduction: senderData["introduction"] ?? "No introduction",
                   rating: senderData["rating"] != null
                       ? double.parse(senderData["rating"])
-                      : 0.0,
+                      : 46.0,
                 );
               },
             ),
