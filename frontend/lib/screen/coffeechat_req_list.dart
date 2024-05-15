@@ -323,18 +323,20 @@ class ReceivedReq extends StatelessWidget {
               itemBuilder: (context, index) {
                 final receivedItem = revList[index];
                 final List<dynamic> senderData = receivedItem["data"];
-                final Map<String, dynamic> senderInfo =
-                    senderData.isNotEmpty ? senderData.first["senderInfo"] : {};
 
-                return UserItem(
-                  type: "receivedReqUser",
-                  userId: senderInfo["userId"] ??
-                      1, // Provide a default value if userId is null
-                  nickname: senderInfo["nickname"] ?? "Unknown",
-                  company: senderInfo["company"] ?? "Unknown",
-                  position: senderInfo["position"] ?? "Unknown",
-                  introduction: senderInfo["introduction"] ?? "No introduction",
-                  rating: senderInfo["rating"] ?? 0.0,
+                return Column(
+                  children: senderData.map((senderInfo) {
+                    return UserItem(
+                      type: "receivedReqUser",
+                      userId: senderInfo["userId"] ?? 1,
+                      nickname: senderInfo["nickname"] ?? "Unknown",
+                      company: senderInfo["company"] ?? "Unknown",
+                      position: senderInfo["position"] ?? "Unknown",
+                      introduction:
+                          senderInfo["introduction"] ?? "No introduction",
+                      rating: senderInfo["rating"] ?? 0.0,
+                    );
+                  }).toList(),
                 );
               },
             ),
