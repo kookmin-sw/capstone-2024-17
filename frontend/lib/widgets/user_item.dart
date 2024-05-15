@@ -217,16 +217,7 @@ class ReceivedReqDialog extends StatelessWidget {
                 );
               },
               handleSecondClick: () async {
-                try {
-                  Map<String, dynamic> res = await getUserDetail();
-                  if (!res['success']) {
-                    print(
-                        '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
-                  }
-                  await matchDeclineRequest(matchId);
-                } catch (e) {
-                  print("matchRequest Error: $e");
-                }
+                await matchDeclineRequest(matchId);
               },
             ),
           ],
