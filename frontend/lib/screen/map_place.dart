@@ -285,7 +285,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     canvas.drawCircle(const Offset(80, 80), 80, paint); // 중심(80, 80), 반지름 80
 
     // 텍스트 크기 계산 (중앙배치 하기 위함)
-    const textStyle = TextStyle(color: Colors.white, fontSize: 30); // 폰트, 크기
+    const textStyle = TextStyle(color: Colors.white, fontSize: 50); // 폰트, 크기
     final textSpan = TextSpan(text: "$numUsers", style: textStyle); // 마진
     final textPainter =
         TextPainter(text: textSpan, textDirection: TextDirection.ltr);
