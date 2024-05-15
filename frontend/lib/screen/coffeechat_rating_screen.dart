@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
 import 'map_place.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Coffee Chat Rating',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: CoffeeChatRating(), // 실행할 위젯 설정
+    );
+  }
+}
 
 class CoffeeChatRating extends StatefulWidget {
   const CoffeeChatRating({super.key});
@@ -86,8 +104,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                 onTap: selectedIndex >= 0
                     ? () async {
                         int senderId = 0; //초기화
-                        int receiverId = 0; //초기화
-                        int rating = 0; // 초기화
+                        int receiverId = 2; //추후 수정 필요
+                        int rating = (selectedIndex + 1); //점수
 
                         try {
                           //로그인 한 유저의 senderId 가져오기
@@ -103,7 +121,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                           Map<String, dynamic> response =
                               await coffeeBeanReview(
                                   senderId, receiverId, rating);
-                          print(response);
+                          //이동할 곳 찾기
                         } catch (e) {
                           throw Error();
                         }
