@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
@@ -13,9 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
-import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/model/user_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
@@ -46,30 +45,79 @@ void main() async {
     javaScriptAppKey: dotenv.env['JAVA_SCRIPT_APP_KEY'],
   );
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
+
+  final stompclient = StompClient(
+    config: StompConfig.sockJS(
+      url: socketUrl,
+      onConnect: (_) {
+        print("websocket connected !!");
+      },
+      beforeConnect: () async {
+        print('waiting to connect websocket...');
+      },
+      onWebSocketError: (dynamic error) => print(error.toString()),
+    ),
+  );
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MultiProvider(
+        providers: [
+          Provider(create: (_) => stompclient),
+          ChangeNotifierProvider(create: (_) => AllUsersModel({})),
+          ChangeNotifierProvider(create: (_) => MyCafeModel()),
+          ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
+        ],
+        child: MaterialApp(
+          theme: ThemeData(
+            splashColor: Colors.transparent, // 스플래시 효과 제거
+            highlightColor: Colors.transparent, // 하이라이트 효과 제거
+          ),
+          initialRoute: '/',
+          routes: <String, WidgetBuilder>{
+            '/': (BuildContext context) => const MyHomePage(),
+            '/signup': (BuildContext context) => const SignupScreen(),
+            '/signin': (BuildContext context) => const LoginScreen(),
+            '/user': (BuildContext context) => const UserScreen(),
+            '/chatroomlist': (BuildContext context) =>
+                const ChatroomListScreen(),
+            '/cafe': (BuildContext context) => const CafeDetails(),
+            '/searchcompany': (BuildContext context) =>
+                const SearchCompanyScreen(),
+            '/coffeechatreqlist': (BuildContext context) =>
+                const CoffeechatReqList(
+                  matchId: '',
+                  Question: '',
+                  receiverCompany: '',
+                  receiverPosition: '',
+                  receiverIntroduction: '',
+                  receiverRating: 0.0,
+                  receiverNickname: '',
+                ),
+          },
+        ));
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   String? userToken;
   late StompClient stompClient;
-  int _selectedIndex = 0;
   late List<String> cafeList; // 주변 카페 리스트
-  AllUsersModel allUsers = AllUsersModel({}); // 주변 카페에 있는 모든 유저 목록
+  late AllUsersModel allUsers;
 
-  static late final List<Widget> _screenOptions;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  late final List<Widget> _screenOptions;
 
   void updateCafeList(List<String> cafeList) {
     setState(() {
@@ -91,37 +139,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    stompClient = Provider.of<StompClient>(context, listen: false);
+    allUsers = Provider.of<AllUsersModel>(context, listen: false);
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       setState(() {
         userToken = token;
       });
-
-      // 웹소켓(stomp) 연결
-      stompClient = StompClient(
-        config: StompConfig.sockJS(
-          url: socketUrl,
-          onConnect: (_) {
-            print("websocket connected !!");
-          },
-          beforeConnect: () async {
-            print('waiting to connect websocket...');
-          },
-          onWebSocketError: (dynamic error) => print(error.toString()),
-        ),
-      );
       stompClient.activate();
     });
 
     // 알림 설정
-    final fcm = FCM();
+    final fcm = FCM(context);
     fcm.setNotifications();
-    //fcm.messageStreamController.stream.listen((msg) {
-    // print('[alarmList content] $msg');
-    // });
     // 알림 로그를 저장할 파일 생성
-    getApplicationDocumentsDirectory().then((d) {
-      File('${d.path}/notification.txt');
+    getApplicationDocumentsDirectory().then((dir) {
+      File('${dir.path}/notification.txt');
     });
 
     // 화면 리스트 초기화
@@ -143,77 +176,50 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(
-          create: (_) => stompClient,
-        ),
-        ChangeNotifierProvider(
-          create: (context) => allUsers,
-        ),
-        ChangeNotifierProvider(
-          create: (_) => MyCafeModel(),
-        ),
-      ],
-      child: MaterialApp(
-        theme: ThemeData(
-          splashColor: Colors.transparent, // 스플래시 효과 제거
-          highlightColor: Colors.transparent, // 하이라이트 효과 제거
-        ),
-        initialRoute: '/', // 첫 화면으로 띄우고 싶은 스크린 넣기
-        routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => (userToken == null)
-              ? const LoginScreen()
-              : Scaffold(
-                  body: _screenOptions.elementAt(_selectedIndex),
-                  bottomNavigationBar: BottomNavigationBar(
-                    type: BottomNavigationBarType.fixed,
-                    iconSize: 26,
-                    items: const [
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.map_outlined,
-                        ),
-                        label: '지도',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.coffee_outlined,
-                        ),
-                        activeIcon: Icon(
-                          Icons.coffee_rounded,
-                        ),
-                        label: '커피챗',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.forum_outlined,
-                        ),
-                        label: '채팅',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(
-                          Icons.person_outlined,
-                        ),
-                        label: 'MY',
-                      ),
-                    ],
-                    currentIndex: _selectedIndex,
-                    onTap: _onItemTapped,
-                    showSelectedLabels: false,
-                    showUnselectedLabels: false,
-                    unselectedItemColor: Colors.black,
-                    selectedItemColor: const Color(0xffff6c3e),
-                  ),
-                ),
-          '/signup': (BuildContext context) => const SignupScreen(),
-          '/signin': (BuildContext context) => const LoginScreen(),
-          '/user': (BuildContext context) => const UserScreen(),
-          '/chatroomlist': (BuildContext context) => const ChatroomListScreen(),
-          '/cafe': (BuildContext context) => const CafeDetails(),
-          '/searchcompany': (BuildContext context) =>
-              const SearchCompanyScreen(),
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final selectedIndex = selectedIndexProvider.selectedIndex;
+    return Scaffold(
+      body: _screenOptions.elementAt(selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        iconSize: 26,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.map_outlined,
+            ),
+            label: '지도',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.coffee_outlined,
+            ),
+            activeIcon: Icon(
+              Icons.coffee_rounded,
+            ),
+            label: '커피챗',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.forum_outlined,
+            ),
+            label: '채팅',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person_outlined,
+            ),
+            label: 'MY',
+          ),
+        ],
+        currentIndex: selectedIndex,
+        onTap: (index) {
+          selectedIndexProvider.selectedIndex = index;
         },
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: const Color(0xffff6c3e),
       ),
     );
   }
