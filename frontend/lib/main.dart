@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     stompClient = Provider.of<StompClient>(context, listen: false);
-    userId = Provider.of<UserIdModel>(context);
+    userId = Provider.of<UserIdModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
