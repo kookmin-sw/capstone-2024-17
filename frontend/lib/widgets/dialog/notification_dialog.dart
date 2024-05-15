@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
+import 'package:provider/provider.dart';
 
 // 커피챗 요청 도착 알림창
 class ArriveRequestNotification extends StatelessWidget {
@@ -10,8 +12,8 @@ class ArriveRequestNotification extends StatelessWidget {
   Widget build(BuildContext context) {
     return const NotificationDialog(
       contents: "새로운 커피챗 요청이 \n도착했어요!",
-      firstButton: "보기",
-      secondButton: "닫기",
+      backButton: "닫기",
+      navigateButton: "보기",
     );
   }
 }
@@ -23,8 +25,8 @@ class ReqAcceptedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const NotificationDialog(
-      contents: "OO 님이 커피챗 요청을 \n수락했어요!",
-      firstButton: "확인",
+      contents: "커피챗 요청이 \n수락되었어요!",
+      backButton: "확인",
     );
   }
 }
@@ -36,8 +38,8 @@ class ReqDeniedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const NotificationDialog(
-      contents: "OO 님이 커피챗 요청을 \n거절했어요.. :(",
-      firstButton: "확인",
+      contents: "커피챗 요청이 \n거절되었어요.. :(",
+      backButton: "확인",
     );
   }
 }
@@ -57,19 +59,22 @@ class OfflineNotification extends StatelessWidget {
 }
 
 class NotificationDialog extends StatelessWidget {
+  // navigateButton: 필수 아님, 뒤로 간 다음 요청 화면으로 이동
+  // backButton: 필수, 뒤로가기
   final String contents;
-  final String firstButton;
-  final String? secondButton;
+  final String backButton;
+  final String? navigateButton;
 
   const NotificationDialog({
     super.key,
     required this.contents,
-    required this.firstButton,
-    this.secondButton,
+    required this.backButton,
+    this.navigateButton,
   });
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -99,14 +104,22 @@ class NotificationDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 20),
                 ),
-                (secondButton == null)
-                    ? ModalButton(text: firstButton, handlePressed: () {})
+                (navigateButton == null)
+                    ? ModalButton(
+                        text: backButton,
+                        handlePressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
                     : BottomTwoButtonsSmall(
-                        first: firstButton,
-                        second: secondButton!,
-                        handleFirstClick: () {},
-                        handleSecondClick: () {},
-                      ),
+                        first: navigateButton!,
+                        second: backButton,
+                        handleFirstClick: () {
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName('/'));
+                          selectedIndexProvider.selectedIndex = 1;
+                        },
+                        handleSecondClick: () {}),
               ],
             ),
           ),
@@ -170,7 +183,12 @@ class NotificationDialogLong extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 const Expanded(child: SizedBox()),
-                ModalButton(text: button, handlePressed: () {}),
+                ModalButton(
+                  text: button,
+                  handlePressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
               ],
             ),
           ),

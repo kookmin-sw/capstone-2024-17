@@ -212,6 +212,9 @@ class ReceivedReqDialog extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => Matching(
                       matchId: matchId,
+                      sendercompany: company,
+                      sendername: nickname,
+                      senderId: receiverId,
                     ),
                   ),
                 );

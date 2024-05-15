@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
 import 'package:provider/provider.dart';
@@ -126,12 +128,6 @@ class _CafeDetailsState extends State<CafeDetails>
     super.initState();
     getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
-    tabController!.addListener(() {
-      // 사용자 보기 탭 클릭 시
-      if (tabController!.index == 1) {
-        // 사용자 목록 업데이트 ?
-      }
-    });
   }
 
   @override
@@ -148,7 +144,21 @@ class _CafeDetailsState extends State<CafeDetails>
 
     return Scaffold(
       appBar: TopAppBar(
-        title: widget.cafeName,
+        titleWidget: Row(
+          children: [
+            Text(
+              widget.cafeName,
+              style: const TextStyle(fontSize: 22),
+            ),
+            (myCafe.cafeId != widget.cafeId)
+                ? Container()
+                : const Icon(
+                    Icons.circle,
+                    size: 13,
+                    color: Color(0xFFFF6C3E),
+                  ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -196,20 +206,34 @@ class _CafeDetailsState extends State<CafeDetails>
                     cafeDineIn: widget.cafeDetailsArguments[5],
                     businessHours: widget.cafeDetailsArguments[8],
                   ),
-                  ListView.builder(
-                    itemCount: userList.length,
-                    itemBuilder: (context, index) {
-                      return UserItem(
-                        type: "cafeUser",
-                        userId: userList[index].userId,
-                        nickname: userList[index].nickname,
-                        company: userList[index].company,
-                        position: userList[index].position,
-                        introduction: userList[index].introduction,
-                        rating: userList[index].rating,
-                        matchId: '',
-                      );
-                    },
+                  Stack(
+                    children: [
+                      ListView.builder(
+                        itemCount: userList.length,
+                        itemBuilder: (context, index) {
+                          return UserItem(
+                            type: "cafeUser",
+                            userId: userList[index].userId,
+                            nickname: userList[index].nickname,
+                            company: userList[index].company,
+                            position: userList[index].position,
+                            introduction: userList[index].introduction,
+                            rating: userList[index].rating,
+                            matchId: '',
+                          );
+                        },
+                      ),
+                      (myCafe.cafeId != null)
+                          ? Container()
+                          : ClipRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                            ),
+                    ],
                   ),
                 ],
               ),

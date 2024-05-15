@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/coffeechat_rating_screen.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 
 class Matching extends StatefulWidget {
   final String matchId;
+  final String sendercompany;
+  final String sendername;
+  final int senderId;
 
-  const Matching({Key? key, required this.matchId}) : super(key: key);
+  const Matching({
+    Key? key,
+    required this.sendername,
+    required this.matchId,
+    required this.sendercompany,
+    required this.senderId,
+  }) : super(key: key);
 
   @override
   _MatchingWidgetState createState() => _MatchingWidgetState();
@@ -12,10 +23,39 @@ class Matching extends StatefulWidget {
 
 class _MatchingWidgetState extends State<Matching> {
   //무직이나 취준일 때 default 이미지 필요할 듯
-  var company1 = 'Samsung';
-  var company2 = 'Coupang';
   var imgpath1 = 'bean(1).png';
   var imgpath2 = 'cafe.jpeg';
+
+  String username = '';
+  String usercompany = '';
+  int userId = 0;
+
+  void userinfo() async {
+    print("userinfo in!");
+    try {
+      Map<String, dynamic> res = await getUserDetail();
+      print(res);
+      if (res['success']) {
+        setState(() {
+          userId = res['data']['userId'];
+          username = res['data']['nickname'];
+          usercompany = res['data']['company']['name'];
+        });
+      } else {
+        print(
+            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+      }
+    } catch (e) {
+      throw Error();
+    }
+    usercompany = usercompany ?? '커리어 한잔';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userinfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +96,10 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      '$company1 X $company2', // 회사 이름이 길어졌을 때 논의 필요
+                      '$username X ${widget.sendername}',
+                      // 회사 이름이 길어졌을 때 논의 필요
                       style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
@@ -75,7 +116,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/$imgpath1', // 이미지의 경로
+                          'assets/${usercompany}-logo.png', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -95,7 +136,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/$imgpath2', // 이미지의 경로
+                          'assets/${widget.sendercompany}-logo.png', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -113,8 +154,13 @@ class _MatchingWidgetState extends State<Matching> {
                 height: 80, // 버튼의 높이 설정
                 child: ElevatedButton(
                   onPressed: () {
-                    showAlertDialogYesNo(
-                        context, "커피챗 종료", "커피챗을 종료하고 나가시겠습니까?");
+                    showCoffeeChatExitDialog(
+                        context,
+                        "커피챗 종료",
+                        "커피챗을 종료하고 나가시겠습니까?",
+                        userId,
+                        widget.senderId,
+                        widget.sendername);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -136,5 +182,52 @@ class _MatchingWidgetState extends State<Matching> {
         ),
       ),
     );
+  }
+}
+
+void showCoffeeChatExitDialog(BuildContext context, String title,
+    String message, int userId, int senderId, String sendername) async {
+  // 다이얼로그를 표시하고 사용자의 선택을 기다립니다.
+  bool result = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // AlertDialog 생성
+      return AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: <Widget>[
+          // "예"를 선택하면 Navigator를 통해 true를 반환합니다.
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: Text('종료'),
+          ),
+          // "아니오"를 선택하면 Navigator를 통해 false를 반환합니다.
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text('취소'),
+          ),
+        ],
+      );
+    },
+  );
+
+  // 사용자의 선택에 따라 다른 동작을 실행합니다.
+  if (result != null) {
+    if (result) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CoffeeChatRating(
+            userId: userId,
+            senderId: senderId,
+            sendername: sendername,
+          ),
+        ),
+      );
+    }
   }
 }
