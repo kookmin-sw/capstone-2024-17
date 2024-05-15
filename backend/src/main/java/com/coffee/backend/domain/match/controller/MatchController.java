@@ -62,10 +62,7 @@ public class MatchController {
             @RequestParam("receiverId") Long receiverId) {
         DtoLogger.requestParam("receiverId", receiverId);
 
-        MatchListDto dto = new MatchListDto();
-        dto.setReceiverId(receiverId);
-
-        List<MatchReceivedInfoDto> response = matchService.getMatchReceivedInfo(dto);
+        List<MatchReceivedInfoDto> response = matchService.getMatchReceivedInfo(receiverId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
