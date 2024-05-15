@@ -45,30 +45,30 @@ void main() async {
     javaScriptAppKey: dotenv.env['JAVA_SCRIPT_APP_KEY'],
   );
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final stompclient = StompClient(
+    config: StompConfig.sockJS(
+      url: socketUrl,
+      onConnect: (_) {
+        print("websocket connected !!");
+      },
+      beforeConnect: () async {
+        print('waiting to connect websocket...');
+      },
+      onWebSocketError: (dynamic error) => print(error.toString()),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          Provider(
-              create: (_) => StompClient(
-                    config: StompConfig.sockJS(
-                      url: socketUrl,
-                      onConnect: (_) {
-                        print("websocket connected !!");
-                      },
-                      beforeConnect: () async {
-                        print('waiting to connect websocket...');
-                      },
-                      onWebSocketError: (dynamic error) =>
-                          print(error.toString()),
-                    ),
-                  )),
+          Provider(create: (_) => stompclient),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => MyCafeModel()),
           ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
@@ -78,9 +78,9 @@ class MyApp extends StatelessWidget {
             splashColor: Colors.transparent, // 스플래시 효과 제거
             highlightColor: Colors.transparent, // 하이라이트 효과 제거
           ),
-          home: const MyHomePage(),
           initialRoute: '/',
           routes: <String, WidgetBuilder>{
+            '/': (BuildContext context) => const MyHomePage(),
             '/signup': (BuildContext context) => const SignupScreen(),
             '/signin': (BuildContext context) => const LoginScreen(),
             '/user': (BuildContext context) => const UserScreen(),
