@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:frontend/widgets/dialog/notification_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -16,26 +18,24 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
 
 // FCM 관련 기능을 관리하는 클래스
 class FCM {
-  // StreamController 생성: 어느 타이밍에 데이터가 들어올 지 모를 때 비동기로 작업을 처리
-  // 메시지 내용은 {'title': String?, 'body': String?, 'senttime': DateTime?, 'senderId': String?} 형태
-  final messageStreamController =
-      StreamController<Map<String, dynamic>>.broadcast();
+  final BuildContext context;
+  FCM(this.context);
 
   // 알림 설정
-  setNotifications() async {
-    PermissionStatus status = await Permission.notification.request();
-    if (status.isDenied) {
-      print('사용자가 알림 권한을 거부했습니다.');
-    } else if (status.isGranted) {
-      print('사용자가 알림 권한을 허용했습니다.');
-    }
+  setNotifications() {
+    Permission.notification.request().then((status) => {
+          if (status.isDenied)
+            {print('사용자가 알림 권한을 거부했습니다.')}
+          else if (status.isGranted)
+            {print('사용자가 알림 권한을 허용했습니다.')}
+        });
 
     FirebaseMessaging.onBackgroundMessage(
         onBackgroundMessage); // 백그라운드 메시지 처리 함수를 등록
 
     forgroundNotification();
-    backgroundNotification();
-    terminateNotification();
+    // backgroundNotification();
+    // terminateNotification();
   }
 
   // 앱이 forground 상태일 경우를 위한 메소드
@@ -46,63 +46,60 @@ class FCM {
         // file에 저장
         await saveMessageDataLogToFile(
             message.data['title'], message.data['body'], message.sentTime!);
-        if (message.notification != null) {
-          messageStreamController.sink.add({
-            'title': message.data['title'],
-            'body': message.data['body'],
-            'sentTime': message.sentTime,
-            'senderId': message.senderId,
-          });
+
+        // 이 부분은 작동하는지 테스트 후 수정
+        print(message.data['title']);
+
+        if (message.data['title'] == '커피챗 요청') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const ArriveRequestNotification();
+            },
+          );
+        } else if (message.data['title'] == '커피챗 매칭 실패') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const ReqDeniedNotification();
+            },
+          );
+        } else if (message.data['title'] == '커피챗 매칭 성공') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const ReqAcceptedNotification();
+            },
+          );
         } else {
-          print('message.notification is null');
+          // 오프라인 상태로 전환됨
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const OfflineNotification();
+            },
+          );
         }
       },
     );
   }
 
-  // 앱이 background 상태일 경우를 위한 메소드
+  // 앱이 background 상태일 경우를 위한 메소드: 앱을 열었을 때 수행할 로직이 없음!
+  /*
   backgroundNotification() {
     FirebaseMessaging.onMessageOpenedApp.listen(
-      (RemoteMessage message) async {
-        if (message.notification != null) {
-          messageStreamController.sink.add({
-            'title': message.data['title'],
-            'body': message.data['body'],
-            'sentTime': message.sentTime,
-            'senderId': message.senderId,
-          });
-        } else {
-          print('message.notification is null');
-        }
-      },
+      (RemoteMessage message) async {},
     );
   }
+  */
 
-  // 앱이 완전히 종료된 상태일 때 terminate하기 위한 메소드
+  // 앱이 완전히 종료된 상태일 때 terminate하기 위한 메소드: 첫번째 메시지로 수행할 로직이 없음!
+  /*
   terminateNotification() async {
     // fcm 메시지를 통해 앱이 열렸을 때, 그 첫번째 메시지를 가져옴
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
-
-    if (initialMessage != null) {
-      if (initialMessage.notification != null) {
-        messageStreamController.sink.add({
-          'title': initialMessage.data['title'],
-          'body': initialMessage.data['body'],
-          'sentTime': initialMessage.sentTime,
-          'senderId': initialMessage.senderId,
-        });
-      } else {
-        print('initialMessage.notification is null');
-      }
-    } else {
-      print('initialMessage is null!');
-    }
-  }
-
-  dispose() {
-    messageStreamController.close();
-  }
+        */
 }
 
 // /data/user/0/com.example.frontend/app_flutter의 notification.txt에 저장함

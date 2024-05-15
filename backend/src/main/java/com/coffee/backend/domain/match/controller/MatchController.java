@@ -4,6 +4,8 @@ import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
+import com.coffee.backend.domain.match.dto.MatchListDto;
+import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
@@ -11,6 +13,7 @@ import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
 import com.coffee.backend.global.DtoLogger;
 import com.coffee.backend.utils.ApiResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +54,15 @@ public class MatchController {
         dto.setReceiverId(receiverId);
 
         MatchInfoResponseDto response = matchService.getMatchRequestInfo(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/received/info")
+    public ResponseEntity<ApiResponse<List<MatchReceivedInfoDto>>> getMatchReceivedInfo(
+            @RequestParam("receiverId") Long receiverId) {
+        DtoLogger.requestParam("receiverId", receiverId);
+
+        List<MatchReceivedInfoDto> response = matchService.getMatchReceivedInfo(receiverId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

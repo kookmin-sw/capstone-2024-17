@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 
 class Matching extends StatefulWidget {
   final String matchId;
+  final String sendercompany;
+  final String sendername;
 
-  const Matching({Key? key, required this.matchId}) : super(key: key);
+  const Matching(
+      {Key? key,
+      required this.sendername,
+      required this.matchId,
+      required this.sendercompany})
+      : super(key: key);
 
   @override
   _MatchingWidgetState createState() => _MatchingWidgetState();
@@ -12,10 +20,35 @@ class Matching extends StatefulWidget {
 
 class _MatchingWidgetState extends State<Matching> {
   //무직이나 취준일 때 default 이미지 필요할 듯
-  var company1 = 'Samsung';
-  var company2 = 'Coupang';
   var imgpath1 = 'bean(1).png';
   var imgpath2 = 'cafe.jpeg';
+
+  String username = '';
+  String usercompany = '';
+
+  void userinfo() async {
+    print("userinfo in!");
+    try {
+      Map<String, dynamic> res = await getUserDetail();
+      print(res);
+      if (res['success']) {
+        username = res['data']['nickname'];
+        usercompany = res['data']['company']['name'];
+      } else {
+        print(
+            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+      }
+    } catch (e) {
+      throw Error();
+    }
+    usercompany = usercompany ?? '커리어 한잔';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userinfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +89,10 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      '$company1 X $company2', // 회사 이름이 길어졌을 때 논의 필요
+                      '$usercompany X ${widget.sendercompany}',
+                      // 회사 이름이 길어졌을 때 논의 필요
                       style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
                     ),
@@ -75,7 +109,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/$imgpath1', // 이미지의 경로
+                          'assets/${usercompany}-logo.png', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -95,7 +129,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/$imgpath2', // 이미지의 경로
+                          'assets/${widget.sendercompany}-logo.png', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
