@@ -15,6 +15,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
+import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           Provider(create: (_) => stompclient),
+          ChangeNotifierProvider(create: (_) => UserIdModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => MyCafeModel()),
           ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
@@ -114,6 +116,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String? userToken;
   late StompClient stompClient;
+
+  late UserIdModel userId; // 유저 아이디
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
 
@@ -140,13 +144,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     stompClient = Provider.of<StompClient>(context, listen: false);
+    userId = Provider.of<UserIdModel>(context);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       setState(() {
         userToken = token;
       });
+
+      // 웹소켓 연결
       stompClient.activate();
+
+      // 유저 정보 가져오기
+      getUserDetail().then((userDetail) {
+        userId.setUserId(userDetail['data']['userId']);
+      });
     });
 
     // 알림 설정
