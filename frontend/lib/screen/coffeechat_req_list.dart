@@ -92,13 +92,13 @@ class CoffeechatReqList extends StatelessWidget {
                   question: Question,
                 ),
                 ReceivedReq(
-                    nickname: receiverNickname,
-                    company: receiverCompany,
-                    position: receiverPosition,
-                    introduction: receiverIntroduction,
-                    rating: receiverRating,
-                    question: Question,
-                    e), // 이 부분은 나중에 수정 필요
+                  nickname: receiverNickname,
+                  company: receiverCompany,
+                  position: receiverPosition,
+                  introduction: receiverIntroduction,
+                  rating: receiverRating,
+                  question: Question,
+                ), // 이 부분은 나중에 수정 필요
               ]),
             ),
           ],
