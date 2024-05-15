@@ -239,17 +239,6 @@ public class MatchService {
         }
     }
 
-    // 매칭 정보 생성
-    private Map<String, String> createMatchInfo(MatchRequestDto dto, String matchId) {
-        return Map.of(
-                "matchId", matchId,
-                "senderId", dto.getSenderId().toString(),
-                "receiverId", dto.getReceiverId().toString(),
-                "requestTypeId", dto.getRequestTypeId(),
-                "status", "pending"
-        );
-    }
-
     // Object -> Long 타입 변환
     private Long getLongId(Object result) {
         log.trace("getLongId()");
