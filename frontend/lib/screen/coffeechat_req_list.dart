@@ -276,46 +276,71 @@ class ReceivedReq extends StatelessWidget {
     required this.question,
   }) : super(key: key);
 
-  void receiveList() async {
+  Future<List<Map<String, dynamic>>> receiveList() async {
     int userId = 0;
+    List<Map<String, dynamic>> resultList = []; // Initialize an empty list
+
     try {
-      //로그인 한 유저의 senderId 가져오기
       Map<String, dynamic> res = await getUserDetail();
       if (res['success']) {
         userId = res['data']['userId'];
       } else {
         print(
-            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+            'Unable to fetch user details: ${res["message"]}(${res["statusCode"]})');
       }
 
-      Map<String, dynamic> response =
-          await receivedInfoRequest(userId); // 받은 요청에서 가져와야 함.
+      // Get the received request based on the user's ID asynchronously
+      Map<String, dynamic> response = await receivedInfoRequest(userId);
 
-      print(response);
+      // If receivedInfoRequest(userId) returns a single map, add it to the resultList
+      if (response.isNotEmpty) {
+        resultList.add(response);
+      }
     } catch (e) {
-      throw Error();
+      print('Error fetching received requests: $e');
     }
+    print(resultList);
+
+    return resultList;
   }
 
   @override
   Widget build(BuildContext context) {
-    receiveList();
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: ListView.builder(
-        itemCount: sampleUserList.length,
-        itemBuilder: (context, index) {
-          return UserItem(
-            type: "receivedReqUser",
-            userId: sampleUserList[index]["userId"], //변경필요
-            nickname: sampleUserList[index]["nickname"],
-            company: sampleUserList[index]["companyName"],
-            position: sampleUserList[index]["positionName"],
-            introduction: sampleUserList[index]["introduction"],
-            rating: sampleUserList[index]["rating"],
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: receiveList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Map<String, dynamic>> revList = snapshot.data ?? [];
+
+          return Container(
+            padding: const EdgeInsets.all(20),
+            child: ListView.builder(
+              itemCount: revList.length,
+              itemBuilder: (context, index) {
+                final receivedItem = revList[index];
+                final List<dynamic> senderData = receivedItem["data"];
+                final Map<String, dynamic> senderInfo =
+                    senderData.isNotEmpty ? senderData.first["senderInfo"] : {};
+
+                return UserItem(
+                  type: "receivedReqUser",
+                  userId: senderInfo["userId"] ??
+                      1, // Provide a default value if userId is null
+                  nickname: senderInfo["nickname"] ?? "Unknown",
+                  company: senderInfo["company"] ?? "Unknown",
+                  position: senderInfo["position"] ?? "Unknown",
+                  introduction: senderInfo["introduction"] ?? "No introduction",
+                  rating: senderInfo["rating"] ?? 0.0,
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
+      },
     );
   }
 }
