@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
+import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
@@ -91,13 +92,13 @@ class CoffeechatReqList extends StatelessWidget {
                   question: Question,
                 ),
                 ReceivedReq(
-                  nickname: receiverNickname,
-                  company: receiverCompany,
-                  position: receiverPosition,
-                  introduction: receiverIntroduction,
-                  rating: receiverRating,
-                  question: Question,
-                ), // 이 부분은 나중에 수정 필요
+                    nickname: receiverNickname,
+                    company: receiverCompany,
+                    position: receiverPosition,
+                    introduction: receiverIntroduction,
+                    rating: receiverRating,
+                    question: Question,
+                    e), // 이 부분은 나중에 수정 필요
               ]),
             ),
           ],
@@ -285,7 +286,6 @@ class ReceivedReq extends StatelessWidget {
               itemCount: revList.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> senderData = revList[index]['senderInfo'];
-                print("senderData = $senderData\n");
 
                 // senderData를 사용하여 UserItem 생성
                 return UserItem(
