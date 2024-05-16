@@ -96,7 +96,7 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      '$usercompany X ${widget.sendercompany}',
+                      '$username X ${widget.sendername}',
                       // 회사 이름이 길어졌을 때 논의 필요
                       style: const TextStyle(
                           fontSize: 20,

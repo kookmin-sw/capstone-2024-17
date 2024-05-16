@@ -79,11 +79,8 @@ flutter:
     - assets/
     - assets/kakao_login_medium_narrow.png
     - assets/커리어 한잔-logo.png
-<<<<<<< HEAD
 #    - assets/google(구글)-logo.png
-=======
-    - assets/google(구글)-logo.png
->>>>>>> 92f686986f225c7556cb87708727f5544d71c707
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
