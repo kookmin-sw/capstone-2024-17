@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 
 class Matching extends StatefulWidget {
-  const Matching({super.key});
+  final String matchId;
+
+  const Matching({Key? key, required this.matchId}) : super(key: key);
 
   @override
   _MatchingWidgetState createState() => _MatchingWidgetState();

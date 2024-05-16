@@ -9,23 +9,25 @@ import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 
 class UserItem extends StatelessWidget {
-  final int userId;
   final String type;
+  final int userId;
   final String nickname;
   final String company;
   final String position;
   final String introduction;
   final double rating;
+  final String matchId;
 
   const UserItem({
     super.key,
-    required this.userId,
     required this.type,
+    required this.userId,
     required this.nickname,
     required this.company,
     required this.position,
     required this.introduction,
     required this.rating,
+    required this.matchId,
   });
 
   @override
@@ -42,7 +44,7 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating,
-                receiverId: receiverId,
+                userId: userId,
               );
             } else if (type == "receivedReqUser") {
               return ReceivedReqDialog(
@@ -51,7 +53,8 @@ class UserItem extends StatelessWidget {
                 position: position,
                 introduction: introduction,
                 rating: rating, // 여기에서 rating을 전달합니다.
-                receiverId: receiverId,
+                receiverId: userId, //여기선 요청 받은 애의 userId를 씀
+                matchId: matchId,
               );
             } else {
               return Container();
@@ -75,10 +78,16 @@ class UserItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(nickname),
-                Text("$company / $position"),
+                Text(
+                  nickname,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "$company / $position",
+                  overflow: TextOverflow.ellipsis,
+                ),
                 SizedBox(
-                  width: 200,
+                  width: 179,
                   child: Text(
                     introduction,
                     overflow: TextOverflow.ellipsis,
@@ -100,7 +109,7 @@ class ReqDialog extends StatefulWidget {
   final String position;
   final String introduction;
   final double rating;
-  final int receiverId;
+  final int userId;
 
   ReqDialog({
     Key? key,
@@ -109,7 +118,7 @@ class ReqDialog extends StatefulWidget {
     required this.position,
     required this.introduction,
     required this.rating,
-    required this.receiverId,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -120,11 +129,12 @@ int receiverId = 0;
 
 class _ReqDialogState extends State<ReqDialog> {
   bool isNext = false;
+  int receiverId = 0; // receiverId를 state로 추가
 
-  handleChangeDialog(receiverId) {
+  handleChangeDialog(int userId) {
     setState(() {
       isNext = !isNext;
-      receiverId = receiverId;
+      receiverId = userId;
     });
   }
 
@@ -132,14 +142,16 @@ class _ReqDialogState extends State<ReqDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: isNext
-          ? const ChoosePurpose()
+          ? ChoosePurpose(
+              userId: receiverId,
+            ) // receiverId를 ChoosePurpose 위젯에 전달
           : UserDetailsModal(
               nickname: widget.nickname,
               company: widget.company,
               position: widget.position,
               introduction: widget.introduction,
               rating: widget.rating,
-              receiverId: widget.receiverId,
+              userId: widget.userId,
               handleChangeDialog: handleChangeDialog,
             ),
     );
@@ -154,6 +166,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final String introduction;
   final double rating;
   final int receiverId;
+  final String matchId;
 
   const ReceivedReqDialog({
     super.key,
@@ -163,6 +176,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.introduction,
     required this.rating,
     required this.receiverId,
+    required this.matchId,
   });
 
   @override
@@ -191,46 +205,16 @@ class ReceivedReqDialog extends StatelessWidget {
               first: "수락",
               second: "거절",
               handleFirstClick: () async {
-                try {
-                  //로그인 한 유저의 senderId 가져오기
-                  Map<String, dynamic> res = await getUserDetail();
-                  if (!res['success']) {
-                    print(
-                        '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
-                  }
-
-                  Map<String, dynamic> response =
-                      await matchAcceptRequest('matchId'); // 받은 요청에서 가져와야 함.
-
-                  print(response);
-
-                  // if (response['success'] == true) {
-                  //   try {
-                  //     Map<String, dynamic> inforesponse =
-                  //         await matchInfoRequest(
-                  //             response['data']['matchId'],
-                  //             response['data']['senderId'],
-                  //             response['data']['receiverId']);
-                  //
-                  //     print("info Response: $inforesponse");
-                  //     var nickname =
-                  //         inforesponse['data']['nickname'] ?? "nickname";
-                  //     var company =
-                  //         inforesponse['data']['company'] ?? "company";
-                  //     // var position = inforesponse['data']['position'] ?? "position"; // 아직 백엔드 딴에서 리턴 X 나중에 수정 필요
-                  //     var introduction = inforesponse['data']['introduction'] ??
-                  //         "introduction";
-                  //     double rating = inforesponse['data']['rating'] ?? 0.0;
-                  //
-                  //     Navigator.push(context,
-                  //         MaterialPageRoute(builder: (context) => Matching()));
-                  //   } catch (e) {
-                  //     print("matchInfoRequest Error: $e");
-                  //   }
-                  // }
-                } catch (e) {
-                  print("matchRequest Error: $e");
-                }
+                print(matchId);
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Matching(
+                      matchId: matchId,
+                    ),
+                  ),
+                );
               },
               handleSecondClick: () {},
             ),

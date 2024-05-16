@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
+import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
@@ -12,36 +13,6 @@ import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
-const List<Map<String, dynamic>> sampleUserList = [
-  {
-    "nickname": "뽕순이",
-    "companyName": "채연컴퍼니",
-    "positionName": "집사",
-    "introduction": "안녕하세요 뽕순이입니다 뽕",
-    "rating": 10.0,
-  },
-  {
-    "nickname": "담",
-    "companyName": "네카라쿠배당토",
-    "positionName": "웹 프론트엔드",
-    "introduction": "안녕하세욯ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
-    "rating": 20.0,
-  },
-  {
-    "nickname": "잠온다",
-    "companyName": "구글",
-    "positionName": "데이터 엔지니어",
-    "introduction": "잠오니까 요청하지 마세요. 감사합니다.",
-    "rating": 30.0,
-  },
-  {
-    "nickname": "내가제일잘나가",
-    "companyName": "꿈의직장",
-    "positionName": "풀스택",
-    "introduction": "안녕하세요, 저는 제일 잘나갑니다. 잘 부탁드립니다. 요청 마니주세용 >3<",
-    "rating": 40.0,
-  },
-];
 bool timerend = false;
 
 void main() async {
@@ -120,7 +91,14 @@ class CoffeechatReqList extends StatelessWidget {
                   rating: receiverRating,
                   question: Question,
                 ),
-                ReceivedReq(), // 이 부분은 나중에 수정 필요
+                ReceivedReq(
+                  nickname: receiverNickname,
+                  company: receiverCompany,
+                  position: receiverPosition,
+                  introduction: receiverIntroduction,
+                  rating: receiverRating,
+                  question: Question,
+                ), // 이 부분은 나중에 수정 필요
               ]),
             ),
           ],
@@ -246,26 +224,89 @@ class _SentReqState extends State<SentReq> {
 }
 
 class ReceivedReq extends StatelessWidget {
-  const ReceivedReq({super.key});
+  // final String? matchId;
+  final String nickname;
+  final String company;
+  final String position;
+  final String introduction;
+  final double rating;
+  final String question;
+
+  const ReceivedReq({
+    Key? key,
+    // this.matchId,
+    required this.nickname,
+    required this.company,
+    required this.position,
+    required this.introduction,
+    required this.rating,
+    required this.question,
+  }) : super(key: key);
+
+  Future<List<Map<String, dynamic>>> receiveList() async {
+    int userId = 0;
+    List<Map<String, dynamic>> resultList = []; // 리스트로 수정
+
+    try {
+      Map<String, dynamic> res = await getUserDetail();
+      if (res['success']) {
+        userId = res['data']['userId'];
+      } else {
+        print(
+            'Unable to fetch user details: ${res["message"]}(${res["statusCode"]})');
+      }
+      try {
+        // receivedInfoRequest 함수로 받은 데이터를 바로 resultList에 추가
+        resultList = await receivedInfoRequest(userId);
+        print(resultList);
+      } catch (e) {
+        print('Error 1: $e');
+      }
+    } catch (e) {
+      print('Error 2: $e');
+    }
+    return resultList;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: ListView.builder(
-        itemCount: sampleUserList.length,
-        itemBuilder: (context, index) {
-          return UserItem(
-            type: "receivedReqUser",
-            userId: sampleUserList[index]["userId"], //변경필요
-            nickname: sampleUserList[index]["nickname"],
-            company: sampleUserList[index]["companyName"],
-            position: sampleUserList[index]["positionName"],
-            introduction: sampleUserList[index]["introduction"],
-            rating: sampleUserList[index]["rating"],
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: receiveList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Map<String, dynamic>> revList = snapshot.data ?? [];
+
+          return Container(
+            padding: const EdgeInsets.all(20),
+            child: ListView.builder(
+              itemCount: revList.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> senderData = revList[index]['senderInfo'];
+
+                // senderData를 사용하여 UserItem 생성
+                return UserItem(
+                  type: "receivedReqUser",
+                  userId: senderData["userId"] ?? 1,
+                  nickname: senderData["nickname"] ?? "Unknown",
+                  company: senderData["company"] != null
+                      ? senderData["company"]["name"]
+                      : "Unknown",
+                  position: senderData["position"] ?? "Unknown",
+                  introduction: senderData["introduction"] ?? "No introduction",
+                  rating: senderData["rating"] != null
+                      ? double.parse(senderData["rating"])
+                      : 46.0,
+                  matchId: revList[index]["matchId"],
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
+      },
     );
   }
 }

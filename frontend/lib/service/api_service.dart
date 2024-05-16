@@ -49,8 +49,6 @@ Future<Map<String, dynamic>> matchRequest(
   userToken ??=
       "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
-  receiverId = 7; //현재 device 토큰 있는 애(6,7번) 로 고정해둠, 추후에 지워야 함.
-
   try {
     final response = await http.post(
       url,
@@ -112,6 +110,45 @@ Future<Map<String, dynamic>> matchInfoRequest(
     }
   } catch (e) {
     throw Error();
+  }
+}
+
+//매칭 요청 받은 list
+Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
+  final url = Uri.parse('$baseUrl/match/received/info?receiverId=$receiverId');
+
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // 응답 데이터가 리스트 형식인지 확인하고, 맞다면 그대로 반환
+      List<dynamic> responseData =
+          jsonDecode(utf8.decode(response.bodyBytes))["data"];
+      print(responseData.runtimeType); // 출력: String
+
+      if (responseData is List) {
+        List<Map<String, dynamic>> resultList =
+            responseData.cast<Map<String, dynamic>>();
+        return resultList;
+      } else {
+        throw Exception('Received data is not in the expected format');
+      }
+    } else {
+      throw Exception(
+          'Failed to get receivedInfoRequest: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Error in receivedInfoRequest: $e');
   }
 }
 
