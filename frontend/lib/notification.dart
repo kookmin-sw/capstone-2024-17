@@ -19,7 +19,8 @@ Future<void> onBackgroundMessage(RemoteMessage message) async {
 // FCM 관련 기능을 관리하는 클래스
 class FCM {
   final BuildContext context;
-  FCM(this.context);
+  final Function autoOffline;
+  FCM(this.context, this.autoOffline);
 
   // 알림 설정
   setNotifications() {
@@ -71,6 +72,9 @@ class FCM {
               return const ReqAcceptedNotification();
             },
           );
+
+          // 오프라인으로 전환
+          autoOffline();
         } else {
           // 오프라인 상태로 전환됨
           showDialog(

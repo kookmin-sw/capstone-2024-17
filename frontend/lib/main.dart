@@ -188,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // 알림 설정
-    final fcm = FCM(context);
+    final fcm = FCM(context, autoOffline);
     fcm.setNotifications();
     // 알림 로그를 저장할 파일 생성
     getApplicationDocumentsDirectory().then((dir) {
