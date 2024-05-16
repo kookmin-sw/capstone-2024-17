@@ -7,12 +7,15 @@ class CoffeeChatRating extends StatefulWidget {
   final String sendername;
   final int senderId;
   final int userId;
+  final String matchId;
 
   const CoffeeChatRating({
     Key? key,
     required this.senderId,
     required this.userId,
     required this.sendername,
+    required this.matchId,
+
   }) : super(key: key);
 
   @override
@@ -113,6 +116,10 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                           Map<String, dynamic> response =
                               await coffeeBeanReview(
                                   senderId, receiverId, rating);
+
+                          print(response);
+
+
                           //이동할 곳 찾기
                         } catch (e) {
                           throw Error();

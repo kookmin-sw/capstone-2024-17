@@ -215,7 +215,7 @@ class _CafeDetailsState extends State<CafeDetails>
                       ListView.builder(
                         itemCount: userList.length,
                         itemBuilder: (context, index) {
-                          return (userList[index].userId == userId.userId)
+                          return (userList[index].userId != userId.userId)
                               ? Container()
                               : UserItem(
                                   type: "cafeUser",
