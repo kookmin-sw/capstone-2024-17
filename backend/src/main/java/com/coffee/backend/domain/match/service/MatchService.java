@@ -291,14 +291,12 @@ public class MatchService {
         int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
         double oldCoffeeBean = receiver.getCoffeeBean();
 
-        double baseline = 46.0;
-        double ratio = 0.1;
-        double standard = 4.0;
+        double standard = 3.0;
+        double randomRatio = 0.3 + (1.0 - 0.3) * Math.random(); //0.3 ~ 1.0
 
-        // 46 + (평점 합계 + (새로운 평점 - 기준 평점) * 반영 비율) / (평점 개수 + 1)
-        double newCoffeeBean =
-                baseline + ((oldCoffeeBean - baseline) * numberOfReviews + (dto.getRating() - standard) * ratio) /
-                        (numberOfReviews + 1);
+        // 기존 평점 + (새로운 평점 - 기준 평점) * 랜덤 반영 비율
+        double newCoffeeBean = oldCoffeeBean + (dto.getRating() - standard) * randomRatio;
+        double newCoffeeBeanDouble = Double.parseDouble(String.format("%.3f", newCoffeeBean)); // 소수점 3자리까지
 
         receiver.setCoffeeBean(newCoffeeBean);
         userRepository.save(receiver);
