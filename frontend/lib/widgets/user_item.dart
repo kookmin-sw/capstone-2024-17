@@ -219,7 +219,9 @@ class ReceivedReqDialog extends StatelessWidget {
                   ),
                 );
               },
-              handleSecondClick: () {},
+              handleSecondClick: () async {
+                await matchDeclineRequest(matchId);
+              },
             ),
           ],
         ),
