@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/service/stomp_service.dart';
-import 'package:frontend/model/my_cafe_model.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
@@ -48,8 +47,6 @@ class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
 
   final storage = const FlutterSecureStorage();
-  late StompClient stompClient;
-  late MyCafeModel myCafe;
 
   final List<Map<String, String>> optionList = [
     {
@@ -68,9 +65,6 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    stompClient = Provider.of<StompClient>(context, listen: false);
-    myCafe = Provider.of<MyCafeModel>(context);
-
     return Scaffold(
       appBar: const TopAppBar(
         title: "환경설정",
@@ -147,26 +141,7 @@ class SettingsScreen extends StatelessWidget {
 
   Future<void> logout(BuildContext context) async {
     // 온라인 상태이면 오프라인으로 전환
-    if (myCafe.cafeId != null) {
-      int userId;
-      Map<String, dynamic> res = await getUserDetail();
-
-      if (res['success']) {
-        userId = res['data']['userId'];
-        print("!!!!유저 아이디: $userId");
-
-        // pub 요청 - 카페 지정 해제
-        deleteUserInCafe(
-          stompClient,
-          userId,
-          myCafe.cafeId!,
-        );
-        myCafe.clearMyCafe();
-      } else {
-        print("!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
-        return;
-      }
-    }
+    Provider.of<AutoOfflineService>(context, listen: false).autoOffline();
 
     // 기기에서 토큰 삭제
     await storage.deleteAll();
