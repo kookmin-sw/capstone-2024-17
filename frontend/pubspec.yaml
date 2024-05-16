@@ -79,7 +79,7 @@ flutter:
     - assets/
     - assets/kakao_login_medium_narrow.png
     - assets/커리어 한잔-logo.png
-#    - assets/google(구글)-logo.png
+    - assets/google(구글)-logo.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

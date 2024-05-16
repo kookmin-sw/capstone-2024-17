@@ -8,6 +8,8 @@ import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 
+import '../screen/coffeechat_req_list.dart';
+
 class UserItem extends StatelessWidget {
   final String type;
   final int userId;
@@ -17,9 +19,11 @@ class UserItem extends StatelessWidget {
   final String introduction;
   final double rating;
   final String matchId;
+  final int requestTypeId;
+  final VoidCallback? onReject; // onReject 함수 추가
 
   const UserItem({
-    super.key,
+    Key? key,
     required this.type,
     required this.userId,
     required this.nickname,
@@ -28,7 +32,9 @@ class UserItem extends StatelessWidget {
     required this.introduction,
     required this.rating,
     required this.matchId,
-  });
+    required this.requestTypeId,
+    this.onReject, // onReject 매개변수 설정
+  }) : super(key: key); // key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +54,15 @@ class UserItem extends StatelessWidget {
               );
             } else if (type == "receivedReqUser") {
               return ReceivedReqDialog(
-                nickname: nickname,
-                company: company,
-                position: position,
-                introduction: introduction,
-                rating: rating, // 여기에서 rating을 전달합니다.
-                receiverId: userId, //여기선 요청 받은 애의 userId를 씀
-                matchId: matchId,
-              );
+                  nickname: nickname,
+                  company: company,
+                  position: position,
+                  introduction: introduction,
+                  rating: rating, // 여기에서 rating을 전달합니다.
+                  receiverId: userId, //여기선 요청 받은 애의 userId를 씀
+                  matchId: matchId,
+                  requestTypeId: requestTypeId,
+                  onReject: onReject);
             } else {
               return Container();
             }
@@ -158,6 +165,13 @@ class _ReqDialogState extends State<ReqDialog> {
   }
 }
 
+List<String> purpose = [
+  "당신의 회사가 궁금해요",
+  "당신의 업무가 궁금해요",
+  "같이 개발 이야기 나눠요",
+  "점심시간 함께 산책해요"
+];
+
 // 받은 요청 상세보기 모달
 class ReceivedReqDialog extends StatelessWidget {
   final String nickname;
@@ -167,9 +181,11 @@ class ReceivedReqDialog extends StatelessWidget {
   final double rating;
   final int receiverId;
   final String matchId;
+  final int requestTypeId;
+  final VoidCallback? onReject; // onReject 함수 추가
 
   const ReceivedReqDialog({
-    super.key,
+    Key? key, // Key 매개변수 추가
     required this.nickname,
     required this.company,
     required this.position,
@@ -177,7 +193,9 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.rating,
     required this.receiverId,
     required this.matchId,
-  });
+    required this.requestTypeId,
+    required this.onReject,
+  }) : super(key: key); // Key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
@@ -199,14 +217,14 @@ class ReceivedReqDialog extends StatelessWidget {
               introduction: introduction,
               rating: rating,
             ),
-            const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
+            ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
             const Expanded(child: SizedBox()),
             BottomTwoButtons(
               first: "수락",
               second: "거절",
               handleFirstClick: () async {
                 print(matchId);
-                Navigator.pop(context);
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -220,7 +238,7 @@ class ReceivedReqDialog extends StatelessWidget {
                 );
               },
               handleSecondClick: () async {
-                await matchDeclineRequest(matchId);
+                onReject?.call(); // onReject 함수 호출
               },
             ),
           ],

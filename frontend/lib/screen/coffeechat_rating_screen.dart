@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'map_place.dart';
 import 'package:flutter/material.dart';
 
@@ -7,12 +8,14 @@ class CoffeeChatRating extends StatefulWidget {
   final String sendername;
   final int senderId;
   final int userId;
+  final String matchId;
 
   const CoffeeChatRating({
     Key? key,
     required this.senderId,
     required this.userId,
     required this.sendername,
+    required this.matchId,
   }) : super(key: key);
 
   @override
@@ -113,10 +116,21 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                           Map<String, dynamic> response =
                               await coffeeBeanReview(
                                   senderId, receiverId, rating);
-                          //이동할 곳 찾기
+
+                          print(response);
+
+                          Map<String, dynamic> delresponse =
+                              await matchCancelRequest(widget.matchId);
+                          if (delresponse['success'] == true) {
+                            showAlertDialog(context,
+                                "${widget.sendername}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.");
+                          }
+                          print(delresponse);
                         } catch (e) {
                           throw Error();
                         }
+
+                        //이동할 곳 여기 추가하면 됨!!!
 
                         // Navigator.pop(context); // 현재 화면 닫기
 

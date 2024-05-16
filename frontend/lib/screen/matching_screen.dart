@@ -155,12 +155,14 @@ class _MatchingWidgetState extends State<Matching> {
                 child: ElevatedButton(
                   onPressed: () {
                     showCoffeeChatExitDialog(
-                        context,
-                        "커피챗 종료",
-                        "커피챗을 종료하고 나가시겠습니까?",
-                        userId,
-                        widget.senderId,
-                        widget.sendername);
+                      context,
+                      "커피챗 종료",
+                      "커피챗을 종료하고 나가시겠습니까?",
+                      userId,
+                      widget.senderId,
+                      widget.sendername,
+                      widget.matchId,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -185,8 +187,14 @@ class _MatchingWidgetState extends State<Matching> {
   }
 }
 
-void showCoffeeChatExitDialog(BuildContext context, String title,
-    String message, int userId, int senderId, String sendername) async {
+void showCoffeeChatExitDialog(
+    BuildContext context,
+    String title,
+    String message,
+    int userId,
+    int senderId,
+    String sendername,
+    String matchId) async {
   // 다이얼로그를 표시하고 사용자의 선택을 기다립니다.
   bool result = await showDialog(
     context: context,
@@ -225,6 +233,7 @@ void showCoffeeChatExitDialog(BuildContext context, String title,
             userId: userId,
             senderId: senderId,
             sendername: sendername,
+            matchId: matchId,
           ),
         ),
       );

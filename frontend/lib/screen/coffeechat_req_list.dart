@@ -216,10 +216,22 @@ class _SentReqState extends State<SentReq> {
   }
 }
 
-class ReceivedReq extends StatelessWidget {
-  Future<List<Map<String, dynamic>>> receiveList() async {
+class ReceivedReq extends StatefulWidget {
+  @override
+  _ReceivedReqState createState() => _ReceivedReqState();
+}
+
+class _ReceivedReqState extends State<ReceivedReq> {
+  List<Map<String, dynamic>> revList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchReceiveList();
+  }
+
+  Future<void> fetchReceiveList() async {
     int userId = 0;
-    List<Map<String, dynamic>> resultList = []; // 리스트로 수정
 
     try {
       Map<String, dynamic> res = await getUserDetail();
@@ -228,59 +240,61 @@ class ReceivedReq extends StatelessWidget {
       } else {
         print(
             'Unable to fetch user details: ${res["message"]}(${res["statusCode"]})');
+        return;
       }
+
       try {
-        // receivedInfoRequest 함수로 받은 데이터를 바로 resultList에 추가
-        resultList = await receivedInfoRequest(userId);
-        print(resultList);
+        List<Map<String, dynamic>> resultList =
+            await receivedInfoRequest(userId);
+        setState(() {
+          revList = resultList;
+        });
       } catch (e) {
         print('Error 1: $e');
       }
     } catch (e) {
       print('Error 2: $e');
     }
-    return resultList;
+  }
+
+  Future<void> handleMatchDecline(String matchId) async {
+    await matchDeclineRequest(matchId);
+    fetchReceiveList(); // 거절 후에 UI를 업데이트하기 위해 다시 데이터를 가져옴
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: receiveList(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          List<Map<String, dynamic>> revList = snapshot.data ?? [];
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: ListView.builder(
+        itemCount: revList.length,
+        itemBuilder: (context, index) {
+          Map<String, dynamic> senderData = revList[index]['senderInfo'];
 
-          return Container(
-            padding: const EdgeInsets.all(20),
-            child: ListView.builder(
-              itemCount: revList.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> senderData = revList[index]['senderInfo'];
+          // 거절 버튼을 누를 때 호출할 함수
+          void handleReject() {
+            handleMatchDecline(revList[index]["matchId"]);
+          }
 
-                // senderData를 사용하여 UserItem 생성
-                return UserItem(
-                  type: "receivedReqUser",
-                  userId: senderData["userId"] ?? 1,
-                  nickname: senderData["nickname"] ?? "Unknown",
-                  company: senderData["company"] != null
-                      ? senderData["company"]["name"]
-                      : "Unknown",
-                  position: senderData["position"] ?? "Unknown",
-                  introduction: senderData["introduction"] ?? "No introduction",
-                  rating: senderData["rating"] != null
-                      ? double.parse(senderData["rating"])
-                      : 46.0,
-                  matchId: revList[index]["matchId"],
-                );
-              },
-            ),
+          // senderData를 사용하여 UserItem 생성
+          return UserItem(
+            type: "receivedReqUser",
+            userId: senderData["userId"] ?? 1,
+            nickname: senderData["nickname"] ?? "Unknown",
+            company: senderData["company"] != null
+                ? senderData["company"]["name"]
+                : "Unknown",
+            position: senderData["position"] ?? "Unknown",
+            introduction: senderData["introduction"] ?? "No introduction",
+            rating: senderData["rating"] != null
+                ? double.parse(senderData["rating"])
+                : 46.0,
+            matchId: revList[index]["matchId"],
+            requestTypeId: int.parse(revList[index]["requestTypeId"]),
+            onReject: handleReject, // 거절 버튼에 대한 콜백 함수 전달
           );
-        }
-      },
+        },
+      ),
     );
   }
 }
