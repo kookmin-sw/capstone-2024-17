@@ -296,6 +296,7 @@ public class MatchService {
 
         // 기존 평점 + (새로운 평점 - 기준 평점) * 랜덤 반영 비율
         double newCoffeeBean = oldCoffeeBean + (dto.getRating() - standard) * randomRatio;
+        double newCoffeeBeanDouble = Double.parseDouble(String.format("%.3f", newCoffeeBean)); // 소수점 3자리까지
 
         receiver.setCoffeeBean(newCoffeeBean);
         userRepository.save(receiver);
