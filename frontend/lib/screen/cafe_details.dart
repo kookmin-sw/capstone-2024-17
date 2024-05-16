@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -108,27 +109,8 @@ class _CafeDetailsState extends State<CafeDetails>
   void _stopTimer() async {
     _timer?.cancel();
 
-    // 온라인 상태이면 오프라인으로 전환
-    if (myCafe.cafeId != null) {
-      int userId;
-      Map<String, dynamic> res = await getUserDetail();
-
-      if (res['success']) {
-        userId = res['data']['userId'];
-        print("!!!!유저 아이디: $userId");
-
-        // pub 요청 - 카페 지정 해제
-        deleteUserInCafe(
-          stompClient,
-          userId,
-          myCafe.cafeId!,
-        );
-        myCafe.clearMyCafe();
-      } else {
-        print("!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
-        return;
-      }
-    }
+    // 오프라인으로 전환
+    Provider.of<AutoOfflineService>(context, listen: false).autoOffline();
   }
 
   Future<void> getPlacePhotoUri() async {
