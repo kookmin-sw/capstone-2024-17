@@ -101,6 +101,7 @@ class ChoosePurpose extends StatelessWidget {
                             ['nickname'] ??
                         "nickname";
                     var company = inforesponse['data']['receiverInfo']
+
                             ['company']['name'] ??
                         "company";
                     var position = inforesponse['data']['receiverInfo']
@@ -114,9 +115,6 @@ class ChoosePurpose extends StatelessWidget {
 
                     int requestType =
                         int.parse(inforesponse['data']['requestTypeId'] ?? '0');
-                    print(nickname);
-                    print(company);
-                    print(position);
 
                     Navigator.push(
                         context,
