@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/notification.dart';
 
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -10,6 +11,7 @@ import 'package:frontend/widgets/kakao_login_widget.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -143,12 +145,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void waitLogin(BuildContext context, String loginId, String password) async {
+    UserIdModel userId = Provider.of<UserIdModel>(context, listen: false);
+
     Map<String, dynamic> res = await login(loginId, password);
     if (res['success'] == true) {
       // 요청 성공
       const storage = FlutterSecureStorage();
       await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       updateNotificationLogFile(res['data']['userUUID']); // 알림 기록 파일 업데이트
+
+      // 유저 아이디 저장
+      Map<String, dynamic> userDetail = await getUserDetail();
+      userId.setUserId(userDetail['data']['userId']);
+
       showAlertDialog(context, res['message']);
       // 메인 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
       Future.delayed(Duration.zero, () {
