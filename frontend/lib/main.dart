@@ -118,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late StompClient stompClient;
 
   late UserIdModel userId; // 유저 아이디
+  late MyCafeModel myCafe; // 내 카페 정보
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
 
@@ -137,6 +138,31 @@ class _MyHomePageState extends State<MyHomePage> {
         // 주변 모든 카페에 sub 요청
         subCafeList(stompClient, cafeList, allUsers);
       });
+    }
+  }
+
+  // 자동 오프라인 전환 처리 함수
+  void autoOffline() async {
+    // 온라인 상태이면 오프라인으로 전환
+    if (myCafe.cafeId != null) {
+      int userId;
+      Map<String, dynamic> res = await getUserDetail();
+
+      if (res['success']) {
+        userId = res['data']['userId'];
+        print("!!!!유저 아이디: $userId");
+
+        // pub 요청 - 카페 지정 해제
+        deleteUserInCafe(
+          stompClient,
+          userId,
+          myCafe.cafeId!,
+        );
+        myCafe.clearMyCafe();
+      } else {
+        print("!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
+        return;
+      }
     }
   }
 
