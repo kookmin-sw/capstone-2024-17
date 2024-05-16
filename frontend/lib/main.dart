@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/service/auto_offline.dart';
 import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
+  MyCafeModel myCafe = MyCafeModel();
 
   final stompclient = StompClient(
     config: StompConfig.sockJS(
@@ -70,9 +72,15 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           Provider(create: (_) => stompclient),
+          Provider(
+            create: (_) => AutoOfflineService(
+              stompClient: stompclient,
+              myCafe: myCafe,
+            ),
+          ),
           ChangeNotifierProvider(create: (_) => UserIdModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
-          ChangeNotifierProvider(create: (_) => MyCafeModel()),
+          ChangeNotifierProvider(create: (_) => myCafe),
           ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
         ],
         child: MaterialApp(
@@ -118,7 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late StompClient stompClient;
 
   late UserIdModel userId; // 유저 아이디
-  late MyCafeModel myCafe; // 내 카페 정보
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
 
@@ -138,31 +145,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // 주변 모든 카페에 sub 요청
         subCafeList(stompClient, cafeList, allUsers);
       });
-    }
-  }
-
-  // 자동 오프라인 전환 처리 함수
-  void autoOffline() async {
-    // 온라인 상태이면 오프라인으로 전환
-    if (myCafe.cafeId != null) {
-      int userId;
-      Map<String, dynamic> res = await getUserDetail();
-
-      if (res['success']) {
-        userId = res['data']['userId'];
-        print("!!!!유저 아이디: $userId");
-
-        // pub 요청 - 카페 지정 해제
-        deleteUserInCafe(
-          stompClient,
-          userId,
-          myCafe.cafeId!,
-        );
-        myCafe.clearMyCafe();
-      } else {
-        print("!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
-        return;
-      }
     }
   }
 
@@ -188,7 +170,10 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // 알림 설정
-    final fcm = FCM(context, autoOffline);
+    final fcm = FCM(
+      context,
+      Provider.of<AutoOfflineService>(context, listen: false).autoOffline,
+    );
     fcm.setNotifications();
     // 알림 로그를 저장할 파일 생성
     getApplicationDocumentsDirectory().then((dir) {
