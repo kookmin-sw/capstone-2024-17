@@ -1,5 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/service/api_service.dart';
 import 'map_place.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Coffee Chat Rating',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: CoffeeChatRating(), // 실행할 위젯 설정
+    );
+  }
+}
 
 class CoffeeChatRating extends StatefulWidget {
   const CoffeeChatRating({super.key});
@@ -83,8 +102,31 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               padding: const EdgeInsets.only(top: 150),
               child: GestureDetector(
                 onTap: selectedIndex >= 0
-                    ? () {
-                        Navigator.pop(context); // 현재 화면 닫기
+                    ? () async {
+                        int senderId = 0; //초기화
+                        int receiverId = 2; //추후 수정 필요
+                        int rating = (selectedIndex + 1); //점수
+
+                        try {
+                          //로그인 한 유저의 senderId 가져오기
+                          Map<String, dynamic> res = await getUserDetail();
+
+                          if (res['success']) {
+                            senderId = res['data']['userId'];
+                          } else {
+                            print(
+                                '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+                          }
+
+                          Map<String, dynamic> response =
+                              await coffeeBeanReview(
+                                  senderId, receiverId, rating);
+                          //이동할 곳 찾기
+                        } catch (e) {
+                          throw Error();
+                        }
+
+                        // Navigator.pop(context); // 현재 화면 닫기
 
                         // 일단 주석 처리
                         // Navigator.push(
