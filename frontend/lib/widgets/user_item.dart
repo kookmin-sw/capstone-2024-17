@@ -17,6 +17,7 @@ class UserItem extends StatelessWidget {
   final String introduction;
   final double rating;
   final String matchId;
+  final int requestTypeId;
 
   const UserItem({
     super.key,
@@ -28,6 +29,7 @@ class UserItem extends StatelessWidget {
     required this.introduction,
     required this.rating,
     required this.matchId,
+    required this.requestTypeId,
   });
 
   @override
@@ -48,14 +50,14 @@ class UserItem extends StatelessWidget {
               );
             } else if (type == "receivedReqUser") {
               return ReceivedReqDialog(
-                nickname: nickname,
-                company: company,
-                position: position,
-                introduction: introduction,
-                rating: rating, // 여기에서 rating을 전달합니다.
-                receiverId: userId, //여기선 요청 받은 애의 userId를 씀
-                matchId: matchId,
-              );
+                  nickname: nickname,
+                  company: company,
+                  position: position,
+                  introduction: introduction,
+                  rating: rating, // 여기에서 rating을 전달합니다.
+                  receiverId: userId, //여기선 요청 받은 애의 userId를 씀
+                  matchId: matchId,
+                  requestTypeId: requestTypeId);
             } else {
               return Container();
             }
@@ -158,6 +160,13 @@ class _ReqDialogState extends State<ReqDialog> {
   }
 }
 
+List<String> purpose = [
+  "당신의 회사가 궁금해요",
+  "당신의 업무가 궁금해요",
+  "같이 개발 이야기 나눠요",
+  "점심시간 함께 산책해요"
+];
+
 // 받은 요청 상세보기 모달
 class ReceivedReqDialog extends StatelessWidget {
   final String nickname;
@@ -167,6 +176,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final double rating;
   final int receiverId;
   final String matchId;
+  final int requestTypeId;
 
   const ReceivedReqDialog({
     super.key,
@@ -177,6 +187,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.rating,
     required this.receiverId,
     required this.matchId,
+    required this.requestTypeId,
   });
 
   @override
@@ -199,7 +210,7 @@ class ReceivedReqDialog extends StatelessWidget {
               introduction: introduction,
               rating: rating,
             ),
-            const ColorTextContainer(text: "# 당신의 업무가 궁금해요."),
+            ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
             const Expanded(child: SizedBox()),
             BottomTwoButtons(
               first: "수락",

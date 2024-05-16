@@ -275,6 +275,7 @@ class ReceivedReq extends StatelessWidget {
                       ? double.parse(senderData["rating"])
                       : 46.0,
                   matchId: revList[index]["matchId"],
+                  requestTypeId: int.parse(revList[index]["requestTypeId"]),
                 );
               },
             ),

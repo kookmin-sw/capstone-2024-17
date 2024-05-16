@@ -215,7 +215,7 @@ class _CafeDetailsState extends State<CafeDetails>
                       ListView.builder(
                         itemCount: userList.length,
                         itemBuilder: (context, index) {
-                          return (userList[index].userId == userId.userId)
+                          return (userList[index].userId != userId.userId)
                               ? Container()
                               : UserItem(
                                   type: "cafeUser",
@@ -225,7 +225,8 @@ class _CafeDetailsState extends State<CafeDetails>
                                   position: userList[index].position,
                                   introduction: userList[index].introduction,
                                   rating: userList[index].rating,
-                                  matchId: '',
+                                  matchId: '', // 안 쓰는 값이기에 초기값 넣어줌
+                                  requestTypeId: 0, // 안 쓰는 값이기에 초기값 넣어줌
                                 );
                         },
                       ),
