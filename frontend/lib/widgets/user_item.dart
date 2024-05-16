@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/service/auto_offline.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
 import 'package:frontend/widgets/user_details.dart';

@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/service/auto_offline.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
