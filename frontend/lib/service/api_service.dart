@@ -214,7 +214,6 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
   }
 }
 
-
 //match decline  요청
 Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/decline');
@@ -242,7 +241,9 @@ Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
       throw Exception('Failed to get match delete: ${response.statusCode}');
     }
   } catch (error) {
-    throw Error();
+    throw Exception('Error occurred in matchDeclineRequest: $error');
+
+    // throw Error();
   }
 }
 
@@ -285,7 +286,6 @@ Future<Map<String, dynamic>> coffeeBeanReview(
     throw Error();
   }
 }
-
 
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,

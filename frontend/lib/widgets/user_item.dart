@@ -8,6 +8,8 @@ import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 
+import '../screen/coffeechat_req_list.dart';
+
 class UserItem extends StatelessWidget {
   final String type;
   final int userId;
@@ -18,9 +20,10 @@ class UserItem extends StatelessWidget {
   final double rating;
   final String matchId;
   final int requestTypeId;
+  final VoidCallback? onReject; // onReject 함수 추가
 
   const UserItem({
-    super.key,
+    Key? key,
     required this.type,
     required this.userId,
     required this.nickname,
@@ -30,7 +33,8 @@ class UserItem extends StatelessWidget {
     required this.rating,
     required this.matchId,
     required this.requestTypeId,
-  });
+    this.onReject, // onReject 매개변수 설정
+  }) : super(key: key); // key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +61,8 @@ class UserItem extends StatelessWidget {
                   rating: rating, // 여기에서 rating을 전달합니다.
                   receiverId: userId, //여기선 요청 받은 애의 userId를 씀
                   matchId: matchId,
-                  requestTypeId: requestTypeId);
+                  requestTypeId: requestTypeId,
+                  onReject: onReject);
             } else {
               return Container();
             }
@@ -177,9 +182,10 @@ class ReceivedReqDialog extends StatelessWidget {
   final int receiverId;
   final String matchId;
   final int requestTypeId;
+  final VoidCallback? onReject; // onReject 함수 추가
 
   const ReceivedReqDialog({
-    super.key,
+    Key? key, // Key 매개변수 추가
     required this.nickname,
     required this.company,
     required this.position,
@@ -188,7 +194,8 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.receiverId,
     required this.matchId,
     required this.requestTypeId,
-  });
+    required this.onReject,
+  }) : super(key: key); // Key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +224,7 @@ class ReceivedReqDialog extends StatelessWidget {
               second: "거절",
               handleFirstClick: () async {
                 print(matchId);
-                Navigator.pop(context);
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -231,7 +238,7 @@ class ReceivedReqDialog extends StatelessWidget {
                 );
               },
               handleSecondClick: () async {
-                await matchDeclineRequest(matchId);
+                onReject?.call(); // onReject 함수 호출
               },
             ),
           ],
