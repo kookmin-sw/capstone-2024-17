@@ -12,5 +12,5 @@ public class SenderInfoDto {
     private Company company;
     private String position;
     private String introduction;
-    private String rating;
+    private double coffeeBean;
 }
