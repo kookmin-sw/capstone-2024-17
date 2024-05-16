@@ -3,25 +3,17 @@ import 'package:frontend/service/api_service.dart';
 import 'map_place.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Coffee Chat Rating',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: CoffeeChatRating(), // 실행할 위젯 설정
-    );
-  }
-}
-
 class CoffeeChatRating extends StatefulWidget {
-  const CoffeeChatRating({super.key});
+  final String sendername;
+  final int senderId;
+  final int userId;
+
+  const CoffeeChatRating({
+    Key? key,
+    required this.senderId,
+    required this.userId,
+    required this.sendername,
+  }) : super(key: key);
 
   @override
   _CoffeeChatRatingState createState() => _CoffeeChatRatingState();
@@ -45,11 +37,11 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 200.0, bottom: 0),
+            Padding(
+              padding: const EdgeInsets.only(top: 200.0, bottom: 0),
               child: Text(
-                '00님과의 커피챗\n만족하셨나요?',
-                style: TextStyle(
+                '${widget.sendername}님과의 커피챗\n만족하셨나요?',
+                style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),

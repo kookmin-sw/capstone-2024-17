@@ -101,9 +101,12 @@ class ChoosePurpose extends StatelessWidget {
                             ['nickname'] ??
                         "nickname";
                     var company = inforesponse['data']['receiverInfo']
-                            ['company'] ??
+
+                            ['company']['name'] ??
                         "company";
-                    // var position = inforesponse['data']['receiverInfo']['position'] ?? "position"; // 아직 백엔드 딴에서 리턴 X 나중에 수정 필요
+                    var position = inforesponse['data']['receiverInfo']
+                            ['position'] ??
+                        "position";
                     var introduction = inforesponse['data']['receiverInfo']
                             ['introduction'] ??
                         "introduction";
@@ -119,7 +122,7 @@ class ChoosePurpose extends StatelessWidget {
                             builder: (context) => CoffeechatReqList(
                                   receiverNickname: nickname,
                                   receiverCompany: company,
-                                  receiverPosition: 'Position',
+                                  receiverPosition: position,
                                   receiverIntroduction: introduction,
                                   receiverRating: rating,
                                   Question: purpose[requestType],

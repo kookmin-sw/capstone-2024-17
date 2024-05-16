@@ -213,20 +213,22 @@ class _CafeDetailsState extends State<CafeDetails>
                   Stack(
                     children: [
                       ListView.builder(
-                          itemCount: userList.length,
-                          itemBuilder: (context, index) {
-                            return (userList[index].userId == userId.userId)
-                                ? Container()
-                                : UserItem(
-                                    type: "cafeUser",
-                                    userId: userList[index].userId,
-                                    nickname: userList[index].nickname,
-                                    company: userList[index].company,
-                                    position: userList[index].position,
-                                    introduction: userList[index].introduction,
-                                    rating: userList[index].rating,
-                                  );
-                          }),
+                        itemCount: userList.length,
+                        itemBuilder: (context, index) {
+                          return (userList[index].userId == userId.userId)
+                              ? Container()
+                              : UserItem(
+                                  type: "cafeUser",
+                                  userId: userList[index].userId,
+                                  nickname: userList[index].nickname,
+                                  company: userList[index].company,
+                                  position: userList[index].position,
+                                  introduction: userList[index].introduction,
+                                  rating: userList[index].rating,
+                                  matchId: '',
+                                );
+                        },
+                      ),
                       (myCafe.cafeId != null)
                           ? Container()
                           : ClipRect(

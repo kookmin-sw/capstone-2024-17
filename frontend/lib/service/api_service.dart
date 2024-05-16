@@ -318,6 +318,7 @@ Future<Map<String, dynamic>> getUserDetail() async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
+    print("here errorrrrrrrr");
     print('error: $error');
     throw Error();
   }

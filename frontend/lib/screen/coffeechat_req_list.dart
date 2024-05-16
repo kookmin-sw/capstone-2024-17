@@ -91,14 +91,7 @@ class CoffeechatReqList extends StatelessWidget {
                   rating: receiverRating,
                   question: Question,
                 ),
-                ReceivedReq(
-                  nickname: receiverNickname,
-                  company: receiverCompany,
-                  position: receiverPosition,
-                  introduction: receiverIntroduction,
-                  rating: receiverRating,
-                  question: Question,
-                ), // 이 부분은 나중에 수정 필요
+                ReceivedReq(),
               ]),
             ),
           ],
@@ -224,25 +217,6 @@ class _SentReqState extends State<SentReq> {
 }
 
 class ReceivedReq extends StatelessWidget {
-  // final String? matchId;
-  final String nickname;
-  final String company;
-  final String position;
-  final String introduction;
-  final double rating;
-  final String question;
-
-  const ReceivedReq({
-    Key? key,
-    // this.matchId,
-    required this.nickname,
-    required this.company,
-    required this.position,
-    required this.introduction,
-    required this.rating,
-    required this.question,
-  }) : super(key: key);
-
   Future<List<Map<String, dynamic>>> receiveList() async {
     int userId = 0;
     List<Map<String, dynamic>> resultList = []; // 리스트로 수정
