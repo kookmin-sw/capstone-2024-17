@@ -87,9 +87,12 @@ class _UserScreenState extends State<UserScreen> {
                               children: <Widget>[
                                 (logoInfo == '')
                                     ? const ProfileImg(
-                                        logo: "assets/coffee_bean.png")
-                                    : Image.network(logoInfo,
-                                        width: 100, height: 100),
+                                        isLocal: true,
+                                        logoUrl: "assets/coffee_bean.png")
+                                    : ProfileImg(
+                                        isLocal: false,
+                                        logoUrl: logoInfo,
+                                      ),
                                 const SizedBox(
                                   width: 30,
                                 ),

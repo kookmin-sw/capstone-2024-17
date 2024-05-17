@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ProfileImg extends StatelessWidget {
-  final String logo;
+  final bool isLocal;
+  final String logoUrl;
 
   const ProfileImg({
     super.key,
-    required this.logo,
+    required this.isLocal,
+    required this.logoUrl,
   });
 
   @override
@@ -20,10 +22,15 @@ class ProfileImg extends StatelessWidget {
         radius: 50,
         backgroundColor: Colors.white,
         child: ClipOval(
-          child: Image.asset(
-            logo,
-            fit: BoxFit.cover, // 이미지가 원 안에 꽉 차도록 합니다
-          ),
+          child: (isLocal)
+              ? Image.asset(
+                  logoUrl,
+                  fit: BoxFit.cover, // 이미지가 원 안에 꽉 차도록 합니다
+                )
+              : Image.network(
+                  logoUrl,
+                  fit: BoxFit.cover,
+                ),
         ),
       ),
     );
