@@ -7,6 +7,7 @@ class ChatroomItem extends StatelessWidget {
   final Image? logoImage;
   final String? recentMessage;
   final int count;
+  final String company;
 
   const ChatroomItem({
     super.key,
@@ -15,6 +16,7 @@ class ChatroomItem extends StatelessWidget {
     required this.logoImage,
     required this.recentMessage,
     required this.count,
+    required this.company,
   });
 
   @override
@@ -29,7 +31,8 @@ class ChatroomItem extends StatelessWidget {
                   builder: (context) => ChatScreen(
                         chatroomId: id,
                         nickname: nickname,
-                        logoImage: logoImage ?? Image.asset('assets/logo.png'),
+                        logoImage: logoImage ??
+                            Image.asset('assets/$company-logo.png'),
                       )));
         });
       },
@@ -43,7 +46,8 @@ class ChatroomItem extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 40,
                   backgroundImage:
-                      (logoImage ?? Image.asset('assets/logo.png')).image,
+                      (logoImage ?? Image.asset('assets/$company-logo.png'))
+                          .image,
                 ),
               ),
               Expanded(
