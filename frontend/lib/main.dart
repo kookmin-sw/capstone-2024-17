@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/service/stomp_service.dart';
 
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
+  MyCafeModel myCafe = MyCafeModel();
 
   final stompclient = StompClient(
     config: StompConfig.sockJS(
@@ -70,9 +72,15 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           Provider(create: (_) => stompclient),
+          Provider(
+            create: (_) => AutoOfflineService(
+              stompClient: stompclient,
+              myCafe: myCafe,
+            ),
+          ),
           ChangeNotifierProvider(create: (_) => UserIdModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
-          ChangeNotifierProvider(create: (_) => MyCafeModel()),
+          ChangeNotifierProvider(create: (_) => myCafe),
           ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
         ],
         child: MaterialApp(
@@ -162,7 +170,10 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // 알림 설정
-    final fcm = FCM(context);
+    final fcm = FCM(
+      context,
+      Provider.of<AutoOfflineService>(context, listen: false).autoOffline,
+    );
     fcm.setNotifications();
     // 알림 로그를 저장할 파일 생성
     getApplicationDocumentsDirectory().then((dir) {

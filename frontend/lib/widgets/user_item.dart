@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
+import 'package:provider/provider.dart';
 
 import '../screen/coffeechat_req_list.dart';
 
@@ -23,7 +25,7 @@ class UserItem extends StatelessWidget {
   final VoidCallback? onReject; // onReject 함수 추가
 
   const UserItem({
-    Key? key,
+    super.key,
     required this.type,
     required this.userId,
     required this.nickname,
@@ -34,7 +36,7 @@ class UserItem extends StatelessWidget {
     required this.matchId,
     required this.requestTypeId,
     this.onReject, // onReject 매개변수 설정
-  }) : super(key: key); // key 매개변수 설정
+  }); // key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
@@ -118,15 +120,15 @@ class ReqDialog extends StatefulWidget {
   final double rating;
   final int userId;
 
-  ReqDialog({
-    Key? key,
+  const ReqDialog({
+    super.key,
     required this.nickname,
     required this.company,
     required this.position,
     required this.introduction,
     required this.rating,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   State<ReqDialog> createState() => _ReqDialogState();
@@ -185,7 +187,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final VoidCallback? onReject; // onReject 함수 추가
 
   const ReceivedReqDialog({
-    Key? key, // Key 매개변수 추가
+    super.key, // Key 매개변수 추가
     required this.nickname,
     required this.company,
     required this.position,
@@ -195,7 +197,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.matchId,
     required this.requestTypeId,
     required this.onReject,
-  }) : super(key: key); // Key 매개변수 설정
+  }); // Key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +238,10 @@ class ReceivedReqDialog extends StatelessWidget {
                     ),
                   ),
                 );
+
+                // 오프라인으로 전환
+                Provider.of<AutoOfflineService>(context, listen: false)
+                    .autoOffline();
               },
               handleSecondClick: () async {
                 onReject?.call(); // onReject 함수 호출

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
+import 'package:frontend/service/auto_offline_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -105,8 +106,11 @@ class _CafeDetailsState extends State<CafeDetails>
     });
   }
 
-  void _stopTimer() {
+  void _stopTimer() async {
     _timer?.cancel();
+
+    // 오프라인으로 전환
+    Provider.of<AutoOfflineService>(context, listen: false).autoOffline();
   }
 
   Future<void> getPlacePhotoUri() async {
