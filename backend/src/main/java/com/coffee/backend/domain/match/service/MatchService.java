@@ -298,7 +298,7 @@ public class MatchService {
         double newCoffeeBean = oldCoffeeBean + (dto.getRating() - standard) * randomRatio;
         double newCoffeeBeanDouble = Double.parseDouble(String.format("%.3f", newCoffeeBean)); // 소수점 3자리까지
 
-        receiver.setCoffeeBean(newCoffeeBean);
+        receiver.setCoffeeBean(newCoffeeBeanDouble);
         userRepository.save(receiver);
 
         Review review = new Review();
