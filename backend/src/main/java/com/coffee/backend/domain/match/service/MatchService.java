@@ -52,12 +52,15 @@ public class MatchService {
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
         validateLock(lockKey); // 락 검증
 
+        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
+
         String matchId = UUID.randomUUID().toString();
         Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
                 "requestTypeId", dto.getRequestTypeId(),
+                "expirationTime", String.valueOf(expirationTime),
                 "status", "pending"
         );
 
