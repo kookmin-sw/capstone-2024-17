@@ -102,12 +102,14 @@ public class MatchService {
 
         String key = "matchId:" + dto.getMatchId();
         String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
 
         MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
         matchInfo.setReceiverInfo(receiverInfo);
         matchInfo.setSenderId(dto.getSenderId());
         matchInfo.setReceiverId(dto.getReceiverId());
         matchInfo.setRequestTypeId(requestTypeId);
+        matchInfo.setExpirationTime(expirationTime);
         return matchInfo;
     }
 
