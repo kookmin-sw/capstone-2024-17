@@ -44,7 +44,8 @@ public class MatchController {
 
     @GetMapping("/request/info")
     public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(
-            @RequestParam String matchId, @RequestParam Long senderId, @RequestParam Long receiverId) {
+            @RequestParam("matchId") String matchId, @RequestParam("senderId") Long senderId,
+            @RequestParam("receiverId") Long receiverId) {
         DtoLogger.requestParam("senderId", senderId);
         DtoLogger.requestParam("receiverId", receiverId);
 

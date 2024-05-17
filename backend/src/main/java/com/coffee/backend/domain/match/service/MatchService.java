@@ -84,6 +84,7 @@ public class MatchService {
         MatchDto match = mapper.map(dto, MatchDto.class);
         match.setMatchId(matchId);
         match.setStatus("pending");
+        match.setExpirationTime(expirationTime);
         return match;
     }
 
