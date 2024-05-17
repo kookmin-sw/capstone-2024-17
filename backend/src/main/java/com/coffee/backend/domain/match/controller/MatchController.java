@@ -1,6 +1,7 @@
 package com.coffee.backend.domain.match.controller;
 
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
@@ -44,7 +45,8 @@ public class MatchController {
 
     @GetMapping("/request/info")
     public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(
-            @RequestParam String matchId, @RequestParam Long senderId, @RequestParam Long receiverId) {
+            @RequestParam("matchId") String matchId, @RequestParam("senderId") Long senderId,
+            @RequestParam("receiverId") Long receiverId) {
         DtoLogger.requestParam("senderId", senderId);
         DtoLogger.requestParam("receiverId", receiverId);
 
@@ -94,7 +96,7 @@ public class MatchController {
     }
 
     @PostMapping("/finish")
-    public ResponseEntity<ApiResponse<MatchStatusDto>> finishMatch(@RequestBody MatchIdDto dto) {
+    public ResponseEntity<ApiResponse<MatchStatusDto>> finishMatch(@RequestBody MatchFinishRequestDto dto) {
         DtoLogger.requestBody(dto);
 
         log.info("Finish Message Catch!!");
