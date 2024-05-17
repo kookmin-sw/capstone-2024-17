@@ -9,5 +9,6 @@ public class MatchDto {
     private String matchId;
     private Long senderId;
     private Long receiverId;
+    private long expirationTime;
     private String status;
 }
