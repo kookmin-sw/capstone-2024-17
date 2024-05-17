@@ -4,7 +4,6 @@ import 'package:frontend/screen/chat_screen.dart';
 class ChatroomItem extends StatelessWidget {
   final int id;
   final String nickname;
-  final Image? logoImage;
   final String? recentMessage;
   final int count;
   final String company;
@@ -13,7 +12,6 @@ class ChatroomItem extends StatelessWidget {
     super.key,
     required this.id,
     required this.nickname,
-    required this.logoImage,
     required this.recentMessage,
     required this.count,
     required this.company,
@@ -31,8 +29,7 @@ class ChatroomItem extends StatelessWidget {
                   builder: (context) => ChatScreen(
                         chatroomId: id,
                         nickname: nickname,
-                        logoImage: logoImage ??
-                            Image.asset('assets/$company-logo.png'),
+                        logoImage: Image.asset('assets/$company-logo.png'),
                       )));
         });
       },
@@ -46,8 +43,7 @@ class ChatroomItem extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 40,
                   backgroundImage:
-                      (logoImage ?? Image.asset('assets/$company-logo.png'))
-                          .image,
+                      (Image.asset('assets/$company-logo.png')).image,
                 ),
               ),
               Expanded(
