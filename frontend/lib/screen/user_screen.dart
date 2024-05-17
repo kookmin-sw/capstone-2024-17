@@ -6,6 +6,7 @@ import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
 class UserScreen extends StatefulWidget {
@@ -20,8 +21,7 @@ class _UserScreenState extends State<UserScreen> {
   String? token;
   bool isLogined = false;
   String nickname = '';
-  String logoInfo =
-      'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
+  String logoInfo = '';
   String companyName = '미인증';
   String position = '선택안함';
   int temperature = 0;
@@ -85,8 +85,11 @@ class _UserScreenState extends State<UserScreen> {
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
                               children: <Widget>[
-                                Image.network(logoInfo,
-                                    width: 100, height: 100),
+                                (logoInfo == '')
+                                    ? const ProfileImg(
+                                        logo: "assets/coffee_bean.png")
+                                    : Image.network(logoInfo,
+                                        width: 100, height: 100),
                                 const SizedBox(
                                   width: 30,
                                 ),
