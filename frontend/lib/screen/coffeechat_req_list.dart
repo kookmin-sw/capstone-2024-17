@@ -250,7 +250,9 @@ class _ReceivedReqState extends State<ReceivedReq> {
           revList = resultList;
         });
       } catch (e) {
-        print('Error 1: $e');
+        setState(() {
+          revList = [];
+        });
       }
     } catch (e) {
       print('Error 2: $e');
@@ -259,42 +261,49 @@ class _ReceivedReqState extends State<ReceivedReq> {
 
   Future<void> handleMatchDecline(String matchId) async {
     await matchDeclineRequest(matchId);
-    fetchReceiveList(); // 거절 후에 UI를 업데이트하기 위해 다시 데이터를 가져옴
+    fetchReceiveList(); // Refresh data after rejection
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      child: ListView.builder(
-        itemCount: revList.length,
-        itemBuilder: (context, index) {
-          Map<String, dynamic> senderData = revList[index]['senderInfo'];
+      child: revList.isEmpty
+          ? Center(
+              child: Text(
+                '받은 요청이 없습니다 :(',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          : ListView.builder(
+              itemCount: revList.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> senderData = revList[index]['senderInfo'];
 
-          // 거절 버튼을 누를 때 호출할 함수
-          void handleReject() {
-            handleMatchDecline(revList[index]["matchId"]);
-          }
+                void handleReject() {
+                  handleMatchDecline(revList[index]["matchId"]);
+                }
 
-          // senderData를 사용하여 UserItem 생성
-          return UserItem(
-            type: "receivedReqUser",
-            userId: senderData["userId"] ?? 1,
-            nickname: senderData["nickname"] ?? "Unknown",
-            company: senderData["company"] != null
-                ? senderData["company"]["name"]
-                : "Unknown",
-            position: senderData["position"] ?? "Unknown",
-            introduction: senderData["introduction"] ?? "No introduction",
-            rating: senderData["rating"] != null
-                ? double.parse(senderData["rating"])
-                : 46.0,
-            matchId: revList[index]["matchId"],
-            requestTypeId: int.parse(revList[index]["requestTypeId"]),
-            onReject: handleReject, // 거절 버튼에 대한 콜백 함수 전달
-          );
-        },
-      ),
+                return UserItem(
+                  type: "receivedReqUser",
+                  userId: senderData["userId"] ?? 1,
+                  nickname: senderData["nickname"] ?? "Unknown",
+                  company: senderData["company"]?["name"] ?? "Unknown",
+                  position: senderData["position"] ?? "Unknown",
+                  introduction: senderData["introduction"] ?? "No introduction",
+                  rating: senderData["rating"] != null
+                      ? double.parse(senderData["rating"])
+                      : 0.0,
+                  matchId: revList[index]["matchId"],
+                  requestTypeId: int.parse(revList[index]["requestTypeId"]),
+                  onReject: handleReject,
+                );
+              },
+            ),
     );
   }
 }
