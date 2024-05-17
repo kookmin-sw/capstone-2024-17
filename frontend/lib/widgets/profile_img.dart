@@ -19,7 +19,12 @@ class ProfileImg extends StatelessWidget {
       child: CircleAvatar(
         radius: 50,
         backgroundColor: Colors.white,
-        backgroundImage: AssetImage(logo),
+        child: ClipOval(
+          child: Image.asset(
+            logo,
+            fit: BoxFit.cover, // 이미지가 원 안에 꽉 차도록 합니다
+          ),
+        ),
       ),
     );
   }
