@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
@@ -227,14 +228,26 @@ class ReceivedReqDialog extends StatelessWidget {
               handleFirstClick: () async {
                 print(matchId);
 
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => Matching(
+                //       matchId: matchId,
+                //       sendercompany: company,
+                //       sendername: nickname,
+                //       senderId: receiverId,
+                //     ),
+                //   ),
+                // );
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Matching(
-                      matchId: matchId,
-                      sendercompany: company,
-                      sendername: nickname,
-                      senderId: receiverId,
+                    builder: (context) => ChatScreen(
+                      logoImage: Image.network(
+                          'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png'),
+                      nickname: '채연이 테스트다',
+                      chatroomId: 10,
                     ),
                   ),
                 );

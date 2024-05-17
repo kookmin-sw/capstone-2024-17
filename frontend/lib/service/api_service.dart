@@ -287,6 +287,50 @@ Future<Map<String, dynamic>> coffeeBeanReview(
   }
 }
 
+//커피챗 수락 시 채팅창 생성
+Future<Map<String, dynamic>> chatroomCreateRequest() async {
+  final url = Uri.parse('$baseUrl/chatroom/create');
+  String? userToken = await storage.read(key: 'authToken');
+  userToken ??=
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
+
+  print("유저토큰 출력합니다이이이이이이이잉");
+  print(userToken);
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+
+      // 토큰으로 전달하면 body 안 보내도 됨.
+      // body: jsonEncode({
+      //   'senderId': senderId,
+      //   'receiverId': receiverId,
+      //   'rating': rating,
+      //   'comment': '',
+      // }),
+    );
+
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData;
+      } else {
+        throw Exception(
+            '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+      }
+    } else {
+      throw Exception('서버 오류: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
