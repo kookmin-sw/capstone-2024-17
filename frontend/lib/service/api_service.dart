@@ -108,6 +108,31 @@ Future<Map<String, dynamic>> matchInfoRequest(
   }
 }
 
+//보낸 요청
+Future<List<Map<String, dynamic>>> sendInfoRequest(int senderId) async {
+  final url = Uri.parse('$baseUrl/match/received/info?senderId=$senderId');
+
+  String? userToken = await storage.read(key: 'authToken');
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Failed to get send info: ${response.statusCode}');
+    }
+  } catch (error) {
+    throw Error();
+  }
+}
+
 //매칭 요청 받은 list
 Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
   final url = Uri.parse('$baseUrl/match/received/info?receiverId=$receiverId');
