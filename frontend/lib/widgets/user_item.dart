@@ -22,6 +22,7 @@ class UserItem extends StatelessWidget {
   final double rating;
   final String matchId;
   final int requestTypeId;
+  final VoidCallback? onAccept;
   final VoidCallback? onReject; // onReject 함수 추가
 
   const UserItem({
@@ -35,6 +36,7 @@ class UserItem extends StatelessWidget {
     required this.rating,
     required this.matchId,
     required this.requestTypeId,
+    this.onAccept,
     this.onReject, // onReject 매개변수 설정
   }); // key 매개변수 설정
 
@@ -64,6 +66,7 @@ class UserItem extends StatelessWidget {
                   receiverId: userId, //여기선 요청 받은 애의 userId를 씀
                   matchId: matchId,
                   requestTypeId: requestTypeId,
+                  onAccept: onAccept,
                   onReject: onReject);
             } else {
               return Container();
@@ -184,6 +187,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final int receiverId;
   final String matchId;
   final int requestTypeId;
+  final VoidCallback? onAccept;
   final VoidCallback? onReject; // onReject 함수 추가
 
   const ReceivedReqDialog({
@@ -196,6 +200,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.receiverId,
     required this.matchId,
     required this.requestTypeId,
+    required this.onAccept,
     required this.onReject,
   }); // Key 매개변수 설정
 
@@ -226,7 +231,7 @@ class ReceivedReqDialog extends StatelessWidget {
               second: "거절",
               handleFirstClick: () async {
                 print(matchId);
-
+                onAccept?.call();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -238,7 +243,6 @@ class ReceivedReqDialog extends StatelessWidget {
                     ),
                   ),
                 );
-
                 // 오프라인으로 전환
                 Provider.of<AutoOfflineService>(context, listen: false)
                     .autoOffline();
