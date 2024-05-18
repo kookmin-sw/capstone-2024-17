@@ -2,7 +2,6 @@ package com.coffee.backend.domain.chatroom.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.chatroom.dto.ChatroomCreationDto;
-import com.coffee.backend.domain.chatroom.dto.ChatroomResponse;
 import com.coffee.backend.domain.chatroom.dto.ChatroomResponses;
 import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.user.entity.User;
@@ -26,12 +25,12 @@ public class ChatroomController {
 
     //    채팅방 생성 FIXME 체팅방 생성은 api가 아니라 매칭 성공시 서버에 의해 이뤄져야한다
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<ChatroomResponse>> createChatroom(@AuthenticationPrincipal User user,
-                                                                        @RequestParam("senderId") Long senderId) {
+    public ResponseEntity<ApiResponse<Long>> createChatroom(@AuthenticationPrincipal User user,
+                                                            @RequestParam("senderId") Long senderId) {
         DtoLogger.requestParam("senderId", senderId); // SenderId: 매칭요청을 보낸 사람 Id
 
         ChatroomCreationDto dto = new ChatroomCreationDto(senderId, user.getUserId());
-        ChatroomResponse response = chatroomService.createChatroom(dto);
+        Long response = chatroomService.createChatroom(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
