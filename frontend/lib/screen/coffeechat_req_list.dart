@@ -170,6 +170,7 @@ class _SentReqState extends State<SentReq> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.grey, width: 1),
           ),
+          // 여기서 api 요청
           child: UserDetails(
             nickname: widget.nickname,
             company: widget.company,
