@@ -82,7 +82,7 @@ class UserItem extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Row(
           children: [
-            ProfileImg(
+            ProfileImgMedium(
               isLocal: true,
               logoUrl: "assets/$company-logo.png",
             ),

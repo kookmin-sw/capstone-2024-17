@@ -3,23 +3,25 @@ import 'package:flutter/material.dart';
 class ProfileImg extends StatelessWidget {
   final bool isLocal;
   final String logoUrl;
+  final double size;
 
   const ProfileImg({
     super.key,
     required this.isLocal,
     required this.logoUrl,
+    required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
+      width: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: Colors.grey),
       ),
       child: CircleAvatar(
-        radius: 50,
+        radius: size / 2,
         backgroundColor: Colors.white,
         child: ClipOval(
           child: (isLocal)
@@ -34,5 +36,53 @@ class ProfileImg extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ProfileImgMedium extends StatelessWidget {
+  final bool isLocal;
+  final String logoUrl;
+
+  const ProfileImgMedium({
+    super.key,
+    required this.isLocal,
+    required this.logoUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ProfileImg(isLocal: isLocal, logoUrl: logoUrl, size: 100);
+  }
+}
+
+class ProfileImgSmall extends StatelessWidget {
+  final bool isLocal;
+  final String logoUrl;
+
+  const ProfileImgSmall({
+    super.key,
+    required this.isLocal,
+    required this.logoUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ProfileImg(isLocal: isLocal, logoUrl: logoUrl, size: 80);
+  }
+}
+
+class ProfileImgXSmall extends StatelessWidget {
+  final bool isLocal;
+  final String logoUrl;
+
+  const ProfileImgXSmall({
+    super.key,
+    required this.isLocal,
+    required this.logoUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ProfileImg(isLocal: isLocal, logoUrl: logoUrl, size: 50);
   }
 }

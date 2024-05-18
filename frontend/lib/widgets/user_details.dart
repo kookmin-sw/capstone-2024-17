@@ -26,7 +26,7 @@ class UserDetails extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ProfileImg(
+            ProfileImgMedium(
               isLocal: true,
               logoUrl: "assets/$company-logo.png",
             ),

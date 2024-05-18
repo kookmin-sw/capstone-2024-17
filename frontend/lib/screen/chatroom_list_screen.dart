@@ -65,7 +65,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
         nickname: nickname,
         recentMessage: recentMessage,
         count: 0, // 일단 0으로 설정
-        company: chatroom['userInfo']['company']['name'],
+        logoUrl: chatroom['userInfo']['company']['logoUrl'],
       );
     }).toList();
   }

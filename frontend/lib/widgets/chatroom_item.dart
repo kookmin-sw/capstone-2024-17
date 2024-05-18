@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/chat_screen.dart';
+import 'package:frontend/widgets/profile_img.dart';
 
 class ChatroomItem extends StatelessWidget {
   final int id;
   final String nickname;
   final String? recentMessage;
   final int count;
-  final String company;
+  final String logoUrl;
 
   const ChatroomItem({
     super.key,
@@ -14,7 +15,7 @@ class ChatroomItem extends StatelessWidget {
     required this.nickname,
     required this.recentMessage,
     required this.count,
-    required this.company,
+    required this.logoUrl,
   });
 
   @override
@@ -22,16 +23,21 @@ class ChatroomItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // print('탭됨: $id');
-        Future.delayed(Duration.zero, () {
-          Navigator.push(
+        Future.delayed(
+          Duration.zero,
+          () {
+            Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ChatScreen(
-                        chatroomId: id,
-                        nickname: nickname,
-                        logoImage: Image.asset('assets/$company-logo.png'),
-                      )));
-        });
+                builder: (context) => ChatScreen(
+                  chatroomId: id,
+                  nickname: nickname,
+                  logoUrl: logoUrl,
+                ),
+              ),
+            );
+          },
+        );
       },
       child: Card(
         child: Container(
@@ -40,11 +46,15 @@ class ChatroomItem extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      (Image.asset('assets/$company-logo.png')).image,
-                ),
+                child: (logoUrl == '')
+                    ? const ProfileImgSmall(
+                        isLocal: true,
+                        logoUrl: "assets/coffee_bean.png",
+                      )
+                    : ProfileImgSmall(
+                        isLocal: false,
+                        logoUrl: logoUrl,
+                      ),
               ),
               Expanded(
                 child: Column(

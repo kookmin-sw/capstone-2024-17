@@ -86,10 +86,10 @@ class _UserScreenState extends State<UserScreen> {
                             child: Row(
                               children: <Widget>[
                                 (logoInfo == '')
-                                    ? const ProfileImg(
+                                    ? const ProfileImgMedium(
                                         isLocal: true,
                                         logoUrl: "assets/coffee_bean.png")
-                                    : ProfileImg(
+                                    : ProfileImgMedium(
                                         isLocal: false,
                                         logoUrl: logoInfo,
                                       ),

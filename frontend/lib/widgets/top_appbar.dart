@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/profile_img.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -66,14 +67,14 @@ class TopAppBarWithButton extends StatelessWidget
 
 class ChatroomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String nickname;
-  final Image logoImage;
+  final String logoUrl;
   @override
   final Size preferredSize = const Size.fromHeight(70);
 
   const ChatroomAppBar({
     super.key,
     required this.nickname,
-    required this.logoImage,
+    required this.logoUrl,
   });
 
   @override
@@ -84,10 +85,15 @@ class ChatroomAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: <Widget>[
           Container(
             margin: const EdgeInsets.all(10),
-            child: CircleAvatar(
-              radius: 35,
-              backgroundImage: logoImage.image,
-            ),
+            child: (logoUrl == '')
+                ? const ProfileImgXSmall(
+                    isLocal: true,
+                    logoUrl: "assets/coffee_bean.png",
+                  )
+                : ProfileImgXSmall(
+                    isLocal: false,
+                    logoUrl: logoUrl,
+                  ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
