@@ -29,41 +29,46 @@ class CafeInfo extends StatelessWidget {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const SizedBox(width: 50),
-            Icon(
-              isDineIn ? Icons.fastfood_outlined : Icons.no_meals_sharp,
-              size: 20,
-              color: isDineIn ? Colors.green : Colors.red,
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: Icon(
+                    isDineIn ? Icons.fastfood_outlined : Icons.no_meals_sharp,
+                    size: 20,
+                    color: isDineIn ? Colors.green : Colors.red,
+                  ),
+                ),
+                const Text(
+                  '매장 내 식사',
+                  style: TextStyle(fontSize: 13),
+                  overflow: TextOverflow.clip,
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            const SizedBox(
-              width: 120,
-              child: Text(
-                '매장 내 식사',
-                style: TextStyle(fontSize: 13),
-                overflow: TextOverflow.clip,
-              ),
-            ),
-            const SizedBox(width: 30),
-            Icon(
-              isTakeout ? Icons.wallet_giftcard_sharp : Icons.not_interested,
-              size: 20,
-              color: isDineIn ? Colors.green : Colors.red,
-            ),
-            const SizedBox(width: 10),
-            const SizedBox(
-              width: 100,
-              child: Text(
-                '테이크아웃',
-                style: TextStyle(fontSize: 13),
-                overflow: TextOverflow.clip,
-              ),
+            Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: Icon(
+                    isTakeout
+                        ? Icons.wallet_giftcard_sharp
+                        : Icons.not_interested,
+                    size: 20,
+                    color: isDineIn ? Colors.green : Colors.red,
+                  ),
+                ),
+                const Text(
+                  '테이크아웃',
+                  style: TextStyle(fontSize: 13),
+                  overflow: TextOverflow.clip,
+                ),
+              ],
             ),
           ],
         ),
-        const SizedBox(height: 10),
         Row(
           children: [
             // 이전 위젯들
@@ -84,11 +89,11 @@ class CafeInfo extends StatelessWidget {
               size: 30,
             ),
             const SizedBox(width: 15),
-            SizedBox(
-              width: 300,
+            Expanded(
               child: Text(
                 address,
                 style: const TextStyle(fontSize: 15),
+                softWrap: true,
                 overflow: TextOverflow.clip,
               ),
             ),
