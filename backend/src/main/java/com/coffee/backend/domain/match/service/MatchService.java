@@ -2,6 +2,7 @@ package com.coffee.backend.domain.match.service;
 
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchDto;
+import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
@@ -52,12 +53,15 @@ public class MatchService {
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
         validateLock(lockKey); // 락 검증
 
+        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
+
         String matchId = UUID.randomUUID().toString();
         Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
                 "receiverId", dto.getReceiverId().toString(),
                 "requestTypeId", dto.getRequestTypeId(),
+                "expirationTime", String.valueOf(expirationTime),
                 "status", "pending"
         );
 
@@ -72,8 +76,9 @@ public class MatchService {
                 TimeUnit.SECONDS);
 
         // 알림
+        User fromUser = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
-        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", "커피챗 요청이 도착했습니다.");
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", fromUser.getNickname() + "님에게 커피챗 요청이 도착했습니다.");
 
         // 10분동안 락 설정
         redisTemplate.opsForValue().set(lockKey, "Locked", 600, TimeUnit.SECONDS);
@@ -81,6 +86,7 @@ public class MatchService {
         MatchDto match = mapper.map(dto, MatchDto.class);
         match.setMatchId(matchId);
         match.setStatus("pending");
+        match.setExpirationTime(expirationTime);
         return match;
     }
 
@@ -147,8 +153,9 @@ public class MatchService {
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
         // 알림
+        User fromUser = userRepository.findByUserId(senderId).orElseThrow();
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
-        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", "커피챗이 성사되었습니다.");
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", fromUser.getNickname() + "님과 커피챗이 성사되었습니다.");
 
         MatchDto match = new MatchDto();
         match.setMatchId(dto.getMatchId());
@@ -174,8 +181,10 @@ public class MatchService {
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
         // 알림
+        User fromUser = userRepository.findByUserId(receiverId).orElseThrow();
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
-        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패", "커피챗 요청이 거절되었습니다.");
+        fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패",
+                fromUser.getNickname() + "님이 커피챗 요청을 거절하였습니다.");
 
         redisTemplate.delete(key);
         redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
@@ -258,8 +267,23 @@ public class MatchService {
         return id;
     }
 
-    public MatchStatusDto finishMatch(MatchIdDto dto) {
+    // 매칭 종료
+    public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
+
+        String key = "matchId:" + dto.getMatchId();
+        Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
+        Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
+
+        if (dto.getEnderId().equals(senderId)) {
+            User toUser = userRepository.findByUserId(receiverId).orElseThrow();
+            fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
+                    toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+        } else if (dto.getEnderId().equals(receiverId)) {
+            User toUser = userRepository.findByUserId(senderId).orElseThrow();
+            fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
+                    toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+        }
 
         redisTemplate.delete("matchId:" + dto.getMatchId() + "-info");
 
@@ -269,6 +293,7 @@ public class MatchService {
         return match;
     }
 
+    // 매칭 요청 종료 확인
     public Boolean isMatching(MatchIdDto dto) {
         log.trace("isMatching()");
 
@@ -298,7 +323,7 @@ public class MatchService {
         double newCoffeeBean = oldCoffeeBean + (dto.getRating() - standard) * randomRatio;
         double newCoffeeBeanDouble = Double.parseDouble(String.format("%.3f", newCoffeeBean)); // 소수점 3자리까지
 
-        receiver.setCoffeeBean(newCoffeeBean);
+        receiver.setCoffeeBean(newCoffeeBeanDouble);
         userRepository.save(receiver);
 
         Review review = new Review();
