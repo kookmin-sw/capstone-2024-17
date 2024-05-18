@@ -34,7 +34,8 @@ public class CompanyRequestController {
 
     @Hidden
     @DeleteMapping("/company/request")
-    public ResponseEntity<ApiResponse<String>> deleteCompanyRequest(@RequestParam Long companyRequestId) {
+    public ResponseEntity<ApiResponse<String>> deleteCompanyRequest(
+            @RequestParam("companyRequestId") Long companyRequestId) {
         DtoLogger.requestParam("companyRequestId", companyRequestId);
 
         companyRequestService.deleteRequest(companyRequestId);
