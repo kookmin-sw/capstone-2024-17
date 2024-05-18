@@ -15,13 +15,13 @@ import 'package:stomp_dart_client/stomp.dart';
 class ChatScreen extends StatefulWidget {
   final int chatroomId;
   final String nickname;
-  final Image logoImage;
+  final String logoUrl;
 
   const ChatScreen({
     super.key,
     required this.chatroomId,
     required this.nickname,
-    required this.logoImage,
+    required this.logoUrl,
   });
 
   @override
@@ -74,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     return Scaffold(
       appBar: ChatroomAppBar(
-        logoImage: widget.logoImage,
+        logoUrl: widget.logoUrl,
         nickname: widget.nickname,
       ),
       body: Container(

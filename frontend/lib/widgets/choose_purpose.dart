@@ -18,9 +18,9 @@ class ChoosePurpose extends StatelessWidget {
   final int userId; // receiverId 추가
 
   const ChoosePurpose({
-    Key? key,
+    super.key,
     required this.userId, // 생성자에 receiverId 추가
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +101,6 @@ class ChoosePurpose extends StatelessWidget {
                             ['nickname'] ??
                         "nickname";
                     var company = inforesponse['data']['receiverInfo']
-
                             ['company']['name'] ??
                         "company";
                     var position = inforesponse['data']['receiverInfo']
@@ -110,8 +109,9 @@ class ChoosePurpose extends StatelessWidget {
                     var introduction = inforesponse['data']['receiverInfo']
                             ['introduction'] ??
                         "introduction";
-                    double rating =
-                        inforesponse['data']['receiverInfo']['rating'] ?? 0.0;
+                    double rating = inforesponse['data']['receiverInfo']
+                            ['coffeeBean'] ??
+                        0.0;
 
                     int requestType =
                         int.parse(inforesponse['data']['requestTypeId'] ?? '0');
@@ -154,11 +154,11 @@ class PurposeButton extends StatefulWidget {
   final Function(int) onIndexChanged; // 새로운 함수 추가
 
   const PurposeButton({
-    Key? key,
+    super.key,
     required this.purpose,
     required this.selectedindex,
     required this.onIndexChanged, // 생성자에 함수 추가
-  }) : super(key: key);
+  });
 
   @override
   State<PurposeButton> createState() => _PurposeButtonState();
