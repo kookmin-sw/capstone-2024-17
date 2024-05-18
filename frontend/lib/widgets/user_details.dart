@@ -26,10 +26,15 @@ class UserDetails extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ProfileImgMedium(
-              isLocal: true,
-              logoUrl: "assets/$company-logo.png",
-            ),
+            (company == '')
+                ? const ProfileImgMedium(
+                    isLocal: true,
+                    logoUrl: "assets/coffee_bean.png",
+                  )
+                : ProfileImgMedium(
+                    isLocal: true,
+                    logoUrl: "assets/$company-logo.png",
+                  ),
             const SizedBox(
               width: 35,
             ),
