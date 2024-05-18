@@ -18,6 +18,7 @@ import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
+import com.coffee.backend.utils.CustomMapper;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,7 @@ public class MatchService {
     private final ModelMapper mapper;
 
     private static final String LOCK_KEY_PREFIX = "lock:senderId:";
+    private final CustomMapper customMapper;
 
     // 매칭 요청
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
@@ -96,16 +98,18 @@ public class MatchService {
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
 
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
-        receiverInfo.setCompany(receiver.getCompany());
+        receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
         String key = "matchId:" + dto.getMatchId();
         String requestTypeId = (String) redisTemplate.opsForHash().get(key, "requestTypeId");
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
 
         MatchInfoResponseDto matchInfo = new MatchInfoResponseDto();
         matchInfo.setReceiverInfo(receiverInfo);
         matchInfo.setSenderId(dto.getSenderId());
         matchInfo.setReceiverId(dto.getReceiverId());
         matchInfo.setRequestTypeId(requestTypeId);
+        matchInfo.setExpirationTime(expirationTime);
         return matchInfo;
     }
 
@@ -127,6 +131,7 @@ public class MatchService {
             User sender = userRepository.findById(senderId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+            senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
 
             MatchReceivedInfoDto res = new MatchReceivedInfoDto();
             res.setMatchId(matchId);

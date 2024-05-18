@@ -1,6 +1,6 @@
 package com.coffee.backend.domain.user.dto;
 
-import com.coffee.backend.domain.company.entity.Company;
+import com.coffee.backend.domain.company.dto.CompanyDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +9,7 @@ import lombok.Setter;
 public class SenderInfoDto {
     private Long userId;
     private String nickname;
-    private Company company;
+    private CompanyDto company;
     private String position;
     private String introduction;
     private double coffeeBean;
