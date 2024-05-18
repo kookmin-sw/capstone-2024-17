@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ChatroomResponse {
-    private Long chatrooId;
+    private Long chatroomId;
     private UserDto userInfo;
     private String recentMessage;
 }
