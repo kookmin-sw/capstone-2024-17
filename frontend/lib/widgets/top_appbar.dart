@@ -84,7 +84,7 @@ class ChatroomAppBar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.only(right: 15),
             child: (logoUrl == '')
                 ? const ProfileImgXSmall(
                     isLocal: true,
