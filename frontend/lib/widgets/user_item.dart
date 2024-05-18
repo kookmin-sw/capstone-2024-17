@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
+import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
@@ -206,6 +208,7 @@ class ReceivedReqDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Dialog(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
@@ -231,18 +234,23 @@ class ReceivedReqDialog extends StatelessWidget {
               second: "거절",
               handleFirstClick: () async {
                 print(matchId);
+
+
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => Matching(
+                //       matchId: matchId,
+                //       sendercompany: company,
+                //       sendername: nickname,
+                //       senderId: receiverId,
+                //     ),
+                //   ),
+                // );
+
+                selectedIndexProvider.selectedIndex = 2;
                 onAccept?.call();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Matching(
-                      matchId: matchId,
-                      sendercompany: company,
-                      sendername: nickname,
-                      senderId: receiverId,
-                    ),
-                  ),
-                );
+
                 // 오프라인으로 전환
                 Provider.of<AutoOfflineService>(context, listen: false)
                     .autoOffline();
