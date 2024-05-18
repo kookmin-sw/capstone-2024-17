@@ -90,10 +90,8 @@ class ChoosePurpose extends StatelessWidget {
                 print(response);
                 if (response['success'] == true) {
                   try {
-                    Map<String, dynamic> inforesponse = await matchInfoRequest(
-                        response['data']['matchId'],
-                        response['data']['senderId'],
-                        response['data']['receiverId']);
+                    Map<String, dynamic> inforesponse =
+                        await matchRequestInfo(response['data']['senderId']);
 
                     print("info Response: $inforesponse");
 
@@ -101,7 +99,6 @@ class ChoosePurpose extends StatelessWidget {
                             ['nickname'] ??
                         "nickname";
                     var company = inforesponse['data']['receiverInfo']
-
                             ['company']['name'] ??
                         "company";
                     var position = inforesponse['data']['receiverInfo']
