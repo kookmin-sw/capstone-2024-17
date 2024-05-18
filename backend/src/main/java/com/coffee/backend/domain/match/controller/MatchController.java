@@ -5,7 +5,6 @@ import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
 import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
-import com.coffee.backend.domain.match.dto.MatchListDto;
 import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
