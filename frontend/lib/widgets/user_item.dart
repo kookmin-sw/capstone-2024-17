@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
@@ -202,6 +203,7 @@ class ReceivedReqDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Dialog(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
@@ -239,6 +241,8 @@ class ReceivedReqDialog extends StatelessWidget {
                 //     ),
                 //   ),
                 // );
+
+                selectedIndexProvider.selectedIndex = 2;
 
                 Navigator.push(
                   context,
