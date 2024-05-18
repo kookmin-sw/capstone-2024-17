@@ -1,6 +1,9 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.chatroom.dto.ChatroomCreationDto;
+import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.fcm.service.FcmService;
+import com.coffee.backend.domain.match.dto.MatchAcceptResponse;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
@@ -44,6 +47,7 @@ public class MatchService {
 
     private static final String LOCK_KEY_PREFIX = "lock:senderId:";
     private final CustomMapper customMapper;
+    private final ChatroomService chatroomService;
 
     // 매칭 요청
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
@@ -148,7 +152,7 @@ public class MatchService {
     }
 
     // 매칭 요청 수락
-    public MatchDto acceptMatchRequest(MatchIdDto dto) {
+    public MatchAcceptResponse acceptMatchRequest(MatchIdDto dto) {
         log.trace("acceptMatchRequest()");
 
         if (!verifyMatchRequest(dto)) {
@@ -167,13 +171,19 @@ public class MatchService {
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", fromUser.getNickname() + "님과 커피챗이 성사되었습니다.");
 
-        MatchDto match = new MatchDto();
+        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+
+        MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
+        match.setChatroomId(chatroomId);
 
         redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
+        redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // 락 해제
 
         return match;
     }

@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.controller;
 
+import com.coffee.backend.domain.match.dto.MatchAcceptResponse;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
@@ -60,11 +61,11 @@ public class MatchController {
     }
 
     @PutMapping("/accept")
-    public ResponseEntity<ApiResponse<MatchDto>> acceptMatchRequest(@RequestBody MatchIdDto dto) {
+    public ResponseEntity<ApiResponse<MatchAcceptResponse>> acceptMatchRequest(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
 
         log.info("Accept Message Catch!!");
-        MatchDto response = matchService.acceptMatchRequest(dto);
+        MatchAcceptResponse response = matchService.acceptMatchRequest(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

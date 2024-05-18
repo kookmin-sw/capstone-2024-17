@@ -15,6 +15,7 @@ import com.coffee.backend.utils.CustomMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,29 +30,37 @@ public class ChatroomService {
     private final MessageService messageService;
     private final CustomMapper customMapper;
 
+    /**
+     * sender 와 receiver 사이에 기존 채팅방이 있다면 기존 채팅방의 Id, 없다면 새로 생성하고 생성된  채팅방의 Id 반환
+     */
     @Transactional
-    public ChatroomResponse createChatroom(ChatroomCreationDto dto) {
+    public Long createChatroom(ChatroomCreationDto dto) {
         log.trace("createChatroom()");
-//      TODO?  채팅방 이미 있는지 확인
-//      TODO Exception 수정
-        User sender = userRepository.findByUserUUID(dto.getSenderUUID())
+        User sender = userRepository.findByUserId(dto.getSenderId())
                 .orElseThrow(NoSuchElementException::new);
         User receiver = userRepository.findById(dto.getReceiverId())
                 .orElseThrow(NoSuchElementException::new);
 
-        Chatroom room = new Chatroom();
-        chatroomRepository.save(room);
-        UserChatroom uc1 = new UserChatroom();
-        uc1.setChatroom(room);
-        uc1.setUser(sender);
-        userChatroomRepository.save(uc1);
-        UserChatroom uc2 = new UserChatroom();
-        uc2.setChatroom(room);
-        uc2.setUser(receiver);
-        userChatroomRepository.save(uc2);
-
-        UserDto userInfo = customMapper.toUserDto(sender);
-        return new ChatroomResponse(room.getChatroomId(), userInfo, "");
+        Chatroom room;
+        // 채팅방 이미 있는지 확인
+        Optional<Chatroom> chatroom = userChatroomRepository.findByUserAndOtherUser(sender, receiver);
+        if (chatroom.isPresent()) {
+            // 기존 채팅방 반환
+            room = chatroom.get();
+        } else {
+            // 채팅방 생성
+            room = new Chatroom();
+            chatroomRepository.save(room);
+            UserChatroom uc1 = new UserChatroom();
+            uc1.setChatroom(room);
+            uc1.setUser(sender);
+            userChatroomRepository.save(uc1);
+            UserChatroom uc2 = new UserChatroom();
+            uc2.setChatroom(room);
+            uc2.setUser(receiver);
+            userChatroomRepository.save(uc2);
+        }
+        return room.getChatroomId();
     }
 
     @Transactional
