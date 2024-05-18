@@ -46,8 +46,6 @@ Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
   try {
     final response = await http.post(
@@ -87,9 +85,6 @@ Future<Map<String, dynamic>> matchInfoRequest(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  print("userToken = $userToken");
 
   try {
     final response = await http.get(
@@ -118,8 +113,6 @@ Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
   final url = Uri.parse('$baseUrl/match/received/info?receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
 
   try {
     final response = await http.get(
@@ -157,8 +150,6 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/cancel');
 
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
 
   try {
     final response = await http.delete(
@@ -187,10 +178,6 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/accept');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
 
   try {
     final response = await http.put(
@@ -219,10 +206,6 @@ Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/decline');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
 
   try {
     final response = await http.delete(
@@ -252,8 +235,6 @@ Future<Map<String, dynamic>> coffeeBeanReview(
     int senderId, int receiverId, int rating) async {
   final url = Uri.parse('$baseUrl/match/review');
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
   try {
     final response = await http.post(
@@ -291,11 +272,6 @@ Future<Map<String, dynamic>> coffeeBeanReview(
 Future<Map<String, dynamic>> chatroomCreateRequest() async {
   final url = Uri.parse('$baseUrl/chatroom/create');
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
-
-  print("유저토큰 출력합니다이이이이이이이잉");
-  print(userToken);
 
   try {
     final response = await http.post(
@@ -321,7 +297,7 @@ Future<Map<String, dynamic>> chatroomCreateRequest() async {
         return responseData;
       } else {
         throw Exception(
-            '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+            '채팅방 생성에 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
       }
     } else {
       throw Exception('서버 오류: ${response.statusCode}');
