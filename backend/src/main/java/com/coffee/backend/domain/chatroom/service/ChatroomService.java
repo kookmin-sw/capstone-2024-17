@@ -34,7 +34,7 @@ public class ChatroomService {
         log.trace("createChatroom()");
 //      TODO?  채팅방 이미 있는지 확인
 //      TODO Exception 수정
-        User sender = userRepository.findByUserUUID(dto.getSenderUUID())
+        User sender = userRepository.findByUserId(dto.getSenderId())
                 .orElseThrow(NoSuchElementException::new);
         User receiver = userRepository.findById(dto.getReceiverId())
                 .orElseThrow(NoSuchElementException::new);
