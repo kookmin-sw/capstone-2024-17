@@ -3,7 +3,6 @@ package com.coffee.backend.domain.match.controller;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
 import com.coffee.backend.domain.match.dto.MatchIdDto;
-import com.coffee.backend.domain.match.dto.MatchInfoDto;
 import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
@@ -44,17 +43,10 @@ public class MatchController {
 
     @GetMapping("/request/info")
     public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(
-            @RequestParam("matchId") String matchId, @RequestParam("senderId") Long senderId,
-            @RequestParam("receiverId") Long receiverId) {
+            @RequestParam("senderId") Long senderId) {
         DtoLogger.requestParam("senderId", senderId);
-        DtoLogger.requestParam("receiverId", receiverId);
 
-        MatchInfoDto dto = new MatchInfoDto();
-        dto.setMatchId(matchId);
-        dto.setSenderId(senderId);
-        dto.setReceiverId(receiverId);
-
-        MatchInfoResponseDto response = matchService.getMatchRequestInfo(dto);
+        MatchInfoResponseDto response = matchService.getMatchRequestInfo(senderId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
