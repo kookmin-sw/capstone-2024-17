@@ -155,18 +155,24 @@ public class MatchService {
     public MatchAcceptResponse acceptMatchRequest(MatchIdDto dto) {
         log.trace("acceptMatchRequest()");
 
-        validateTTL(dto.getMatchId());
         validateIfAlreadyAccepted(dto.getMatchId());
+        validateTTL(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
-        redisTemplate.opsForHash().put(key + "-info", "status", "matching");
+
+        Map<String, String> matchInfo = Map.of(
+                "senderId", senderId.toString(),
+                "receiverId", receiverId.toString(),
+                "status", "accepted"
+        );
+        redisTemplate.opsForHash().putAll(key + "-info", matchInfo);
 
         // 알림
         User fromUser = userRepository.findByUserId(senderId).orElseThrow();
@@ -185,8 +191,12 @@ public class MatchService {
 
         if (keys != null && !keys.isEmpty()) {
             String actualKey = keys.iterator().next(); // 키가 하나만 있다고 가정
-            redisTemplate.delete(actualKey);
-            redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // 락 해제
+            String matchId = (String) redisTemplate.opsForHash().get(actualKey, "matchId");
+            if (matchId != null && !matchId.equals(dto.getMatchId())) {
+                redisTemplate.delete("matchId:" + matchId);
+                redisTemplate.delete(actualKey);
+                redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // 락 해제
+            }
         }
 
         redisTemplate.delete("matchId:" + dto.getMatchId());
@@ -197,15 +207,16 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-//        match.setChatroomId(chatroomId);
+        match.setChatroomId(chatroomId);
 
         return match;
     }
 
     // 이미 수락된 요청인지 검증
     private void validateIfAlreadyAccepted(String matchId) {
-        String key = "matchId:" + matchId + "-info";
-        String status = (String) redisTemplate.opsForHash().get(key, "status");
+        log.trace("validateIfAlreadyAccepted()");
+
+        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId + "-info", "status");
         if (status != null && status.equals("accepted")) {
             throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
         }
@@ -273,6 +284,8 @@ public class MatchService {
 
     // 락 검증
     private void validateLock(String lockKey) {
+        log.trace("validateLock()");
+
         // 이미 락이 걸려 있는 경우 요청 처리 X
         if (redisTemplate.opsForValue().get(lockKey) != null) {
             throw new CustomException(ErrorCode.REQUEST_DUPLICATED);
@@ -281,6 +294,8 @@ public class MatchService {
 
     // 유저 검증
     private void validateRequest(MatchRequestDto dto) {
+        log.trace("validateRequest()");
+
         // TODO: 향후 테스트 기간 끝나고 주석 해제
 //        // 본인에게 요청을 보내는 경우 처리 X
 //        if (dto.getSenderId().equals(dto.getReceiverId())) {
@@ -315,7 +330,9 @@ public class MatchService {
     public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
 
-        String key = "matchId:" + dto.getMatchId();
+        validateFinishMatch(dto.getMatchId());
+
+        String key = "matchId:" + dto.getMatchId() + "-info";
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
@@ -327,6 +344,8 @@ public class MatchService {
             User toUser = userRepository.findByUserId(senderId).orElseThrow();
             fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
                     toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+        } else {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         // 종료로 상태 변경
@@ -336,6 +355,17 @@ public class MatchService {
         match.setMatchId(dto.getMatchId());
         match.setStatus("finished");
         return match;
+    }
+
+    private void validateFinishMatch(String matchId) {
+        log.trace("validateFinishMatch()");
+        Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + matchId + "-info");
+        if (matchInfo.isEmpty()) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+        }
+        if (matchInfo.get("status").equals("finished")) {
+            throw new CustomException(ErrorCode.REQUEST_ALREADY_FINISHED);
+        }
     }
 
     // 매칭 요청 종료 확인
