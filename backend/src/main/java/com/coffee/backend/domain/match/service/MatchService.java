@@ -162,8 +162,8 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
 
@@ -207,7 +207,7 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-//        match.setChatroomId(chatroomId);
+        match.setChatroomId(chatroomId);
 
         return match;
     }
