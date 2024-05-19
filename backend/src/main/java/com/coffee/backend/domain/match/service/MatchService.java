@@ -167,7 +167,7 @@ public class MatchService {
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
         // 알림
-        User fromUser = userRepository.findByUserId(senderId).orElseThrow();
+        User fromUser = userRepository.findByUserId(receiverId).orElseThrow();
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", fromUser.getNickname() + "님과 커피챗이 성사되었습니다.");
 
@@ -268,25 +268,6 @@ public class MatchService {
         }
     }
 
-    // Object -> Long 타입 변환
-    private Long getLongId(Object result) {
-        log.trace("getLongId()");
-
-        Long id = null;
-        if (result != null) {
-            if (result instanceof Number) {
-                id = ((Number) result).longValue();
-            } else {
-                try {
-                    id = Long.parseLong(result.toString());
-                } catch (NumberFormatException e) {
-                    log.trace("변환 에러: {}", e.getMessage());
-                }
-            }
-        }
-        return id;
-    }
-
     // 매칭 종료
     public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
@@ -324,6 +305,25 @@ public class MatchService {
         User toUser = userRepository.findByUserId(targetUserId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
                 toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+    }
+
+    // Object -> Long 타입 변환
+    private Long getLongId(Object result) {
+        log.trace("getLongId()");
+
+        Long id = null;
+        if (result != null) {
+            if (result instanceof Number) {
+                id = ((Number) result).longValue();
+            } else {
+                try {
+                    id = Long.parseLong(result.toString());
+                } catch (NumberFormatException e) {
+                    log.trace("변환 에러: {}", e.getMessage());
+                }
+            }
+        }
+        return id;
     }
 
     // 매칭 요청 종료 확인
