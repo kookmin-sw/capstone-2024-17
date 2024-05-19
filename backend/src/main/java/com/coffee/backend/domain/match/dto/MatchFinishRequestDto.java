@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class MatchFinishRequestDto {
     private String matchId;
-    private Long enderId;
+    private Long loginUserId; // 현재 로그인 한 유저 아이디 (알림 대상)
+    private Long enderId; // 종료를 누른 유저 아이디
 }
