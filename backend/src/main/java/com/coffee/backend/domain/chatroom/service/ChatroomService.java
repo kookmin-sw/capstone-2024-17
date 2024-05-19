@@ -33,6 +33,7 @@ public class ChatroomService {
     /**
      * sender 와 receiver 사이에 기존 채팅방이 있다면 기존 채팅방의 Id, 없다면 새로 생성하고 생성된  채팅방의 Id 반환
      */
+    @Transactional
     public Long createChatroom(ChatroomCreationDto dto) {
         log.trace("createChatroom()");
         User sender = userRepository.findByUserId(dto.getSenderId())
@@ -47,7 +48,6 @@ public class ChatroomService {
             // 기존 채팅방 반환
             room = chatroom.get();
         } else {
-            log.info("bbb");
             // 채팅방 생성
             room = new Chatroom();
             chatroomRepository.save(room);
@@ -63,6 +63,7 @@ public class ChatroomService {
         return room.getChatroomId();
     }
 
+    @Transactional
     public ChatroomResponses getChatrooms(User user) {
         log.trace("getChatrooms()");
         List<ChatroomResponse> responses = (userChatroomRepository.findAllByUser(user)).stream()
