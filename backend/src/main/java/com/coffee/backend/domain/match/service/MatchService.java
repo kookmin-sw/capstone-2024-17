@@ -162,8 +162,8 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
 
@@ -207,7 +207,7 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-        match.setChatroomId(chatroomId);
+//        match.setChatroomId(chatroomId);
 
         return match;
     }
@@ -336,24 +336,16 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        // Case 1: 본인이 종료한 경우
-        if (dto.getEnderId().equals(dto.getLoginUserId())) {
-            if (dto.getEnderId().equals(senderId)) { // 본인이 매칭 요청을 보낸 경우
-                sendMatchFinishNotification(receiverId);
-            } else { // 본인이 매칭 요청을 받은 경우
-                sendMatchFinishNotification(senderId);
-            }
-        }
-        // Case 2: 상대방이 종료한 경우
-        else {
-            if (dto.getEnderId().equals(senderId)) { // 상대방이 매칭 요청을 보낸 경우
-                sendMatchFinishNotification(senderId);
-            } else { // 상대방이 매칭 요청을 받은 경우
-                sendMatchFinishNotification(receiverId);
-            }
+        if (!dto.getEnderId().equals(senderId) && !dto.getEnderId().equals(receiverId)) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        // 종료로 상태 변경
+        if (dto.getEnderId().equals(senderId)) {
+            sendMatchFinishNotification(senderId, receiverId);
+        } else {
+            sendMatchFinishNotification(receiverId, senderId);
+        }
+
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId() + "-info", "status", "finished");
 
         MatchStatusDto match = new MatchStatusDto();
@@ -372,11 +364,12 @@ public class MatchService {
             throw new CustomException(ErrorCode.REQUEST_ALREADY_FINISHED);
         }
     }
-  
-      private void sendMatchFinishNotification(Long targetUserId) {
-        User toUser = userRepository.findByUserId(targetUserId).orElseThrow();
+
+    private void sendMatchFinishNotification(Long fromUserId, Long toUserId) {
+        User fromUser = userRepository.findByUserId(fromUserId).orElseThrow();
+        User toUser = userRepository.findByUserId(toUserId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
-                toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+                fromUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
     }
 
     // 매칭 요청 종료 확인
