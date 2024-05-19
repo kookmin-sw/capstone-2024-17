@@ -295,12 +295,27 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        if (dto.getEnderId().equals(senderId)) {
+        // Case 1: 본인이 매칭 요청 보내고, 본인이 종료한 경우
+        if (dto.getEnderId().equals(dto.getLoginUserId()) && dto.getEnderId().equals(senderId)) {
             User toUser = userRepository.findByUserId(receiverId).orElseThrow();
             fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
                     toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
-        } else if (dto.getEnderId().equals(receiverId)) {
+        }
+        // Case 2: 본인이 매칭 요청 보내고, 상대가 종료한 경우
+        else if (!dto.getEnderId().equals(dto.getLoginUserId()) && dto.getEnderId().equals(senderId)) {
             User toUser = userRepository.findByUserId(senderId).orElseThrow();
+            fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
+                    toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+        }
+        // Case 3: 상대가 매칭 요청 보내고, 본인이 종료한 경우
+        else if (dto.getEnderId().equals(dto.getLoginUserId()) && dto.getEnderId().equals(receiverId)) {
+            User toUser = userRepository.findByUserId(senderId).orElseThrow();
+            fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
+                    toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
+        }
+        // Case 4: 상대가 매칭 요청 보내고, 상대가 종료한 경우
+        else if (!dto.getEnderId().equals(dto.getLoginUserId()) && dto.getEnderId().equals(receiverId)) {
+            User toUser = userRepository.findByUserId(receiverId).orElseThrow();
             fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
                     toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
         }
