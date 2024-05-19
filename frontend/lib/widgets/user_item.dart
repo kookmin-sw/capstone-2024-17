@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/matching_screen.dart';
-import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
@@ -9,8 +8,6 @@ import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:provider/provider.dart';
-
-import '../screen/coffeechat_req_list.dart';
 
 class UserItem extends StatelessWidget {
   final String type;
@@ -73,9 +70,7 @@ class UserItem extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-        width: 400,
-        height: 100,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.grey),
@@ -83,27 +78,28 @@ class UserItem extends StatelessWidget {
         child: Row(
           children: [
             const ProfileImg(logo: "assets/coffee_bean.png"),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  nickname,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  "$company / $position",
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(
-                  width: 179,
-                  child: Text(
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    nickname,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    "$company / $position",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
                     introduction,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            )
+                ],
+              ),
+            ),
           ],
         ),
       ),
