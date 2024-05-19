@@ -33,7 +33,9 @@ class _UserScreenState extends State<UserScreen> {
     super.initState();
     setAccessToken().then((token) {
       print('token: $token');
-      setProfile(token);
+      if (token != null) {
+        setProfile(token);
+      }
     });
     _scrollController = ScrollController();
   }
@@ -278,9 +280,14 @@ class _UserScreenState extends State<UserScreen> {
 
       setState(() {}); // 상태 갱신
     } else {
-      // 요청 실패
-      showAlertDialog(
-          context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
+      if (res['code'] == "1401") {
+        showAlertDialog(
+            context, '${res['message']} 다시 로그인해주세요. (${res['code']})');
+      } else {
+        // 요청 실패
+        showAlertDialog(
+            context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
+      }
     }
 
     return;
