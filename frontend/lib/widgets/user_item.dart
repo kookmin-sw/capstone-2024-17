@@ -200,13 +200,12 @@ class ReceivedReqDialog extends StatelessWidget {
     return Dialog(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
-        width: 350,
-        height: 470,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             UserDetails(
               nickname: nickname,
@@ -216,7 +215,6 @@ class ReceivedReqDialog extends StatelessWidget {
               rating: rating,
             ),
             ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
-            const Expanded(child: SizedBox()),
             BottomTwoButtons(
               first: "수락",
               second: "거절",
