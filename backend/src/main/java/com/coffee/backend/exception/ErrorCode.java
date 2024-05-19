@@ -1,5 +1,6 @@
 package com.coffee.backend.exception;
 
+import com.google.api.Http;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,9 @@ public enum ErrorCode {
     REQUEST_SAME_USER(HttpStatus.CONFLICT, "7409", "본인에게 요청을 보낼 수 없습니다."),
     REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "7404", "해당 요청 정보를 찾을 수 없습니다."),
     REQUEST_EXPIRED(HttpStatus.UNAUTHORIZED, "7401", "요청이 만료되었습니다."),
+    REQUEST_ALREADY_ACCEPTED(HttpStatus.CONFLICT, "7409", "이미 수락한 요청입니다."),
+    REQUEST_ALREADY_FINISHED(HttpStatus.CONFLICT, "7409", "이미 종료한 요청입니다."),
+    REQUEST_NOT_ACCEPTED(HttpStatus.NOT_FOUND, "7404", "해당 요청은 수락되지 않았습니다."),
 
     COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "8404", "해당 COMPANY를 찾을 수 없습니다."),
 
