@@ -183,7 +183,6 @@ public class MatchService {
 
         redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
-        redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // 락 해제
 
         return match;
     }
