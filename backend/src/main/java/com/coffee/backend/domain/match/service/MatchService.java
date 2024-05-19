@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -159,30 +160,48 @@ public class MatchService {
             throw new CustomException(ErrorCode.REQUEST_EXPIRED);
         }
 
-        String key = "matchId:" + dto.getMatchId();
-        redisTemplate.opsForHash().put(key, "status", "accepted");
-        redisTemplate.opsForHash().put(key + "-info", "status", "matching");
+        // TODO: 이미 수락한 요청이면 예외처리
 
+        String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
+
+//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+
+        redisTemplate.opsForHash().put(key, "status", "accepted");
+        redisTemplate.opsForHash().put(key + "-info", "status", "matching");
 
         // 알림
         User fromUser = userRepository.findByUserId(senderId).orElseThrow();
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", fromUser.getNickname() + "님과 커피챗이 성사되었습니다.");
 
-        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+
+        // receiver가 보낸 다른 요청이 있었다면 해당 요청 취소
+        Set<String> keys;
+        try {
+            keys = redisTemplate.keys("receiverId:*-senderId:" + receiverId);
+        } catch (NoSuchElementException e) {
+            keys = null; // keys를 null로 설정하여 다음 로직으로 이동
+        }
+
+        if (keys != null && !keys.isEmpty()) {
+            String actualKey = keys.iterator().next(); // 키가 하나만 있다고 가정
+            redisTemplate.delete(actualKey);
+            redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // 락 해제
+        }
+
+        redisTemplate.delete("matchId:" + dto.getMatchId());
+        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
         MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-        match.setChatroomId(chatroomId);
-
-        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
-        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
+//        match.setChatroomId(chatroomId);
 
         return match;
     }
@@ -257,7 +276,8 @@ public class MatchService {
 
     // 유저 검증
     private void validateRequest(MatchRequestDto dto) {
-        // 본인에게 요청을 보내는 경우 처리 X
+        // TODO: 향후 테스트 기간 끝나고 주석 해제
+//        // 본인에게 요청을 보내는 경우 처리 X
 //        if (dto.getSenderId().equals(dto.getReceiverId())) {
 //            throw new CustomException(ErrorCode.REQUEST_SAME_USER);
 //        }
@@ -304,7 +324,8 @@ public class MatchService {
                     toUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
         }
 
-        redisTemplate.delete("matchId:" + dto.getMatchId() + "-info");
+        // 종료로 상태 변경
+        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId() + "-info", "status", "finished");
 
         MatchStatusDto match = new MatchStatusDto();
         match.setMatchId(dto.getMatchId());
@@ -313,13 +334,19 @@ public class MatchService {
     }
 
     // 매칭 요청 종료 확인
-    public Boolean isMatching(MatchIdDto dto) {
-        log.trace("isMatching()");
-
-        String key = "matchId:" + dto.getMatchId() + "-info";
-        Object status = redisTemplate.opsForHash().get(key, "status");
-        return status != null; // true
-    }
+//    public MatchStatusDto isMatching(MatchIdDto dto) {
+//        log.trace("isMatching()");
+//
+//        String key = "matchId:" + dto.getMatchId() + "-info";
+//        String status = (String) redisTemplate.opsForHash().get(key, "status");
+//
+//        // TODO: status가 null이면 수락하지 않았다는 의미 - 예외 처리
+//
+//        MatchStatusDto response = new MatchStatusDto();
+//        response.setMatchId(dto.getMatchId());
+//        response.setStatus(status);
+//        return response;
+//    }
 
     @Transactional
     public Review saveReview(ReviewDto dto) {

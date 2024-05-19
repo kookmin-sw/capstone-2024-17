@@ -97,11 +97,11 @@ public class MatchController {
     }
 
     @GetMapping("/isMatching")
-    public ResponseEntity<ApiResponse<Boolean>> isMatching(@RequestBody MatchIdDto dto) {
+    public ResponseEntity<ApiResponse<MatchStatusDto>> isMatching(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
 
         log.info("Check if isMathing");
-        Boolean response = matchService.isMatching(dto);
+        MatchStatusDto response = matchService.isMatching(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
