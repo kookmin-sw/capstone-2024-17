@@ -334,19 +334,19 @@ public class MatchService {
     }
 
     // 매칭 요청 종료 확인
-//    public MatchStatusDto isMatching(MatchIdDto dto) {
-//        log.trace("isMatching()");
-//
-//        String key = "matchId:" + dto.getMatchId() + "-info";
-//        String status = (String) redisTemplate.opsForHash().get(key, "status");
-//
-//        // TODO: status가 null이면 수락하지 않았다는 의미 - 예외 처리
-//
-//        MatchStatusDto response = new MatchStatusDto();
-//        response.setMatchId(dto.getMatchId());
-//        response.setStatus(status);
-//        return response;
-//    }
+    public MatchStatusDto isMatching(MatchIdDto dto) {
+        log.trace("isMatching()");
+
+        String key = "matchId:" + dto.getMatchId() + "-info";
+        String status = (String) redisTemplate.opsForHash().get(key, "status");
+
+        // TODO: status가 null이면 수락하지 않았다는 의미 - 예외 처리
+
+        MatchStatusDto response = new MatchStatusDto();
+        response.setMatchId(dto.getMatchId());
+        response.setStatus(status);
+        return response;
+    }
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
