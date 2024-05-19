@@ -26,9 +26,8 @@ class YesOrNoDialog extends StatelessWidget {
       ),
       child: Container(
         padding: const EdgeInsets.all(20),
-        width: 300,
-        height: 200,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(
               height: 15,
@@ -38,7 +37,9 @@ class YesOrNoDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 20),
             ),
-            const Expanded(child: SizedBox()),
+            const SizedBox(
+              height: 20,
+            ),
             BottomTwoButtonsSmall(
               first: "확인",
               second: "취소",
