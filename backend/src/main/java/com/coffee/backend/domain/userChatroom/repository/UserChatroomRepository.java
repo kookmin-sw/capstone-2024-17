@@ -33,6 +33,6 @@ public interface UserChatroomRepository extends JpaRepository<UserChatroom, Long
             "FROM UserChatroom uc1 " +
             "JOIN UserChatroom uc2 ON uc1.chatroom = uc2.chatroom " +
             "WHERE uc1.user = :user AND uc2.user = :user2")
-    Optional<Chatroom> findByUserAndOtherUser(User user, User user2);
+    Optional<Chatroom> findByUserAndOtherUser(@Param("user") User user, @Param("user2") User user2);
 
 }

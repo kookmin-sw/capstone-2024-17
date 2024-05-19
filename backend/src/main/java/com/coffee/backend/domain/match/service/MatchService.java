@@ -54,10 +54,9 @@ public class MatchService {
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
         log.trace("sendMatchRequest()");
 
-        validateRequest(dto); // 요청 검증
-
+        validateRequest(dto);
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
-        validateLock(lockKey); // 락 검증
+        validateLock(lockKey);
 
         long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
 
@@ -156,11 +155,8 @@ public class MatchService {
     public MatchAcceptResponse acceptMatchRequest(MatchIdDto dto) {
         log.trace("acceptMatchRequest()");
 
-        if (!verifyMatchRequest(dto)) {
-            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
-        }
-
-        // TODO: 이미 수락한 요청이면 예외처리
+        validateTTL(dto.getMatchId());
+        validateIfAlreadyAccepted(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -206,13 +202,20 @@ public class MatchService {
         return match;
     }
 
+    // 이미 수락된 요청인지 검증
+    private void validateIfAlreadyAccepted(String matchId) {
+        String key = "matchId:" + matchId + "-info";
+        String status = (String) redisTemplate.opsForHash().get(key, "status");
+        if (status != null && status.equals("accepted")) {
+            throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
+        }
+    }
+
     // 매칭 요청 거절
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
 
-        if (!verifyMatchRequest(dto)) {
-            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
-        }
+        validateTTL(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -239,9 +242,8 @@ public class MatchService {
     // 매칭 요청 수동 취소
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
         log.trace("cancelMatchRequest()");
-        if (!verifyMatchRequest(dto)) {
-            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
-        }
+
+        validateTTL(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -260,10 +262,13 @@ public class MatchService {
     }
 
     // 매칭 요청 검증
-    private boolean verifyMatchRequest(MatchIdDto dto) {
-        log.trace("verifyMatchRequest()");
-        Long ttl = redisTemplate.getExpire("matchId:" + dto.getMatchId());
-        return ttl != null && ttl > 0; // true
+    private void validateTTL(String matchId) {
+        log.trace("validateTTL()");
+
+        Long ttl = redisTemplate.getExpire("matchId:" + matchId);
+        if (ttl == null || ttl <= 0) {
+            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+        }
     }
 
     // 락 검증
@@ -340,7 +345,10 @@ public class MatchService {
         String key = "matchId:" + dto.getMatchId() + "-info";
         String status = (String) redisTemplate.opsForHash().get(key, "status");
 
-        // TODO: status가 null이면 수락하지 않았다는 의미 - 예외 처리
+        // status가 null이면 수락되지 않은 것
+        if (status == null) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
+        }
 
         MatchStatusDto response = new MatchStatusDto();
         response.setMatchId(dto.getMatchId());
