@@ -46,8 +46,6 @@ Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
   final url = Uri.parse('$baseUrl/match/request');
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
   try {
     final response = await http.post(
@@ -87,9 +85,6 @@ Future<Map<String, dynamic>> matchInfoRequest(
       '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  print("userToken = $userToken");
 
   try {
     final response = await http.get(
@@ -118,8 +113,6 @@ Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
   final url = Uri.parse('$baseUrl/match/received/info?receiverId=$receiverId');
 
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
 
   try {
     final response = await http.get(
@@ -157,8 +150,6 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/cancel');
 
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
 
   try {
     final response = await http.delete(
@@ -187,10 +178,6 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/accept');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
 
   try {
     final response = await http.put(
@@ -219,10 +206,6 @@ Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
   final url = Uri.parse('$baseUrl/match/decline');
 
   String? userToken = await storage.read(key: 'authToken');
-  if (userToken == null) {
-    userToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNDk5NDkxOCwiaWQiOjF9.EkQD7Y3pgkEBtUoQ-jHybaVT0oJqDlCvPNFKqTPrvo8";
-  }
 
   try {
     final response = await http.delete(
@@ -252,8 +235,6 @@ Future<Map<String, dynamic>> coffeeBeanReview(
     int senderId, int receiverId, int rating) async {
   final url = Uri.parse('$baseUrl/match/review');
   String? userToken = await storage.read(key: 'authToken');
-  userToken ??=
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcxNTE3NTk0OCwiaWQiOjF9.bXf5VukS-ZOaEvAPUOEI3qKWKPV1f79pWj00mveXEgw";
 
   try {
     final response = await http.post(
@@ -278,6 +259,45 @@ Future<Map<String, dynamic>> coffeeBeanReview(
       } else {
         throw Exception(
             '매칭 요청이 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
+      }
+    } else {
+      throw Exception('서버 오류: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
+//커피챗 수락 시 채팅창 생성
+Future<Map<String, dynamic>> chatroomCreateRequest() async {
+  final url = Uri.parse('$baseUrl/chatroom/create');
+  String? userToken = await storage.read(key: 'authToken');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+
+      // 토큰으로 전달하면 body 안 보내도 됨.
+      // body: jsonEncode({
+      //   'senderId': senderId,
+      //   'receiverId': receiverId,
+      //   'rating': rating,
+      //   'comment': '',
+      // }),
+    );
+
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData;
+      } else {
+        throw Exception(
+            '채팅방 생성에 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
       }
     } else {
       throw Exception('서버 오류: ${response.statusCode}');

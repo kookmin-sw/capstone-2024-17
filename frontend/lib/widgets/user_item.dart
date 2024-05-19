@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
+import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
@@ -19,6 +21,7 @@ class UserItem extends StatelessWidget {
   final double rating;
   final String matchId;
   final int requestTypeId;
+  final VoidCallback? onAccept;
   final VoidCallback? onReject; // onReject 함수 추가
 
   const UserItem({
@@ -32,6 +35,7 @@ class UserItem extends StatelessWidget {
     required this.rating,
     required this.matchId,
     required this.requestTypeId,
+    this.onAccept,
     this.onReject, // onReject 매개변수 설정
   }); // key 매개변수 설정
 
@@ -61,6 +65,7 @@ class UserItem extends StatelessWidget {
                   receiverId: userId, //여기선 요청 받은 애의 userId를 씀
                   matchId: matchId,
                   requestTypeId: requestTypeId,
+                  onAccept: onAccept,
                   onReject: onReject);
             } else {
               return Container();
@@ -77,7 +82,15 @@ class UserItem extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Row(
           children: [
-            const ProfileImg(logo: "assets/coffee_bean.png"),
+            (company == '')
+                ? const ProfileImgMedium(
+                    isLocal: true,
+                    logoUrl: "assets/coffee_bean.png",
+                  )
+                : ProfileImgMedium(
+                    isLocal: true,
+                    logoUrl: "assets/$company-logo.png",
+                  ),
             const SizedBox(
               width: 10,
             ),
@@ -180,6 +193,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final int receiverId;
   final String matchId;
   final int requestTypeId;
+  final VoidCallback? onAccept;
   final VoidCallback? onReject; // onReject 함수 추가
 
   const ReceivedReqDialog({
@@ -192,11 +206,13 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.receiverId,
     required this.matchId,
     required this.requestTypeId,
+    required this.onAccept,
     required this.onReject,
   }); // Key 매개변수 설정
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Dialog(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
@@ -221,17 +237,20 @@ class ReceivedReqDialog extends StatelessWidget {
               handleFirstClick: () async {
                 print(matchId);
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Matching(
-                      matchId: matchId,
-                      sendercompany: company,
-                      sendername: nickname,
-                      senderId: receiverId,
-                    ),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => Matching(
+                //       matchId: matchId,
+                //       sendercompany: company,
+                //       sendername: nickname,
+                //       senderId: receiverId,
+                //     ),
+                //   ),
+                // );
+
+                selectedIndexProvider.selectedIndex = 2;
+                onAccept?.call();
 
                 // 오프라인으로 전환
                 Provider.of<AutoOfflineService>(context, listen: false)

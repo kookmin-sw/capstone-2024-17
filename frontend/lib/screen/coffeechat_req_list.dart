@@ -259,6 +259,10 @@ class _ReceivedReqState extends State<ReceivedReq> {
     }
   }
 
+  Future<void> handleMatchAccept(String matchId) async {
+    await matchAcceptRequest(matchId);
+  }
+
   Future<void> handleMatchDecline(String matchId) async {
     await matchDeclineRequest(matchId);
     fetchReceiveList(); // Refresh data after rejection
@@ -284,6 +288,11 @@ class _ReceivedReqState extends State<ReceivedReq> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> senderData = revList[index]['senderInfo'];
 
+                // 수락 버튼을 누를 때 호출할 함수
+                void handleAccept() {
+                  handleMatchAccept(revList[index]["matchId"]);
+                }
+
                 void handleReject() {
                   handleMatchDecline(revList[index]["matchId"]);
                 }
@@ -300,6 +309,7 @@ class _ReceivedReqState extends State<ReceivedReq> {
                       : 0.0,
                   matchId: revList[index]["matchId"],
                   requestTypeId: int.parse(revList[index]["requestTypeId"]),
+                  onAccept: handleAccept,
                   onReject: handleReject,
                 );
               },

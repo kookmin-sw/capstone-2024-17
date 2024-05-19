@@ -11,4 +11,5 @@ public class MatchInfoResponseDto {
     private Long senderId;
     private Long receiverId;
     private ReceiverInfoDto receiverInfo;
+    private String expirationTime;
 }

@@ -6,11 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatroomCreationDto {
-    private String senderUUID;
+    private Long senderId;
     private Long receiverId;
 
-    public ChatroomCreationDto(String senderUUID, Long receiverId) {
-        this.senderUUID = senderUUID;
+    public ChatroomCreationDto(Long senderId, Long receiverId) {
+        this.senderId = senderId;
         this.receiverId = receiverId;
     }
 }

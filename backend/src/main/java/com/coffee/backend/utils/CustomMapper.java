@@ -23,15 +23,18 @@ public class CustomMapper {
 
                     Company company = context.getSource().getCompany();
                     if (company != null) {
-                        var dto = CompanyDto.builder()
-                                .name(company.getName())
-                                .domain(company.getDomain())
-                                .logoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename()))
-                                .build();
+                        var dto = toCompanyDto(company);
                         context.getDestination().setCompany(dto);
                     }
                     return context.getDestination();
                 })
                 .map(user);
+    }
+
+    public CompanyDto toCompanyDto(Company company) {
+        return CompanyDto.builder()
+                .name(company.getName())
+                .domain(company.getDomain())
+                .logoUrl(storageService.getFileUrl(company.getLogo().getStoredFilename())).build();
     }
 }

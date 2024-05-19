@@ -31,7 +31,7 @@ public class CompanyController {
      * 회사 이름을 키워드로 검색하는 api
      */
     @GetMapping("/company/search")
-    public ResponseEntity<ApiResponse<List<CompanyDto>>> searchCompany(@RequestParam String keyword) {
+    public ResponseEntity<ApiResponse<List<CompanyDto>>> searchCompany(@RequestParam("keyword") String keyword) {
         DtoLogger.requestParam("keyword", keyword);
 
         List<CompanyDto> companyList = companyService.searchCompany(keyword);
