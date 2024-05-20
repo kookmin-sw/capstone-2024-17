@@ -112,7 +112,6 @@ class SentReq extends StatefulWidget {
 }
 
 class _SentReqState extends State<SentReq> {
-  late int _endTime;
   late Future<Map<String, dynamic>> _sendinfoFuture;
   bool timerend = false;
 
@@ -120,7 +119,6 @@ class _SentReqState extends State<SentReq> {
   void initState() {
     super.initState();
     timerend = false;
-    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10분 후
     _sendinfoFuture = sendinfo();
   }
 
@@ -148,20 +146,22 @@ class _SentReqState extends State<SentReq> {
   }
 
   Future<Map<String, dynamic>> sendinfo() async {
-    int senderId = 0;
     try {
       // 로그인 한 유저의 senderId 가져오기
       Map<String, dynamic> res = await getUserDetail();
       if (res['success']) {
-        senderId = res['data']['userId'];
+        int senderId = res['data']['userId'];
+        Map<String, dynamic> response = await requestInfoRequest(senderId);
+        return response;
       } else {
         print(
             '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+        return {
+          'success': false,
+          'message': res["message"],
+          'statusCode': res["statusCode"],
+        };
       }
-      Map<String, dynamic> response = await requestInfoRequest(senderId);
-
-      print(response);
-      return response;
     } catch (e) {
       print('에러 발생: $e');
       return {
@@ -182,13 +182,15 @@ class _SentReqState extends State<SentReq> {
         } else if (snapshot.hasError) {
           return Center(child: Text('에러 발생: ${snapshot.error}'));
         } else if (!snapshot.hasData || !snapshot.data!['success']) {
-          return Center(child: Text('데이터를 가져올 수 없습니다'));
+          return Center(child: Text('보낸 요청이 없습니다.'));
         } else {
           var data = snapshot.data!['data'];
           int requestTypeId = data['requestTypeId'] is int
               ? data['requestTypeId']
               : int.tryParse(data['requestTypeId'].toString()) ?? 0;
-          var matchId = data['matchId']; // 아직 백엔드에 없음
+          // var matchId = data['matchId']; // 아직 백엔드에 없음
+          DateTime _endTime = DateTime.fromMillisecondsSinceEpoch(
+              int.parse(data['expirationTime']));
 
           return Column(
             children: [
@@ -211,10 +213,9 @@ class _SentReqState extends State<SentReq> {
                       (data['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
                 ),
               ),
-              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
               Expanded(child: SizedBox(height: 10)),
               CountdownTimer(
-                endTime: _endTime,
+                endTime: _endTime.millisecondsSinceEpoch,
                 onEnd: () {
                   if (!timerend) {
                     showAlertDialogWithContext(context);
