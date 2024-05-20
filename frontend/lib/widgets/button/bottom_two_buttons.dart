@@ -35,7 +35,7 @@ class BottomTwoButtons extends StatelessWidget {
 
   const BottomTwoButtons({
     super.key,
-    this.width = 130,
+    this.width, // width값을 지정하지 않으면 null이 됨
     required this.first,
     required this.second,
     required this.handleFirstClick,
@@ -44,45 +44,97 @@ class BottomTwoButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        SizedBox(
-          width: width,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              handleFirstClick();
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color(0xff212121),
-            ),
-            child: Text(
-              first,
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: width,
-          height: 50,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              handleSecondClick();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
-            ),
-            child: Text(
-              second,
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        )
-      ],
-    );
+    return (width == null)
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    handleFirstClick();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xff212121),
+                  ),
+                  child: Text(
+                    first,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    handleSecondClick();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    /*
+                      side: const BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      )
+                    */
+                  ),
+                  child: Text(
+                    second,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ],
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                width: width,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    handleFirstClick();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xff212121),
+                  ),
+                  child: Text(
+                    first,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: width,
+                height: 50,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    handleSecondClick();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    /*
+                      side: const BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      )
+                    */
+                  ),
+                  child: Text(
+                    second,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 }
