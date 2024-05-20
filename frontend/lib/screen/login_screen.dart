@@ -154,9 +154,20 @@ class _LoginScreenState extends State<LoginScreen> {
       await storage.write(key: 'authToken', value: res["data"]["authToken"]);
       updateNotificationLogFile(res['data']['userUUID']); // 알림 기록 파일 업데이트
 
-      // 유저 아이디 저장
-      Map<String, dynamic> userDetail = await getUserDetail();
-      userId.setUserId(userDetail['data']['userId']);
+      // 유저 정보 가져오기
+      getUserDetail().then((userDetail) {
+        print('[login getuserdetail] $userDetail');
+        userId.setProfile(
+          userDetail['data']['userId'],
+          userDetail['data']['nickname'],
+          userDetail['data']['company']['logo'],
+          userDetail['data']['company']['name'],
+          userDetail['data']['position'],
+          userDetail['data']['introduction'],
+          userDetail['data']['coffeeBean'],
+        );
+        print('[login userId profile] ${userId.profile}');
+      });
 
       showAlertDialog(context, res['message']);
       // 메인 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제

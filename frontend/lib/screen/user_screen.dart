@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/service/api_service.dart';
@@ -8,6 +9,7 @@ import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -27,10 +29,12 @@ class _UserScreenState extends State<UserScreen> {
   int temperature = 0;
   String introduction = '';
   late ScrollController _scrollController;
+  late UserIdModel userId;
 
   @override
   void initState() {
     super.initState();
+    userId = Provider.of<UserIdModel>(context, listen: false);
     setAccessToken().then((token) {
       print('token: $token');
       setProfile(token);
@@ -46,6 +50,7 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ChangeNotifierProvider(create: (_) => UserIdModel());
     return Scaffold(
       appBar: TopAppBarWithButton(
         title: "내 프로필",
@@ -85,13 +90,13 @@ class _UserScreenState extends State<UserScreen> {
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
                               children: <Widget>[
-                                (logoInfo == '')
+                                (userId.logoUrl == '')
                                     ? const ProfileImgMedium(
                                         isLocal: true,
                                         logoUrl: "assets/coffee_bean.png")
                                     : ProfileImgMedium(
                                         isLocal: false,
-                                        logoUrl: logoInfo,
+                                        logoUrl: userId.logoUrl,
                                       ),
                                 const SizedBox(
                                   width: 30,
@@ -104,7 +109,7 @@ class _UserScreenState extends State<UserScreen> {
                                       Row(children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            nickname,
+                                            userId.nickname,
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                                 fontSize: 18,
@@ -121,7 +126,7 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                companyName,
+                                                userId.company,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -138,7 +143,7 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                position,
+                                                userId.position,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -158,7 +163,7 @@ class _UserScreenState extends State<UserScreen> {
                                 Row(children: <Widget>[
                                   Expanded(
                                     child: BigThermometer(
-                                        temperature: temperature),
+                                        temperature: userId.rating.toInt()),
                                   )
                                 ]),
                               ])),
@@ -189,7 +194,7 @@ class _UserScreenState extends State<UserScreen> {
                                         controller: _scrollController,
                                         scrollDirection: Axis.vertical,
                                         child: Text(
-                                          introduction,
+                                          userId.introduction,
                                           // textAlign: TextAlign.left,
                                         ),
                                       ),
@@ -259,12 +264,15 @@ class _UserScreenState extends State<UserScreen> {
     return token;
   }
 
+  // verify profile?로 전환
   Future<void> setProfile(String? token) async {
     // 토큰으로 프로필 get하는 코드
     Map<String, dynamic> res = await getUserDetail();
     if (res['success'] == true) {
       // 요청 성공
-      print(res);
+      print('[userscreen setprofile] $res');
+      // 프로바이더에 넣기: 필요없다?
+/*
       nickname = res['data']['nickname'];
       if (res['data']['company'] != null) {
         logoInfo = res['data']['company']['logoUrl'];
@@ -275,7 +283,8 @@ class _UserScreenState extends State<UserScreen> {
       temperature = res['data']['coffeeBean'].round(); // 반올림
       introduction = res['data']['introduction'] ?? '';
       print(res['data']);
-
+      */
+      print('[userscreen userId] $userId');
       setState(() {}); // 상태 갱신
     } else {
       // 요청 실패

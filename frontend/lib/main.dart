@@ -165,7 +165,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
-        userId.setUserId(userDetail['data']['userId']);
+        print('[main getuserdetail] $userDetail');
+        userId.setProfile(
+          userDetail['data']['userId'],
+          userDetail['data']['nickname'],
+          userDetail['data']['company']['logo'],
+          userDetail['data']['company']['name'],
+          userDetail['data']['position'],
+          userDetail['data']['introduction'],
+          userDetail['data']['coffeeBean'],
+        );
+        print('[main userId profile] ${userId.profile}');
       });
     });
 
