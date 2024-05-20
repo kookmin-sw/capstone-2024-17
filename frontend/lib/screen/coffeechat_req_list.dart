@@ -14,7 +14,12 @@ import 'package:frontend/widgets/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 bool timerend = false;
-
+List<String> purpose = [
+  "당신의 회사가 궁금해요",
+  "당신의 업무가 궁금해요",
+  "같이 개발 이야기 나눠요",
+  "점심시간 함께 산책해요"
+];
 void main() async {
   await dotenv.load();
   runApp(const MyApp());
@@ -82,15 +87,7 @@ class CoffeechatReqList extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(children: [
-                SentReq(
-                  matchId: matchId,
-                  nickname: receiverNickname,
-                  company: receiverCompany,
-                  position: receiverPosition,
-                  introduction: receiverIntroduction,
-                  rating: receiverRating,
-                  question: Question,
-                ),
+                SentReq(),
                 ReceivedReq(),
               ]),
             ),
@@ -102,42 +99,24 @@ class CoffeechatReqList extends StatelessWidget {
 }
 
 class SentReq extends StatefulWidget {
-  final String? matchId;
-  final String nickname;
-  final String company;
-  final String position;
-  final String introduction;
-  final double rating;
-  final String question;
-
-  const SentReq({
-    Key? key,
-    this.matchId,
-    required this.nickname,
-    required this.company,
-    required this.position,
-    required this.introduction,
-    required this.rating,
-    required this.question,
-  }) : super(key: key);
-
   @override
   _SentReqState createState() => _SentReqState();
 }
 
 class _SentReqState extends State<SentReq> {
-  late int _endTime;
+  late Future<Map<String, dynamic>> _sendinfoFuture;
+  bool timerend = false;
 
   @override
   void initState() {
     super.initState();
     timerend = false;
-    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10분후
+    _sendinfoFuture = sendinfo();
   }
 
   Future<void> handleRequestCancel() async {
     try {
-      Map<String, dynamic> response = await matchCancelRequest(widget.matchId!);
+      Map<String, dynamic> response = await matchCancelRequest("matchId");
 
       if (response['success'] == true) {
         print("정상적으로 삭제됨");
@@ -153,65 +132,113 @@ class _SentReqState extends State<SentReq> {
     }
   }
 
-  void showAlertDialogWithContext(BuildContext context) {
-    showAlertDialog(
-        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.", handleRequestCancel);
+  Future<Map<String, dynamic>> sendinfo() async {
+    try {
+      // 로그인 한 유저의 senderId 가져오기
+      Map<String, dynamic> res = await getUserDetail();
+      if (res['success']) {
+        int senderId = res['data']['userId'];
+        Map<String, dynamic> response = await requestInfoRequest(senderId);
+        return response;
+      } else {
+        print(
+            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+        return {};
+      }
+    } catch (e) {
+      return {};
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 20),
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
-          width: 370,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey, width: 1),
-          ),
-          child: UserDetails(
-            nickname: widget.nickname,
-            company: widget.company,
-            position: widget.position,
-            introduction: widget.introduction,
-            rating: widget.rating,
-          ),
-        ),
-        ColorTextContainer(text: "# ${widget.question}"),
-        Expanded(child: SizedBox(height: 10)),
-        CountdownTimer(
-          endTime: _endTime,
-          onEnd: () {
-            // 카운트다운 타이머가 끝났을 때
-            if (!timerend) {
-              showAlertDialogWithContext(context);
-            }
-          },
-          widgetBuilder: (_, CurrentRemainingTime? time) {
-            if (time == null) {
-              return Text('남은 시간: 00:00');
-            }
-            int minutes = time.min ?? 0;
-            int seconds = time.sec ?? 0;
-            return Text(
-              '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-              style: TextStyle(fontSize: 20, color: Colors.black),
-            );
-          },
-        ),
-        SizedBox(height: 10),
-        BottomTextButton(
-          text: "요청 취소하기",
-          handlePressed: () async {
-            if (widget.matchId != null) {
-              showAlertDialogYesNo(
-                  context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
-              timerend = true;
-            }
-          },
-        ),
-      ],
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _sendinfoFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.data == null ||
+            snapshot.data!['success'] != true ||
+            snapshot.hasError) {
+          return Center(
+            child: Text(
+              '보낸 요청이 없습니다 :(',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        } else {
+          var data = snapshot.data!['data'];
+          int requestTypeId = data['requestTypeId'] is int
+              ? data['requestTypeId']
+              : int.tryParse(data['requestTypeId'].toString()) ?? 0;
+          // var matchId = data['matchId']; // 아직 백엔드에 없음
+          DateTime _endTime = DateTime.fromMillisecondsSinceEpoch(
+              int.parse(data['expirationTime']));
+
+          return Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+                width: 370,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey, width: 1),
+                ),
+                child: UserDetails(
+                  nickname: data['receiverInfo']['nickname'] ?? 'nickname',
+                  company: data['receiverInfo']['company']['name'] ?? 'company',
+                  position: data['receiverInfo']['position'] ?? 'position',
+                  introduction:
+                      data['receiverInfo']['introduction'] ?? 'introduction',
+                  rating:
+                      (data['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
+                ),
+              ),
+              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
+              Expanded(child: SizedBox(height: 10)),
+              CountdownTimer(
+                endTime: _endTime.millisecondsSinceEpoch,
+                onEnd: () {
+                  if (!timerend) {
+                    showAlertDialog(
+                        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.");
+                    setState(() {
+                      _sendinfoFuture = sendinfo();
+                    });
+                  }
+                },
+                widgetBuilder: (_, CurrentRemainingTime? time) {
+                  if (time == null) {
+                    return Text('남은 시간: 00:00',
+                        style: TextStyle(fontSize: 20, color: Colors.black));
+                  }
+                  int minutes = time.min ?? 0;
+                  int seconds = time.sec ?? 0;
+                  return Text(
+                    '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+                    style: TextStyle(fontSize: 20, color: Colors.black),
+                  );
+                },
+              ),
+              SizedBox(height: 10),
+              BottomTextButton(
+                text: "요청 취소하기",
+                handlePressed: () async {
+                  showAlertDialogYesNo(
+                      context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
+                  timerend = true;
+                },
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }
