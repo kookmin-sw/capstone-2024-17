@@ -6,10 +6,6 @@ import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
 
-String reqlistpara = '';
-int requestTypeId = 0;
-int _selectedIndex = -1; // 선택된 인덱스를 저장할 변수, 초기값은 선택되지 않은 상태를 의미
-
 List<String> purpose = [
   "당신의 회사가 궁금해요",
   "당신의 업무가 궁금해요",
@@ -32,6 +28,7 @@ class ChoosePurpose extends StatefulWidget {
 class _ChoosePurposeState extends State<ChoosePurpose> {
   @override
   Widget build(BuildContext context) {
+    int? _selectedIndex;
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
 
     return Container(
@@ -57,7 +54,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
               children: List.generate(purpose.length, (index) {
                 return PurposeButton(
                   purpose: purpose[index],
-                  isSelected: _selectedIndex == index,
+                  isSelected: _selectedIndex != null && _selectedIndex == index,
                   onPressed: () {
                     setState(() {
                       _selectedIndex = index;
@@ -84,13 +81,13 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                   return;
                 }
 
-                if (_selectedIndex == -1) {
+                if (_selectedIndex == null) {
                   print('목적을 선택하지 않았습니다');
                   return;
                 }
 
                 Map<String, dynamic> response =
-                    await matchRequest(senderId, receiverId, _selectedIndex);
+                    await matchRequest(senderId, receiverId, _selectedIndex!);
 
                 selectedIndexProvider.selectedIndex = 1;
               } catch (e) {
