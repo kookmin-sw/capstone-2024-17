@@ -188,6 +188,7 @@ class _SentReqState extends State<SentReq> {
           int requestTypeId = data['requestTypeId'] is int
               ? data['requestTypeId']
               : int.tryParse(data['requestTypeId'].toString()) ?? 0;
+          var matchId = data['matchId']; // 아직 백엔드에 없음
 
           return Column(
             children: [
