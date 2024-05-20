@@ -3,6 +3,7 @@ import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
 
@@ -26,11 +27,18 @@ class ChoosePurpose extends StatefulWidget {
 }
 
 class _ChoosePurposeState extends State<ChoosePurpose> {
+  int? _selectedIndex;
+  late SelectedIndexModel selectedIndexProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndexProvider =
+        Provider.of<SelectedIndexModel>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    int? _selectedIndex;
-    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
-
     return Container(
       padding: const EdgeInsets.all(25),
       width: 350,
@@ -57,7 +65,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                   isSelected: _selectedIndex != null && _selectedIndex == index,
                   onPressed: () {
                     setState(() {
-                      _selectedIndex = index;
+                      _selectedIndex = index; // 선택한 목적의 인덱스 업데이트
                     });
                   },
                 );
@@ -82,7 +90,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                 }
 
                 if (_selectedIndex == null) {
-                  print('목적을 선택하지 않았습니다');
+                  showAlertDialog(context, "커피챗 목적을 선택해주세요.\n");
                   return;
                 }
 
@@ -94,6 +102,9 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                 throw Error();
               }
             },
+            buttonColor: _selectedIndex != null
+                ? Colors.black
+                : Colors.grey, // 배경색 조건에 따라 동적으로 설정
           )
         ],
       ),
