@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
+import 'package:provider/provider.dart';
 
 String reqlistpara = '';
 int requestTypeId = 0;
@@ -24,6 +26,8 @@ class ChoosePurpose extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+
     return Container(
       padding: const EdgeInsets.all(25),
       width: 350,
@@ -86,51 +90,10 @@ class ChoosePurpose extends StatelessWidget {
                 // receiverId 어케 가져올건데 purpose에서 가져와야지
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId, _selectedIndex);
-
-                print(response);
-                if (response['success'] == true) {
-                  try {
-                    Map<String, dynamic> inforesponse =
-                        await requestInfoRequest(response['data']['senderId']);
-
-                    print("info Response: $inforesponse");
-
-                    var nickname = inforesponse['data']['receiverInfo']
-                            ['nickname'] ??
-                        "nickname";
-                    var company = inforesponse['data']['receiverInfo']
-                            ['company']['name'] ??
-                        "company";
-                    var position = inforesponse['data']['receiverInfo']
-                            ['position'] ??
-                        "position";
-                    var introduction = inforesponse['data']['receiverInfo']
-                            ['introduction'] ??
-                        "introduction";
-                    double rating =
-                        inforesponse['data']['receiverInfo']['rating'] ?? 0.0;
-
-                    int requestType =
-                        int.parse(inforesponse['data']['requestTypeId'] ?? '0');
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CoffeechatReqList(
-                                  receiverNickname: nickname,
-                                  receiverCompany: company,
-                                  receiverPosition: position,
-                                  receiverIntroduction: introduction,
-                                  receiverRating: rating,
-                                  Question: purpose[requestType],
-                                  matchId: response['data']['matchId'],
-                                )));
-                  } catch (e) {
-                    print("matchInfoRequest Error: $e");
-                  }
-                }
+                selectedIndexProvider.selectedIndex = 1;
+                // print(response);
               } catch (e) {
-                print("matchRequest Error: $e");
+                throw Error();
               }
             },
           )
