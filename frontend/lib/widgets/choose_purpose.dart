@@ -91,7 +91,7 @@ class ChoosePurpose extends StatelessWidget {
                 if (response['success'] == true) {
                   try {
                     Map<String, dynamic> inforesponse =
-                        await matchRequestInfo(response['data']['senderId']);
+                        await requestInfoRequest(response['data']['senderId']);
 
                     print("info Response: $inforesponse");
 
