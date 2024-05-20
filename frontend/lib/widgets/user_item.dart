@@ -235,19 +235,6 @@ class ReceivedReqDialog extends StatelessWidget {
               handleFirstClick: () async {
                 print(matchId);
 
-
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => Matching(
-                //       matchId: matchId,
-                //       sendercompany: company,
-                //       sendername: nickname,
-                //       senderId: receiverId,
-                //     ),
-                //   ),
-                // );
-
                 selectedIndexProvider.selectedIndex = 2;
                 onAccept?.call();
 

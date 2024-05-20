@@ -87,15 +87,7 @@ class CoffeechatReqList extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(children: [
-                SentReq(
-                    // matchId: matchId,
-                    // nickname: receiverNickname,
-                    // company: receiverCompany,
-                    // position: receiverPosition,
-                    // introduction: receiverIntroduction,
-                    // rating: receiverRating,
-                    // question: Question,
-                    ),
+                SentReq(),
                 ReceivedReq(),
               ]),
             ),
@@ -140,11 +132,6 @@ class _SentReqState extends State<SentReq> {
     }
   }
 
-  void showAlertDialogWithContext(BuildContext context) {
-    showAlertDialog(
-        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.", handleRequestCancel);
-  }
-
   Future<Map<String, dynamic>> sendinfo() async {
     try {
       // 로그인 한 유저의 senderId 가져오기
@@ -156,19 +143,10 @@ class _SentReqState extends State<SentReq> {
       } else {
         print(
             '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
-        return {
-          'success': false,
-          'message': res["message"],
-          'statusCode': res["statusCode"],
-        };
+        return {};
       }
     } catch (e) {
-      print('에러 발생: $e');
-      return {
-        'success': false,
-        'message': '에러 발생',
-        'statusCode': 500,
-      };
+      return {};
     }
   }
 
@@ -179,10 +157,19 @@ class _SentReqState extends State<SentReq> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('에러 발생: ${snapshot.error}'));
-        } else if (!snapshot.hasData || !snapshot.data!['success']) {
-          return Center(child: Text('보낸 요청이 없습니다.'));
+        } else if (snapshot.data == null ||
+            snapshot.data!['success'] != true ||
+            snapshot.hasError) {
+          return Center(
+            child: Text(
+              '보낸 요청이 없습니다 :(',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          );
         } else {
           var data = snapshot.data!['data'];
           int requestTypeId = data['requestTypeId'] is int
@@ -213,17 +200,23 @@ class _SentReqState extends State<SentReq> {
                       (data['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
                 ),
               ),
+              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
               Expanded(child: SizedBox(height: 10)),
               CountdownTimer(
                 endTime: _endTime.millisecondsSinceEpoch,
                 onEnd: () {
                   if (!timerend) {
-                    showAlertDialogWithContext(context);
+                    showAlertDialog(
+                        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.");
+                    setState(() {
+                      _sendinfoFuture = sendinfo();
+                    });
                   }
                 },
                 widgetBuilder: (_, CurrentRemainingTime? time) {
                   if (time == null) {
-                    return Text('남은 시간: 00:00');
+                    return Text('남은 시간: 00:00',
+                        style: TextStyle(fontSize: 20, color: Colors.black));
                   }
                   int minutes = time.min ?? 0;
                   int seconds = time.sec ?? 0;
