@@ -51,6 +51,7 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     ChangeNotifierProvider(create: (_) => UserIdModel());
+    Map<String, dynamic> profile = userId.profile;
     return Scaffold(
       appBar: TopAppBarWithButton(
         title: "내 프로필",
@@ -90,14 +91,13 @@ class _UserScreenState extends State<UserScreen> {
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
                               children: <Widget>[
-                                (userId.logoUrl == '')
+                                (profile["logoUrl"] == '')
                                     ? const ProfileImgMedium(
                                         isLocal: true,
                                         logoUrl: "assets/coffee_bean.png")
                                     : ProfileImgMedium(
                                         isLocal: false,
-                                        logoUrl: userId.logoUrl,
-                                      ),
+                                        logoUrl: profile["logoUrl"]),
                                 const SizedBox(
                                   width: 30,
                                 ),
@@ -109,7 +109,7 @@ class _UserScreenState extends State<UserScreen> {
                                       Row(children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            userId.nickname,
+                                            profile["nickname"],
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                                 fontSize: 18,
@@ -126,7 +126,7 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                userId.company,
+                                                profile["company"],
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -143,7 +143,7 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                userId.position,
+                                                profile["position"],
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -163,7 +163,7 @@ class _UserScreenState extends State<UserScreen> {
                                 Row(children: <Widget>[
                                   Expanded(
                                     child: BigThermometer(
-                                        temperature: userId.rating.toInt()),
+                                        temperature: profile["rating"].toInt()),
                                   )
                                 ]),
                               ])),
@@ -194,7 +194,7 @@ class _UserScreenState extends State<UserScreen> {
                                         controller: _scrollController,
                                         scrollDirection: Axis.vertical,
                                         child: Text(
-                                          userId.introduction,
+                                          profile["introduction"],
                                           // textAlign: TextAlign.left,
                                         ),
                                       ),
@@ -213,7 +213,9 @@ class _UserScreenState extends State<UserScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const EditProfileScreen(),
+                                builder: (context) => EditProfileScreen(
+                                    nickname: profile["nickname"],
+                                    introduction: profile["introduction"]),
                               ),
                             );
                           },

@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
         userId.setProfile(
           userDetail['data']['userId'],
           userDetail['data']['nickname'],
-          userDetail['data']['company']['logo'],
+          userDetail['data']['company']['logoUrl'],
           userDetail['data']['company']['name'],
           userDetail['data']['position'],
           userDetail['data']['introduction'],

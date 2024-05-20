@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -6,35 +7,32 @@ import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({
-    super.key,
-  });
+  final String nickname;
+  final String introduction;
+
+  const EditProfileScreen(
+      {super.key, required this.nickname, required this.introduction});
 
   @override
   EditProfileScreenState createState() => EditProfileScreenState();
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  String nickname = '';
-  String logoInfo =
-      'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
-  String companyName = '미인증';
-  String position = '';
-  int temperature = 0;
-  String introduction = '';
   late ScrollController _scrollController;
   late TextEditingController _nicknameController;
   late TextEditingController _introductionController;
+  late UserIdModel userId;
 
   @override
   void initState() {
     super.initState();
     setProfile();
     _scrollController = ScrollController();
-    _nicknameController = TextEditingController(text: nickname);
-    _introductionController = TextEditingController(text: introduction);
+    _nicknameController = TextEditingController(text: widget.nickname);
+    _introductionController = TextEditingController(text: widget.introduction);
   }
 
   @override
@@ -47,6 +45,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ChangeNotifierProvider(create: (_) => UserIdModel());
+    Map<String, dynamic> profile = userId.profile;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: const TopAppBar(
@@ -71,7 +71,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           children: <Widget>[
-                            Image.network(logoInfo, width: 100, height: 100),
+                            Image.network(profile["logoUrl"],
+                                width: 100, height: 100),
                             const SizedBox(
                               width: 30,
                             ),
@@ -106,7 +107,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                       children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            companyName,
+                                            profile["company"],
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -160,7 +161,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                       children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            position,
+                                            profile["position"],
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -171,8 +172,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PositionSelectScreen(
-                                                            lastPosition:
-                                                                position)),
+                                                            lastPosition: profile[
+                                                                "position"])),
                                               );
                                             },
                                             style: TextButton.styleFrom(
@@ -198,7 +199,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                             Row(children: <Widget>[
                               Expanded(
-                                child: BigThermometer(temperature: temperature),
+                                child: BigThermometer(
+                                    temperature: profile["rating"]),
                               )
                             ]),
                           ])),
@@ -247,6 +249,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             _introductionController.text);
                         print(res);
                         if (res['success'] == true) {
+                          // provider에 저장
+                          userId.setNicknameIntroduction();
                           // 유저페이지로 pop
                           Navigator.pop(context);
                         } else {

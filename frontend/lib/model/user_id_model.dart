@@ -36,4 +36,10 @@ class UserIdModel extends ChangeNotifier {
     _rating = rating;
     notifyListeners();
   }
+
+  void setNicknameIntroduction(String nickname, String introduction) {
+    _nickname = nickname;
+    _introduction = introduction;
+    notifyListeners();
+  }
 }
