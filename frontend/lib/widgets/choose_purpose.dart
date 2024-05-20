@@ -20,9 +20,9 @@ class ChoosePurpose extends StatelessWidget {
   final int userId; // receiverId 추가
 
   const ChoosePurpose({
-    Key? key,
+    super.key,
     required this.userId, // 생성자에 receiverId 추가
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +90,8 @@ class ChoosePurpose extends StatelessWidget {
                 // receiverId 어케 가져올건데 purpose에서 가져와야지
                 Map<String, dynamic> response =
                     await matchRequest(senderId, receiverId, _selectedIndex);
+
                 selectedIndexProvider.selectedIndex = 1;
-                // print(response);
               } catch (e) {
                 throw Error();
               }
@@ -114,11 +114,11 @@ class PurposeButton extends StatefulWidget {
   final Function(int) onIndexChanged; // 새로운 함수 추가
 
   const PurposeButton({
-    Key? key,
+    super.key,
     required this.purpose,
     required this.selectedindex,
     required this.onIndexChanged, // 생성자에 함수 추가
-  }) : super(key: key);
+  });
 
   @override
   State<PurposeButton> createState() => _PurposeButtonState();
