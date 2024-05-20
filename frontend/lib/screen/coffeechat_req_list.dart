@@ -284,6 +284,7 @@ class _ReceivedReqState extends State<ReceivedReq> {
               ),
             )
           : ListView.builder(
+              //받은 요청
               itemCount: revList.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> senderData = revList[index]['senderInfo'];
