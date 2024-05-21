@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 class ModalButton extends StatelessWidget {
   final String text;
   final Function handlePressed;
+  final Color buttonColor; // 선택적 매개변수로 변경
 
   const ModalButton({
-    super.key,
     required this.text,
     required this.handlePressed,
+    this.buttonColor = const Color(0xff212121), // 기본값 설정
   });
 
   @override
@@ -20,7 +21,7 @@ class ModalButton extends StatelessWidget {
           handlePressed();
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xff212121),
+          backgroundColor: buttonColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
