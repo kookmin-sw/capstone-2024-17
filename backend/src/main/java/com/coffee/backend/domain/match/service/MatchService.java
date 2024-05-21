@@ -96,25 +96,30 @@ public class MatchService {
         log.trace("getMatchRequestInfo()");
 
         Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
+
+        // 한번도 매칭 요청을 보낸 적이 없는 경우
         if (keys.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        String actualKey = keys.iterator().next();
-        Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(actualKey);
-        if (matchInfo.isEmpty()) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+        MatchInfoResponseDto response = new MatchInfoResponseDto();
+        for (String key : keys) {
+            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
+            if (matchInfo.get("status").equals("pending")) {
+                Long receiverId = getLongId(matchInfo.get("receiverId"));
+                User receiver = userRepository.findById(receiverId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+                receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
+
+                response = mapper.map(matchInfo, MatchInfoResponseDto.class);
+                response.setReceiverInfo(receiverInfo);
+            } else if (matchInfo.get("status").equals("expired")) {
+                throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+            } else {
+                throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+            }
         }
-
-        Long receiverId = getLongId(matchInfo.get("receiverId"));
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
-        receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
-
-        MatchInfoResponseDto response = mapper.map(matchInfo, MatchInfoResponseDto.class);
-        response.setReceiverInfo(receiverInfo);
-
         return response;
     }
 
@@ -373,7 +378,6 @@ public class MatchService {
         Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + dto.getMatchId());
         Long senderId = getLongId(matchInfo.get("senderId"));
         Long receiverId = getLongId(matchInfo.get("receiverId"));
-        log.info(senderId.toString());
 
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "expired");
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "expired");

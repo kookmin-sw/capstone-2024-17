@@ -97,14 +97,14 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @GetMapping("/isMatching")
-    public ResponseEntity<ApiResponse<MatchStatusDto>> isMatching(@RequestParam Long userId) {
-        DtoLogger.requestParam("userId", userId);
-
-        log.info("Check if isMathing");
-        MatchStatusDto response = matchService.isMatching(userId);
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
+//    @GetMapping("/isMatching")
+//    public ResponseEntity<ApiResponse<MatchStatusDto>> isMatching(@RequestParam Long userId) {
+//        DtoLogger.requestParam("userId", userId);
+//
+//        log.info("Check if isMathing");
+//        MatchStatusDto response = matchService.isMatching(userId);
+//        return ResponseEntity.ok(ApiResponse.success(response));
+//    }
 
     @PutMapping("/alert/expired")
     public ResponseEntity<ApiResponse<MatchStatusDto>> alertExpired(@RequestBody MatchIdDto dto) {
