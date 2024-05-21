@@ -42,13 +42,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final FcmService fcmService;
+    private final ChatroomService chatroomService;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ModelMapper mapper;
+    private final CustomMapper customMapper;
 
     private static final String LOCK_KEY_PREFIX = "lock:senderId:";
-    private final CustomMapper customMapper;
-    private final ChatroomService chatroomService;
 
     // 매칭 요청
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
@@ -58,9 +58,8 @@ public class MatchService {
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
         validateLock(lockKey);
 
-        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
-
         String matchId = UUID.randomUUID().toString();
+        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
         Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
@@ -70,23 +69,20 @@ public class MatchService {
                 "status", "pending"
         );
 
-        // 매칭 요청 저장
+        // 매칭 요청 저장 - status가 expired면 만료
         redisTemplate.opsForHash().putAll("matchId:" + matchId, matchInfo);
-        redisTemplate.expire("matchId:" + matchId, 600, TimeUnit.SECONDS);
 
-        // 매칭 요청 리스트를 위한 정보 저장
+        // 매칭 요청 리스트를 위한 정보 저장 - status가 expired면 만료
         redisTemplate.opsForHash()
                 .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
-        redisTemplate.expire("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), 600,
-                TimeUnit.SECONDS);
+
+        // 10분동안 락 설정
+        redisTemplate.opsForValue().set(lockKey, "Locked", 600, TimeUnit.SECONDS);
 
         // 알림
         User fromUser = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User toUser = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 요청", fromUser.getNickname() + "님에게 커피챗 요청이 도착했습니다.");
-
-        // 10분동안 락 설정
-        redisTemplate.opsForValue().set(lockKey, "Locked", 600, TimeUnit.SECONDS);
 
         MatchDto match = mapper.map(dto, MatchDto.class);
         match.setMatchId(matchId);
@@ -104,7 +100,7 @@ public class MatchService {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        String actualKey = keys.iterator().next(); // 키가 하나만 있다고 가정
+        String actualKey = keys.iterator().next();
         Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(actualKey);
         if (matchInfo.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
@@ -179,14 +175,12 @@ public class MatchService {
         User toUser = userRepository.findByUserId(senderId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", fromUser.getNickname() + "님과 커피챗이 성사되었습니다.");
 
-        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
-
         // receiver가 보낸 다른 요청이 있었다면 해당 요청 취소
         Set<String> keys;
         try {
-            keys = redisTemplate.keys("receiverId:*-senderId:" + receiverId);
+            keys = redisTemplate.keys(LOCK_KEY_PREFIX + receiverId);
         } catch (NoSuchElementException e) {
-            keys = null; // keys를 null로 설정하여 다음 로직으로 이동
+            keys = null;
         }
 
         if (keys != null && !keys.isEmpty()) {
@@ -195,7 +189,7 @@ public class MatchService {
             if (matchId != null && !matchId.equals(dto.getMatchId())) {
                 redisTemplate.delete("matchId:" + matchId);
                 redisTemplate.delete(actualKey);
-                redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // 락 해제
+                redisTemplate.opsForValue().set(LOCK_KEY_PREFIX + receiverId, "UNLOCKED"); // 락 해제
             }
         }
 
@@ -372,23 +366,42 @@ public class MatchService {
                 fromUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
     }
 
-    // 매칭 요청 종료 확인
-    public MatchStatusDto isMatching(MatchIdDto dto) {
-        log.trace("isMatching()");
+    // 10분 지나 매칭 만료
+    public MatchStatusDto setExpired(MatchIdDto dto) {
+        log.trace("setExpired()");
 
-        String key = "matchId:" + dto.getMatchId() + "-info";
-        String status = (String) redisTemplate.opsForHash().get(key, "status");
+        Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + dto.getMatchId());
+        Long senderId = getLongId(matchInfo.get("senderId"));
+        Long receiverId = getLongId(matchInfo.get("receiverId"));
+        log.info(senderId.toString());
 
-        // status가 null이면 수락되지 않은 것
-        if (status == null) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
-        }
+        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "expired");
+        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "expired");
 
         MatchStatusDto response = new MatchStatusDto();
         response.setMatchId(dto.getMatchId());
-        response.setStatus(status);
+        response.setStatus("expired");
         return response;
     }
+
+    // 매칭 요청 종료 확인
+//    public MatchStatusDto isMatching(Long userId) {
+//        log.trace("isMatching()");
+//
+//        String key = "matchId:" + dto.getMatchId() + "-info";
+//        String status = (String) redisTemplate.opsForHash().get(key, "status");
+//
+//        // status가 null이면 수락되지 않은 것
+//        if (status == null) {
+//            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
+//        }
+//
+//        MatchStatusDto response = new MatchStatusDto();
+//        response.setMatchId(dto.getMatchId());
+//        response.setStatus(status);
+//        return response;
+//    }
+
 
     @Transactional
     public Review saveReview(ReviewDto dto) {

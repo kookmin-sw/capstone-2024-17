@@ -13,6 +13,7 @@ import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
 import com.coffee.backend.global.DtoLogger;
 import com.coffee.backend.utils.ApiResponse;
+import com.google.protobuf.Api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,11 +98,20 @@ public class MatchController {
     }
 
     @GetMapping("/isMatching")
-    public ResponseEntity<ApiResponse<MatchStatusDto>> isMatching(@RequestBody MatchIdDto dto) {
-        DtoLogger.requestBody(dto);
+    public ResponseEntity<ApiResponse<MatchStatusDto>> isMatching(@RequestParam Long userId) {
+        DtoLogger.requestParam("userId", userId);
 
         log.info("Check if isMathing");
-        MatchStatusDto response = matchService.isMatching(dto);
+        MatchStatusDto response = matchService.isMatching(userId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PutMapping("/alert/expired")
+    public ResponseEntity<ApiResponse<MatchStatusDto>> alertExpired(@RequestBody MatchIdDto dto) {
+        DtoLogger.requestBody(dto);
+        log.info("Set the match expired");
+
+        MatchStatusDto response = matchService.setExpired(dto);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
