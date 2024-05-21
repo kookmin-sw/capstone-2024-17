@@ -217,7 +217,9 @@ public class MatchService {
     // 매칭 요청 거절
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
-        
+
+//        validateTTL(dto.getMatchId());
+
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
@@ -250,8 +252,8 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        redisTemplate.delete(key);
-        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+        redisTemplate.opsForHash().put(key, "status", "declined");
+        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "canceled");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
         MatchDto match = new MatchDto();
