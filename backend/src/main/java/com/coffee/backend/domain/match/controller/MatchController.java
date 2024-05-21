@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.controller;
 
+import com.coffee.backend.domain.match.dto.IsMatchingDto;
 import com.coffee.backend.domain.match.dto.MatchAcceptResponse;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
@@ -13,12 +14,10 @@ import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
 import com.coffee.backend.global.DtoLogger;
 import com.coffee.backend.utils.ApiResponse;
-import com.google.protobuf.Api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -97,21 +96,21 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-//    @GetMapping("/isMatching")
-//    public ResponseEntity<ApiResponse<MatchStatusDto>> isMatching(@RequestParam Long userId) {
-//        DtoLogger.requestParam("userId", userId);
-//
-//        log.info("Check if isMathing");
-//        MatchStatusDto response = matchService.isMatching(userId);
-//        return ResponseEntity.ok(ApiResponse.success(response));
-//    }
-
     @PutMapping("/alert/expired")
     public ResponseEntity<ApiResponse<MatchStatusDto>> alertExpired(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
-        log.info("Set the match expired");
 
+        log.info("Set the match expired");
         MatchStatusDto response = matchService.setExpired(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/isMatching")
+    public ResponseEntity<ApiResponse<IsMatchingDto>> isMatching(@RequestParam Long userId) {
+        DtoLogger.requestParam("userId", userId);
+
+        log.info("Check if isMathing");
+        IsMatchingDto response = matchService.isMatching(userId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

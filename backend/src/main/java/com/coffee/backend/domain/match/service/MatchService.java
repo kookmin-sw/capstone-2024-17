@@ -2,6 +2,7 @@ package com.coffee.backend.domain.match.service;
 
 import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.fcm.service.FcmService;
+import com.coffee.backend.domain.match.dto.IsMatchingDto;
 import com.coffee.backend.domain.match.dto.MatchAcceptResponse;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
@@ -193,6 +194,10 @@ public class MatchService {
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "accepted");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
+        // 매칭 중인지 조회 위해 저장
+        redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "yes");
+        redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "yes");
+
         MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
         match.setSenderId(senderId);
@@ -307,6 +312,9 @@ public class MatchService {
         redisTemplate.opsForHash().put(key, "status", "finished");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "finished");
 
+        redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "no");
+        redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "no");
+
         MatchStatusDto match = new MatchStatusDto();
         match.setMatchId(dto.getMatchId());
         match.setStatus("finished");
@@ -338,6 +346,8 @@ public class MatchService {
     }
 
     private void sendMatchFinishNotification(Long fromUserId, Long toUserId) {
+        log.trace("sendMatchFinishNotification()");
+
         User fromUser = userRepository.findByUserId(fromUserId).orElseThrow();
         User toUser = userRepository.findByUserId(toUserId).orElseThrow();
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 종료",
@@ -362,22 +372,14 @@ public class MatchService {
     }
 
     // 매칭 요청 종료 확인
-//    public MatchStatusDto isMatching(Long userId) {
-//        log.trace("isMatching()");
-//
-//        String key = "matchId:" + dto.getMatchId() + "-info";
-//        String status = (String) redisTemplate.opsForHash().get(key, "status");
-//
-//        // status가 null이면 수락되지 않은 것
-//        if (status == null) {
-//            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
-//        }
-//
-//        MatchStatusDto response = new MatchStatusDto();
-//        response.setMatchId(dto.getMatchId());
-//        response.setStatus(status);
-//        return response;
-//    }
+    public IsMatchingDto isMatching(Long userId) {
+        log.trace("isMatching()");
+
+        String isMatching = (String) redisTemplate.opsForHash().get("userId:" + userId, "isMatching");
+        IsMatchingDto response = new IsMatchingDto();
+        response.setIsMatching(isMatching);
+        return response;
+    }
 
     // Object -> Long 타입 변환
     private Long getLongId(Object result) {
