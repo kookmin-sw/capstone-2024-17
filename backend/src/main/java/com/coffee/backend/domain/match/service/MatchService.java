@@ -169,8 +169,8 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "accepted");
@@ -199,7 +199,7 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-        match.setChatroomId(chatroomId);
+//        match.setChatroomId(chatroomId);
 
         return match;
     }
@@ -208,7 +208,7 @@ public class MatchService {
     private void validateIfAlreadyAccepted(String matchId) {
         log.trace("validateIfAlreadyAccepted()");
 
-        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId + "-info", "status");
+        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
         if (status != null && status.equals("accepted")) {
             throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
         }
@@ -217,9 +217,7 @@ public class MatchService {
     // 매칭 요청 거절
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
-
-        validateTTL(dto.getMatchId());
-
+        
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
@@ -230,8 +228,8 @@ public class MatchService {
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 실패",
                 fromUser.getNickname() + "님이 커피챗 요청을 거절하였습니다.");
 
-        redisTemplate.delete(key);
-        redisTemplate.delete("receiverId:" + receiverId + "-senderId:" + senderId);
+        redisTemplate.opsForHash().put(key, "status", "declined");
+        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "declined");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
         MatchDto match = new MatchDto();
@@ -246,7 +244,7 @@ public class MatchService {
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
         log.trace("cancelMatchRequest()");
 
-        validateTTL(dto.getMatchId());
+//        validateTTL(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));

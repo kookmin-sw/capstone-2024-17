@@ -70,7 +70,7 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/decline")
+    @PutMapping("/decline")
     public ResponseEntity<ApiResponse<MatchDto>> declineMatchRequest(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
 
@@ -79,7 +79,7 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/cancel")
+    @PutMapping("/cancel")
     public ResponseEntity<ApiResponse<MatchDto>> cancelMatchRequest(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
 
@@ -88,7 +88,7 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @PostMapping("/finish")
+    @PutMapping("/finish")
     public ResponseEntity<ApiResponse<MatchStatusDto>> finishMatch(@RequestBody MatchFinishRequestDto dto) {
         DtoLogger.requestBody(dto);
 
