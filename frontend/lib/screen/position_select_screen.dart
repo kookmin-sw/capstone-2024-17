@@ -112,7 +112,6 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                   }),
             ],
           )),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 

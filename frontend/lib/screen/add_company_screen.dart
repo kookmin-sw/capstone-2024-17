@@ -82,8 +82,7 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
               ],
             ),
           ),
-        ),
-        bottomNavigationBar: const BottomAppBar());
+        ));
   }
 
   void addCompanyPressed() {
