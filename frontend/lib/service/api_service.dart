@@ -78,11 +78,9 @@ Future<Map<String, dynamic>> matchRequest(
   }
 }
 
-//매칭 info 요청
-Future<Map<String, dynamic>> matchInfoRequest(
-    String matchId, int senderId, int receiverId) async {
-  final url = Uri.parse(
-      '$baseUrl/match/request/info?matchId=$matchId&senderId=$senderId&receiverId=$receiverId');
+//매칭 info 요청//보낸 요청
+Future<Map<String, dynamic>> requestInfoRequest(int senderId) async {
+  final url = Uri.parse('$baseUrl/match/request/info?senderId=$senderId');
 
   String? userToken = await storage.read(key: 'authToken');
 
@@ -95,12 +93,9 @@ Future<Map<String, dynamic>> matchInfoRequest(
       },
     );
 
-    print("처리중");
     if (response.statusCode == 200) {
-      print("O1");
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      print("O2");
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (e) {
