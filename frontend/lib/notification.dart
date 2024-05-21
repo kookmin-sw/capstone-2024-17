@@ -44,6 +44,16 @@ class FCM {
     // onMessage: 메시지가 도착했을 때 발생하는 이벤트
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
+        /* 도착한 알림 구조 확인용
+        print(message.data);
+        print(message.notification!.title);
+        print(message.notification!.body);
+        print(message.sentTime);
+        print(message.category);
+        print(message.from);
+        print(message.senderId);
+        */
+
         // file에 저장
         await saveMessageDataLogToFile(
             message.data['title'], message.data['body'], message.sentTime!);
@@ -59,24 +69,40 @@ class FCM {
             },
           );
         } else if (message.data['title'] == '커피챗 매칭 실패') {
+          String nickname =
+              message.data['body'].replaceAll("님이 커피챗 요청을 거절하였습니다.", "");
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return const ReqDeniedNotification();
+              return ReqDeniedNotification(nickname: nickname);
             },
           );
         } else if (message.data['title'] == '커피챗 매칭 성공') {
+          String nickname =
+              message.data['body'].replaceAll("님과 커피챗이 성사되었습니다.", "");
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return const ReqAcceptedNotification();
+              return ReqAcceptedNotification(nickname: nickname);
             },
           );
 
           // 오프라인으로 전환
           autoOffline();
-        } else {
-          // 오프라인 상태로 전환됨
+        } else if (message.data['title'] == '커피챗 매칭 종료') {
+          String nickname =
+              message.data['body'].replaceAll("님과의 커피챗이 종료되었습니다.", "");
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ReqFinishedNotification(nickname: nickname);
+            },
+          );
+        }
+
+        // 오프라인 알림 아직 없음
+        /*else {
+          // 오프라인 상태로 전환
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -84,6 +110,7 @@ class FCM {
             },
           );
         }
+        */
       },
     );
   }

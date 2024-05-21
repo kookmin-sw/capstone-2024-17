@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
-import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
@@ -11,8 +10,6 @@ import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:provider/provider.dart';
-
-import '../screen/coffeechat_req_list.dart';
 
 class UserItem extends StatelessWidget {
   final String type;
@@ -78,9 +75,7 @@ class UserItem extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-        width: 400,
-        height: 100,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.grey),
@@ -96,27 +91,28 @@ class UserItem extends StatelessWidget {
                     isLocal: true,
                     logoUrl: "assets/$company-logo.png",
                   ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  nickname,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  "$company / $position",
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(
-                  width: 179,
-                  child: Text(
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    nickname,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    "$company / $position",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
                     introduction,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            )
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -220,13 +216,12 @@ class ReceivedReqDialog extends StatelessWidget {
     return Dialog(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
-        width: 350,
-        height: 470,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             UserDetails(
               nickname: nickname,
@@ -236,25 +231,11 @@ class ReceivedReqDialog extends StatelessWidget {
               rating: rating,
             ),
             ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
-            const Expanded(child: SizedBox()),
             BottomTwoButtons(
               first: "수락",
               second: "거절",
               handleFirstClick: () async {
                 print(matchId);
-
-
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => Matching(
-                //       matchId: matchId,
-                //       sendercompany: company,
-                //       sendername: nickname,
-                //       senderId: receiverId,
-                //     ),
-                //   ),
-                // );
 
                 selectedIndexProvider.selectedIndex = 2;
                 onAccept?.call();
