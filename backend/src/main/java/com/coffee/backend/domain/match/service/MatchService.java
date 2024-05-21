@@ -1,6 +1,5 @@
 package com.coffee.backend.domain.match.service;
 
-import com.coffee.backend.domain.chatroom.dto.ChatroomCreationDto;
 import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.MatchAcceptResponse;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +52,7 @@ public class MatchService {
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
         log.trace("sendMatchRequest()");
 
-        validateRequest(dto);
+        validateUser(dto);
         String lockKey = LOCK_KEY_PREFIX + dto.getSenderId();
         validateLock(lockKey);
 
@@ -164,6 +162,7 @@ public class MatchService {
         log.trace("acceptMatchRequest()");
 
         validateIfAlreadyAccepted(dto.getMatchId());
+        validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -218,7 +217,7 @@ public class MatchService {
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
 
-//        validateTTL(dto.getMatchId());
+        validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -246,7 +245,7 @@ public class MatchService {
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
         log.trace("cancelMatchRequest()");
 
-//        validateTTL(dto.getMatchId());
+        validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -264,16 +263,6 @@ public class MatchService {
         return match;
     }
 
-    // 매칭 요청 검증
-    private void validateTTL(String matchId) {
-        log.trace("validateTTL()");
-
-        Long ttl = redisTemplate.getExpire("matchId:" + matchId);
-        if (ttl == null || ttl <= 0) {
-            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
-        }
-    }
-
     // 락 검증
     private void validateLock(String lockKey) {
         log.trace("validateLock()");
@@ -285,7 +274,7 @@ public class MatchService {
     }
 
     // 유저 검증
-    private void validateRequest(MatchRequestDto dto) {
+    private void validateUser(MatchRequestDto dto) {
         log.trace("validateRequest()");
 
         // TODO: 향후 테스트 기간 끝나고 주석 해제
@@ -299,38 +288,17 @@ public class MatchService {
         }
     }
 
-    // Object -> Long 타입 변환
-    private Long getLongId(Object result) {
-        log.trace("getLongId()");
-
-        Long id = null;
-        if (result != null) {
-            if (result instanceof Number) {
-                id = ((Number) result).longValue();
-            } else {
-                try {
-                    id = Long.parseLong(result.toString());
-                } catch (NumberFormatException e) {
-                    log.trace("변환 에러: {}", e.getMessage());
-                }
-            }
-        }
-        return id;
-    }
-
     // 매칭 종료
     public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
 
-        validateFinishMatch(dto.getMatchId());
+        validateRequest(dto.getMatchId());
 
-        String key = "matchId:" + dto.getMatchId() + "-info";
+        String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        if (!dto.getEnderId().equals(senderId) && !dto.getEnderId().equals(receiverId)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
+        validateEnder(dto.getEnderId(), senderId, receiverId);
 
         if (dto.getEnderId().equals(senderId)) {
             sendMatchFinishNotification(senderId, receiverId);
@@ -338,7 +306,7 @@ public class MatchService {
             sendMatchFinishNotification(receiverId, senderId);
         }
 
-        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId() + "-info", "status", "finished");
+        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "finished");
 
         MatchStatusDto match = new MatchStatusDto();
         match.setMatchId(dto.getMatchId());
@@ -346,14 +314,20 @@ public class MatchService {
         return match;
     }
 
-    private void validateFinishMatch(String matchId) {
-        log.trace("validateFinishMatch()");
-        Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + matchId + "-info");
-        if (matchInfo.isEmpty()) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+    private void validateEnder(Long enderId, Long senderId, Long receiverId) {
+        if (!enderId.equals(senderId) && !enderId.equals(receiverId)) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        if (matchInfo.get("status").equals("finished")) {
-            throw new CustomException(ErrorCode.REQUEST_ALREADY_FINISHED);
+    }
+
+    // 매칭 요청 검증
+    private void validateRequest(String matchId) {
+        log.trace("validateRequest()");
+
+        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
+        if (status == null || status.equals("declined") || status.equals("canceled") || status.equals("expired")
+                || status.equals("finished")) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
     }
 
@@ -399,6 +373,24 @@ public class MatchService {
 //        return response;
 //    }
 
+    // Object -> Long 타입 변환
+    private Long getLongId(Object result) {
+        log.trace("getLongId()");
+
+        Long id = null;
+        if (result != null) {
+            if (result instanceof Number) {
+                id = ((Number) result).longValue();
+            } else {
+                try {
+                    id = Long.parseLong(result.toString());
+                } catch (NumberFormatException e) {
+                    log.trace("변환 에러: {}", e.getMessage());
+                }
+            }
+        }
+        return id;
+    }
 
     @Transactional
     public Review saveReview(ReviewDto dto) {
