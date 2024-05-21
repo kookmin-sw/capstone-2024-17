@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class PositionSelectScreen extends StatefulWidget {
   final String? lastPosition;
@@ -36,6 +38,8 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
+    Map<String, dynamic> profile = userId.profile;
     return Scaffold(
       appBar: const TopAppBar(
         title: "직무 등록",
@@ -99,9 +103,13 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                 ],
               ),
               BottomTextButton(
-                text: '저장하기',
-                handlePressed: savePressed,
-              ),
+                  text: '저장하기',
+                  handlePressed: () {
+                    // 서버에 저장 요청
+                    savePressed();
+                    // provider에 저장
+                    userId.setPosition(selectedPosition);
+                  }),
             ],
           )),
       bottomNavigationBar: const BottomAppBar(),
@@ -151,7 +159,6 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
   void savePressed() async {
     // 직무 저장 요청하기
     Map<String, dynamic> res = await updatePosition(selectedPosition);
-    // print(res);
     if (res['success']) {
       // 직무 저장 성공
       showAlertDialog(context, '직무가 저장되었습니다!');

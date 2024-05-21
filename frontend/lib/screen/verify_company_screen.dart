@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/rounded_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
   final String companyName;
-  final Image logoImage;
+  final String logoUrl;
   final String domain;
 
   const VerifyCompanyScreen({
     super.key,
     required this.companyName,
-    required this.logoImage,
+    required this.logoUrl,
     required this.domain,
   });
 
@@ -41,6 +43,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
+    Image logoImage = Image.network(widget.logoUrl, fit: BoxFit.cover);
     return Scaffold(
       appBar: const TopAppBar(title: '회사 인증'),
       body: SingleChildScrollView(
@@ -72,7 +76,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
                   child: Column(children: <Widget>[
                     // 회사 로고
-                    RoundedImg(image: widget.logoImage, size: 100),
+                    RoundedImg(image: logoImage, size: 100),
                     const SizedBox(
                       height: 20,
                     ),
@@ -104,7 +108,13 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                       return SizedBox(
                         // width: iconWidth,
                         child: TextButton(
-                          onPressed: () => sendPressed(_emailIdController.text),
+                          onPressed: () => {
+                            //  서버에 인증 요청
+                            sendPressed(_emailIdController.text),
+                            // provider에 저장
+                            userId.setCompanyLogoUrl(
+                                widget.companyName, widget.logoUrl)
+                          },
                           child:
                               const Text('전송', style: TextStyle(fontSize: 16)),
                         ),

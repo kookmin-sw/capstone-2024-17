@@ -36,7 +36,7 @@ class _UserScreenState extends State<UserScreen> {
     setAccessToken().then((token) {
       print('token: $token');
       if (token != null) {
-        setProfile(token);
+        verifyToken(token);
       }
     });
     _scrollController = ScrollController();
@@ -267,28 +267,11 @@ class _UserScreenState extends State<UserScreen> {
     return token;
   }
 
-  // verify profile?로 전환
-  Future<void> setProfile(String? token) async {
-    // 토큰으로 프로필 get하는 코드
+  // 토큰 유효한지 확인
+  Future<void> verifyToken(String? token) async {
+    // 토큰으로 프로필 get
     Map<String, dynamic> res = await getUserDetail();
-    if (res['success'] == true) {
-      print('[userscreen setprofile] $res');
-      // 요청 성공
-      // 프로바이더에 넣기: 필요없다?
-/*
-      nickname = res['data']['nickname'];
-      if (res['data']['company'] != null) {
-        logoInfo = res['data']['company']['logoUrl'];
-        companyName = res['data']['company']['name'];
-      }
-
-      position = res['data']['position'];
-      temperature = res['data']['coffeeBean'].round(); // 반올림
-      introduction = res['data']['introduction'] ?? '';
-      print(res['data']);
-      */
-      setState(() {}); // 상태 갱신
-    } else {
+    if (res['success'] != true) {
       if (res['code'] == "1401") {
         showAlertDialog(context, '로그인 시간이 만료되어 재로그인이 필요합니다.');
       } else {
@@ -297,7 +280,6 @@ class _UserScreenState extends State<UserScreen> {
             context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
       }
     }
-
     return;
   }
 }

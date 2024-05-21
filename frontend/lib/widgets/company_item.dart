@@ -5,20 +5,20 @@ import 'package:frontend/widgets/rounded_img.dart';
 class CompanyItem extends StatelessWidget {
   // final int id;
   final String companyName;
-  final String logoInfo;
+  final String logoUrl;
   final String domain;
 
   const CompanyItem({
     super.key,
     // required this.id,
     required this.companyName,
-    required this.logoInfo,
+    required this.logoUrl,
     required this.domain,
   });
 
   @override
   Widget build(BuildContext context) {
-    Image logoImage = Image.network(logoInfo, fit: BoxFit.cover);
+    Image logoImage = Image.network(logoUrl, fit: BoxFit.cover);
     return GestureDetector(
       onTap: () {
         print('탭됨: $companyName');
@@ -28,7 +28,7 @@ class CompanyItem extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => VerifyCompanyScreen(
                         companyName: companyName,
-                        logoImage: logoImage,
+                        logoUrl: logoUrl,
                         domain: domain,
                       )));
         });

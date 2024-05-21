@@ -42,4 +42,15 @@ class UserIdModel extends ChangeNotifier {
     _introduction = introduction;
     notifyListeners();
   }
+
+  void setPosition(String position) {
+    _position = position;
+    notifyListeners();
+  }
+
+  void setCompanyLogoUrl(String company, String logoUrl) {
+    _company = company;
+    _logoUrl = logoUrl;
+    notifyListeners();
+  }
 }

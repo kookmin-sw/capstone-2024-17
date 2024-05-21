@@ -5,6 +5,7 @@ import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
@@ -69,8 +70,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           children: <Widget>[
-                            Image.network(profile["logoUrl"],
-                                width: 100, height: 100),
+                            (profile["logoUrl"] == '')
+                                ? const ProfileImgMedium(
+                                    isLocal: true,
+                                    logoUrl: "assets/coffee_bean.png")
+                                : ProfileImgMedium(
+                                    isLocal: false,
+                                    logoUrl: profile["logoUrl"]),
                             const SizedBox(
                               width: 30,
                             ),
@@ -117,6 +123,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                               Map<String, dynamic> res =
                                                   await resetCompany();
                                               if (res['success'] == true) {
+                                                userId.setCompanyLogoUrl(
+                                                    '미인증', '');
                                                 showAlertDialog(context,
                                                     '초기화 성공: ${res['message']}(${res['code']})');
                                               } else {
@@ -242,7 +250,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     BottomTextButton(
                       text: '저장하기',
                       handlePressed: () async {
-                        // 저장하는 코드
                         // 닉네임 업데이트
                         // introduction 업데이트
                         Map<String, dynamic> res2 = await updateIntroduction(
