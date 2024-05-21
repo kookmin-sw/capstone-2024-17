@@ -165,7 +165,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
-        print('[main getuserdetail] $userDetail');
         userId.setProfile(
           userDetail['data']['userId'],
           userDetail['data']['nickname'],

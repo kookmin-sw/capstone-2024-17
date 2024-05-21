@@ -29,15 +29,13 @@ class _UserScreenState extends State<UserScreen> {
   int temperature = 0;
   String introduction = '';
   late ScrollController _scrollController;
-  late UserIdModel userId;
 
   @override
   void initState() {
     super.initState();
-    userId = Provider.of<UserIdModel>(context, listen: false);
     setAccessToken().then((token) {
       print('token: $token');
-      setProfile(token);
+      // setProfile(token);
     });
     _scrollController = ScrollController();
   }
@@ -50,8 +48,9 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ChangeNotifierProvider(create: (_) => UserIdModel());
+    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
     Map<String, dynamic> profile = userId.profile;
+    print('[userscreen profile] $profile');
     return Scaffold(
       appBar: TopAppBarWithButton(
         title: "내 프로필",
@@ -271,8 +270,8 @@ class _UserScreenState extends State<UserScreen> {
     // 토큰으로 프로필 get하는 코드
     Map<String, dynamic> res = await getUserDetail();
     if (res['success'] == true) {
-      // 요청 성공
       print('[userscreen setprofile] $res');
+      // 요청 성공
       // 프로바이더에 넣기: 필요없다?
 /*
       nickname = res['data']['nickname'];
@@ -286,7 +285,6 @@ class _UserScreenState extends State<UserScreen> {
       introduction = res['data']['introduction'] ?? '';
       print(res['data']);
       */
-      print('[userscreen userId] $userId');
       setState(() {}); // 상태 갱신
     } else {
       // 요청 실패

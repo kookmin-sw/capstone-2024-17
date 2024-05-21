@@ -24,12 +24,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   late ScrollController _scrollController;
   late TextEditingController _nicknameController;
   late TextEditingController _introductionController;
-  late UserIdModel userId;
 
   @override
   void initState() {
     super.initState();
-    setProfile();
     _scrollController = ScrollController();
     _nicknameController = TextEditingController(text: widget.nickname);
     _introductionController = TextEditingController(text: widget.introduction);
@@ -45,7 +43,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ChangeNotifierProvider(create: (_) => UserIdModel());
+    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
     Map<String, dynamic> profile = userId.profile;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -200,7 +198,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             Row(children: <Widget>[
                               Expanded(
                                 child: BigThermometer(
-                                    temperature: profile["rating"]),
+                                    temperature: profile["rating"].toInt()),
                               )
                             ]),
                           ])),
@@ -245,18 +243,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       text: '저장하기',
                       handlePressed: () async {
                         // 저장하는 코드
-                        Map<String, dynamic> res = await updateIntroduction(
+                        // 닉네임 업데이트
+                        // introduction 업데이트
+                        Map<String, dynamic> res2 = await updateIntroduction(
                             _introductionController.text);
-                        print(res);
-                        if (res['success'] == true) {
+                        if (res2['success'] == true) {
                           // provider에 저장
-                          userId.setNicknameIntroduction();
+                          userId.setNicknameIntroduction(
+                              widget.nickname, _introductionController.text);
                           // 유저페이지로 pop
                           Navigator.pop(context);
                         } else {
                           // 요청 실패
                           showAlertDialog(context,
-                              '유저정보 변경에 실패했습니다: ${res['message']}(${res['code']})');
+                              '유저정보 변경에 실패했습니다: ${res2['message']}(${res2['code']})');
                         }
                       },
                     ),
@@ -265,29 +265,5 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       ])),
       bottomNavigationBar: const BottomAppBar(),
     );
-  }
-
-  Future<void> setProfile() async {
-    // 프로필 get하는 코드
-    Map<String, dynamic> res = await getUserDetail();
-    if (res['success'] == true) {
-      // 요청 성공
-      print(res);
-      nickname = res['data']['nickname'];
-      if (res['data']['company'] != null) {
-        logoInfo = res['data']['company']['logoUrl'];
-        companyName = res['data']['company']['name'];
-      }
-
-      position = res['data']['position'];
-      temperature = res['data']['coffeeBean'].round(); // 반올림
-      introduction = res['data']['introduction'] ?? '';
-
-      setState(() {}); // 상태 갱신
-    } else {
-      // 요청 실패
-      showAlertDialog(
-          context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
-    }
   }
 }
