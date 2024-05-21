@@ -98,7 +98,7 @@ public class MatchService {
         Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
 
         // 한번도 매칭 요청을 보낸 적이 없는 경우
-        if (keys.isEmpty()) {
+        if (keys == null || keys.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
@@ -132,24 +132,26 @@ public class MatchService {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        List<MatchReceivedInfoDto> requests = new ArrayList<>();
+        List<MatchReceivedInfoDto> response = new ArrayList<>();
         for (String key : keys) {
             Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
-            String matchId = (String) matchInfo.get("matchId");
+            if (matchInfo.get("status").equals("pending")) {
+                String matchId = (String) matchInfo.get("matchId");
 
-            Long senderId = getLongId(matchInfo.get("senderId"));
-            User sender = userRepository.findById(senderId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-            SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
-            senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
+                Long senderId = getLongId(matchInfo.get("senderId"));
+                User sender = userRepository.findById(senderId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+                senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
 
-            MatchReceivedInfoDto res = new MatchReceivedInfoDto();
-            res.setMatchId(matchId);
-            res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
-            res.setSenderInfo(senderInfo);
-            requests.add(res);
+                MatchReceivedInfoDto res = new MatchReceivedInfoDto();
+                res.setMatchId(matchId);
+                res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
+                res.setSenderInfo(senderInfo);
+                response.add(res);
+            }
         }
-        return requests;
+        return response;
     }
 
     // 매칭 요청 수락
