@@ -76,8 +76,13 @@ public class MatchService {
         redisTemplate.opsForHash()
                 .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
 
+        Map<String, String> lockInfo = Map.of(
+                "matchId", matchId,
+                "lock", "locked"
+        );
         // 10분동안 락 설정
-        redisTemplate.opsForValue().set(lockKey, "Locked", 600, TimeUnit.SECONDS);
+        redisTemplate.opsForHash().putAll(lockKey, lockInfo);
+        redisTemplate.expire(lockKey, 600, TimeUnit.SECONDS);
 
         // 알림
         User fromUser = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
@@ -159,7 +164,6 @@ public class MatchService {
         log.trace("acceptMatchRequest()");
 
         validateIfAlreadyAccepted(dto.getMatchId());
-        validateTTL(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -169,13 +173,7 @@ public class MatchService {
         Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
-
-        Map<String, String> matchInfo = Map.of(
-                "senderId", senderId.toString(),
-                "receiverId", receiverId.toString(),
-                "status", "accepted"
-        );
-        redisTemplate.opsForHash().putAll(key + "-info", matchInfo);
+        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "accepted");
 
         // 알림
         User fromUser = userRepository.findByUserId(receiverId).orElseThrow();
@@ -183,25 +181,18 @@ public class MatchService {
         fcmService.sendPushMessageTo(toUser.getDeviceToken(), "커피챗 매칭 성공", fromUser.getNickname() + "님과 커피챗이 성사되었습니다.");
 
         // receiver가 보낸 다른 요청이 있었다면 해당 요청 취소
-        Set<String> keys;
-        try {
-            keys = redisTemplate.keys(LOCK_KEY_PREFIX + receiverId);
-        } catch (NoSuchElementException e) {
-            keys = null;
+        Map<Object, Object> receiverRequest = redisTemplate.opsForHash().entries(LOCK_KEY_PREFIX + receiverId);
+        if (!receiverRequest.isEmpty()) {
+            String matchId = (String) redisTemplate.opsForHash().get(LOCK_KEY_PREFIX + receiverId, "matchId");
+            redisTemplate.opsForHash().put("matchId:" + matchId, "status", "canceled");
+            Long receiverId2 = getLongId(redisTemplate.opsForHash().get("matchId:" + matchId, "receiverId"));
+            redisTemplate.opsForHash()
+                    .put("receiverId:" + receiverId2 + "-senderId:" + receiverId, "status", "canceled");
+            redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // receiver 락 해제
         }
 
-        if (keys != null && !keys.isEmpty()) {
-            String actualKey = keys.iterator().next(); // 키가 하나만 있다고 가정
-            String matchId = (String) redisTemplate.opsForHash().get(actualKey, "matchId");
-            if (matchId != null && !matchId.equals(dto.getMatchId())) {
-                redisTemplate.delete("matchId:" + matchId);
-                redisTemplate.delete(actualKey);
-                redisTemplate.opsForValue().set(LOCK_KEY_PREFIX + receiverId, "UNLOCKED"); // 락 해제
-            }
-        }
-
-        redisTemplate.delete("matchId:" + dto.getMatchId());
-        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
+        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "accepted");
+        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
         MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
@@ -288,7 +279,7 @@ public class MatchService {
         log.trace("validateLock()");
 
         // 이미 락이 걸려 있는 경우 요청 처리 X
-        if (redisTemplate.opsForValue().get(lockKey) != null) {
+        if (!redisTemplate.opsForHash().entries(lockKey).isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_DUPLICATED);
         }
     }
