@@ -281,8 +281,7 @@ class _UserScreenState extends State<UserScreen> {
       setState(() {}); // 상태 갱신
     } else {
       if (res['code'] == "1401") {
-        showAlertDialog(
-            context, '${res['message']} 다시 로그인해주세요. (${res['code']})');
+        showAlertDialog(context, '로그인 시간이 만료되어 재로그인이 필요합니다.');
       } else {
         // 요청 실패
         showAlertDialog(
