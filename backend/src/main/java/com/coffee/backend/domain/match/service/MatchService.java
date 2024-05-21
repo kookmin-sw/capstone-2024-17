@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -162,7 +163,6 @@ public class MatchService {
         log.trace("acceptMatchRequest()");
 
         validateIfAlreadyAccepted(dto.getMatchId());
-        validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
@@ -275,7 +275,7 @@ public class MatchService {
 
     // 유저 검증
     private void validateUser(MatchRequestDto dto) {
-        log.trace("validateRequest()");
+        log.trace("validateUser()");
 
         // TODO: 향후 테스트 기간 끝나고 주석 해제
 //        // 본인에게 요청을 보내는 경우 처리 X
@@ -292,8 +292,6 @@ public class MatchService {
     public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
 
-        validateRequest(dto.getMatchId());
-
         String key = "matchId:" + dto.getMatchId();
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
@@ -306,7 +304,8 @@ public class MatchService {
             sendMatchFinishNotification(receiverId, senderId);
         }
 
-        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "finished");
+        redisTemplate.opsForHash().put(key, "status", "finished");
+        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "finished");
 
         MatchStatusDto match = new MatchStatusDto();
         match.setMatchId(dto.getMatchId());
@@ -315,6 +314,8 @@ public class MatchService {
     }
 
     private void validateEnder(Long enderId, Long senderId, Long receiverId) {
+        log.trace("validateEnder()");
+
         if (!enderId.equals(senderId) && !enderId.equals(receiverId)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
@@ -325,9 +326,14 @@ public class MatchService {
         log.trace("validateRequest()");
 
         String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
-        if (status == null || status.equals("declined") || status.equals("canceled") || status.equals("expired")
-                || status.equals("finished")) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+        switch (Objects.requireNonNull(status)) {
+            case "pending" -> throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
+            case "accepted" -> throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
+            case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
+            case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
+            case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
+            case "expired" -> throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+            default -> throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
     }
 
