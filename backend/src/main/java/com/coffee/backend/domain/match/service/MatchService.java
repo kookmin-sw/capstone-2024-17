@@ -21,12 +21,14 @@ import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
 import com.coffee.backend.utils.CustomMapper;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -69,18 +71,15 @@ public class MatchService {
                 "status", "pending"
         );
 
-        // 매칭 요청 저장 - status가 expired면 만료
+        // 매칭 요청 저장
         redisTemplate.opsForHash().putAll("matchId:" + matchId, matchInfo);
 
-        // 매칭 요청 리스트를 위한 정보 저장 - status가 expired면 만료
+        // 매칭 요청 리스트를 위한 정보 저장
         redisTemplate.opsForHash()
                 .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
 
-        Map<String, String> lockInfo = Map.of(
-                "matchId", matchId,
-                "lock", "locked"
-        );
         // 10분동안 락 설정
+        Map<String, String> lockInfo = Map.of("matchId", matchId);
         redisTemplate.opsForHash().putAll(lockKey, lockInfo);
         redisTemplate.expire(lockKey, 600, TimeUnit.SECONDS);
 
@@ -92,7 +91,7 @@ public class MatchService {
         MatchDto match = mapper.map(dto, MatchDto.class);
         match.setMatchId(matchId);
         match.setStatus("pending");
-        match.setExpirationTime(expirationTime);
+        match.setExpirationTime(String.valueOf(expirationTime));
         return match;
     }
 
@@ -110,7 +109,8 @@ public class MatchService {
         MatchInfoResponseDto response = new MatchInfoResponseDto();
         for (String key : keys) {
             Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
-            if (matchInfo.get("status").equals("pending")) {
+            String expirationTime = (String) matchInfo.get("expirationTime");
+            if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
                 Long receiverId = getLongId(matchInfo.get("receiverId"));
                 User receiver = userRepository.findById(receiverId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -119,13 +119,15 @@ public class MatchService {
 
                 response = mapper.map(matchInfo, MatchInfoResponseDto.class);
                 response.setReceiverInfo(receiverInfo);
-            } else if (matchInfo.get("status").equals("expired")) {
-                throw new CustomException(ErrorCode.REQUEST_EXPIRED);
             } else {
                 throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
             }
         }
         return response;
+    }
+
+    private boolean hasNotExpired(String expirationTime) {
+        return System.currentTimeMillis() < Long.parseLong(expirationTime);
     }
 
     // 받은 요청 정보
@@ -140,7 +142,8 @@ public class MatchService {
         List<MatchReceivedInfoDto> response = new ArrayList<>();
         for (String key : keys) {
             Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
-            if (matchInfo.get("status").equals("pending")) {
+            String expirationTime = (String) matchInfo.get("expirationTime");
+            if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
                 String matchId = (String) matchInfo.get("matchId");
 
                 Long senderId = getLongId(matchInfo.get("senderId"));
@@ -166,6 +169,13 @@ public class MatchService {
         validateIfAlreadyAccepted(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
+
+        // 요청 만료 확인
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
+        if (!hasNotExpired(expirationTime)) {
+            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+        }
+
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
@@ -340,7 +350,6 @@ public class MatchService {
             case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
             case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
             case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
-            case "expired" -> throw new CustomException(ErrorCode.REQUEST_EXPIRED);
             default -> throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
     }
@@ -354,28 +363,15 @@ public class MatchService {
                 fromUser.getNickname() + "님과의 커피챗이 종료되었습니다.");
     }
 
-    // 10분 지나 매칭 만료
-    public MatchStatusDto setExpired(MatchIdDto dto) {
-        log.trace("setExpired()");
-
-        Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries("matchId:" + dto.getMatchId());
-        Long senderId = getLongId(matchInfo.get("senderId"));
-        Long receiverId = getLongId(matchInfo.get("receiverId"));
-
-        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "expired");
-        redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "expired");
-
-        MatchStatusDto response = new MatchStatusDto();
-        response.setMatchId(dto.getMatchId());
-        response.setStatus("expired");
-        return response;
-    }
-
     // 매칭 요청 종료 확인
     public IsMatchingDto isMatching(Long userId) {
         log.trace("isMatching()");
 
         String isMatching = (String) redisTemplate.opsForHash().get("userId:" + userId, "isMatching");
+        if (isMatching == null) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
+        }
+
         IsMatchingDto response = new IsMatchingDto();
         response.setIsMatching(isMatching);
         return response;
