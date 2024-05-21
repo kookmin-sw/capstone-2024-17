@@ -165,16 +165,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
+        print('[main userDetail] $userDetail');
         userId.setProfile(
           userDetail['data']['userId'],
           userDetail['data']['nickname'],
-          userDetail['data']['company']['logoUrl'],
-          userDetail['data']['company']['name'],
+          (userDetail['data']['company'] != null)
+              ? userDetail['data']['company']['logoUrl']
+              : '',
+          (userDetail['data']['company'] != null)
+              ? userDetail['data']['company']['name']
+              : '미인증',
           userDetail['data']['position'],
           userDetail['data']['introduction'],
           userDetail['data']['coffeeBean'],
         );
-        print('[main userId profile] ${userId.profile}');
       });
     });
 
