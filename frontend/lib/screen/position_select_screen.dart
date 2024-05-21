@@ -160,7 +160,13 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
     Map<String, dynamic> res = await updatePosition(selectedPosition);
     if (res['success']) {
       // 직무 저장 성공
-      showAlertDialog(context, '직무가 저장되었습니다!');
+      showAlertDialog(
+          context,
+          '직무가 저장되었습니다!',
+          () => {
+                Navigator.of(context)
+                    .popUntil(ModalRoute.withName('/editprofile'))
+              });
     } else {
       // 직무 저장 실패
       showAlertDialog(context, '직무 저장 실패: ${res['message']}(${res['code']})');

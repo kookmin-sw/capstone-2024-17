@@ -214,10 +214,10 @@ class _UserScreenState extends State<UserScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditProfileScreen(
-                                    nickname: profile["nickname"],
-                                    introduction: profile["introduction"]),
-                              ),
+                                  builder: (context) =>
+                                      const EditProfileScreen(),
+                                  settings: const RouteSettings(
+                                      name: '/editprofile')),
                             );
                           },
                         ),

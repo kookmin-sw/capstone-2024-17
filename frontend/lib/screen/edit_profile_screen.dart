@@ -11,11 +11,9 @@ import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final String nickname;
-  final String introduction;
-
-  const EditProfileScreen(
-      {super.key, required this.nickname, required this.introduction});
+  const EditProfileScreen({
+    super.key,
+  });
 
   @override
   EditProfileScreenState createState() => EditProfileScreenState();
@@ -30,8 +28,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _nicknameController = TextEditingController(text: widget.nickname);
-    _introductionController = TextEditingController(text: widget.introduction);
+    _nicknameController = TextEditingController();
+    _introductionController = TextEditingController();
   }
 
   @override
@@ -46,6 +44,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
     Map<String, dynamic> profile = userId.profile;
+    _nicknameController.text = profile["nickname"];
+    _introductionController.text = profile["introduction"];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: const TopAppBar(
@@ -256,8 +257,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             _introductionController.text);
                         if (res2['success'] == true) {
                           // provider에 저장
-                          userId.setNicknameIntroduction(
-                              widget.nickname, _introductionController.text);
+                          userId.setNicknameIntroduction(profile["nickname"],
+                              _introductionController.text);
                           // 유저페이지로 pop
                           Navigator.pop(context);
                         } else {

@@ -179,30 +179,48 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
                 // 인증 성공 시 보이는 column
                 Visibility(
-                    visible: isVerified,
-                    child: Column(children: <Widget>[
-                      const Text('인증 완료!',
-                          style: TextStyle(
-                            color: Color(0xffff6c3e),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          )),
-                      TextButton.icon(
+                  visible: isVerified,
+                  child: Column(children: <Widget>[
+                    const Text('인증 완료!',
+                        style: TextStyle(
+                          color: Color(0xffff6c3e),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton.icon(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PositionSelectScreen(
-                                        lastPosition: null,
-                                      )),
-                            );
+                            Navigator.of(context)
+                                .popUntil(ModalRoute.withName('/editprofile'));
                           },
-                          label: const Icon(Icons.keyboard_double_arrow_right),
-                          icon: const Text('직무 등록',
-                              style: TextStyle(fontSize: 14)))
-                    ])),
-
+                          icon: const Icon(Icons.keyboard_double_arrow_left),
+                          label: const Text('돌아가기',
+                              style: TextStyle(fontSize: 14)),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        TextButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PositionSelectScreen(
+                                          lastPosition: null,
+                                        )),
+                              );
+                            },
+                            label:
+                                const Icon(Icons.keyboard_double_arrow_right),
+                            icon: const Text('직무 등록',
+                                style: TextStyle(fontSize: 14))),
+                      ],
+                    ),
+                  ]),
+                ),
                 /* 타이머 테스트용
               ElevatedButton(
                 onPressed: () {

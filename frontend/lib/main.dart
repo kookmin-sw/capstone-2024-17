@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
+import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
@@ -109,6 +110,7 @@ class MyApp extends StatelessWidget {
                   receiverRating: 0.0,
                   receiverNickname: '',
                 ),
+            '/editprofile': (BuildContext context) => const EditProfileScreen(),
           },
         ));
   }

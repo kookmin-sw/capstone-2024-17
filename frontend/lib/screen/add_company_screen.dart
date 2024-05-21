@@ -117,7 +117,8 @@ void waitAddCompany(
   if (res['success'] == true) {
     // 요청 성공
     print(res);
-    showAlertDialog(context, res['message']);
+    showAlertDialog(context, "회사 추가 요청 성공! 회사가 승인될 때까지 기다려주세요.",
+        () => {Navigator.pop(context)});
   } else {
     // 요청 실패
     showAlertDialog(
