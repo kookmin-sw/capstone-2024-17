@@ -421,6 +421,12 @@ public class MatchService {
         IsMatchingDto response = mapper.map(isMatchingInfo, IsMatchingDto.class);
         response.setSenderInfo(senderInfo);
         response.setReceiverInfo(receiverInfo);
+
+        if (userId.equals(senderId)) {
+            response.setPartner(receiverId);
+        } else if (userId.equals(receiverId)) {
+            response.setPartner(senderId);
+        }
         return response;
     }
 

@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 public class IsMatchingDto {
     private String matchId;
+    private String isMatching;
+    private Long partner;
     private SenderInfoDto senderInfo;
     private ReceiverInfoDto receiverInfo;
-    private String isMatching;
 }
