@@ -41,6 +41,38 @@ Future<Map<String, List<UserModel>>> getAllUsers(
   }
 }
 
+// 커피챗 진행중 여부
+Future<bool> getIsMatching(userId) async {
+  final url =
+      Uri.parse('$baseUrl/match/isMatching?userId=$userId'); // check !!!
+  String? userToken = await storage.read(key: "authToken");
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
+    if (response.statusCode == 200) {
+      if (responseData['success']) {
+        return responseData["data"]["isMatching"] == "yes";
+      } else {
+        throw Exception('${responseData["message"]}(${responseData["code"]})');
+      }
+    } else {
+      throw Exception('서버 오류: ${response.statusCode} ${response.body}');
+    }
+  } catch (error) {
+    print("HTTP GET error (getIsMatching): $error");
+    throw Error();
+  }
+}
+
 //매칭 요청
 Future<Map<String, dynamic>> matchRequest(
     int senderId, int receiverId, int requestTypeId) async {
@@ -129,13 +161,9 @@ Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
           jsonDecode(utf8.decode(response.bodyBytes))["data"];
       print(responseData.runtimeType); // 출력: String
 
-      if (responseData is List) {
-        List<Map<String, dynamic>> resultList =
-            responseData.cast<Map<String, dynamic>>();
-        return resultList;
-      } else {
-        throw Exception('Received data is not in the expected format');
-      }
+      List<Map<String, dynamic>> resultList =
+          responseData.cast<Map<String, dynamic>>();
+      return resultList;
     } else {
       throw Exception(
           'Failed to get receivedInfoRequest: ${response.statusCode}');

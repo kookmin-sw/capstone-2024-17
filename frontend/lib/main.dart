@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/model/is_matching_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
 import 'package:path_provider/path_provider.dart';
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
               myCafe: myCafe,
             ),
           ),
+          ChangeNotifierProvider(create: (_) => IsMatchingModel()),
           ChangeNotifierProvider(create: (_) => UserIdModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => myCafe),
@@ -128,6 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late UserIdModel userId; // 유저 아이디
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
+  late IsMatchingModel isMatchingModel; // 커피챗 진행중 여부
 
   late final List<Widget> _screenOptions;
 
@@ -154,6 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
     stompClient = Provider.of<StompClient>(context, listen: false);
     userId = Provider.of<UserIdModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
+    isMatchingModel = Provider.of<IsMatchingModel>(context, listen: false);
+
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       setState(() {
@@ -166,6 +171,10 @@ class _MyHomePageState extends State<MyHomePage> {
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
         userId.setUserId(userDetail['data']['userId']);
+        // 커피챗 진행중 여부 가져오기
+        getIsMatching(userId.userId).then((value) {
+          isMatchingModel.setIsMatching(value);
+        });
       });
     });
 
