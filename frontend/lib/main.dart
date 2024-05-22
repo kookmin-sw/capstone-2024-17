@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
               myCafe: myCafe,
             ),
           ),
-          ChangeNotifierProvider(create: (_) => IsMatchingModel()),
+          ChangeNotifierProvider(create: (_) => MatchingInfoModel()),
           ChangeNotifierProvider(create: (_) => UserIdModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => myCafe),
@@ -130,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late UserIdModel userId; // 유저 아이디
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
-  late IsMatchingModel isMatchingModel; // 커피챗 진행중 여부
+  late MatchingInfoModel matchingInfo; // 커피챗 진행중 정보
 
   late final List<Widget> _screenOptions;
 
@@ -157,7 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
     stompClient = Provider.of<StompClient>(context, listen: false);
     userId = Provider.of<UserIdModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
-    isMatchingModel = Provider.of<IsMatchingModel>(context, listen: false);
 
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
@@ -171,9 +170,19 @@ class _MyHomePageState extends State<MyHomePage> {
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
         userId.setUserId(userDetail['data']['userId']);
+
         // 커피챗 진행중 여부 가져오기
-        getIsMatching(userId.userId).then((value) {
-          isMatchingModel.setIsMatching(value);
+        getMatchingInfo(userId.userId).then((value) {
+          matchingInfo.setIsMatching(value["isMatching"]);
+          // 커피챗 진행중이면 상대방 정보도 가져오기
+          if (value["isMatching"]) {
+            matchingInfo.setMatching(
+              matchId: value["matchId"],
+              senderId: value["senderId"],
+              senderCompany: value["senderCompany"],
+              senderNickname: value["senderNickname"],
+            );
+          }
         });
       });
     });
@@ -208,6 +217,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     final selectedIndex = selectedIndexProvider.selectedIndex;
     return (userToken == null)

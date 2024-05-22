@@ -41,8 +41,8 @@ Future<Map<String, List<UserModel>>> getAllUsers(
   }
 }
 
-// 커피챗 진행중 여부
-Future<bool> getIsMatching(userId) async {
+// 커피챗 진행중 여부 및 상대방 정보 가져오기
+Future<Map<String, dynamic>> getMatchingInfo(userId) async {
   final url =
       Uri.parse('$baseUrl/match/isMatching?userId=$userId'); // check !!!
   String? userToken = await storage.read(key: "authToken");
@@ -60,7 +60,14 @@ Future<bool> getIsMatching(userId) async {
 
     if (response.statusCode == 200) {
       if (responseData['success']) {
-        return responseData["data"]["isMatching"] == "yes";
+        var senderInfo = responseData["data"]["senderInfo"];
+        return {
+          "isMatching": responseData["data"]["isMatching"] == "yes",
+          "matchId": responseData["data"]["matchId"],
+          "senderId": senderInfo["userId"],
+          "senderCompany": senderInfo["company"]["name"],
+          "senderNickname": senderInfo["nickname"],
+        };
       } else {
         throw Exception('${responseData["message"]}(${responseData["code"]})');
       }
