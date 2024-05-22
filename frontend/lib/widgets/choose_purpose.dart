@@ -4,7 +4,7 @@ import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/widgets/button/bottom_one_button.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
 
