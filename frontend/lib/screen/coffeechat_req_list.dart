@@ -5,9 +5,10 @@ import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
+import 'package:frontend/widgets/button/bottom_one_button.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+var matchId = "";
 
 class CoffeechatReqList extends StatelessWidget {
   final String matchId;
@@ -106,6 +109,7 @@ class SentReq extends StatefulWidget {
 class _SentReqState extends State<SentReq> {
   late Future<Map<String, dynamic>> _sendinfoFuture;
   bool timerend = false;
+  String matchId = '';
 
   @override
   void initState() {
@@ -116,14 +120,12 @@ class _SentReqState extends State<SentReq> {
 
   Future<void> handleRequestCancel() async {
     try {
-      Map<String, dynamic> response = await matchCancelRequest("matchId");
+      Map<String, dynamic> response = await matchCancelRequest(matchId);
 
       if (response['success'] == true) {
-        print("정상적으로 삭제됨");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AlarmList()),
-        );
+        setState(() {
+          _sendinfoFuture = sendinfo();
+        });
       } else {
         print(response);
       }
@@ -134,7 +136,6 @@ class _SentReqState extends State<SentReq> {
 
   Future<Map<String, dynamic>> sendinfo() async {
     try {
-      // 로그인 한 유저의 senderId 가져오기
       Map<String, dynamic> res = await getUserDetail();
       if (res['success']) {
         int senderId = res['data']['userId'];
@@ -175,7 +176,7 @@ class _SentReqState extends State<SentReq> {
           int requestTypeId = data['requestTypeId'] is int
               ? data['requestTypeId']
               : int.tryParse(data['requestTypeId'].toString()) ?? 0;
-          // var matchId = data['matchId']; // 아직 백엔드에 없음
+          matchId = data['matchId'];
           DateTime _endTime = DateTime.fromMillisecondsSinceEpoch(
               int.parse(data['expirationTime']));
 
@@ -206,11 +207,25 @@ class _SentReqState extends State<SentReq> {
                 endTime: _endTime.millisecondsSinceEpoch,
                 onEnd: () {
                   if (!timerend) {
-                    showAlertDialog(
-                        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.");
-                    setState(() {
-                      _sendinfoFuture = sendinfo();
-                    });
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text('제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  _sendinfoFuture = sendinfo();
+                                });
+                              },
+                              child: Text('확인'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }
                 },
                 widgetBuilder: (_, CurrentRemainingTime? time) {
@@ -230,9 +245,20 @@ class _SentReqState extends State<SentReq> {
               BottomTextButton(
                 text: "요청 취소하기",
                 handlePressed: () async {
-                  showAlertDialogYesNo(
-                      context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
-                  timerend = true;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return YesOrNoDialog(
+                        content: "매칭 요청을 취소하시겠습니까?",
+                        firstButton: "요청 취소",
+                        secondButton: "닫기",
+                        handleFirstClick: () async {
+                          handleRequestCancel();
+                        },
+                        handleSecondClick: () {},
+                      );
+                    },
+                  );
                 },
               ),
             ],
@@ -332,8 +358,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
                   company: senderData["company"]?["name"] ?? "Unknown",
                   position: senderData["position"] ?? "Unknown",
                   introduction: senderData["introduction"] ?? "No introduction",
-                  rating: senderData["rating"] != null
-                      ? double.parse(senderData["rating"])
+                  rating: senderData["coffeeBean"] != null
+                      ? senderData["coffeeBean"]
                       : 0.0,
                   matchId: revList[index]["matchId"],
                   requestTypeId: int.parse(revList[index]["requestTypeId"]),
