@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
-import 'package:frontend/model/is_matching_model.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
 import 'package:path_provider/path_provider.dart';
