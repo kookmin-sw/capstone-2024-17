@@ -225,6 +225,37 @@ Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
   }
 }
 
+//match finish  요청
+Future<Map<String, dynamic>> matchFinishRequest(
+    String matchId, int enderId) async {
+  final url = Uri.parse('$baseUrl/match/finish');
+
+  String? userToken = await storage.read(key: 'authToken');
+
+  try {
+    final response = await http.put(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+      body: jsonEncode({
+        'matchId': matchId,
+        'enderId': enderId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to get match delete: ${response.statusCode}');
+    }
+  } catch (error) {
+    throw Exception('Error occurred in matchDeclineRequest: $error');
+
+    // throw Error();
+  }
+}
+
 //커피챗 진행 후 평점 보내기
 Future<Map<String, dynamic>> coffeeBeanReview(
     int senderId, int receiverId, int rating) async {
