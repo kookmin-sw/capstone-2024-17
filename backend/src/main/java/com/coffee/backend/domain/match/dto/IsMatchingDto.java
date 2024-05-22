@@ -10,7 +10,7 @@ import lombok.Setter;
 public class IsMatchingDto {
     private String matchId;
     private String isMatching;
-    private Long partner;
+    private String matchPosition;
     private SenderInfoDto senderInfo;
     private ReceiverInfoDto receiverInfo;
 }

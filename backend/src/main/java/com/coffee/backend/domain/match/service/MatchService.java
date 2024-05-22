@@ -414,8 +414,10 @@ public class MatchService {
         User receiver = userRepository.findByUserId(receiverId).orElseThrow();
 
         SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+        senderInfo.setSenderId(senderId);
         senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+        receiverInfo.setReceiverId(receiverId);
         receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
         IsMatchingDto response = mapper.map(isMatchingInfo, IsMatchingDto.class);
@@ -423,9 +425,9 @@ public class MatchService {
         response.setReceiverInfo(receiverInfo);
 
         if (userId.equals(senderId)) {
-            response.setPartner(receiverId);
+            response.setMatchPosition("sender");
         } else if (userId.equals(receiverId)) {
-            response.setPartner(senderId);
+            response.setMatchPosition("receiver");
         }
         return response;
     }
