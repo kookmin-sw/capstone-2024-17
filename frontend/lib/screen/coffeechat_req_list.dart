@@ -44,6 +44,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+var matchId = "";
+
 class CoffeechatReqList extends StatelessWidget {
   final String matchId;
   final String receiverNickname;
@@ -116,14 +118,11 @@ class _SentReqState extends State<SentReq> {
 
   Future<void> handleRequestCancel() async {
     try {
-      Map<String, dynamic> response = await matchCancelRequest("matchId");
-
+      print("handelRequestCancel _ matchId: $matchId");
+      Map<String, dynamic> response = await matchCancelRequest(matchId);
+      print(response);
       if (response['success'] == true) {
         print("정상적으로 삭제됨");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AlarmList()),
-        );
       } else {
         print(response);
       }
@@ -175,7 +174,7 @@ class _SentReqState extends State<SentReq> {
           int requestTypeId = data['requestTypeId'] is int
               ? data['requestTypeId']
               : int.tryParse(data['requestTypeId'].toString()) ?? 0;
-          // var matchId = data['matchId']; // 아직 백엔드에 없음
+          matchId = data['matchId'];
           DateTime _endTime = DateTime.fromMillisecondsSinceEpoch(
               int.parse(data['expirationTime']));
 

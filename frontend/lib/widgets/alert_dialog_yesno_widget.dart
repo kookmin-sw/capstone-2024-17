@@ -7,7 +7,6 @@ showAlertDialogYesNo(BuildContext context, String title, String message,
   Widget yesButton = TextButton(
     onPressed: () {
       Navigator.of(context).pop(); // Close dialog
-      Navigator.of(context).pop(); // Close screen
       if (onOKPressed != null) {
         onOKPressed();
       }
