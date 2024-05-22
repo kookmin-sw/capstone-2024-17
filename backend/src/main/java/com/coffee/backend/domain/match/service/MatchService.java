@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.chatroom.dto.ChatroomCreationDto;
 import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.IsMatchingDto;
@@ -21,14 +22,12 @@ import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
 import com.coffee.backend.utils.CustomMapper;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -126,10 +125,6 @@ public class MatchService {
         return response;
     }
 
-    private boolean hasNotExpired(String expirationTime) {
-        return System.currentTimeMillis() < Long.parseLong(expirationTime);
-    }
-
     // 받은 요청 정보
     public List<MatchReceivedInfoDto> getMatchReceivedInfo(Long receiverId) {
         log.trace("getReceivedMatchRequests() for receiverId: {}", receiverId);
@@ -179,8 +174,8 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "accepted");
@@ -205,7 +200,14 @@ public class MatchService {
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
         // 매칭 중인지 조회 위해 저장
-        redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "yes");
+        Map<String, String> isMatchingInfo = Map.of(
+                "matchId", dto.getMatchId(),
+                "senderId", senderId.toString(),
+                "receiverId", receiverId.toString(),
+                "isMatching", "yes"
+        );
+
+        redisTemplate.opsForHash().putAll("userId:" + senderId, isMatchingInfo);
         redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "yes");
 
         MatchAcceptResponse match = new MatchAcceptResponse();
@@ -213,7 +215,7 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-//        match.setChatroomId(chatroomId);
+        match.setChatroomId(chatroomId);
 
         return match;
     }
@@ -235,6 +237,11 @@ public class MatchService {
         validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
+        if (!hasNotExpired(expirationTime)) {
+            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+        }
+
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
@@ -256,17 +263,22 @@ public class MatchService {
         return match;
     }
 
-    // 매칭 요청 수동 취소
+    // 매칭 요청 취소
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
         log.trace("cancelMatchRequest()");
 
         validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
+        if (!hasNotExpired(expirationTime)) {
+            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+        }
+
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        redisTemplate.opsForHash().put(key, "status", "declined");
+        redisTemplate.opsForHash().put(key, "status", "canceled");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "canceled");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
@@ -300,6 +312,23 @@ public class MatchService {
         // 유저 DB에 없는 유저가 보낼 경우 처리 X
         if (!userRepository.existsById(dto.getSenderId())) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    private boolean hasNotExpired(String expirationTime) {
+        return System.currentTimeMillis() < Long.parseLong(expirationTime);
+    }
+
+    // 매칭 요청 검증
+    private void validateRequest(String matchId) {
+        log.trace("validateRequest()");
+
+        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
+        switch (Objects.requireNonNull(status)) {
+            case "accepted" -> throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
+            case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
+            case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
+            case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
         }
     }
 
@@ -339,21 +368,6 @@ public class MatchService {
         }
     }
 
-    // 매칭 요청 검증
-    private void validateRequest(String matchId) {
-        log.trace("validateRequest()");
-
-        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
-        switch (Objects.requireNonNull(status)) {
-            case "pending" -> throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
-            case "accepted" -> throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
-            case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
-            case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
-            case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
-            default -> throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
-        }
-    }
-
     private void sendMatchFinishNotification(Long fromUserId, Long toUserId) {
         log.trace("sendMatchFinishNotification()");
 
@@ -371,6 +385,28 @@ public class MatchService {
         if (isMatching == null) {
             throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
         }
+
+        Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
+
+        MatchInfoResponseDto response = new MatchInfoResponseDto();
+        for (String key : keys) {
+            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
+            String expirationTime = (String) matchInfo.get("expirationTime");
+            if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
+                Long receiverId = getLongId(matchInfo.get("receiverId"));
+                User receiver = userRepository.findById(receiverId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+                receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
+
+                response = mapper.map(matchInfo, MatchInfoResponseDto.class);
+                response.setReceiverInfo(receiverInfo);
+            } else {
+                throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+            }
+        }
+
+        if (userId == )
 
         IsMatchingDto response = new IsMatchingDto();
         response.setIsMatching(isMatching);
