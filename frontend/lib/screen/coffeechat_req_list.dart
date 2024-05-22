@@ -118,11 +118,13 @@ class _SentReqState extends State<SentReq> {
 
   Future<void> handleRequestCancel() async {
     try {
-      print("handelRequestCancel _ matchId: $matchId");
       Map<String, dynamic> response = await matchCancelRequest(matchId);
-      print(response);
+
       if (response['success'] == true) {
-        print("정상적으로 삭제됨");
+        showAlertDialog(context, "매칭 요청이 취소되었습니다.");
+        setState(() {
+          _sendinfoFuture = sendinfo();
+        });
       } else {
         print(response);
       }
@@ -229,8 +231,8 @@ class _SentReqState extends State<SentReq> {
               BottomTextButton(
                 text: "요청 취소하기",
                 handlePressed: () async {
-                  showAlertDialogYesNo(
-                      context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
+                  showAlertDialogYesNo(context, "매칭 취소", "매칭 요청을 취소하시겠습니까?",
+                      handleRequestCancel);
                   timerend = true;
                 },
               ),
