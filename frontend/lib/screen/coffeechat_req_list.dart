@@ -383,7 +383,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
                       ? senderData["coffeeBean"]
                       : 0.0,
                   matchId: revList[index]["matchId"],
-                  requestTypeId: int.parse(revList[index]["requestTypeId"]),
+                  requestTypeId: int.parse(revList[index]["requestTypeId"]
+                      .replaceAll(RegExp(r'[{}]'), '')),
                   onAccept: handleAccept,
                   onReject: handleReject,
                 );
