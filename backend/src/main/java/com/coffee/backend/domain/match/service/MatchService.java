@@ -60,7 +60,7 @@ public class MatchService {
         validateLock(lockKey);
 
         String matchId = UUID.randomUUID().toString();
-        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
+        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1);
         Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
@@ -80,7 +80,7 @@ public class MatchService {
         // 10분동안 락 설정
         Map<String, String> lockInfo = Map.of("matchId", matchId);
         redisTemplate.opsForHash().putAll(lockKey, lockInfo);
-        redisTemplate.expire(lockKey, 600, TimeUnit.SECONDS);
+        redisTemplate.expire(lockKey, 60, TimeUnit.SECONDS);
 
         // 알림
         User fromUser = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
@@ -384,12 +384,6 @@ public class MatchService {
         log.trace("isMatching()");
 
         Map<Object, Object> isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
-
-        // 수락한 적이 없는 경우
-        if (isMatchingInfo.get("isMatching") == null) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
-        }
-
         Long senderId = getLongId(isMatchingInfo.get("senderId"));
         Long receiverId = getLongId(isMatchingInfo.get("receiverId"));
 
