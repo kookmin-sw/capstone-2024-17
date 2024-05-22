@@ -9,6 +9,7 @@ import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 import 'package:frontend/widgets/button/bottom_one_button.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
@@ -109,6 +110,7 @@ class SentReq extends StatefulWidget {
 class _SentReqState extends State<SentReq> {
   late Future<Map<String, dynamic>> _sendinfoFuture;
   bool timerend = false;
+  String matchId = '';
 
   @override
   void initState() {
@@ -135,7 +137,6 @@ class _SentReqState extends State<SentReq> {
 
   Future<Map<String, dynamic>> sendinfo() async {
     try {
-      // 로그인 한 유저의 senderId 가져오기
       Map<String, dynamic> res = await getUserDetail();
       if (res['success']) {
         int senderId = res['data']['userId'];
@@ -207,15 +208,25 @@ class _SentReqState extends State<SentReq> {
                 endTime: _endTime.millisecondsSinceEpoch,
                 onEnd: () {
                   if (!timerend) {
-                    AlertDialog(
-                      content: BottomOneButton(
-                        first: '제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.',
-                      ),
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text('제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  _sendinfoFuture = sendinfo();
+                                });
+                              },
+                              child: Text('확인'),
+                            ),
+                          ],
+                        );
+                      },
                     );
-
-                    setState(() {
-                      _sendinfoFuture = sendinfo();
-                    });
                   }
                 },
                 widgetBuilder: (_, CurrentRemainingTime? time) {
@@ -235,17 +246,19 @@ class _SentReqState extends State<SentReq> {
               BottomTextButton(
                 text: "요청 취소하기",
                 handlePressed: () async {
-                  showAlertDialogYesNo(
-                    context,
-                    message: "매칭 요청을 취소하시겠습니까?",
-                    yesButtonText: "취소",
-                    noButtonText: "닫기",
-                    onOKPressed: handleRequestCancel,
-                  );
-                  AlertDialog(
-                    content: BottomOneButton(
-                      first: '매칭 요청이 취소되었습니다.',
-                    ),
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return YesOrNoDialog(
+                        content: "매칭 요청을 취소하시겠습니까?",
+                        firstButton: "요청 취소",
+                        secondButton: "닫기",
+                        handleFirstClick: () async {
+                          handleRequestCancel();
+                        },
+                        handleSecondClick: () {},
+                      );
+                    },
                   );
                 },
               ),
