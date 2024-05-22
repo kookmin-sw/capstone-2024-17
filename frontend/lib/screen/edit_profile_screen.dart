@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
@@ -17,13 +20,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  String nickname = '';
-  String logoInfo =
-      'https://capstone2024-17-coffeechat.s3.ap-northeast-2.amazonaws.com/coffeechat-logo.png';
-  String companyName = '미인증';
-  String position = '';
-  int temperature = 0;
-  String introduction = '';
   late ScrollController _scrollController;
   late TextEditingController _nicknameController;
   late TextEditingController _introductionController;
@@ -31,10 +27,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    setProfile();
     _scrollController = ScrollController();
-    _nicknameController = TextEditingController(text: nickname);
-    _introductionController = TextEditingController(text: introduction);
+    _nicknameController = TextEditingController();
+    _introductionController = TextEditingController();
   }
 
   @override
@@ -47,6 +42,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
+    Map<String, dynamic> profile = userProfile.profile;
+    _nicknameController.text = profile["nickname"];
+    _introductionController.text = profile["introduction"];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: const TopAppBar(
@@ -71,7 +72,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           children: <Widget>[
-                            Image.network(logoInfo, width: 100, height: 100),
+                            (profile["logoUrl"] == '')
+                                ? const ProfileImgMedium(
+                                    isLocal: true,
+                                    logoUrl: "assets/coffee_bean.png")
+                                : ProfileImgMedium(
+                                    isLocal: false,
+                                    logoUrl: profile["logoUrl"]),
                             const SizedBox(
                               width: 30,
                             ),
@@ -106,7 +113,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                       children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            companyName,
+                                            profile["company"],
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -118,6 +125,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                               Map<String, dynamic> res =
                                                   await resetCompany();
                                               if (res['success'] == true) {
+                                                userProfile.setCompanyLogoUrl(
+                                                    company: '미인증',
+                                                    logoUrl: '');
                                                 showAlertDialog(context,
                                                     '초기화 성공: ${res['message']}(${res['code']})');
                                               } else {
@@ -160,7 +170,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                       children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            position,
+                                            profile["position"],
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -171,8 +181,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PositionSelectScreen(
-                                                            lastPosition:
-                                                                position)),
+                                                            lastPosition: profile[
+                                                                "position"])),
                                               );
                                             },
                                             style: TextButton.styleFrom(
@@ -198,7 +208,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                             Row(children: <Widget>[
                               Expanded(
-                                child: BigThermometer(temperature: temperature),
+                                child: BigThermometer(
+                                    temperature: profile["rating"].toInt()),
                               )
                             ]),
                           ])),
@@ -242,48 +253,27 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     BottomTextButton(
                       text: '저장하기',
                       handlePressed: () async {
-                        // 저장하는 코드
-                        Map<String, dynamic> res = await updateIntroduction(
+                        // 닉네임 업데이트
+                        // introduction 업데이트
+                        Map<String, dynamic> res2 = await updateIntroduction(
                             _introductionController.text);
-                        print(res);
-                        if (res['success'] == true) {
+                        if (res2['success'] == true) {
+                          // provider에 저장
+                          userProfile.setNicknameIntroduction(
+                              nickname: profile["nickname"],
+                              introduction: _introductionController.text);
                           // 유저페이지로 pop
                           Navigator.pop(context);
                         } else {
                           // 요청 실패
                           showAlertDialog(context,
-                              '유저정보 변경에 실패했습니다: ${res['message']}(${res['code']})');
+                              '유저정보 변경에 실패했습니다: ${res2['message']}(${res2['code']})');
                         }
                       },
                     ),
                   ],
                 )))
       ])),
-      bottomNavigationBar: const BottomAppBar(),
     );
-  }
-
-  Future<void> setProfile() async {
-    // 프로필 get하는 코드
-    Map<String, dynamic> res = await getUserDetail();
-    if (res['success'] == true) {
-      // 요청 성공
-      print(res);
-      nickname = res['data']['nickname'];
-      if (res['data']['company'] != null) {
-        logoInfo = res['data']['company']['logoUrl'];
-        companyName = res['data']['company']['name'];
-      }
-
-      position = res['data']['position'];
-      temperature = res['data']['coffeeBean'].round(); // 반올림
-      introduction = res['data']['introduction'] ?? '';
-
-      setState(() {}); // 상태 갱신
-    } else {
-      // 요청 실패
-      showAlertDialog(
-          context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
-    }
   }
 }

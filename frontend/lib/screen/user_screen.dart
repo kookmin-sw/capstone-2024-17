@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/service/api_service.dart';
@@ -8,6 +9,7 @@ import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -34,7 +36,7 @@ class _UserScreenState extends State<UserScreen> {
     setAccessToken().then((token) {
       print('token: $token');
       if (token != null) {
-        setProfile(token);
+        verifyToken(token);
       }
     });
     _scrollController = ScrollController();
@@ -48,6 +50,10 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
+    Map<String, dynamic> profile = userProfile.profile;
+    print('[userscreen profile] $profile');
     return Scaffold(
       appBar: TopAppBarWithButton(
         title: "내 프로필",
@@ -87,14 +93,13 @@ class _UserScreenState extends State<UserScreen> {
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
                               children: <Widget>[
-                                (logoInfo == '')
+                                (profile["logoUrl"] == '')
                                     ? const ProfileImgMedium(
                                         isLocal: true,
                                         logoUrl: "assets/coffee_bean.png")
                                     : ProfileImgMedium(
                                         isLocal: false,
-                                        logoUrl: logoInfo,
-                                      ),
+                                        logoUrl: profile["logoUrl"]),
                                 const SizedBox(
                                   width: 30,
                                 ),
@@ -106,7 +111,7 @@ class _UserScreenState extends State<UserScreen> {
                                       Row(children: <Widget>[
                                         Flexible(
                                           child: Text(
-                                            nickname,
+                                            profile["nickname"],
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                                 fontSize: 18,
@@ -123,7 +128,7 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                companyName,
+                                                profile["company"],
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -140,7 +145,7 @@ class _UserScreenState extends State<UserScreen> {
                                           children: <Widget>[
                                             Flexible(
                                               child: Text(
-                                                position,
+                                                profile["position"],
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -160,7 +165,7 @@ class _UserScreenState extends State<UserScreen> {
                                 Row(children: <Widget>[
                                   Expanded(
                                     child: BigThermometer(
-                                        temperature: temperature),
+                                        temperature: profile["rating"].toInt()),
                                   )
                                 ]),
                               ])),
@@ -191,7 +196,7 @@ class _UserScreenState extends State<UserScreen> {
                                         controller: _scrollController,
                                         scrollDirection: Axis.vertical,
                                         child: Text(
-                                          introduction,
+                                          profile["introduction"],
                                           // textAlign: TextAlign.left,
                                         ),
                                       ),
@@ -210,8 +215,10 @@ class _UserScreenState extends State<UserScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const EditProfileScreen(),
-                              ),
+                                  builder: (context) =>
+                                      const EditProfileScreen(),
+                                  settings: const RouteSettings(
+                                      name: '/editprofile')),
                             );
                           },
                         ),
@@ -261,25 +268,11 @@ class _UserScreenState extends State<UserScreen> {
     return token;
   }
 
-  Future<void> setProfile(String? token) async {
-    // 토큰으로 프로필 get하는 코드
+  // 토큰 유효한지 확인
+  Future<void> verifyToken(String? token) async {
+    // 토큰으로 프로필 get
     Map<String, dynamic> res = await getUserDetail();
-    if (res['success'] == true) {
-      // 요청 성공
-      print(res);
-      nickname = res['data']['nickname'];
-      if (res['data']['company'] != null) {
-        logoInfo = res['data']['company']['logoUrl'];
-        companyName = res['data']['company']['name'];
-      }
-
-      position = res['data']['position'];
-      temperature = res['data']['coffeeBean'].round(); // 반올림
-      introduction = res['data']['introduction'] ?? '';
-      print(res['data']);
-
-      setState(() {}); // 상태 갱신
-    } else {
+    if (res['success'] != true) {
       if (res['code'] == "1401") {
         showAlertDialog(context, '로그인 시간이 만료되어 재로그인이 필요합니다.');
       } else {
@@ -288,7 +281,6 @@ class _UserScreenState extends State<UserScreen> {
             context, '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})');
       }
     }
-
     return;
   }
 }

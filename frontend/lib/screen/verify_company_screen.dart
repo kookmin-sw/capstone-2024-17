@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/rounded_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
   final String companyName;
-  final Image logoImage;
+  final String logoUrl;
   final String domain;
 
   const VerifyCompanyScreen({
     super.key,
     required this.companyName,
-    required this.logoImage,
+    required this.logoUrl,
     required this.domain,
   });
 
@@ -41,6 +43,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
+    Image logoImage = Image.network(widget.logoUrl, fit: BoxFit.cover);
     return Scaffold(
       appBar: const TopAppBar(title: '회사 인증'),
       body: SingleChildScrollView(
@@ -72,7 +77,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
                   child: Column(children: <Widget>[
                     // 회사 로고
-                    RoundedImg(image: widget.logoImage, size: 100),
+                    RoundedImg(image: logoImage, size: 100),
                     const SizedBox(
                       height: 20,
                     ),
@@ -104,7 +109,14 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                       return SizedBox(
                         // width: iconWidth,
                         child: TextButton(
-                          onPressed: () => sendPressed(_emailIdController.text),
+                          onPressed: () => {
+                            //  서버에 인증 요청
+                            sendPressed(_emailIdController.text),
+                            // provider에 저장
+                            userProfile.setCompanyLogoUrl(
+                                company: widget.companyName,
+                                logoUrl: widget.logoUrl)
+                          },
                           child:
                               const Text('전송', style: TextStyle(fontSize: 16)),
                         ),
@@ -169,30 +181,48 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
                 // 인증 성공 시 보이는 column
                 Visibility(
-                    visible: isVerified,
-                    child: Column(children: <Widget>[
-                      const Text('인증 완료!',
-                          style: TextStyle(
-                            color: Color(0xffff6c3e),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          )),
-                      TextButton.icon(
+                  visible: isVerified,
+                  child: Column(children: <Widget>[
+                    const Text('인증 완료!',
+                        style: TextStyle(
+                          color: Color(0xffff6c3e),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton.icon(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PositionSelectScreen(
-                                        lastPosition: null,
-                                      )),
-                            );
+                            Navigator.of(context)
+                                .popUntil(ModalRoute.withName('/editprofile'));
                           },
-                          label: const Icon(Icons.keyboard_double_arrow_right),
-                          icon: const Text('직무 등록',
-                              style: TextStyle(fontSize: 14)))
-                    ])),
-
+                          icon: const Icon(Icons.keyboard_double_arrow_left),
+                          label: const Text('돌아가기',
+                              style: TextStyle(fontSize: 14)),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        TextButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PositionSelectScreen(
+                                          lastPosition: null,
+                                        )),
+                              );
+                            },
+                            label:
+                                const Icon(Icons.keyboard_double_arrow_right),
+                            icon: const Text('직무 등록',
+                                style: TextStyle(fontSize: 14))),
+                      ],
+                    ),
+                  ]),
+                ),
                 /* 타이머 테스트용
               ElevatedButton(
                 onPressed: () {

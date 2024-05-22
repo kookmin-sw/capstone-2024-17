@@ -134,8 +134,8 @@ class NotificationDialog extends StatelessWidget {
                         first: navigateButton!,
                         second: backButton,
                         handleFirstClick: () {
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName('/'));
+                          Navigator.popUntil(
+                              context, ModalRoute.withName('/editprofile'));
                           selectedIndexProvider.selectedIndex = 1;
                         },
                         handleSecondClick: () {}),
