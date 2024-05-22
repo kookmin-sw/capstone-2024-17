@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
+import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -13,6 +15,7 @@ import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:provider/provider.dart';
 
 bool timerend = false;
 List<String> purpose = [
@@ -312,8 +315,19 @@ class _ReceivedReqState extends State<ReceivedReq> {
     }
   }
 
-  Future<void> handleMatchAccept(String matchId) async {
-    await matchAcceptRequest(matchId);
+  Future<void> handleMatchAccept(
+      String matchId, String nickname, String logoUrl, String senderId) async {
+    Map<String, dynamic> response = await matchAcceptRequest(matchId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatScreen(
+          chatroomId: response["data"]["chatroomId"],
+          nickname: nickname,
+          logoUrl: logoUrl,
+        ),
+      ),
+    );
   }
 
   Future<void> handleMatchDecline(String matchId) async {
@@ -323,6 +337,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: revList.isEmpty
@@ -344,7 +360,12 @@ class _ReceivedReqState extends State<ReceivedReq> {
 
                 // 수락 버튼을 누를 때 호출할 함수
                 void handleAccept() {
-                  handleMatchAccept(revList[index]["matchId"]);
+                  selectedIndexProvider.selectedIndex = 2;
+                  handleMatchAccept(
+                      revList[index]["matchId"],
+                      revList[index]["senderInfo"]["nickname"],
+                      revList[index]["senderInfo"]["company"]["logoUrl"],
+                      revList[index]["senderInfo"]["userId"]);
                 }
 
                 void handleReject() {
