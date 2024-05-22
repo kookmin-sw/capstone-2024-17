@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class BottomOneButtonSmall extends StatelessWidget {
   final String first;
+  final void Function()? onFirstButtonClick; // 새로운 콜백 함수 추가
 
   const BottomOneButtonSmall({
     Key? key,
     required this.first,
+    this.onFirstButtonClick, // 콜백 함수를 생성자에 추가
   }) : super(key: key);
 
   @override
@@ -13,6 +15,7 @@ class BottomOneButtonSmall extends StatelessWidget {
     return OneButtonDialog(
       width: 110,
       first: first,
+      onFirstButtonClick: onFirstButtonClick, // 콜백 함수 전달
     );
   }
 }
@@ -20,12 +23,14 @@ class BottomOneButtonSmall extends StatelessWidget {
 class OneButtonDialog extends StatelessWidget {
   final double? width;
   final String first;
+  final void Function()? onFirstButtonClick; // 새로운 콜백 함수 추가
 
   const OneButtonDialog({
-    super.key,
-    this.width, // width 값을 지정하지 않으면 null이 됨
+    Key? key,
+    this.width,
     required this.first,
-  });
+    this.onFirstButtonClick, // 콜백 함수를 생성자에 추가
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +49,10 @@ class OneButtonDialog extends StatelessWidget {
           height: 50,
           child: ElevatedButton(
             onPressed: () {
+              if (onFirstButtonClick != null) {
+                // 콜백 함수가 null이 아닌 경우 실행
+                onFirstButtonClick!();
+              }
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(

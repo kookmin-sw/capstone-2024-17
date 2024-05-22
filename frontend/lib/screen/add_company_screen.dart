@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -88,24 +89,72 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
   void addCompanyPressed() {
     // 회사 추가 요청
     if (_companyNameController.text == '') {
-      showAlertDialog(context, '회사명을 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '회사명을 입력해주세요.',
+            ),
+          );
+        },
+      );
+
       return;
     } else if (_bnoController.text == '') {
-      showAlertDialog(context, '사업자 등록번호를 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '사업자 등록번호를 입력해주세요.',
+            ),
+          );
+        },
+      );
+
       return;
     } else if (_domainController.text == '') {
-      showAlertDialog(context, '사내메일 도메인을 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '사내메일 도메인을 입력해주세요.',
+            ),
+          );
+        },
+      );
+
       return;
     } else if (!RegExp('@[a-zA-Z0-9-]+.[a-zA-Z]+')
         .hasMatch(_domainController.text)) {
-      showAlertDialog(context, '도메인 형식이 올바르지 않습니다.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '도메인 형식이 올바르지 않습니다.',
+            ),
+          );
+        },
+      );
       return;
     }
     try {
       waitAddCompany(context, _companyNameController.text, _bnoController.text,
           _domainController.text.substring(1)); // 첫 문자 '@' 제외하고 요청
     } catch (error) {
-      showAlertDialog(context, '요청 실패: $error');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '요청 실패: $error',
+            ),
+          );
+        },
+      );
     }
   }
 }
@@ -117,11 +166,35 @@ void waitAddCompany(
   if (res['success'] == true) {
     // 요청 성공
     print(res);
-    showAlertDialog(context, "회사 추가 요청 성공! 회사가 승인될 때까지 기다려주세요.",
-        () => {Navigator.pop(context)});
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: OneButtonDialog(
+            first: '회사 추가 요청 성공! 회사가 승인될 때까지 기다려주세요.',
+            onFirstButtonClick: () {
+              Navigator.pop(context); // 버튼 클릭 시 다이얼로그 닫기
+            },
+          ),
+        );
+      },
+    );
+
+    showAlertDialog(context, "", () => {});
   } else {
     // 요청 실패
-    showAlertDialog(
-        context, '회사 추가요청 실패: ${res['message']}(${res['statusCode']})');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: OneButtonDialog(
+            first: '회사 추가요청 실패: ${res['message']}(${res['statusCode']})',
+            onFirstButtonClick: () {
+              Navigator.pop(context); // 버튼 클릭 시 다이얼로그 닫기
+            },
+          ),
+        );
+      },
+    );
   }
 }
