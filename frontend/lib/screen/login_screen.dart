@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/notification.dart';
 
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -145,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void waitLogin(BuildContext context, String loginId, String password) async {
-    UserIdModel userId = Provider.of<UserIdModel>(context, listen: false);
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: false);
 
     Map<String, dynamic> res = await login(loginId, password);
     if (res['success'] == true) {
@@ -157,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
         print('[login getuserdetail] $userDetail');
-        userId.setProfile(
+        userProfile.setProfile(
           userDetail['data']['userId'],
           userDetail['data']['nickname'],
           (userDetail['data']['company'] != null)

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class UserIdModel extends ChangeNotifier {
+class UserProfileModel extends ChangeNotifier {
   int? _userId;
   String _nickname = '';
   String _logoUrl = '';

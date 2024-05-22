@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -42,8 +42,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
-    Map<String, dynamic> profile = userId.profile;
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
+    Map<String, dynamic> profile = userProfile.profile;
     _nicknameController.text = profile["nickname"];
     _introductionController.text = profile["introduction"];
 
@@ -124,7 +125,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                               Map<String, dynamic> res =
                                                   await resetCompany();
                                               if (res['success'] == true) {
-                                                userId.setCompanyLogoUrl(
+                                                userProfile.setCompanyLogoUrl(
                                                     '미인증', '');
                                                 showAlertDialog(context,
                                                     '초기화 성공: ${res['message']}(${res['code']})');
@@ -257,7 +258,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             _introductionController.text);
                         if (res2['success'] == true) {
                           // provider에 저장
-                          userId.setNicknameIntroduction(profile["nickname"],
+                          userProfile.setNicknameIntroduction(
+                              profile["nickname"],
                               _introductionController.text);
                           // 유저페이지로 pop
                           Navigator.pop(context);

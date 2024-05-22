@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/service/api_service.dart';
@@ -50,8 +50,9 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
-    Map<String, dynamic> profile = userId.profile;
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
+    Map<String, dynamic> profile = userProfile.profile;
     print('[userscreen profile] $profile');
     return Scaffold(
       appBar: TopAppBarWithButton(

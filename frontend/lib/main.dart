@@ -17,7 +17,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
               myCafe: myCafe,
             ),
           ),
-          ChangeNotifierProvider(create: (_) => UserIdModel()),
+          ChangeNotifierProvider(create: (_) => UserProfileModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => myCafe),
           ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? userToken;
   late StompClient stompClient;
 
-  late UserIdModel userId; // 유저 아이디
+  late UserProfileModel userProfile;
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
 
@@ -154,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     stompClient = Provider.of<StompClient>(context, listen: false);
-    userId = Provider.of<UserIdModel>(context, listen: false);
+    userProfile = Provider.of<UserProfileModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
@@ -168,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
         print('[main userDetail] $userDetail');
-        userId.setProfile(
+        userProfile.setProfile(
           userDetail['data']['userId'],
           userDetail['data']['nickname'],
           (userDetail['data']['company'] != null)

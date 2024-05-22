@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -38,8 +38,8 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
-    Map<String, dynamic> profile = userId.profile;
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
     return Scaffold(
       appBar: const TopAppBar(
         title: "직무 등록",
@@ -108,7 +108,7 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                     // 서버에 저장 요청
                     savePressed();
                     // provider에 저장
-                    userId.setPosition(selectedPosition);
+                    userProfile.setPosition(selectedPosition);
                   }),
             ],
           )),

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
@@ -43,7 +43,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserIdModel userId = Provider.of<UserIdModel>(context, listen: true);
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
     Image logoImage = Image.network(widget.logoUrl, fit: BoxFit.cover);
     return Scaffold(
       appBar: const TopAppBar(title: '회사 인증'),
@@ -112,7 +113,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                             //  서버에 인증 요청
                             sendPressed(_emailIdController.text),
                             // provider에 저장
-                            userId.setCompanyLogoUrl(
+                            userProfile.setCompanyLogoUrl(
                                 widget.companyName, widget.logoUrl)
                           },
                           child:
