@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screen/matching_screen.dart';
 
 class MatchingInfoModel extends ChangeNotifier {
   bool _isMatching = false;

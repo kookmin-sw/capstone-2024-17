@@ -21,6 +21,7 @@ import 'package:frontend/model/user_id_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
+import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
@@ -202,15 +203,22 @@ class _MyHomePageState extends State<MyHomePage> {
     // 화면 리스트 초기화
     _screenOptions = [
       Google_Map(updateCafesCallback: updateCafeList),
-      const CoffeechatReqList(
-        matchId: '',
-        Question: '',
-        receiverCompany: '',
-        receiverPosition: '',
-        receiverIntroduction: '',
-        receiverRating: 0.0,
-        receiverNickname: '',
-      ),
+      (matchingInfo.isMatching)
+          ? Matching(
+              matchId: matchingInfo.matchId!,
+              partnerId: matchingInfo.partnerId!,
+              partnerCompany: matchingInfo.partnerCompany!,
+              partnerNickname: matchingInfo.partnerNickname!,
+            )
+          : const CoffeechatReqList(
+              matchId: '',
+              Question: '',
+              receiverCompany: '',
+              receiverPosition: '',
+              receiverIntroduction: '',
+              receiverRating: 0.0,
+              receiverNickname: '',
+            ),
       const ChatroomListScreen(),
       const UserScreen(),
     ];
