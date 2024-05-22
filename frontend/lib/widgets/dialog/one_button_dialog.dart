@@ -42,6 +42,7 @@ class OneButtonDialog extends StatelessWidget {
         Text(
           first,
           style: const TextStyle(fontSize: 18),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
         SizedBox(
