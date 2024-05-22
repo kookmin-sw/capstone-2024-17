@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class MatchingInfoModel extends ChangeNotifier {
   bool _isMatching = false;
   String? _matchId;
-  int? _senderId;
-  String? _senderCompany;
-  String? _senderNickname;
+  int? _partnerId;
+  String? _partnerCompany;
+  String? _partnerNickname;
 
   bool get isMatching => _isMatching;
   String? get matchId => _matchId;
-  int? get senderId => _senderId;
-  String? get senderCompany => _senderCompany;
-  String? get senderNickname => _senderNickname;
+  int? get partnerId => _partnerId;
+  String? get partnerCompany => _partnerCompany;
+  String? get partnerNickname => _partnerNickname;
 
   void setIsMatching(bool value) {
     _isMatching = value;
@@ -20,13 +20,13 @@ class MatchingInfoModel extends ChangeNotifier {
 
   void setMatching(
       {String? matchId,
-      int? senderId,
-      String? senderCompany,
-      String? senderNickname}) {
+      int? partnerId,
+      String? partnerCompany,
+      String? partnerNickname}) {
     _matchId = matchId;
-    _senderId = senderId;
-    _senderCompany = senderCompany;
-    _senderNickname = senderNickname;
+    _partnerId = partnerId;
+    _partnerCompany = partnerCompany;
+    _partnerNickname = partnerNickname;
     notifyListeners();
   }
 }

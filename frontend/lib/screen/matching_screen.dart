@@ -5,17 +5,17 @@ import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 
 class Matching extends StatefulWidget {
   final String matchId;
-  final String sendercompany;
-  final String sendername;
-  final int senderId;
+  final String partnerCompany;
+  final String partnerNickname;
+  final int partnerId;
 
   const Matching({
-    Key? key,
-    required this.sendername,
+    super.key,
+    required this.partnerNickname,
     required this.matchId,
-    required this.sendercompany,
-    required this.senderId,
-  }) : super(key: key);
+    required this.partnerCompany,
+    required this.partnerId,
+  });
 
   @override
   _MatchingWidgetState createState() => _MatchingWidgetState();
@@ -96,7 +96,7 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      '$username X ${widget.sendername}',
+                      '$username X ${widget.partnerNickname}',
                       // 회사 이름이 길어졌을 때 논의 필요
                       style: const TextStyle(
                           fontSize: 20,
@@ -116,7 +116,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/${usercompany}-logo.png', // 이미지의 경로
+                          'assets/$usercompany-logo.png', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -136,7 +136,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/${widget.sendercompany}-logo.png', // 이미지의 경로
+                          'assets/${widget.partnerCompany}-logo.png', // 이미지의 경로
                           width: 140,
                           height: 140,
                           fit: BoxFit.cover,
@@ -159,8 +159,8 @@ class _MatchingWidgetState extends State<Matching> {
                       "커피챗 종료",
                       "커피챗을 종료하고 나가시겠습니까?",
                       userId,
-                      widget.senderId,
-                      widget.sendername,
+                      widget.partnerId,
+                      widget.partnerNickname,
                       widget.matchId,
                     );
                   },
@@ -192,8 +192,8 @@ void showCoffeeChatExitDialog(
     String title,
     String message,
     int userId,
-    int senderId,
-    String sendername,
+    int partnerId,
+    String partnerNickname,
     String matchId) async {
   // 다이얼로그를 표시하고 사용자의 선택을 기다립니다.
   bool result = await showDialog(
@@ -209,14 +209,14 @@ void showCoffeeChatExitDialog(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
-            child: Text('종료'),
+            child: const Text('종료'),
           ),
           // "아니오"를 선택하면 Navigator를 통해 false를 반환합니다.
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            child: Text('취소'),
+            child: const Text('취소'),
           ),
         ],
       );
@@ -224,19 +224,17 @@ void showCoffeeChatExitDialog(
   );
 
   // 사용자의 선택에 따라 다른 동작을 실행합니다.
-  if (result != null) {
-    if (result) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CoffeeChatRating(
-            userId: userId,
-            senderId: senderId,
-            sendername: sendername,
-            matchId: matchId,
-          ),
+  if (result) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CoffeeChatRating(
+          userId: userId,
+          partnerId: partnerId,
+          partnerNickname: partnerNickname,
+          matchId: matchId,
         ),
-      );
-    }
+      ),
+    );
   }
 }

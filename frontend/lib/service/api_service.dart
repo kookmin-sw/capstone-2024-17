@@ -60,13 +60,19 @@ Future<Map<String, dynamic>> getMatchingInfo(userId) async {
 
     if (response.statusCode == 200) {
       if (responseData['success']) {
-        var senderInfo = responseData["data"]["senderInfo"];
+        var matchPosition = responseData["data"]["matchPosition"];
+        var partnerInfo = (matchPosition == "sender")
+            ? responseData["data"]["receiverInfo"]
+            : responseData["data"]["senderInfo"];
+        var partnerId = (matchPosition == "sender")
+            ? partnerInfo["receiverId"]
+            : partnerInfo["senderId"];
         return {
           "isMatching": responseData["data"]["isMatching"] == "yes",
           "matchId": responseData["data"]["matchId"],
-          "senderId": senderInfo["userId"],
-          "senderCompany": senderInfo["company"]["name"],
-          "senderNickname": senderInfo["nickname"],
+          "partnerId": partnerId,
+          "partnerCompany": partnerInfo["company"]["name"],
+          "partnerNickname": partnerInfo["nickname"],
         };
       } else {
         throw Exception('${responseData["message"]}(${responseData["code"]})');

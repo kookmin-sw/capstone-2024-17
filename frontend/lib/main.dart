@@ -178,11 +178,12 @@ class _MyHomePageState extends State<MyHomePage> {
           if (value["isMatching"]) {
             matchingInfo.setMatching(
               matchId: value["matchId"],
-              senderId: value["senderId"],
-              senderCompany: value["senderCompany"],
-              senderNickname: value["senderNickname"],
+              partnerId: value["partnerId"],
+              partnerCompany: value["partnerCompany"],
+              partnerNickname: value["partnerNickname"],
             );
           }
+          print("~~~~~성공~~~~isMatching: ${matchingInfo.isMatching}");
         });
       });
     });
