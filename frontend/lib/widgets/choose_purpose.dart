@@ -110,6 +110,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
 
                 selectedIndexProvider.selectedIndex = 1;
               } catch (e) {
+                print(e);
                 throw Error();
               }
             },
