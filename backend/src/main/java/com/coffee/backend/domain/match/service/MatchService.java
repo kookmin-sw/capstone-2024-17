@@ -109,28 +109,17 @@ public class MatchService {
     public MatchInfoResponseDto getMatchRequestInfo(Long senderId) {
         log.trace("getMatchRequestInfo()");
 
-        Set<String> keys;
-        try {
-            keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
-        }
-
+        Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
         if (keys == null || keys.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        MatchInfoResponseDto response = new MatchInfoResponseDto();
         for (String key : keys) {
-            Map<Object, Object> matchInfo;
-            try {
-                matchInfo = redisTemplate.opsForHash().entries(key);
-            } catch (Exception e) {
-                log.error("Error fetching match info from Redis for key: {}", key, e);
-                continue;
-            }
+            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
             String expirationTime = (String) matchInfo.get("expirationTime");
             if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
+                String matchId = (String) matchInfo.get("matchId");
+
                 Long receiverId = getLongId(matchInfo.get("receiverId"));
                 User receiver = userRepository.findById(receiverId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -138,14 +127,16 @@ public class MatchService {
                 receiverInfo.setReceiverId(receiverId);
                 receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
-                response = mapper.map(matchInfo, MatchInfoResponseDto.class);
+                MatchInfoResponseDto response = mapper.map(matchInfo, MatchInfoResponseDto.class);
+                response.setMatchId(matchId);
+                response.setRequestTypeId((String) matchInfo.get("requestTypeId"));
                 response.setReceiverInfo(receiverInfo);
-                break;
+                return response;
             } else {
                 throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
             }
         }
-        return response;
+        return new MatchInfoResponseDto();
     }
 
     // 받은 요청 정보
