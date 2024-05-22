@@ -30,25 +30,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
       ),
       body: ListView(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-        children:
-            /* <Widget>[
-            const ChatroomItem(
-              id: 1,
-              nickname: 'goodnavers',
-              logoImage: null,
-              recentMessage: '네 거기서 봬요!',
-              count: 100,
-            ),
-            ChatroomItem(
-              id: 2,
-              nickname: '블랙빈',
-              logoImage: Image.asset("assets/coffee_bean.png"),
-              recentMessage: '네 거기서 봬요!',
-              count: 0,
-            ),
-          ]
-          */
-            _buildChatroomItems(),
+        children: _buildChatroomItems(),
       ),
     );
   }
@@ -56,16 +38,20 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   List<Widget> _buildChatroomItems() {
     // 받아온 각 chatroom의 정보를 ChatroomItem으로 만들어 반환
     return chatrooms.map((chatroom) {
-      int id = chatroom['chatrooId'];
+      // print(chatroom);
+      int id = chatroom['chatroomId'];
       String nickname = chatroom['userInfo']['nickname'];
-      // Image logoImage = chatroom['userInfo']['logoImage'];
       String? recentMessage = chatroom['recentMessage'];
+      // company가 null일 때도 처리해야 함
+      String logoUrl = (chatroom['userInfo']['company'] != null)
+          ? chatroom['userInfo']['company']['logoUrl']
+          : '';
       return ChatroomItem(
         id: id,
         nickname: nickname,
         recentMessage: recentMessage,
-        count: 0, // 일단 0으로 설정
-        logoUrl: chatroom['userInfo']['company']['logoUrl'],
+        count: 0, // 읽지 않은 메시지의 개수: 일단 0으로 설정
+        logoUrl: logoUrl,
       );
     }).toList();
   }
