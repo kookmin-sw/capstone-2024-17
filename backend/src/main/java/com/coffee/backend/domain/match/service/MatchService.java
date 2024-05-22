@@ -77,6 +77,17 @@ public class MatchService {
         redisTemplate.opsForHash()
                 .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
 
+        // 매칭 중인지 조회 위해 저장
+        Map<String, String> isMatchingInfo = Map.of(
+                "matchId", matchId,
+                "senderId", dto.getSenderId().toString(),
+                "receiverId", dto.getReceiverId().toString(),
+                "isMatching", "no"
+        );
+
+        redisTemplate.opsForHash().putAll("userId:" + dto.getSenderId(), isMatchingInfo);
+        redisTemplate.opsForHash().putAll("userId:" + dto.getReceiverId(), isMatchingInfo);
+
         // 10분동안 락 설정
         Map<String, String> lockInfo = Map.of("matchId", matchId);
         redisTemplate.opsForHash().putAll(lockKey, lockInfo);
@@ -107,7 +118,13 @@ public class MatchService {
 
         MatchInfoResponseDto response = new MatchInfoResponseDto();
         for (String key : keys) {
-            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
+            Map<Object, Object> matchInfo;
+            try {
+                matchInfo = redisTemplate.opsForHash().entries(key);
+            } catch (Exception e) {
+                log.error("Error fetching match info from Redis for key: {}", key, e);
+                continue;
+            }
             String expirationTime = (String) matchInfo.get("expirationTime");
             if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
                 Long receiverId = getLongId(matchInfo.get("receiverId"));
@@ -200,15 +217,9 @@ public class MatchService {
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "accepted");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
-        // 매칭 중인지 조회 위해 저장
-        Map<String, String> isMatchingInfo = Map.of(
-                "matchId", dto.getMatchId(),
-                "senderId", senderId.toString(),
-                "receiverId", receiverId.toString(),
-                "isMatching", "yes"
-        );
-        redisTemplate.opsForHash().putAll("userId:" + senderId, isMatchingInfo);
-        redisTemplate.opsForHash().putAll("userId:" + receiverId, isMatchingInfo);
+        // 매칭중 상태 업데이트
+        redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "yes");
+        redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "yes");
 
         MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
