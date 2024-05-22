@@ -231,9 +231,13 @@ class _SentReqState extends State<SentReq> {
               BottomTextButton(
                 text: "요청 취소하기",
                 handlePressed: () async {
-                  showAlertDialogYesNo(context, "매칭 취소", "매칭 요청을 취소하시겠습니까?",
-                      handleRequestCancel);
-                  timerend = true;
+                  showAlertDialogYesNo(
+                    context,
+                    message: "매칭 요청을 취소하시겠습니까?",
+                    yesButtonText: "취소",
+                    noButtonText: "닫기",
+                    onOKPressed: handleRequestCancel,
+                  );
                 },
               ),
             ],
