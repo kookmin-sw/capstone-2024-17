@@ -6,6 +6,7 @@ import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
+import 'package:frontend/widgets/button/bottom_one_button.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -121,7 +122,6 @@ class _SentReqState extends State<SentReq> {
       Map<String, dynamic> response = await matchCancelRequest(matchId);
 
       if (response['success'] == true) {
-        showAlertDialog(context, "매칭 요청이 취소되었습니다.");
         setState(() {
           _sendinfoFuture = sendinfo();
         });
@@ -207,8 +207,12 @@ class _SentReqState extends State<SentReq> {
                 endTime: _endTime.millisecondsSinceEpoch,
                 onEnd: () {
                   if (!timerend) {
-                    showAlertDialog(
-                        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.");
+                    AlertDialog(
+                      content: BottomOneButton(
+                        first: '제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.',
+                      ),
+                    );
+
                     setState(() {
                       _sendinfoFuture = sendinfo();
                     });
@@ -237,6 +241,11 @@ class _SentReqState extends State<SentReq> {
                     yesButtonText: "취소",
                     noButtonText: "닫기",
                     onOKPressed: handleRequestCancel,
+                  );
+                  AlertDialog(
+                    content: BottomOneButton(
+                      first: '매칭 요청이 취소되었습니다.',
+                    ),
                   );
                 },
               ),
