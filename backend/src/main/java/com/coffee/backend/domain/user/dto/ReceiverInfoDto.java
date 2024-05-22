@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReceiverInfoDto {
+    private Long receiverId;
     private String nickname;
     private CompanyDto company;
     private String position;
