@@ -331,8 +331,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
                   company: senderData["company"]?["name"] ?? "Unknown",
                   position: senderData["position"] ?? "Unknown",
                   introduction: senderData["introduction"] ?? "No introduction",
-                  rating: senderData["rating"] != null
-                      ? double.parse(senderData["rating"])
+                  rating: senderData["coffeeBean"] != null
+                      ? senderData["coffeeBean"]
                       : 0.0,
                   matchId: revList[index]["matchId"],
                   requestTypeId: int.parse(revList[index]["requestTypeId"]),
