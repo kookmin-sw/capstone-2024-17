@@ -97,9 +97,22 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
       // print('!!!!!!마지막 메시지 $recentMessage');
       return recentMessage['datetime'];
     } else {
-      // 메시지가 없는 경우 임의의 과거 날짜를 반환
-      // print('!!!!마지막 메시지 없음');
-      return '1970년 01월 01일/00:00';
+      // 메시지가 없는 경우 현재 시간 반환: 채팅방 목록의 가장 위에 표시되도록 함
+      return getCurrentTimeFormatted();
     }
+  }
+
+// '1970년 01월 01일/00:00'의 형태로 현재 시간을 반환하는 함수
+  String getCurrentTimeFormatted() {
+    DateTime now = DateTime.now();
+    String formattedDate =
+        '${now.year}년 ${_addLeadingZero(now.month)}월 ${_addLeadingZero(now.day)}일';
+    String formattedTime =
+        '${_addLeadingZero(now.hour)}:${_addLeadingZero(now.minute)}';
+    return '$formattedDate/$formattedTime';
+  }
+
+  String _addLeadingZero(int number) {
+    return number.toString().padLeft(2, '0');
   }
 }
