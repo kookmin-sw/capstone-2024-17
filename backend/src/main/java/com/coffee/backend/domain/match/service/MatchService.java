@@ -116,6 +116,10 @@ public class MatchService {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
+        if (keys == null || keys.isEmpty()) {
+            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+        }
+
         MatchInfoResponseDto response = new MatchInfoResponseDto();
         for (String key : keys) {
             Map<Object, Object> matchInfo;
@@ -136,6 +140,7 @@ public class MatchService {
 
                 response = mapper.map(matchInfo, MatchInfoResponseDto.class);
                 response.setReceiverInfo(receiverInfo);
+                break;
             } else {
                 throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
             }
@@ -331,7 +336,13 @@ public class MatchService {
     }
 
     private boolean hasNotExpired(String expirationTime) {
-        return System.currentTimeMillis() < Long.parseLong(expirationTime);
+        try {
+            long expirationMillis = Long.parseLong(expirationTime);
+            return System.currentTimeMillis() < expirationMillis;
+        } catch (NumberFormatException e) {
+            log.error("Invalid expiration time format: {}", expirationTime, e);
+            return false;
+        }
     }
 
     // 매칭 요청 검증
