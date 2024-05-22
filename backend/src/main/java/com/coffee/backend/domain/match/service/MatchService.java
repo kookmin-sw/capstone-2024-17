@@ -101,10 +101,7 @@ public class MatchService {
         Set<String> keys;
         try {
             keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
-        }
-
-        // 한번도 매칭 요청을 보낸 적이 없는 경우
-        if (keys == null || keys.isEmpty()) {
+        } catch (Exception e) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
