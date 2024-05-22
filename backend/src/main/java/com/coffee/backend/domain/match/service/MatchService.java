@@ -60,7 +60,7 @@ public class MatchService {
         validateLock(lockKey);
 
         String matchId = UUID.randomUUID().toString();
-        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1);
+        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
         Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
@@ -77,10 +77,21 @@ public class MatchService {
         redisTemplate.opsForHash()
                 .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
 
+        // 매칭 중인지 조회 위해 저장
+        Map<String, String> isMatchingInfo = Map.of(
+                "matchId", matchId,
+                "senderId", dto.getSenderId().toString(),
+                "receiverId", dto.getReceiverId().toString(),
+                "isMatching", "no"
+        );
+
+        redisTemplate.opsForHash().putAll("userId:" + dto.getSenderId(), isMatchingInfo);
+        redisTemplate.opsForHash().putAll("userId:" + dto.getReceiverId(), isMatchingInfo);
+
         // 10분동안 락 설정
         Map<String, String> lockInfo = Map.of("matchId", matchId);
         redisTemplate.opsForHash().putAll(lockKey, lockInfo);
-        redisTemplate.expire(lockKey, 60, TimeUnit.SECONDS);
+        redisTemplate.expire(lockKey, 600, TimeUnit.SECONDS);
 
         // 알림
         User fromUser = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
@@ -107,13 +118,20 @@ public class MatchService {
 
         MatchInfoResponseDto response = new MatchInfoResponseDto();
         for (String key : keys) {
-            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
+            Map<Object, Object> matchInfo;
+            try {
+                matchInfo = redisTemplate.opsForHash().entries(key);
+            } catch (Exception e) {
+                log.error("Error fetching match info from Redis for key: {}", key, e);
+                continue;
+            }
             String expirationTime = (String) matchInfo.get("expirationTime");
             if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
                 Long receiverId = getLongId(matchInfo.get("receiverId"));
                 User receiver = userRepository.findById(receiverId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+                receiverInfo.setReceiverId(receiverId);
                 receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
                 response = mapper.map(matchInfo, MatchInfoResponseDto.class);
@@ -145,6 +163,7 @@ public class MatchService {
                 User sender = userRepository.findById(senderId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+                senderInfo.setSenderId(senderId);
                 senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
 
                 MatchReceivedInfoDto res = new MatchReceivedInfoDto();
@@ -200,15 +219,9 @@ public class MatchService {
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "accepted");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
-        // 매칭 중인지 조회 위해 저장
-        Map<String, String> isMatchingInfo = Map.of(
-                "matchId", dto.getMatchId(),
-                "senderId", senderId.toString(),
-                "receiverId", receiverId.toString(),
-                "isMatching", "yes"
-        );
-        redisTemplate.opsForHash().putAll("userId:" + senderId, isMatchingInfo);
-        redisTemplate.opsForHash().putAll("userId:" + receiverId, isMatchingInfo);
+        // 매칭중 상태 업데이트
+        redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "yes");
+        redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "yes");
 
         MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
@@ -383,20 +396,41 @@ public class MatchService {
     public IsMatchingDto isMatching(Long userId) {
         log.trace("isMatching()");
 
-        Map<Object, Object> isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
+        Map<Object, Object> isMatchingInfo = null;
+        try {
+            isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
+        } catch (Exception e) {
+            log.error("isMatching() 에러");
+        }
+
+        if (isMatchingInfo == null || isMatchingInfo.isEmpty()) {
+            log.warn("No matching info found for userId: {}", userId);
+            IsMatchingDto response = new IsMatchingDto();
+            response.setIsMatching("no");
+            return response;
+        }
+
         Long senderId = getLongId(isMatchingInfo.get("senderId"));
         Long receiverId = getLongId(isMatchingInfo.get("receiverId"));
         User sender = userRepository.findByUserId(senderId).orElseThrow();
         User receiver = userRepository.findByUserId(receiverId).orElseThrow();
 
         SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+        senderInfo.setSenderId(senderId);
         senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+        receiverInfo.setReceiverId(receiverId);
         receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
         IsMatchingDto response = mapper.map(isMatchingInfo, IsMatchingDto.class);
         response.setSenderInfo(senderInfo);
         response.setReceiverInfo(receiverInfo);
+
+        if (userId.equals(senderId)) {
+            response.setMatchPosition("sender");
+        } else if (userId.equals(receiverId)) {
+            response.setMatchPosition("receiver");
+        }
         return response;
     }
 
