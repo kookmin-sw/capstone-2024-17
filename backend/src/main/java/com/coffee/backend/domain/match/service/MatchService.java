@@ -106,7 +106,7 @@ public class MatchService {
     }
 
     // 보낸 매칭 요청 정보
-    public MatchInfoResponseDto getMatchRequestInfo(Long senderId) {
+    public List<MatchInfoResponseDto> getMatchRequestInfo(Long senderId) {
         log.trace("getMatchRequestInfo()");
 
         Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
@@ -114,6 +114,7 @@ public class MatchService {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
+        List<MatchInfoResponseDto> response = new ArrayList<>();
         for (String key : keys) {
             Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
             String expirationTime = (String) matchInfo.get("expirationTime");
@@ -127,16 +128,15 @@ public class MatchService {
                 receiverInfo.setReceiverId(receiverId);
                 receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
-                MatchInfoResponseDto response = mapper.map(matchInfo, MatchInfoResponseDto.class);
-                response.setMatchId(matchId);
-                response.setRequestTypeId((String) matchInfo.get("requestTypeId"));
-                response.setReceiverInfo(receiverInfo);
-                return response;
-            } else {
-                throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+                MatchInfoResponseDto res = new MatchInfoResponseDto();
+                res.setMatchId(matchId);
+                res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
+                res.setReceiverInfo(receiverInfo);
+                res.setExpirationTime(expirationTime);
+                response.add(res);
             }
         }
-        return new MatchInfoResponseDto();
+        return response;
     }
 
     // 받은 요청 정보
