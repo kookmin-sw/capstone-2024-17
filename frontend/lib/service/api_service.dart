@@ -147,7 +147,7 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
   String? userToken = await storage.read(key: 'authToken');
 
   try {
-    final response = await http.delete(
+    final response = await http.put(
       url,
       headers: {
         "Content-Type": "application/json",
