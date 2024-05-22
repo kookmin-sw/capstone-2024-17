@@ -21,14 +21,12 @@ import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.exception.CustomException;
 import com.coffee.backend.exception.ErrorCode;
 import com.coffee.backend.utils.CustomMapper;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -256,7 +254,7 @@ public class MatchService {
         return match;
     }
 
-    // 매칭 요청 수동 취소
+    // 매칭 요청 취소
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
         log.trace("cancelMatchRequest()");
 
@@ -266,7 +264,7 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        redisTemplate.opsForHash().put(key, "status", "declined");
+        redisTemplate.opsForHash().put(key, "status", "canceled");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "canceled");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
 
@@ -345,12 +343,10 @@ public class MatchService {
 
         String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
         switch (Objects.requireNonNull(status)) {
-            case "pending" -> throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
             case "accepted" -> throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
             case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
             case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
             case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
-            default -> throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
     }
 
