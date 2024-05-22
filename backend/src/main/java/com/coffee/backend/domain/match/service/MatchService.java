@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.service;
 
+import com.coffee.backend.domain.chatroom.dto.ChatroomCreationDto;
 import com.coffee.backend.domain.chatroom.service.ChatroomService;
 import com.coffee.backend.domain.fcm.service.FcmService;
 import com.coffee.backend.domain.match.dto.IsMatchingDto;
@@ -59,7 +60,7 @@ public class MatchService {
         validateLock(lockKey);
 
         String matchId = UUID.randomUUID().toString();
-        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
+        long expirationTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1);
         Map<String, String> matchInfo = Map.of(
                 "matchId", matchId,
                 "senderId", dto.getSenderId().toString(),
@@ -79,7 +80,7 @@ public class MatchService {
         // 10분동안 락 설정
         Map<String, String> lockInfo = Map.of("matchId", matchId);
         redisTemplate.opsForHash().putAll(lockKey, lockInfo);
-        redisTemplate.expire(lockKey, 600, TimeUnit.SECONDS);
+        redisTemplate.expire(lockKey, 60, TimeUnit.SECONDS);
 
         // 알림
         User fromUser = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
@@ -122,10 +123,6 @@ public class MatchService {
             }
         }
         return response;
-    }
-
-    private boolean hasNotExpired(String expirationTime) {
-        return System.currentTimeMillis() < Long.parseLong(expirationTime);
     }
 
     // 받은 요청 정보
@@ -177,8 +174,8 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-//        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
-//        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
+        ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
+        Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
 
         redisTemplate.opsForHash().put(key, "status", "accepted");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "accepted");
@@ -211,7 +208,7 @@ public class MatchService {
         match.setSenderId(senderId);
         match.setReceiverId(receiverId);
         match.setStatus("accepted");
-//        match.setChatroomId(chatroomId);
+        match.setChatroomId(chatroomId);
 
         return match;
     }
@@ -233,6 +230,11 @@ public class MatchService {
         validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
+        if (!hasNotExpired(expirationTime)) {
+            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+        }
+
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
@@ -261,6 +263,11 @@ public class MatchService {
         validateRequest(dto.getMatchId());
 
         String key = "matchId:" + dto.getMatchId();
+        String expirationTime = (String) redisTemplate.opsForHash().get(key, "expirationTime");
+        if (!hasNotExpired(expirationTime)) {
+            throw new CustomException(ErrorCode.REQUEST_EXPIRED);
+        }
+
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
@@ -301,6 +308,23 @@ public class MatchService {
         }
     }
 
+    private boolean hasNotExpired(String expirationTime) {
+        return System.currentTimeMillis() < Long.parseLong(expirationTime);
+    }
+
+    // 매칭 요청 검증
+    private void validateRequest(String matchId) {
+        log.trace("validateRequest()");
+
+        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
+        switch (Objects.requireNonNull(status)) {
+            case "accepted" -> throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
+            case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
+            case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
+            case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
+        }
+    }
+
     // 매칭 종료
     public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
@@ -334,19 +358,6 @@ public class MatchService {
 
         if (!enderId.equals(senderId) && !enderId.equals(receiverId)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-    }
-
-    // 매칭 요청 검증
-    private void validateRequest(String matchId) {
-        log.trace("validateRequest()");
-
-        String status = (String) redisTemplate.opsForHash().get("matchId:" + matchId, "status");
-        switch (Objects.requireNonNull(status)) {
-            case "accepted" -> throw new CustomException(ErrorCode.REQUEST_ALREADY_ACCEPTED);
-            case "declined" -> throw new CustomException(ErrorCode.REQUEST_DECLINED);
-            case "canceled" -> throw new CustomException(ErrorCode.REQUEST_CANCELED);
-            case "finished" -> throw new CustomException(ErrorCode.REQUEST_FINISHED);
         }
     }
 
