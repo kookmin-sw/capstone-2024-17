@@ -98,7 +98,10 @@ public class MatchService {
     public MatchInfoResponseDto getMatchRequestInfo(Long senderId) {
         log.trace("getMatchRequestInfo()");
 
-        Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
+        Set<String> keys;
+        try {
+            keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
+        }
 
         // 한번도 매칭 요청을 보낸 적이 없는 경우
         if (keys == null || keys.isEmpty()) {
@@ -386,12 +389,6 @@ public class MatchService {
         Map<Object, Object> isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
         Long senderId = getLongId(isMatchingInfo.get("senderId"));
         Long receiverId = getLongId(isMatchingInfo.get("receiverId"));
-
-        // 요청 유저 아닌 경우
-        if (!userId.equals(senderId) && !userId.equals(receiverId)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
         User sender = userRepository.findByUserId(senderId).orElseThrow();
         User receiver = userRepository.findByUserId(receiverId).orElseThrow();
 
