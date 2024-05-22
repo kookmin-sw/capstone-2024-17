@@ -10,6 +10,7 @@ class UserProfileModel extends ChangeNotifier {
   double _rating = 0;
 
   int? get userId => _userId;
+
   Map<String, dynamic> get profile => {
         "userId": _userId,
         "nickname": _nickname,
@@ -25,8 +26,14 @@ class UserProfileModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setProfile(int userId, String nickname, String logoUrl, String company,
-      String position, String introduction, double rating) {
+  void setProfile(
+      {required int userId,
+      required String nickname,
+      required String logoUrl,
+      required String company,
+      required String position,
+      required String introduction,
+      required double rating}) {
     _userId = userId;
     _nickname = nickname;
     _logoUrl = logoUrl;
@@ -37,7 +44,10 @@ class UserProfileModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setNicknameIntroduction(String nickname, String introduction) {
+  void setNicknameIntroduction({
+    required String nickname,
+    required String introduction,
+  }) {
     _nickname = nickname;
     _introduction = introduction;
     notifyListeners();
@@ -48,7 +58,10 @@ class UserProfileModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCompanyLogoUrl(String company, String logoUrl) {
+  void setCompanyLogoUrl({
+    required String company,
+    required String logoUrl,
+  }) {
     _company = company;
     _logoUrl = logoUrl;
     notifyListeners();

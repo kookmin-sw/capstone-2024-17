@@ -159,17 +159,17 @@ class _LoginScreenState extends State<LoginScreen> {
       getUserDetail().then((userDetail) {
         print('[login getuserdetail] $userDetail');
         userProfile.setProfile(
-          userDetail['data']['userId'],
-          userDetail['data']['nickname'],
-          (userDetail['data']['company'] != null)
+          userId: userDetail['data']['userId'],
+          nickname: userDetail['data']['nickname'],
+          logoUrl: (userDetail['data']['company'] != null)
               ? userDetail['data']['company']['logoUrl']
               : '',
-          (userDetail['data']['company'] != null)
+          company: (userDetail['data']['company'] != null)
               ? userDetail['data']['company']['name']
               : '미인증',
-          userDetail['data']['position'],
-          userDetail['data']['introduction'],
-          userDetail['data']['coffeeBean'],
+          position: userDetail['data']['position'],
+          introduction: userDetail['data']['introduction'],
+          rating: userDetail['data']['coffeeBean'],
         );
       });
 

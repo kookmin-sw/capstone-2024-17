@@ -126,7 +126,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                   await resetCompany();
                                               if (res['success'] == true) {
                                                 userProfile.setCompanyLogoUrl(
-                                                    '미인증', '');
+                                                    company: '미인증',
+                                                    logoUrl: '');
                                                 showAlertDialog(context,
                                                     '초기화 성공: ${res['message']}(${res['code']})');
                                               } else {
@@ -259,8 +260,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         if (res2['success'] == true) {
                           // provider에 저장
                           userProfile.setNicknameIntroduction(
-                              profile["nickname"],
-                              _introductionController.text);
+                              nickname: profile["nickname"],
+                              introduction: _introductionController.text);
                           // 유저페이지로 pop
                           Navigator.pop(context);
                         } else {

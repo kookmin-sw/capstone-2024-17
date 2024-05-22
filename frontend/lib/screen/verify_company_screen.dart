@@ -114,7 +114,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                             sendPressed(_emailIdController.text),
                             // provider에 저장
                             userProfile.setCompanyLogoUrl(
-                                widget.companyName, widget.logoUrl)
+                                company: widget.companyName,
+                                logoUrl: widget.logoUrl)
                           },
                           child:
                               const Text('전송', style: TextStyle(fontSize: 16)),
