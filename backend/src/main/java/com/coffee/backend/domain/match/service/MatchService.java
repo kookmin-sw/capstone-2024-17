@@ -394,7 +394,20 @@ public class MatchService {
     public IsMatchingDto isMatching(Long userId) {
         log.trace("isMatching()");
 
-        Map<Object, Object> isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
+        Map<Object, Object> isMatchingInfo = null;
+        try {
+            isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
+        } catch (Exception e) {
+            log.error("isMatching() 에러");
+        }
+
+        if (isMatchingInfo == null || isMatchingInfo.isEmpty()) {
+            log.warn("No matching info found for userId: {}", userId);
+            IsMatchingDto response = new IsMatchingDto();
+            response.setIsMatching("no");
+            return response;
+        }
+
         Long senderId = getLongId(isMatchingInfo.get("senderId"));
         Long receiverId = getLongId(isMatchingInfo.get("receiverId"));
         User sender = userRepository.findByUserId(senderId).orElseThrow();
