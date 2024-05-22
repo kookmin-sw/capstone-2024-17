@@ -96,7 +96,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         // title: const Text(""),
-                        content: BottomOneButton(
+                        content: OneButtonDialog(
                           first: '커피챗 목적을 선택해주세요.',
                         ),
                       );

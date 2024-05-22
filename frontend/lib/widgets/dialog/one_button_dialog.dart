@@ -10,18 +10,18 @@ class BottomOneButtonSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomOneButton(
+    return OneButtonDialog(
       width: 110,
       first: first,
     );
   }
 }
 
-class BottomOneButton extends StatelessWidget {
+class OneButtonDialog extends StatelessWidget {
   final double? width;
   final String first;
 
-  const BottomOneButton({
+  const OneButtonDialog({
     super.key,
     this.width, // width 값을 지정하지 않으면 null이 됨
     required this.first,
