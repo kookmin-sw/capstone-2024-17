@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
@@ -179,8 +178,6 @@ void waitAddCompany(
         );
       },
     );
-
-    showAlertDialog(context, "", () => {});
   } else {
     // 요청 실패
     showDialog(

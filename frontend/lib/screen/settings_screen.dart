@@ -5,7 +5,6 @@ import 'package:stomp_dart_client/stomp.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
 class OptionItem extends StatelessWidget {

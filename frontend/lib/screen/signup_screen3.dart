@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
@@ -144,7 +143,16 @@ class _SignupScreen3State extends State<SignupScreen3> {
           _emailController.text,
           _phoneController.text);
     } catch (error) {
-      showAlertDialog(context, '요청 실패: $error');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '요청 실패: $error',
+            ),
+          );
+        },
+      );
     }
   }
 }
@@ -173,6 +181,15 @@ void waitSignup(BuildContext context, String? loginId, String? password,
   } else {
     // 회원가입 실패
 
-    showAlertDialog(context, '회원가입 실패: ${res['message']}(${res['code']})');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: OneButtonDialog(
+            first: '회원가입 실패: ${res['message']}(${res['code']})',
+          ),
+        );
+      },
+    );
   }
 }

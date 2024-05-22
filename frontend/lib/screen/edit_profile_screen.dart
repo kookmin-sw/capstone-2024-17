@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/service/api_service.dart';
@@ -128,11 +128,32 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                 userProfile.setCompanyLogoUrl(
                                                     company: '미인증',
                                                     logoUrl: '');
-                                                showAlertDialog(context,
-                                                    '초기화 성공: ${res['message']}(${res['code']})');
+
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      content: OneButtonDialog(
+                                                        first:
+                                                            '초기화 성공: ${res['message']}(${res['code']})',
+                                                      ),
+                                                    );
+                                                  },
+                                                );
                                               } else {
-                                                showAlertDialog(context,
-                                                    '초기화 실패: ${res['message']}(${res['code']})');
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      content: OneButtonDialog(
+                                                        first:
+                                                            '초기화 실패: ${res['message']}(${res['code']})',
+                                                      ),
+                                                    );
+                                                  },
+                                                );
                                               }
                                             },
                                             style: TextButton.styleFrom(
@@ -266,8 +287,18 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           Navigator.pop(context);
                         } else {
                           // 요청 실패
-                          showAlertDialog(context,
-                              '유저정보 변경에 실패했습니다: ${res2['message']}(${res2['code']})');
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: OneButtonDialog(
+                                  first:
+                                      '유저정보 변경에 실패했습니다: ${res2['message']}(${res2['code']})',
+                                ),
+                              );
+                            },
+                          );
                         }
                       },
                     ),

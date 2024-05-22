@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'map_place.dart';
 import 'package:flutter/material.dart';

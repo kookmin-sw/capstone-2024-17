@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/rounded_img.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:provider/provider.dart';
@@ -254,7 +254,17 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   // 전송 버튼 클릭 시
   void sendPressed(email) async {
     if (!email.endsWith('@${widget.domain}')) {
-      showAlertDialog(context, "이메일 도메인이 일치하지 않습니다.");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '이메일 도메인이 일치하지 않습니다.',
+            ),
+          );
+        },
+      );
+
       return;
     }
     try {
@@ -263,19 +273,46 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         // 요청 성공
         startTimer();
         sentEmailAddress = email; // 이메일이 발송된 이메일주소 저장
-        showAlertDialog(context, "메일이 발송되었습니다. 인증코드를 입력해주세요.");
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: OneButtonDialog(
+                first: '메일이 발송되었습니다. 인증코드를 입력해주세요.',
+              ),
+            );
+          },
+        );
       } else {
         // 요청 실패
         print('이메일 전송 실패: ${res["message"]}(${res["statusCode"]})');
-        showAlertDialog(
-          context,
-          '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: OneButtonDialog(
+                first: '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
+              ),
+            );
+          },
         );
       }
       // 에러
     } catch (error) {
       print('에러: $error');
-      showAlertDialog(context, '에러: $error');
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '에러: $error',
+            ),
+          );
+        },
+      );
     }
     return;
   }
@@ -283,7 +320,16 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   // 인증코드 입력 후 인증버튼 클릭 시
   void verifyPressed(verifyCode) async {
     if (verifyCode == '') {
-      showAlertDialog(context, "인증코드를 입력해주세요.");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '인증코드를 입력해주세요.',
+            ),
+          );
+        },
+      );
       return;
     }
     try {
@@ -292,19 +338,46 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       if (res['success']) {
         // 요청 성공
         isVerified = true;
-        showAlertDialog(context, "회사 인증이 완료되었습니다.");
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: OneButtonDialog(
+                first: '회사 인증이 완료되었습니다.',
+              ),
+            );
+          },
+        );
       } else {
         // 요청 실패
         print('인증 실패: ${res["message"]}(${res["statusCode"]})');
-        showAlertDialog(
-          context,
-          '인증 실패: ${res["message"]}(${res["statusCode"]})',
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: OneButtonDialog(
+                first: '인증 실패: ${res["message"]}(${res["statusCode"]})',
+              ),
+            );
+          },
         );
       }
       // 에러
     } catch (error) {
       print('에러: $error');
-      showAlertDialog(context, '에러: $error');
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '에러: $error',
+            ),
+          );
+        },
+      );
     }
     return;
   }
