@@ -60,6 +60,10 @@ Future<Map<String, dynamic>> getMatchingInfo(userId) async {
 
     if (response.statusCode == 200) {
       if (responseData['success']) {
+        var isMatching = responseData["data"]["isMatching"] == "yes";
+        if (!isMatching) {
+          return {"isMatching": isMatching};
+        }
         var matchPosition = responseData["data"]["matchPosition"];
         var partnerInfo = (matchPosition == "sender")
             ? responseData["data"]["receiverInfo"]
@@ -68,7 +72,7 @@ Future<Map<String, dynamic>> getMatchingInfo(userId) async {
             ? partnerInfo["receiverId"]
             : partnerInfo["senderId"];
         return {
-          "isMatching": responseData["data"]["isMatching"] == "yes",
+          "isMatching": isMatching,
           "matchId": responseData["data"]["matchId"],
           "partnerId": partnerId,
           "partnerCompany": partnerInfo["company"]["name"],
