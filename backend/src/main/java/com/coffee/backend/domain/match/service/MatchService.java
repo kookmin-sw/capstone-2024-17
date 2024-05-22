@@ -162,6 +162,7 @@ public class MatchService {
                 User sender = userRepository.findById(senderId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+                senderInfo.setSenderId(senderId);
                 senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
 
                 MatchReceivedInfoDto res = new MatchReceivedInfoDto();
