@@ -88,12 +88,12 @@ class UserItem extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Row(
           children: [
-            (company == '')
-                ? const ProfileImgMedium(
+            (company == '무소속')
+                ? const ProfileImgSmall(
                     isLocal: true,
                     logoUrl: "assets/coffee_bean.png",
                   )
-                : ProfileImgMedium(
+                : ProfileImgSmall(
                     isLocal: true,
                     logoUrl: "assets/$company-logo.png",
                   ),
@@ -104,10 +104,12 @@ class UserItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    nickname,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text(nickname,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      )),
                   Text(
                     "$company / $position",
                     overflow: TextOverflow.ellipsis,
@@ -252,7 +254,6 @@ class ReceivedReqDialog extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChatScreen(
-                      // chatroomId: response["data"]["chatroomId"],
                       matchId: matchId,
                       nickname: nickname,
                       logoUrl: logoUrl,
@@ -260,28 +261,8 @@ class ReceivedReqDialog extends StatelessWidget {
                     ),
                   ),
                 );
-
                 // 오프라인으로 전환
                 autoOfflineService.autoOffline();
-
-                // 커피챗 진행중 여부 true로, 매칭정보 가져오기
-                Map<String, dynamic> userDetail = await getUserDetail();
-                getMatchingInfo(userDetail["data"]["userId"]).then((value) {
-                  matchingInfo.setIsMatching(value["isMatching"]);
-
-                  // 커피챗 진행중이면 상대방 정보도 가져오기
-                  if (value["isMatching"]) {
-                    matchingInfo.setMatching(
-                      matchId: value["matchId"],
-                      myId: value["myId"],
-                      myNickname: value["myNickname"],
-                      myCompany: value["myCompany"],
-                      partnerId: value["partnerId"],
-                      partnerCompany: value["partnerCompany"],
-                      partnerNickname: value["partnerNickname"],
-                    );
-                  }
-                });
               },
               handleSecondClick: () async {
                 onReject?.call(); // onReject 함수 호출
