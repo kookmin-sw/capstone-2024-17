@@ -510,6 +510,7 @@ public class MatchService {
             User reviewer = review.getReviewer();
             if (!enderId.equals(reviewer.getUserId())) {
                 hasReviewed = true;
+                break;
             }
         }
         ReviewCheckDto response = new ReviewCheckDto();
