@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/top_appbar.dart';
+import 'package:provider/provider.dart';
 
 class PositionSelectScreen extends StatefulWidget {
   final String? lastPosition;
@@ -36,6 +38,8 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProfileModel userProfile =
+        Provider.of<UserProfileModel>(context, listen: true);
     return Scaffold(
       appBar: const TopAppBar(
         title: "직무 등록",
@@ -99,12 +103,15 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                 ],
               ),
               BottomTextButton(
-                text: '저장하기',
-                handlePressed: savePressed,
-              ),
+                  text: '저장하기',
+                  handlePressed: () {
+                    // 서버에 저장 요청
+                    savePressed();
+                    // provider에 저장
+                    userProfile.setPosition(selectedPosition);
+                  }),
             ],
           )),
-      bottomNavigationBar: const BottomAppBar(),
     );
   }
 
@@ -151,10 +158,15 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
   void savePressed() async {
     // 직무 저장 요청하기
     Map<String, dynamic> res = await updatePosition(selectedPosition);
-    // print(res);
     if (res['success']) {
       // 직무 저장 성공
-      showAlertDialog(context, '직무가 저장되었습니다!');
+      showAlertDialog(
+          context,
+          '직무가 저장되었습니다!',
+          () => {
+                Navigator.of(context)
+                    .popUntil(ModalRoute.withName('/editprofile'))
+              });
     } else {
       // 직무 저장 실패
       showAlertDialog(context, '직무 저장 실패: ${res['message']}(${res['code']})');

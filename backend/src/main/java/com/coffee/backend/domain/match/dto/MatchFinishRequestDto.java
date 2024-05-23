@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class MatchFinishRequestDto {
     private String matchId;
-    private Long enderId;
+    private Long enderId; // 종료를 누른 유저 아이디
 }

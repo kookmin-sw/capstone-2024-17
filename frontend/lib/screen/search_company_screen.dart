@@ -118,11 +118,11 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
   List<Widget> _buildCompanyItems() {
     return companyList.map((company) {
       String companyName = company['name'];
-      String logoInfo = company['logoUrl'];
+      String logoUrl = company['logoUrl'];
       String domain = company['domain'];
       return CompanyItem(
         companyName: companyName,
-        logoInfo: logoInfo,
+        logoUrl: logoUrl,
         domain: domain,
       );
     }).toList();

@@ -5,16 +5,22 @@ import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/alert_dialog_widget.dart';
-import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
+import 'package:frontend/widgets/button/bottom_one_button.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 bool timerend = false;
-
+List<String> purpose = [
+  "당신의 회사가 궁금해요",
+  "당신의 업무가 궁금해요",
+  "같이 개발 이야기 나눠요",
+  "점심시간 함께 산책해요"
+];
 void main() async {
   await dotenv.load();
   runApp(const MyApp());
@@ -38,6 +44,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+var matchId = "";
 
 class CoffeechatReqList extends StatelessWidget {
   final String matchId;
@@ -82,15 +90,7 @@ class CoffeechatReqList extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(children: [
-                SentReq(
-                  matchId: matchId,
-                  nickname: receiverNickname,
-                  company: receiverCompany,
-                  position: receiverPosition,
-                  introduction: receiverIntroduction,
-                  rating: receiverRating,
-                  question: Question,
-                ),
+                SentReq(),
                 ReceivedReq(),
               ]),
             ),
@@ -102,49 +102,30 @@ class CoffeechatReqList extends StatelessWidget {
 }
 
 class SentReq extends StatefulWidget {
-  final String? matchId;
-  final String nickname;
-  final String company;
-  final String position;
-  final String introduction;
-  final double rating;
-  final String question;
-
-  const SentReq({
-    Key? key,
-    this.matchId,
-    required this.nickname,
-    required this.company,
-    required this.position,
-    required this.introduction,
-    required this.rating,
-    required this.question,
-  }) : super(key: key);
-
   @override
   _SentReqState createState() => _SentReqState();
 }
 
 class _SentReqState extends State<SentReq> {
-  late int _endTime;
+  late Future<Map<String, dynamic>> _sendinfoFuture;
+  bool timerend = false;
+  String matchId = '';
 
   @override
   void initState() {
     super.initState();
     timerend = false;
-    _endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 10; // 10분후
+    _sendinfoFuture = sendinfo();
   }
 
   Future<void> handleRequestCancel() async {
     try {
-      Map<String, dynamic> response = await matchCancelRequest(widget.matchId!);
+      Map<String, dynamic> response = await matchCancelRequest(matchId);
 
       if (response['success'] == true) {
-        print("정상적으로 삭제됨");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AlarmList()),
-        );
+        setState(() {
+          _sendinfoFuture = sendinfo();
+        });
       } else {
         print(response);
       }
@@ -153,65 +134,137 @@ class _SentReqState extends State<SentReq> {
     }
   }
 
-  void showAlertDialogWithContext(BuildContext context) {
-    showAlertDialog(
-        context, "제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.", handleRequestCancel);
+  Future<Map<String, dynamic>> sendinfo() async {
+    try {
+      Map<String, dynamic> res = await getUserDetail();
+      if (res['success']) {
+        int senderId = res['data']['userId'];
+        Map<String, dynamic> response = await requestInfoRequest(senderId);
+        return response;
+      } else {
+        print(
+            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+        return {};
+      }
+    } catch (e) {
+      return {};
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 20),
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
-          width: 370,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey, width: 1),
-          ),
-          child: UserDetails(
-            nickname: widget.nickname,
-            company: widget.company,
-            position: widget.position,
-            introduction: widget.introduction,
-            rating: widget.rating,
-          ),
-        ),
-        ColorTextContainer(text: "# ${widget.question}"),
-        Expanded(child: SizedBox(height: 10)),
-        CountdownTimer(
-          endTime: _endTime,
-          onEnd: () {
-            // 카운트다운 타이머가 끝났을 때
-            if (!timerend) {
-              showAlertDialogWithContext(context);
-            }
-          },
-          widgetBuilder: (_, CurrentRemainingTime? time) {
-            if (time == null) {
-              return Text('남은 시간: 00:00');
-            }
-            int minutes = time.min ?? 0;
-            int seconds = time.sec ?? 0;
-            return Text(
-              '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-              style: TextStyle(fontSize: 20, color: Colors.black),
-            );
-          },
-        ),
-        SizedBox(height: 10),
-        BottomTextButton(
-          text: "요청 취소하기",
-          handlePressed: () async {
-            if (widget.matchId != null) {
-              showAlertDialogYesNo(
-                  context, "매칭 취소", "매칭을 종료하시겠습니까?", handleRequestCancel);
-              timerend = true;
-            }
-          },
-        ),
-      ],
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _sendinfoFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.data == null ||
+            snapshot.data!['success'] != true ||
+            snapshot.hasError || snapshot.data!['data']['matchId']==null) {
+          return Center(
+            child: Text(
+              '보낸 요청이 없습니다 :(',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        } else {
+          var data = snapshot.data!['data'];
+          int requestTypeId = data['requestTypeId'] is int
+              ? data['requestTypeId']
+              : int.tryParse(data['requestTypeId'].toString()) ?? 0;
+          matchId = data['matchId'];
+          DateTime _endTime = DateTime.fromMillisecondsSinceEpoch(
+              int.parse(data['expirationTime']));
+
+          return Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+                width: 370,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey, width: 1),
+                ),
+                child: UserDetails(
+                  nickname: data['receiverInfo']['nickname'] ?? 'nickname',
+                  company: data['receiverInfo']['company']['name'] ?? 'company',
+                  position: data['receiverInfo']['position'] ?? 'position',
+                  introduction:
+                      data['receiverInfo']['introduction'] ?? 'introduction',
+                  rating:
+                      (data['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
+                ),
+              ),
+              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
+              Expanded(child: SizedBox(height: 10)),
+              CountdownTimer(
+                endTime: _endTime.millisecondsSinceEpoch,
+                onEnd: () {
+                  if (!timerend) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text('제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  _sendinfoFuture = sendinfo();
+                                });
+                              },
+                              child: Text('확인'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                widgetBuilder: (_, CurrentRemainingTime? time) {
+                  if (time == null) {
+                    return Text('남은 시간: 00:00',
+                        style: TextStyle(fontSize: 20, color: Colors.black));
+                  }
+                  int minutes = time.min ?? 0;
+                  int seconds = time.sec ?? 0;
+                  return Text(
+                    '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+                    style: TextStyle(fontSize: 20, color: Colors.black),
+                  );
+                },
+              ),
+              SizedBox(height: 10),
+              BottomTextButton(
+                text: "요청 취소하기",
+                handlePressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return YesOrNoDialog(
+                        content: "매칭 요청을 취소하시겠습니까?",
+                        firstButton: "요청 취소",
+                        secondButton: "닫기",
+                        handleFirstClick: () async {
+                          handleRequestCancel();
+                        },
+                        handleSecondClick: () {},
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }
@@ -284,6 +337,7 @@ class _ReceivedReqState extends State<ReceivedReq> {
               ),
             )
           : ListView.builder(
+              //받은 요청
               itemCount: revList.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> senderData = revList[index]['senderInfo'];
@@ -304,8 +358,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
                   company: senderData["company"]?["name"] ?? "Unknown",
                   position: senderData["position"] ?? "Unknown",
                   introduction: senderData["introduction"] ?? "No introduction",
-                  rating: senderData["rating"] != null
-                      ? double.parse(senderData["rating"])
+                  rating: senderData["coffeeBean"] != null
+                      ? senderData["coffeeBean"]
                       : 0.0,
                   matchId: revList[index]["matchId"],
                   requestTypeId: int.parse(revList[index]["requestTypeId"]),

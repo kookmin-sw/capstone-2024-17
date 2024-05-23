@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/coffeechat_rating_screen.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/alert_dialog_yesno_widget.dart';
 
 class Matching extends StatefulWidget {
   final String matchId;

@@ -9,13 +9,30 @@ import 'package:frontend/widgets/top_appbar.dart';
 
 class OptionItem extends StatelessWidget {
   final String optionName;
+  final IconData optionIconData;
   final String optionRouteName;
 
   const OptionItem({
     super.key,
     required this.optionName,
+    required this.optionIconData,
     required this.optionRouteName,
   });
+
+/*
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(optionName),
+      leading: Icon(optionIconData),
+      onTap: () {
+        Future.delayed(Duration.zero, () {
+          Navigator.pushNamed(context, optionRouteName);
+        });
+      },
+    );
+  }
+*/
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +46,20 @@ class OptionItem extends StatelessWidget {
           Row(children: <Widget>[
             Expanded(
               child: Card(
-                  elevation: 0,
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(optionName,
+                elevation: 0,
+                child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(children: <Widget>[
+                      Icon(optionIconData, color: Colors.grey),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(optionName,
                           style: const TextStyle(
-                            fontSize: 18,
-                          )))),
+                            fontSize: 17,
+                          )),
+                    ])),
+              ),
             )
           ]),
           const Row(children: <Widget>[Expanded(child: Divider())]),
@@ -48,17 +72,20 @@ class SettingsScreen extends StatelessWidget {
 
   final storage = const FlutterSecureStorage();
 
-  final List<Map<String, String>> optionList = [
+  final List<Map<String, dynamic>> optionList = [
     {
-      'optionName': '옵션1',
+      'optionName': '알림 설정',
+      'optionIconData': Icons.notifications_none_rounded,
       'optionRouteName': '/option1',
     },
     {
-      'optionName': '옵션2',
+      'optionName': '도움말',
+      'optionIconData': Icons.help_outline_rounded,
       'optionRouteName': '/option2',
     },
     {
-      'optionName': '옵션3',
+      'optionName': '앱 정보',
+      'optionIconData': Icons.info_outline_rounded,
       'optionRouteName': '/option3',
     },
   ];
@@ -73,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
           child: Container(
               margin: const EdgeInsets.symmetric(
                 horizontal: 30,
-                vertical: 15,
+                vertical: 5,
               ),
               child: Column(children: <Widget>[
                 Expanded(
@@ -131,9 +158,11 @@ class SettingsScreen extends StatelessWidget {
   List<Widget> _buildOptionItems() {
     return optionList.map((option) {
       String optionName = option['optionName']!;
+      IconData optionIconData = option['optionIconData'];
       String optionRouteName = option['optionRouteName']!;
       return OptionItem(
         optionName: optionName,
+        optionIconData: optionIconData,
         optionRouteName: optionRouteName,
       );
     }).toList();

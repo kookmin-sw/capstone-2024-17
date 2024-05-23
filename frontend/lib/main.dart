@@ -5,6 +5,7 @@ import 'package:frontend/firebase_options.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
+import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
@@ -17,7 +18,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chatroom_list_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
@@ -81,7 +82,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           ChangeNotifierProvider(create: (_) => MatchingInfoModel()),
-          ChangeNotifierProvider(create: (_) => UserIdModel()),
+          ChangeNotifierProvider(create: (_) => UserProfileModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => myCafe),
           ChangeNotifierProvider(create: (_) => SelectedIndexModel()),
@@ -112,6 +113,7 @@ class MyApp extends StatelessWidget {
                   receiverRating: 0.0,
                   receiverNickname: '',
                 ),
+            '/editprofile': (BuildContext context) => const EditProfileScreen(),
           },
         ));
   }
@@ -130,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? userToken;
   late StompClient stompClient;
 
-  late UserIdModel userId; // 유저 아이디
+  late UserProfileModel userProfile;
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
   late MatchingInfoModel matchingInfo; // 커피챗 진행중 정보
@@ -162,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> initialize() async {
     stompClient = Provider.of<StompClient>(context, listen: false);
-    userId = Provider.of<UserIdModel>(context, listen: false);
+    userProfile = Provider.of<UserProfileModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
 
     // 유저 토큰 가져오기
@@ -176,7 +178,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // 유저 정보 가져오기
       getUserDetail().then((userDetail) {
-        userId.setUserId(userDetail['data']['userId']);
+        print('[main userDetail] $userDetail');
+        userProfile.setProfile(
+          userId: userDetail['data']['userId'],
+          nickname: userDetail['data']['nickname'],
+          logoUrl: (userDetail['data']['company'] != null)
+              ? userDetail['data']['company']['logoUrl']
+              : '',
+          company: (userDetail['data']['company'] != null)
+              ? userDetail['data']['company']['name']
+              : '미인증',
+          position: userDetail['data']['position'],
+          introduction: userDetail['data']['introduction'],
+          rating: userDetail['data']['coffeeBean'],
+        );
 
         // 커피챗 진행중 여부 가져오기
         getMatchingInfo(userId.userId).then((value) {

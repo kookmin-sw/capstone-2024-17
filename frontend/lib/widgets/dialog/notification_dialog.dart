@@ -20,12 +20,14 @@ class ArriveRequestNotification extends StatelessWidget {
 
 // 커피챗 요청 수락 알림창
 class ReqAcceptedNotification extends StatelessWidget {
-  const ReqAcceptedNotification({super.key});
+  final String nickname;
+
+  const ReqAcceptedNotification({super.key, required this.nickname});
 
   @override
   Widget build(BuildContext context) {
-    return const NotificationDialog(
-      contents: "커피챗 요청이 \n수락되었어요!",
+    return NotificationDialog(
+      contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
       backButton: "확인",
     );
   }
@@ -33,12 +35,29 @@ class ReqAcceptedNotification extends StatelessWidget {
 
 // 커피챗 요청 거절 알림창
 class ReqDeniedNotification extends StatelessWidget {
-  const ReqDeniedNotification({super.key});
+  final String nickname;
+
+  const ReqDeniedNotification({super.key, required this.nickname});
 
   @override
   Widget build(BuildContext context) {
-    return const NotificationDialog(
-      contents: "커피챗 요청이 \n거절되었어요.. :(",
+    return NotificationDialog(
+      contents: '$nickname님이 커피챗 요청을 \n거절했어요.. :(',
+      backButton: "확인",
+    );
+  }
+}
+
+// 커피챗 종료 알림창
+class ReqFinishedNotification extends StatelessWidget {
+  final String nickname;
+
+  const ReqFinishedNotification({super.key, required this.nickname});
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationDialog(
+      contents: '$nickname님이 커피챗을 종료했어요!',
       backButton: "확인",
     );
   }

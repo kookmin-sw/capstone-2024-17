@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/button/bottom_one_button.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
+import 'package:provider/provider.dart';
 
-String reqlistpara = '';
-int requestTypeId = 0;
-int _selectedIndex = 0; // 선택된 인덱스를 저장할 변수
 List<String> purpose = [
   "당신의 회사가 궁금해요",
   "당신의 업무가 궁금해요",
@@ -14,13 +15,28 @@ List<String> purpose = [
   "점심시간 함께 산책해요"
 ];
 
-class ChoosePurpose extends StatelessWidget {
+class ChoosePurpose extends StatefulWidget {
   final int userId; // receiverId 추가
 
   const ChoosePurpose({
     super.key,
     required this.userId, // 생성자에 receiverId 추가
   });
+
+  @override
+  _ChoosePurposeState createState() => _ChoosePurposeState();
+}
+
+class _ChoosePurposeState extends State<ChoosePurpose> {
+  int? _selectedIndex;
+  late SelectedIndexModel selectedIndexProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndexProvider =
+        Provider.of<SelectedIndexModel>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,34 +60,23 @@ class ChoosePurpose extends StatelessWidget {
           ),
           Expanded(
             child: Column(
-              children: [
-                PurposeButton(
-                  purpose: "당신의 회사가 궁금해요",
-                  selectedindex: 0,
-                  onIndexChanged: _updateSelectedIndex, // 함수 전달
-                ),
-                PurposeButton(
-                  purpose: "당신의 업무가 궁금해요",
-                  selectedindex: 1,
-                  onIndexChanged: _updateSelectedIndex, // 함수 전달
-                ),
-                PurposeButton(
-                  purpose: "같이 개발 이야기 나눠요",
-                  selectedindex: 2,
-                  onIndexChanged: _updateSelectedIndex, // 함수 전달
-                ),
-                PurposeButton(
-                  purpose: "점심시간 함께 산책해요",
-                  selectedindex: 3,
-                  onIndexChanged: _updateSelectedIndex, // 함수 전달
-                ),
-              ],
+              children: List.generate(purpose.length, (index) {
+                return PurposeButton(
+                  purpose: purpose[index],
+                  isSelected: _selectedIndex != null && _selectedIndex == index,
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = index; // 선택한 목적의 인덱스 업데이트
+                    });
+                  },
+                );
+              }),
             ),
           ),
           ModalButton(
             text: "요청 보내기",
             handlePressed: () async {
-              final receiverId = userId;
+              final receiverId = widget.userId;
               int senderId = 0; // 초기화
 
               try {
@@ -82,90 +87,55 @@ class ChoosePurpose extends StatelessWidget {
                 } else {
                   print(
                       '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+                  return;
                 }
-                // receiverId 어케 가져올건데 purpose에서 가져와야지
+
+                if (_selectedIndex == null) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        // title: const Text(""),
+                        content: BottomOneButton(
+                          first: '커피챗 목적을 선택해주세요.',
+                        ),
+                      );
+                    },
+                  );
+                  return;
+                }
+
                 Map<String, dynamic> response =
-                    await matchRequest(senderId, receiverId, _selectedIndex);
-
-                print(response);
-                if (response['success'] == true) {
-                  try {
-                    Map<String, dynamic> inforesponse = await matchInfoRequest(
-                        response['data']['matchId'],
-                        response['data']['senderId'],
-                        response['data']['receiverId']);
-
-                    print("info Response: $inforesponse");
-
-                    var nickname = inforesponse['data']['receiverInfo']
-                            ['nickname'] ??
-                        "nickname";
-                    var company = inforesponse['data']['receiverInfo']
-                            ['company']['name'] ??
-                        "company";
-                    var position = inforesponse['data']['receiverInfo']
-                            ['position'] ??
-                        "position";
-                    var introduction = inforesponse['data']['receiverInfo']
-                            ['introduction'] ??
-                        "introduction";
-                    double rating = inforesponse['data']['receiverInfo']
-                            ['coffeeBean'] ??
-                        0.0;
-
-                    int requestType =
-                        int.parse(inforesponse['data']['requestTypeId'] ?? '0');
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CoffeechatReqList(
-                                  receiverNickname: nickname,
-                                  receiverCompany: company,
-                                  receiverPosition: position,
-                                  receiverIntroduction: introduction,
-                                  receiverRating: rating,
-                                  Question: purpose[requestType],
-                                  matchId: response['data']['matchId'],
-                                )));
-                  } catch (e) {
-                    print("matchInfoRequest Error: $e");
-                  }
-                }
+                    await matchRequest(senderId, receiverId, _selectedIndex!);
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                selectedIndexProvider.selectedIndex = 1;
               } catch (e) {
-                print("matchRequest Error: $e");
+                print(e);
+                throw Error();
               }
             },
+            buttonColor: _selectedIndex != null
+                ? Colors.black
+                : Colors.grey, // 배경색 조건에 따라 동적으로 설정
           )
         ],
       ),
     );
   }
-
-  // 선택된 인덱스를 업데이트하는 함수
-  void _updateSelectedIndex(int newIndex) {
-    _selectedIndex = newIndex;
-  }
 }
 
-class PurposeButton extends StatefulWidget {
+class PurposeButton extends StatelessWidget {
   final String purpose;
-  final int selectedindex;
-  final Function(int) onIndexChanged; // 새로운 함수 추가
+  final bool isSelected;
+  final VoidCallback onPressed;
 
   const PurposeButton({
     super.key,
     required this.purpose,
-    required this.selectedindex,
-    required this.onIndexChanged, // 생성자에 함수 추가
+    required this.isSelected,
+    required this.onPressed,
   });
-
-  @override
-  State<PurposeButton> createState() => _PurposeButtonState();
-}
-
-class _PurposeButtonState extends State<PurposeButton> {
-  bool isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -174,15 +144,9 @@ class _PurposeButtonState extends State<PurposeButton> {
       width: 280,
       height: 50,
       child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            isPressed = !isPressed;
-            // 버튼이 눌리면 새로운 인덱스로 업데이트
-            widget.onIndexChanged(widget.selectedindex);
-          });
-        },
+        onPressed: onPressed,
         style: ButtonStyle(
-          backgroundColor: isPressed
+          backgroundColor: isSelected
               ? MaterialStateProperty.all(const Color(0xffff916f))
               : MaterialStateProperty.all(Colors.white),
           side: MaterialStateProperty.all(const BorderSide(
@@ -196,10 +160,10 @@ class _PurposeButtonState extends State<PurposeButton> {
           ),
         ),
         child: Text(
-          "# ${widget.purpose}",
+          "# $purpose",
           style: TextStyle(
             fontSize: 20,
-            color: isPressed ? Colors.white : Colors.black,
+            color: isSelected ? Colors.white : Colors.black,
           ),
         ),
       ),

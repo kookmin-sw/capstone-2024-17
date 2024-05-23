@@ -13,7 +13,7 @@ import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
-import 'package:frontend/model/user_id_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
@@ -79,7 +79,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
 
-  late UserIdModel userId;
+  late UserProfileModel userProfile;
   late List<UserModel> userList;
   late MyCafeModel myCafe;
 
@@ -146,7 +146,7 @@ class _CafeDetailsState extends State<CafeDetails>
   @override
   Widget build(BuildContext context) {
     stompClient = Provider.of<StompClient>(context);
-    userId = Provider.of<UserIdModel>(context);
+    userProfile = Provider.of<UserProfileModel>(context);
     userList = Provider.of<AllUsersModel>(context).getUserList(widget.cafeId);
     myCafe = Provider.of<MyCafeModel>(context);
 
@@ -219,7 +219,7 @@ class _CafeDetailsState extends State<CafeDetails>
                       ListView.builder(
                         itemCount: userList.length,
                         itemBuilder: (context, index) {
-                          return (userList[index].userId == userId.userId)
+                          return (userList[index].userId == userProfile.userId)
                               ? Container()
                               : UserItem(
                                   type: "cafeUser",

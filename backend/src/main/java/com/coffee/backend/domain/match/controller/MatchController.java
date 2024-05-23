@@ -1,5 +1,6 @@
 package com.coffee.backend.domain.match.controller;
 
+import com.coffee.backend.domain.match.dto.IsMatchingDto;
 import com.coffee.backend.domain.match.dto.MatchAcceptResponse;
 import com.coffee.backend.domain.match.dto.MatchDto;
 import com.coffee.backend.domain.match.dto.MatchFinishRequestDto;
@@ -17,7 +18,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,11 +43,11 @@ public class MatchController {
     }
 
     @GetMapping("/request/info")
-    public ResponseEntity<ApiResponse<MatchInfoResponseDto>> getMatchRequestInfo(
+    public ResponseEntity<ApiResponse<List<MatchInfoResponseDto>>> getMatchRequestInfo(
             @RequestParam("senderId") Long senderId) {
         DtoLogger.requestParam("senderId", senderId);
 
-        MatchInfoResponseDto response = matchService.getMatchRequestInfo(senderId);
+        List<MatchInfoResponseDto> response = matchService.getMatchRequestInfo(senderId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -69,7 +69,7 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/decline")
+    @PutMapping("/decline")
     public ResponseEntity<ApiResponse<MatchDto>> declineMatchRequest(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
 
@@ -78,7 +78,7 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/cancel")
+    @PutMapping("/cancel")
     public ResponseEntity<ApiResponse<MatchDto>> cancelMatchRequest(@RequestBody MatchIdDto dto) {
         DtoLogger.requestBody(dto);
 
@@ -87,7 +87,7 @@ public class MatchController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @PostMapping("/finish")
+    @PutMapping("/finish")
     public ResponseEntity<ApiResponse<MatchStatusDto>> finishMatch(@RequestBody MatchFinishRequestDto dto) {
         DtoLogger.requestBody(dto);
 
@@ -97,11 +97,11 @@ public class MatchController {
     }
 
     @GetMapping("/isMatching")
-    public ResponseEntity<ApiResponse<Boolean>> isMatching(@RequestBody MatchIdDto dto) {
-        DtoLogger.requestBody(dto);
+    public ResponseEntity<ApiResponse<IsMatchingDto>> isMatching(@RequestParam("userId") Long userId) {
+        DtoLogger.requestParam("userId", userId);
 
         log.info("Check if isMathing");
-        Boolean response = matchService.isMatching(dto);
+        IsMatchingDto response = matchService.isMatching(userId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
