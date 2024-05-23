@@ -472,7 +472,6 @@ public class MatchService {
         User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
         User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
 
-        int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
         double oldCoffeeBean = receiver.getCoffeeBean();
 
         double standard = 3.0;

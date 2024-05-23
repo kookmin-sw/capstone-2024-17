@@ -19,6 +19,7 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
+    private String matchId;
 
     @ManyToOne
     @JoinColumn(name = "sender_id")
