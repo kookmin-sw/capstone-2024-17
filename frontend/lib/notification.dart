@@ -155,22 +155,22 @@ Future<void> updateNotificationLogFile(String userUUID) async {
   try {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/notification.txt');
-    if (await file.exists()) {
-      final contents = await file.readAsLines(); // 파일의 모든 줄을 읽어옴
-      if (contents.isNotEmpty) {
-        final storedUUID = contents.first; // 파일의 첫 번째 줄에 저장된 UUID
-        if (storedUUID != userUUID) {
-          // 저장된 UUID와 주어진 UUID가 다를 경우: 파일 내용을 업데이트
-          await file.writeAsString(userUUID); // 새로운 UUID가 첫 줄에 기록된 새 파일로 덮어씀
-          print('UUID 다름: 파일 갱신됨');
-        }
-      } else {
-        // 파일에 내용이 없는 경우
-        await file.writeAsString(userUUID);
-        print('UUID 없음: 기록됨');
+    if (!(await file.exists())) {
+      await file.create(recursive: true);
+      print('파일이 생성되었습니다: ${file.path}');
+    }
+    final contents = await file.readAsLines(); // 파일의 모든 줄을 읽어옴
+    if (contents.isNotEmpty) {
+      final storedUUID = contents.first; // 파일의 첫 번째 줄에 저장된 UUID
+      if (storedUUID != userUUID) {
+        // 저장된 UUID와 주어진 UUID가 다를 경우: 파일 내용을 업데이트
+        await file.writeAsString(userUUID); // 새로운 UUID가 첫 줄에 기록된 새 파일로 덮어씀
+        print('UUID 다름: 파일 갱신됨');
       }
     } else {
-      print('파일이 없는데요?');
+      // 파일에 내용이 없는 경우
+      await file.writeAsString(userUUID);
+      print('UUID 없음: 기록됨');
     }
   } catch (e) {
     print('알림 기록 파일 업데이트 실패: $e');
