@@ -117,7 +117,7 @@ class NotificationDialog extends StatelessWidget {
             top: -50,
             left: 110,
             child: Image.asset(
-              'assets/logo.png',
+              'assets/logo_no_background.png',
               width: 80,
             ),
           ),
