@@ -32,6 +32,14 @@ public class CustomMapper {
     }
 
     public CompanyDto toCompanyDto(Company company) {
+        if (company == null) {
+            return CompanyDto.builder()
+                    .name("무소속")
+                    .domain(null)
+                    .logoUrl(null)
+                    .build();
+        }
+
         return CompanyDto.builder()
                 .name(company.getName())
                 .domain(company.getDomain())

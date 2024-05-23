@@ -68,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     stompClient = Provider.of<StompClient>(context);
 
+    // 새로운 메시지가 추가되면 자동으로 맨 아래로 스크롤
     // addPostFrameCallback: 렌더링된 후 즉시 실행
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -212,10 +213,38 @@ class _ChatScreenState extends State<ChatScreen> {
     Map<String, dynamic> res = await getChatList(chatroomId);
     if (res['success']) {
       // 요청 성공
-      setState(() {
-        chats =
-            List<Map<String, dynamic>>.from(res['data']['messageResponses']);
-      });
+      List<Map<String, dynamic>> fetchedChats =
+          List<Map<String, dynamic>>.from(res['data']['messageResponses']);
+
+      // 채팅방에 메시지가 없는 경우 자동 메시지 전송
+      if (fetchedChats.isEmpty) {
+        // 메시지 전송
+        int senderId;
+        Map<String, dynamic> res = await getUserDetail();
+        if (res['success']) {
+          // 요청 성공 => 아이디 저장
+          senderId = res['data']['userId'];
+          token = (await storage.read(key: 'authToken')) ?? '';
+          final data =
+              jsonEncode({"senderId": senderId, "content": '함께 커피챗 해요!☕️'});
+          stompClient.send(
+            destination: '/pub/chatroom/${widget.chatroomId.toString()}',
+            headers: {
+              "Content-Type": "application/json",
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+            body: data,
+          );
+          setState(() {});
+        } else {
+          print('첫 메시지 전송 실패: ${res["message"]}(${res["statusCode"]})');
+        }
+      } else {
+        setState(() {
+          chats = fetchedChats;
+        });
+      }
     } else {
       // 실패: 예외처리
       print('채팅 불러오기 실패: ${res["message"]}(${res["statusCode"]})');

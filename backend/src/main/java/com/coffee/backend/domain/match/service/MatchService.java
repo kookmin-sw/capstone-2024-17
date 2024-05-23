@@ -106,27 +106,21 @@ public class MatchService {
     }
 
     // 보낸 매칭 요청 정보
-    public MatchInfoResponseDto getMatchRequestInfo(Long senderId) {
+    public List<MatchInfoResponseDto> getMatchRequestInfo(Long senderId) {
         log.trace("getMatchRequestInfo()");
 
-        Set<String> keys;
-        try {
-            keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
-        } catch (Exception e) {
+        Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
+        if (keys == null || keys.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        MatchInfoResponseDto response = new MatchInfoResponseDto();
+        List<MatchInfoResponseDto> response = new ArrayList<>();
         for (String key : keys) {
-            Map<Object, Object> matchInfo;
-            try {
-                matchInfo = redisTemplate.opsForHash().entries(key);
-            } catch (Exception e) {
-                log.error("Error fetching match info from Redis for key: {}", key, e);
-                continue;
-            }
+            Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
             String expirationTime = (String) matchInfo.get("expirationTime");
             if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
+                String matchId = (String) matchInfo.get("matchId");
+
                 Long receiverId = getLongId(matchInfo.get("receiverId"));
                 User receiver = userRepository.findById(receiverId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -134,10 +128,12 @@ public class MatchService {
                 receiverInfo.setReceiverId(receiverId);
                 receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
-                response = mapper.map(matchInfo, MatchInfoResponseDto.class);
-                response.setReceiverInfo(receiverInfo);
-            } else {
-                throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+                MatchInfoResponseDto res = new MatchInfoResponseDto();
+                res.setMatchId(matchId);
+                res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
+                res.setReceiverInfo(receiverInfo);
+                res.setExpirationTime(expirationTime);
+                response.add(res);
             }
         }
         return response;
@@ -331,7 +327,13 @@ public class MatchService {
     }
 
     private boolean hasNotExpired(String expirationTime) {
-        return System.currentTimeMillis() < Long.parseLong(expirationTime);
+        try {
+            long expirationMillis = Long.parseLong(expirationTime);
+            return System.currentTimeMillis() < expirationMillis;
+        } catch (NumberFormatException e) {
+            log.error("Invalid expiration time format: {}", expirationTime, e);
+            return false;
+        }
     }
 
     // 매칭 요청 검증
