@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/auto_offline_service.dart';
@@ -247,8 +248,24 @@ class ReceivedReqDialog extends StatelessWidget {
                 Provider.of<AutoOfflineService>(context, listen: false)
                     .autoOffline();
 
-                // 커피챗 진행중 여부 true로
-                matchingInfo.setIsMatching(true);
+                // 커피챗 진행중 여부 true로, 매칭정보 가져오기
+                Map<String, dynamic> userDetail = await getUserDetail();
+                getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+                  matchingInfo.setIsMatching(value["isMatching"]);
+
+                  // 커피챗 진행중이면 상대방 정보도 가져오기
+                  if (value["isMatching"]) {
+                    matchingInfo.setMatching(
+                      matchId: value["matchId"],
+                      myId: value["myId"],
+                      myNickname: value["myNickname"],
+                      myCompany: value["myCompany"],
+                      partnerId: value["partnerId"],
+                      partnerCompany: value["partnerCompany"],
+                      partnerNickname: value["partnerNickname"],
+                    );
+                  }
+                });
               },
               handleSecondClick: () async {
                 onReject?.call(); // onReject 함수 호출
