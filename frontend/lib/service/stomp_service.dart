@@ -1,15 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/model/user_model.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:stomp_dart_client/stomp.dart';
 
 // cafe list의 각 cafe에 sub 요청
 void subCafeList(
     StompClient stompClient, List<String> cafeList, AllUsersModel allUsers) {
   if (!stompClient.connected) {
-    print("stompClient is not connected !!");
-    return;
+    throw Exception("stompClient is not connected !!");
   }
 
   for (final cafeId in cafeList) {
@@ -37,8 +38,7 @@ void subCafeList(
 // cafe 업데이트(추가, 삭제) pub 요청
 void pubCafe(StompClient stompClient, String type, int userId, String cafeId) {
   if (!stompClient.connected) {
-    print("stompClient is not connected !!");
-    return;
+    throw Exception("stompClient is not connected !!");
   }
 
   stompClient.send(

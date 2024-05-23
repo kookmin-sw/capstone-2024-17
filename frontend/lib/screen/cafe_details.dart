@@ -15,6 +15,7 @@ import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/model/user_model.dart';
 import 'package:frontend/model/all_users_model.dart';
@@ -287,30 +288,39 @@ class _CafeDetailsState extends State<CafeDetails>
                               return;
                             }
 
-                            // 지정 카페 변경인 경우
-                            if (!setOrChange) {
-                              // 기존 카페에서 유저 삭제 pub 요청
-                              deleteUserInCafe(
+                            try {
+                              // 지정 카페 변경인 경우
+                              if (!setOrChange) {
+                                // 기존 카페에서 유저 삭제 pub 요청
+                                deleteUserInCafe(
+                                  stompClient,
+                                  userId,
+                                  myCafe.cafeId!,
+                                );
+                              }
+                              // 카페에 유저 추가 pub 요청
+                              addUserInCafe(
                                 stompClient,
                                 userId,
-                                myCafe.cafeId!,
+                                widget.cafeId,
+                              );
+
+                              // 이 카페에서 5분마다 반경 벗어남 체크
+                              _startTimer();
+
+                              myCafe.setMyCafe(
+                                cafeId: widget.cafeId,
+                                latitude: widget.cafeDetailsArguments[6],
+                                longitude: widget.cafeDetailsArguments[7],
+                              );
+                            } catch (e) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const OneButtonDialog(
+                                  first: "카페 지정에 실패했습니다. \n잠시후 다시 시도해주세요.",
+                                ),
                               );
                             }
-                            // 카페에 유저 추가 pub 요청
-                            addUserInCafe(
-                              stompClient,
-                              userId,
-                              widget.cafeId,
-                            );
-
-                            // 이 카페에서 5분마다 반경 벗어남 체크
-                            _startTimer();
-
-                            myCafe.setMyCafe(
-                              cafeId: widget.cafeId,
-                              latitude: widget.cafeDetailsArguments[6],
-                              longitude: widget.cafeDetailsArguments[7],
-                            );
                           },
                           handleSecondClick: _stopTimer,
                         );
