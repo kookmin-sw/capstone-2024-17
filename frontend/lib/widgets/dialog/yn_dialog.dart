@@ -3,18 +3,17 @@ import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 
 class YesOrNoDialog extends StatelessWidget {
   final String content;
-  final String firstButton;
-  final String secondButton;
-  final Function handleFirstClick;
-  final Function handleSecondClick;
+  final String? firstButton;
+  final String? secondButton;
+  final Function()? handleFirstClick;
+  final Function()? handleSecondClick;
 
   const YesOrNoDialog({
-    super.key,
-    required this.content,
-    required this.firstButton,
-    required this.secondButton,
-    required this.handleFirstClick,
-    required this.handleSecondClick,
+    this.content = '',
+    this.firstButton,
+    this.secondButton,
+    this.handleFirstClick,
+    this.handleSecondClick,
   });
 
   @override
@@ -41,10 +40,10 @@ class YesOrNoDialog extends StatelessWidget {
               height: 20,
             ),
             BottomTwoButtonsSmall(
-              first: "확인",
-              second: "취소",
-              handleFirstClick: handleFirstClick,
-              handleSecondClick: handleSecondClick,
+              first: firstButton ?? '확인',
+              second: secondButton ?? '취소',
+              handleFirstClick: handleFirstClick ?? () {},
+              handleSecondClick: handleSecondClick ?? () {},
             ),
           ],
         ),
