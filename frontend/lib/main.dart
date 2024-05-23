@@ -189,7 +189,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ? userDetail['data']['company']['name']
               : '미인증',
           position: userDetail['data']['position'],
-          introduction: userDetail['data']['introduction'],
+          introduction: (userDetail['data']['introduction'] != null)
+              ? userDetail['data']['introduction']
+              : '',
           rating: userDetail['data']['coffeeBean'],
         );
 
