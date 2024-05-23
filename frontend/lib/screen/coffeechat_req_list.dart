@@ -317,20 +317,14 @@ class _ReceivedReqState extends State<ReceivedReq> {
     }
   }
 
-  Future<void> handleMatchAccept(
-      String matchId, String nickname, String logoUrl, int senderId) async {
-    Map<String, dynamic> response = await matchAcceptRequest(matchId);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatScreen(
-          chatroomId: response["data"]["chatroomId"],
-          nickname: nickname,
-          logoUrl: logoUrl,
-        ),
-      ),
-    );
-  }
+  // Future<void> handleMatchAccept(
+  //     String matchId,
+  //     String nickname,
+  //     String logoUrl,
+  //     int senderId,
+  //     SelectedIndexModel selectedIndexProvider) async {
+  //
+  // }
 
   Future<void> handleMatchDecline(String matchId) async {
     await matchDeclineRequest(matchId);
@@ -360,16 +354,6 @@ class _ReceivedReqState extends State<ReceivedReq> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> senderData = revList[index]['senderInfo'];
 
-                // 수락 버튼을 누를 때 호출할 함수
-                void handleAccept() {
-                  selectedIndexProvider.selectedIndex = 2;
-                  handleMatchAccept(
-                      revList[index]["matchId"],
-                      revList[index]["senderInfo"]["nickname"],
-                      revList[index]["senderInfo"]["company"]["logoUrl"] ?? '',
-                      revList[index]["senderInfo"]["senderId"] ?? 0);
-                }
-
                 void handleReject() {
                   handleMatchDecline(revList[index]["matchId"]);
                 }
@@ -385,9 +369,10 @@ class _ReceivedReqState extends State<ReceivedReq> {
                       ? senderData["coffeeBean"]
                       : 0.0,
                   matchId: revList[index]["matchId"],
+                  logoUrl: senderData["company"]["logoUrl"] ?? '',
                   requestTypeId: int.parse(revList[index]["requestTypeId"]
                       .replaceAll(RegExp(r'[{}]'), '')),
-                  onAccept: handleAccept,
+                  // onAccept: handleAccept,
                   onReject: handleReject,
                 );
               },
