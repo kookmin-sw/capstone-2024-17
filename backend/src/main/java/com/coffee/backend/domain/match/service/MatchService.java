@@ -77,6 +77,17 @@ public class MatchService {
         redisTemplate.opsForHash()
                 .putAll("receiverId:" + dto.getReceiverId() + "-senderId:" + dto.getSenderId(), matchInfo);
 
+        // 매칭 중인지 조회 위해 저장
+        Map<String, String> isMatchingInfo = Map.of(
+                "matchId", matchId,
+                "senderId", dto.getSenderId().toString(),
+                "receiverId", dto.getReceiverId().toString(),
+                "isMatching", "no"
+        );
+
+        redisTemplate.opsForHash().putAll("userId:" + dto.getSenderId(), isMatchingInfo);
+        redisTemplate.opsForHash().putAll("userId:" + dto.getReceiverId(), isMatchingInfo);
+
         // 10분동안 락 설정
         Map<String, String> lockInfo = Map.of("matchId", matchId);
         redisTemplate.opsForHash().putAll(lockKey, lockInfo);
@@ -95,31 +106,34 @@ public class MatchService {
     }
 
     // 보낸 매칭 요청 정보
-    public MatchInfoResponseDto getMatchRequestInfo(Long senderId) {
+    public List<MatchInfoResponseDto> getMatchRequestInfo(Long senderId) {
         log.trace("getMatchRequestInfo()");
 
         Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
-
-        // 한번도 매칭 요청을 보낸 적이 없는 경우
         if (keys == null || keys.isEmpty()) {
             throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        MatchInfoResponseDto response = new MatchInfoResponseDto();
+        List<MatchInfoResponseDto> response = new ArrayList<>();
         for (String key : keys) {
             Map<Object, Object> matchInfo = redisTemplate.opsForHash().entries(key);
             String expirationTime = (String) matchInfo.get("expirationTime");
             if (matchInfo.get("status").equals("pending") && hasNotExpired(expirationTime)) {
+                String matchId = (String) matchInfo.get("matchId");
+
                 Long receiverId = getLongId(matchInfo.get("receiverId"));
                 User receiver = userRepository.findById(receiverId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+                receiverInfo.setReceiverId(receiverId);
                 receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
-                response = mapper.map(matchInfo, MatchInfoResponseDto.class);
-                response.setReceiverInfo(receiverInfo);
-            } else {
-                throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+                MatchInfoResponseDto res = new MatchInfoResponseDto();
+                res.setMatchId(matchId);
+                res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
+                res.setReceiverInfo(receiverInfo);
+                res.setExpirationTime(expirationTime);
+                response.add(res);
             }
         }
         return response;
@@ -145,6 +159,7 @@ public class MatchService {
                 User sender = userRepository.findById(senderId)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+                senderInfo.setSenderId(senderId);
                 senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
 
                 MatchReceivedInfoDto res = new MatchReceivedInfoDto();
@@ -200,15 +215,9 @@ public class MatchService {
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "accepted");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
-        // 매칭 중인지 조회 위해 저장
-        Map<String, String> isMatchingInfo = Map.of(
-                "matchId", dto.getMatchId(),
-                "senderId", senderId.toString(),
-                "receiverId", receiverId.toString(),
-                "isMatching", "yes"
-        );
-        redisTemplate.opsForHash().putAll("userId:" + senderId, isMatchingInfo);
-        redisTemplate.opsForHash().putAll("userId:" + receiverId, isMatchingInfo);
+        // 매칭중 상태 업데이트
+        redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "yes");
+        redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "yes");
 
         MatchAcceptResponse match = new MatchAcceptResponse();
         match.setMatchId(dto.getMatchId());
@@ -318,7 +327,13 @@ public class MatchService {
     }
 
     private boolean hasNotExpired(String expirationTime) {
-        return System.currentTimeMillis() < Long.parseLong(expirationTime);
+        try {
+            long expirationMillis = Long.parseLong(expirationTime);
+            return System.currentTimeMillis() < expirationMillis;
+        } catch (NumberFormatException e) {
+            log.error("Invalid expiration time format: {}", expirationTime, e);
+            return false;
+        }
     }
 
     // 매칭 요청 검증
@@ -383,32 +398,41 @@ public class MatchService {
     public IsMatchingDto isMatching(Long userId) {
         log.trace("isMatching()");
 
-        Map<Object, Object> isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
+        Map<Object, Object> isMatchingInfo = null;
+        try {
+            isMatchingInfo = redisTemplate.opsForHash().entries("userId:" + userId);
+        } catch (Exception e) {
+            log.error("isMatching() 에러");
+        }
 
-        // 수락한 적이 없는 경우
-        if (isMatchingInfo.get("isMatching") == null) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_ACCEPTED);
+        if (isMatchingInfo == null || isMatchingInfo.isEmpty()) {
+            log.warn("No matching info found for userId: {}", userId);
+            IsMatchingDto response = new IsMatchingDto();
+            response.setIsMatching("no");
+            return response;
         }
 
         Long senderId = getLongId(isMatchingInfo.get("senderId"));
         Long receiverId = getLongId(isMatchingInfo.get("receiverId"));
-
-        // 요청 유저 아닌 경우
-        if (!userId.equals(senderId) && !userId.equals(receiverId)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
         User sender = userRepository.findByUserId(senderId).orElseThrow();
         User receiver = userRepository.findByUserId(receiverId).orElseThrow();
 
         SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
+        senderInfo.setSenderId(senderId);
         senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
+        receiverInfo.setReceiverId(receiverId);
         receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
 
         IsMatchingDto response = mapper.map(isMatchingInfo, IsMatchingDto.class);
         response.setSenderInfo(senderInfo);
         response.setReceiverInfo(receiverInfo);
+
+        if (userId.equals(senderId)) {
+            response.setMatchPosition("sender");
+        } else if (userId.equals(receiverId)) {
+            response.setMatchPosition("receiver");
+        }
         return response;
     }
 

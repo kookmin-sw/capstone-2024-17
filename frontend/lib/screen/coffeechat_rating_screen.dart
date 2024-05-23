@@ -5,18 +5,18 @@ import 'map_place.dart';
 import 'package:flutter/material.dart';
 
 class CoffeeChatRating extends StatefulWidget {
-  final String sendername;
-  final int senderId;
+  final String partnerNickname;
+  final int partnerId;
   final int userId;
   final String matchId;
 
   const CoffeeChatRating({
-    Key? key,
-    required this.senderId,
+    super.key,
+    required this.partnerId,
     required this.userId,
-    required this.sendername,
+    required this.partnerNickname,
     required this.matchId,
-  }) : super(key: key);
+  });
 
   @override
   _CoffeeChatRatingState createState() => _CoffeeChatRatingState();
@@ -43,7 +43,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
             Padding(
               padding: const EdgeInsets.only(top: 200.0, bottom: 0),
               child: Text(
-                '${widget.sendername}님과의 커피챗\n만족하셨나요?',
+                '${widget.partnerNickname}님과의 커피챗\n만족하셨나요?',
                 style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -98,16 +98,16 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               child: GestureDetector(
                 onTap: selectedIndex >= 0
                     ? () async {
-                        int senderId = 0; //초기화
+                        int partnerId = 0; //초기화
                         int receiverId = 2; //추후 수정 필요
                         int rating = (selectedIndex + 1); //점수
 
                         try {
-                          //로그인 한 유저의 senderId 가져오기
+                          //로그인 한 유저의 partnerId 가져오기
                           Map<String, dynamic> res = await getUserDetail();
 
                           if (res['success']) {
-                            senderId = res['data']['userId'];
+                            partnerId = res['data']['userId'];
                           } else {
                             print(
                                 '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
@@ -115,7 +115,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
                           Map<String, dynamic> response =
                               await coffeeBeanReview(
-                                  senderId, receiverId, rating);
+                                  partnerId, receiverId, rating);
 
                           print(response);
 
@@ -123,7 +123,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                               await matchCancelRequest(widget.matchId);
                           if (delresponse['success'] == true) {
                             showAlertDialog(context,
-                                "${widget.sendername}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.");
+                                "${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.");
                           }
                           print(delresponse);
                         } catch (e) {

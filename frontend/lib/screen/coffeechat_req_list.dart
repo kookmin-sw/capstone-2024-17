@@ -163,7 +163,7 @@ class _SentReqState extends State<SentReq> {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null ||
             snapshot.data!['success'] != true ||
-            snapshot.hasError) {
+            snapshot.hasError || snapshot.data!['data']['matchId']==null) {
           return Center(
             child: Text(
               '보낸 요청이 없습니다 :(',
