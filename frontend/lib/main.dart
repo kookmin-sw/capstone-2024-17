@@ -225,22 +225,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // 화면 리스트 초기화
       _screenOptions = [
         Google_Map(updateCafesCallback: updateCafeList),
-        (matchingInfo.isMatching)
-            ? Matching(
-                matchId: matchingInfo.matchId!,
-                partnerId: matchingInfo.partnerId!,
-                partnerCompany: matchingInfo.partnerCompany!,
-                partnerNickname: matchingInfo.partnerNickname!,
-              )
-            : const CoffeechatReqList(
-                matchId: '',
-                Question: '',
-                receiverCompany: '',
-                receiverPosition: '',
-                receiverIntroduction: '',
-                receiverRating: 0.0,
-                receiverNickname: '',
-              ),
+        const CoffeechatReqList(
+          matchId: '',
+          Question: '',
+          receiverCompany: '',
+          receiverPosition: '',
+          receiverIntroduction: '',
+          receiverRating: 0.0,
+          receiverNickname: '',
+        ),
         const ChatroomListScreen(),
         const UserScreen(),
       ];
