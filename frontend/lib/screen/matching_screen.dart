@@ -5,12 +5,18 @@ import 'package:frontend/widgets/profile_img.dart';
 
 class Matching extends StatefulWidget {
   final String matchId;
+  final int myId;
+  final String myNickname;
+  final String myCompany;
   final String partnerCompany;
   final String partnerNickname;
   final int partnerId;
 
   const Matching({
     super.key,
+    required this.myId,
+    required this.myNickname,
+    required this.myCompany,
     required this.partnerNickname,
     required this.matchId,
     required this.partnerCompany,
@@ -25,37 +31,6 @@ class _MatchingWidgetState extends State<Matching> {
   //무직이나 취준일 때 default 이미지 필요할 듯
   var imgpath1 = 'bean(1).png';
   var imgpath2 = 'cafe.jpeg';
-
-  String username = '';
-  String usercompany = '';
-  int userId = 0;
-
-  void userinfo() async {
-    print("userinfo in!");
-    try {
-      Map<String, dynamic> res = await getUserDetail();
-      print(res);
-      if (res['success']) {
-        setState(() {
-          userId = res['data']['userId'];
-          username = res['data']['nickname'];
-          usercompany = res['data']['company']['name'];
-        });
-      } else {
-        print(
-            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
-      }
-    } catch (e) {
-      throw Error();
-    }
-    usercompany = usercompany ?? '커리어 한잔';
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    userinfo();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +71,7 @@ class _MatchingWidgetState extends State<Matching> {
                   Positioned(
                     top: 150, // 텍스트 상위 여백 설정
                     child: Text(
-                      '$username X ${widget.partnerNickname}',
+                      '${widget.myNickname} X ${widget.partnerNickname}',
                       // 회사 이름이 길어졌을 때 논의 필요
                       style: const TextStyle(
                           fontSize: 20,
@@ -114,14 +89,14 @@ class _MatchingWidgetState extends State<Matching> {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: (usercompany == '')
+                      child: (widget.myCompany == '')
                           ? const ProfileImgMedium(
                               isLocal: true,
                               logoUrl: "assets/coffee_bean.png",
                             )
                           : ProfileImgMedium(
                               isLocal: true,
-                              logoUrl: "assets/$usercompany-logo.png"),
+                              logoUrl: "assets/${widget.myCompany}-logo.png"),
                     ),
                   ),
                   Positioned(
@@ -159,7 +134,7 @@ class _MatchingWidgetState extends State<Matching> {
                       context,
                       "커피챗 종료",
                       "커피챗을 종료하고 나가시겠습니까?",
-                      userId,
+                      widget.myId,
                       widget.partnerId,
                       widget.partnerNickname,
                       widget.matchId,

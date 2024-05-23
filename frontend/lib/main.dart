@@ -196,6 +196,9 @@ class _MyHomePageState extends State<MyHomePage> {
           if (value["isMatching"]) {
             matchingInfo.setMatching(
               matchId: value["matchId"],
+              myId: value["myId"],
+              myNickname: value["myNickname"],
+              myCompany: value["myCompany"],
               partnerId: value["partnerId"],
               partnerCompany: value["partnerCompany"],
               partnerNickname: value["partnerNickname"],

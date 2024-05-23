@@ -76,6 +76,9 @@ class CoffeechatReqList extends StatelessWidget {
     return (matchingInfo.isMatching == true)
         ? Matching(
             matchId: matchingInfo.matchId!,
+            myId: matchingInfo.myId!,
+            myNickname: matchingInfo.myNickname!,
+            myCompany: matchingInfo.myCompany!,
             partnerId: matchingInfo.partnerId!,
             partnerCompany: matchingInfo.partnerCompany!,
             partnerNickname: matchingInfo.partnerNickname!,
