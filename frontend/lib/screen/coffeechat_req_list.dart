@@ -158,8 +158,8 @@ class _SentReqState extends State<SentReq> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null ||
-            snapshot.data!['success'] != true ||
-            snapshot.hasError || snapshot.data!['data']['matchId']==null) {
+            snapshot.hasError ||
+            snapshot.data!['data'].isEmpty) {
           return Center(
             child: Text(
               '보낸 요청이 없습니다 :(',

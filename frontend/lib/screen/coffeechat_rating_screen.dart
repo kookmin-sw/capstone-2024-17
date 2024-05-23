@@ -128,7 +128,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                                 return AlertDialog(
                                   content: OneButtonDialog(
                                     first:
-                                        '${widget.sendername}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
+                                        '${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
                                   ),
                                 );
                               },
