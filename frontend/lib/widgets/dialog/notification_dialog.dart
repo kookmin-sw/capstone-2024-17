@@ -10,10 +10,15 @@ class ArriveRequestNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const NotificationDialog(
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    return NotificationDialog(
       contents: "새로운 커피챗 요청이 \n도착했어요!",
       backButton: "닫기",
       navigateButton: "보기",
+      handleNavigate: () {
+        Navigator.of(context).popUntil(ModalRoute.withName('/'));
+        selectedIndexProvider.selectedIndex = 1;
+      },
     );
   }
 }
@@ -26,10 +31,15 @@ class ReqAcceptedNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return NotificationDialog(
-      contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
-      backButton: "확인",
-    );
+        contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
+        backButton: "확인",
+        navigateButton: "채팅",
+        handleNavigate: () {
+          Navigator.of(context).popUntil(ModalRoute.withName('/'));
+          selectedIndexProvider.selectedIndex = 2;
+        });
   }
 }
 
@@ -83,17 +93,18 @@ class NotificationDialog extends StatelessWidget {
   final String contents;
   final String backButton;
   final String? navigateButton;
+  final VoidCallback? handleNavigate;
 
   const NotificationDialog({
     super.key,
     required this.contents,
     required this.backButton,
     this.navigateButton,
+    this.handleNavigate,
   });
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -134,9 +145,11 @@ class NotificationDialog extends StatelessWidget {
                         first: navigateButton!,
                         second: backButton,
                         handleFirstClick: () {
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName('/'));
-                          selectedIndexProvider.selectedIndex = 1;
+                          if (handleNavigate != null) {
+                            handleNavigate!();
+                          } else {
+                            Navigator.of(context).pop();
+                          }
                         },
                         handleSecondClick: () {}),
               ],
