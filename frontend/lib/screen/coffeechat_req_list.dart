@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
+import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
@@ -14,6 +16,7 @@ import 'package:frontend/widgets/top_appbar.dart';
 import 'package:frontend/widgets/user_details.dart';
 import 'package:frontend/widgets/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:provider/provider.dart';
 
 bool timerend = false;
 List<String> purpose = [
@@ -171,6 +174,7 @@ class _SentReqState extends State<SentReq> {
     return FutureBuilder<Map<String, dynamic>>(
       future: _sendinfoFuture,
       builder: (context, snapshot) {
+        print(snapshot.data);
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null ||
@@ -188,12 +192,9 @@ class _SentReqState extends State<SentReq> {
           );
         } else {
           var data = snapshot.data!['data'];
-          int requestTypeId = data['requestTypeId'] is int
-              ? data['requestTypeId']
-              : int.tryParse(data['requestTypeId'].toString()) ?? 0;
-          matchId = data['matchId'];
+          int requestTypeId = int.parse(data[0]['requestTypeId']);
           DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
-              int.parse(data['expirationTime']));
+              int.parse(data[0]['expirationTime']));
 
           return Column(
             children: [
@@ -207,13 +208,14 @@ class _SentReqState extends State<SentReq> {
                   border: Border.all(color: Colors.grey, width: 1),
                 ),
                 child: UserDetails(
-                  nickname: data['receiverInfo']['nickname'] ?? 'nickname',
-                  company: data['receiverInfo']['company']['name'] ?? 'company',
-                  position: data['receiverInfo']['position'] ?? 'position',
+                  nickname: data[0]['receiverInfo']['nickname'] ?? 'nickname',
+                  company:
+                      data[0]['receiverInfo']['company']['name'] ?? 'company',
+                  position: data[0]['receiverInfo']['position'] ?? 'position',
                   introduction:
-                      data['receiverInfo']['introduction'] ?? 'introduction',
+                      data[0]['receiverInfo']['introduction'] ?? 'introduction',
                   rating:
-                      (data['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
+                      (data[0]['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
                 ),
               ),
               ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
@@ -330,9 +332,14 @@ class _ReceivedReqState extends State<ReceivedReq> {
     }
   }
 
-  Future<void> handleMatchAccept(String matchId) async {
-    await matchAcceptRequest(matchId);
-  }
+  // Future<void> handleMatchAccept(
+  //     String matchId,
+  //     String nickname,
+  //     String logoUrl,
+  //     int senderId,
+  //     SelectedIndexModel selectedIndexProvider) async {
+  //
+  // }
 
   Future<void> handleMatchDecline(String matchId) async {
     await matchDeclineRequest(matchId);
@@ -341,6 +348,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: revList.isEmpty
@@ -360,11 +369,6 @@ class _ReceivedReqState extends State<ReceivedReq> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> senderData = revList[index]['senderInfo'];
 
-                // 수락 버튼을 누를 때 호출할 함수
-                void handleAccept() {
-                  handleMatchAccept(revList[index]["matchId"]);
-                }
-
                 void handleReject() {
                   handleMatchDecline(revList[index]["matchId"]);
                 }
@@ -378,8 +382,10 @@ class _ReceivedReqState extends State<ReceivedReq> {
                   introduction: senderData["introduction"] ?? "No introduction",
                   rating: senderData["coffeeBean"] ?? 0.0,
                   matchId: revList[index]["matchId"],
-                  requestTypeId: int.parse(revList[index]["requestTypeId"]),
-                  onAccept: handleAccept,
+                  logoUrl: senderData["company"]["logoUrl"] ?? '',
+                  requestTypeId: int.parse(revList[index]["requestTypeId"]
+                      .replaceAll(RegExp(r'[{}]'), '')),
+                  // onAccept: handleAccept,
                   onReject: handleReject,
                 );
               },

@@ -4,6 +4,7 @@ import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
 import 'package:frontend/widgets/user_details_modal.dart';
 import 'package:frontend/widgets/choose_purpose.dart';
@@ -22,6 +23,7 @@ class UserItem extends StatelessWidget {
   final String introduction;
   final double rating;
   final String matchId;
+  final String logoUrl;
   final int requestTypeId;
   final VoidCallback? onAccept;
   final VoidCallback? onReject; // onReject 함수 추가
@@ -36,6 +38,7 @@ class UserItem extends StatelessWidget {
     required this.introduction,
     required this.rating,
     required this.matchId,
+    required this.logoUrl,
     required this.requestTypeId,
     this.onAccept,
     this.onReject, // onReject 매개변수 설정
@@ -66,6 +69,7 @@ class UserItem extends StatelessWidget {
                   rating: rating, // 여기에서 rating을 전달합니다.
                   receiverId: userId, //여기선 요청 받은 애의 userId를 씀
                   matchId: matchId,
+                  logoUrl: logoUrl,
                   requestTypeId: requestTypeId,
                   onAccept: onAccept,
                   onReject: onReject);
@@ -194,6 +198,7 @@ class ReceivedReqDialog extends StatelessWidget {
   final double rating;
   final int receiverId;
   final String matchId;
+  final String logoUrl;
   final int requestTypeId;
   final VoidCallback? onAccept;
   final VoidCallback? onReject; // onReject 함수 추가
@@ -207,6 +212,7 @@ class ReceivedReqDialog extends StatelessWidget {
     required this.rating,
     required this.receiverId,
     required this.matchId,
+    required this.logoUrl,
     required this.requestTypeId,
     required this.onAccept,
     required this.onReject,
@@ -241,8 +247,20 @@ class ReceivedReqDialog extends StatelessWidget {
               handleFirstClick: () async {
                 print(matchId);
 
+                // 수락 버튼을 누를 때 호출할 함수
+                Map<String, dynamic> response =
+                    await matchAcceptRequest(matchId);
                 selectedIndexProvider.selectedIndex = 2;
-                onAccept?.call();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                      chatroomId: response["data"]["chatroomId"],
+                      nickname: nickname,
+                      logoUrl: logoUrl,
+                    ),
+                  ),
+                );
 
                 // 오프라인으로 전환
                 Provider.of<AutoOfflineService>(context, listen: false)
