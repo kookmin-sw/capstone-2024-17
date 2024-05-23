@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
@@ -154,9 +155,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  // 알림 권한 요청
+  void _permissionWithNotification() async {
+    await [Permission.notification].request();
+  }
+
   @override
   void initState() {
     super.initState();
+    _permissionWithNotification();
+
     stompClient = Provider.of<StompClient>(context, listen: false);
     userProfile = Provider.of<UserProfileModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
