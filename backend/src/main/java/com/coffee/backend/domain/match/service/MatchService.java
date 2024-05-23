@@ -127,6 +127,7 @@ public class MatchService {
                 ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
                 receiverInfo.setReceiverId(receiverId);
                 receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
+                receiverInfo.setPosition(receiver.getPosition().getName());
 
                 MatchInfoResponseDto res = new MatchInfoResponseDto();
                 res.setMatchId(matchId);
@@ -161,6 +162,7 @@ public class MatchService {
                 SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
                 senderInfo.setSenderId(senderId);
                 senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
+                senderInfo.setPosition(sender.getPosition().getName());
 
                 MatchReceivedInfoDto res = new MatchReceivedInfoDto();
                 res.setMatchId(matchId);
@@ -420,9 +422,11 @@ public class MatchService {
         SenderInfoDto senderInfo = mapper.map(sender, SenderInfoDto.class);
         senderInfo.setSenderId(senderId);
         senderInfo.setCompany(customMapper.toCompanyDto(sender.getCompany()));
+        senderInfo.setPosition(sender.getPosition().getName());
         ReceiverInfoDto receiverInfo = mapper.map(receiver, ReceiverInfoDto.class);
         receiverInfo.setReceiverId(receiverId);
         receiverInfo.setCompany(customMapper.toCompanyDto(receiver.getCompany()));
+        receiverInfo.setPosition(receiver.getPosition().getName());
 
         IsMatchingDto response = mapper.map(isMatchingInfo, IsMatchingDto.class);
         response.setSenderInfo(senderInfo);
