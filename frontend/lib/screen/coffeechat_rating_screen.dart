@@ -111,7 +111,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                         Map<String, dynamic> res =
                             await getMatchingInfo(widget.userId);
                         print(res);
-                        if (res['data']['isMatching'] != 'no') {
+                        if (res['isMatching'] != 'no') {
                           await matchFinishRequest(
                               widget.matchId, widget.userId);
                         }
