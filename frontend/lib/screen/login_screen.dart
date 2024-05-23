@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/notification.dart';
 
-import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/button/bottom_text_secondary_button.dart';
@@ -91,9 +91,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: '로그인',
                       handlePressed: () async {
                         if (_loginIdController.text == '') {
-                          showAlertDialog(context, '아이디를 입력해주세요.');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: OneButtonDialog(
+                                  first: '아이디를 입력해주세요.',
+                                ),
+                              );
+                            },
+                          );
                         } else if (_passwordController.text == '') {
-                          showAlertDialog(context, '비밀번호를 입력해주세요.');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: OneButtonDialog(
+                                  first: '비밀번호를 입력해주세요.',
+                                ),
+                              );
+                            },
+                          );
                         } else {
                           try {
                             waitLogin(
@@ -102,7 +120,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               _passwordController.text,
                             );
                           } catch (error) {
-                            showAlertDialog(context, '요청 실패: $error');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: OneButtonDialog(
+                                    first: '요청 실패: $error',
+                                  ),
+                                );
+                              },
+                            );
                           }
                           setState(() {}); // 화면 갱신
                         }
@@ -173,14 +200,33 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       });
 
-      showAlertDialog(context, res['message']);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: res['message'],
+            ),
+          );
+        },
+      );
+
       // 메인 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
       Future.delayed(Duration.zero, () {
         Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       });
     } else {
       // 실패
-      showAlertDialog(context, '로그인 실패: ${res['message']}(${res['code']})');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '로그인 실패: ${res['message']}(${res['code']})',
+            ),
+          );
+        },
+      );
     }
   }
 }

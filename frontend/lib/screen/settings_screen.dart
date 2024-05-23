@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
 class OptionItem extends StatelessWidget {
@@ -130,18 +130,47 @@ class SettingsScreen extends StatelessWidget {
                           Map<String, dynamic> res = await deleteUser();
                           if (res['success'] == true) {
                             // 요청 성공
-                            showAlertDialog(context, '탈퇴되었습니다.)');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: OneButtonDialog(
+                                    first: '탈퇴되었습니다.',
+                                  ),
+                                );
+                              },
+                            );
+
                             await logout(context).then((_) {
                               Navigator.pushNamedAndRemoveUntil(
                                   context, '/user', (route) => false);
                             });
                           } else {
                             // 회원탈퇴 실패
-                            showAlertDialog(context,
-                                '회원탈퇴 실패: ${res['message']}(${res['statusCode']})');
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: OneButtonDialog(
+                                    first:
+                                        '회원탈퇴 실패: ${res['message']}(${res['statusCode']})',
+                                  ),
+                                );
+                              },
+                            );
                           }
                         } catch (error) {
-                          showAlertDialog(context, '요청 실패: $error');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: OneButtonDialog(
+                                  first: '요청 실패: $error',
+                                ),
+                              );
+                            },
+                          );
                         }
                       },
                       child: const Text('회원 탈퇴'),
