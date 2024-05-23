@@ -35,7 +35,7 @@ class ReqAcceptedNotification extends StatelessWidget {
     return NotificationDialog(
         contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
         backButton: "확인",
-        navigateButton: "채팅",
+        navigateButton: "채팅 목록",
         handleNavigate: () {
           Navigator.of(context).popUntil(ModalRoute.withName('/'));
           selectedIndexProvider.selectedIndex = 2;
@@ -141,7 +141,7 @@ class NotificationDialog extends StatelessWidget {
                           Navigator.of(context).pop();
                         },
                       )
-                    : BottomTwoButtonsSmall(
+                    : BottomTwoButtons(
                         first: navigateButton!,
                         second: backButton,
                         handleFirstClick: () {
