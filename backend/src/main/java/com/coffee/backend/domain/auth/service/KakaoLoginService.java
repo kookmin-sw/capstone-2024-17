@@ -60,7 +60,7 @@ public class KakaoLoginService {
             userRepository.save(user);
         }
 
-        String token = jwtService.createAccessToken(user.getKakaoId());
+        String token = jwtService.createAccessToken(user.getId());
 
         return new AuthDto(user.getUserUUID(), token);
     }
