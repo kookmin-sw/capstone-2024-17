@@ -33,6 +33,7 @@ class ChatroomItem extends StatelessWidget {
                   chatroomId: id,
                   nickname: nickname,
                   logoUrl: logoUrl,
+                  matchId: '',
                 ),
               ),
             );
