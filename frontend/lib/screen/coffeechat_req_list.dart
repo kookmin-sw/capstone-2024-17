@@ -177,9 +177,10 @@ class _SentReqState extends State<SentReq> {
         print(snapshot.data);
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.data == null ||
-            snapshot.hasError ||
-            snapshot.data!['data'].isEmpty) {
+        } else if (snapshot.hasError ||
+            snapshot.data == null ||
+            (snapshot.data!['data'] == null ||
+                snapshot.data!['data'].isEmpty)) {
           return Center(
             child: Text(
               '보낸 요청이 없습니다 :(',
