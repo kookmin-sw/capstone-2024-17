@@ -49,7 +49,7 @@ public class CompanyService {
 
     public void sendCodeToEmail(String loginId, String toEmail) {
         log.trace("sendCodeToEmail()");
-        userService.checkDuplicatedEmail(toEmail);
+        userService.checkDuplicatedEmail(loginId, toEmail);
         String domain = toEmail.split("@")[1];
         this.findCompanyByDomain(domain);
 
@@ -88,7 +88,7 @@ public class CompanyService {
 
     public EmailVerificationResponse verifiedCode(User user, String email, String authCode) {
         log.trace("verifiedCode()");
-        userService.checkDuplicatedEmail(email);
+        userService.checkDuplicatedEmail(user.getLoginId(), email);
 
         String redisAuthCode = redisTemplate.opsForValue().get(AUTH_CODE_PREFIX + email);
         boolean authResult = authCode.equals(redisAuthCode); // true : 인증 성공

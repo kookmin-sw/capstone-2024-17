@@ -76,6 +76,7 @@ public class AuthController {
         DtoLogger.requestBody(dto);
 
         KakaoUserInfoDto userInfoDto = kakaoLoginService.getUserInfo(dto.getAccessToken());
+        userInfoDto.setDeviceToken(dto.getDeviceToken());
         AuthDto authDto = kakaoLoginService.signIn(userInfoDto);
         return ResponseEntity.ok(ApiResponse.success(authDto));
     }

@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class KakaoUserInfoDto {
     private Long id;
+    private String deviceToken;
 }

@@ -61,8 +61,10 @@ public class KakaoLoginService {
             user.setNickname("user@" + dto.getId());
             user.setPosition(Position.P00);
             user.setCoffeeBean(46);
-            userRepository.save(user);
         }
+        // update deviceToken
+        user.setDeviceToken(dto.getDeviceToken());
+        userRepository.save(user);
 
         String token = jwtService.createAccessToken(user.getUserId());
 

@@ -58,6 +58,10 @@ public class AuthService {
 
         validatePassword(dto.getPassword(), user.getPassword());
 
+        // update deviceToken
+        user.setDeviceToken(dto.getDeviceToken());
+        userRepository.save(user);
+
         String token = jwtService.createAccessToken(user.getUserId());
 
         // redis에 토큰 저장
