@@ -77,6 +77,12 @@ public class UserService {
         user.setCompany(company);
         userRepository.save(user);
     }
+    
+    public UserDto updateUserNickname(User user, String nickname) {
+        log.trace("updateUserNickname()");
+        user.setNickname(nickname);
+        return customMapper.toUserDto(userRepository.save(user));
+    }
 
     public UserDto updateUserPosition(User user, String position) {
         log.trace("updateUserPosition()");
