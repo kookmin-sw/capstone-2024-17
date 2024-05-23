@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/screen/alarm_list_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
@@ -26,7 +28,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,7 @@ class CoffeechatReqList extends StatelessWidget {
   final String Question;
 
   const CoffeechatReqList({
-    Key? key,
+    super.key,
     required this.matchId,
     required this.receiverNickname,
     required this.receiverCompany,
@@ -64,43 +66,57 @@ class CoffeechatReqList extends StatelessWidget {
     required this.receiverIntroduction,
     required this.receiverRating,
     required this.Question,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: TopAppBar(
-          title: "커피챗 요청 목록",
-        ),
-        body: Column(
-          children: [
-            TabBar(
-              tabs: [
-                Tab(text: '보낸 요청'),
-                Tab(text: '받은 요청'),
-              ],
-              indicatorColor: Color(0xff212121),
-              labelStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
+    return (matchingInfo.isMatching == true)
+        ? Matching(
+            matchId: matchingInfo.matchId!,
+            myId: matchingInfo.myId!,
+            myNickname: matchingInfo.myNickname!,
+            myCompany: matchingInfo.myCompany!,
+            partnerId: matchingInfo.partnerId!,
+            partnerCompany: matchingInfo.partnerCompany!,
+            partnerNickname: matchingInfo.partnerNickname!,
+          )
+        : const DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: TopAppBar(
+                title: "커피챗 요청 목록",
+              ),
+              body: Column(
+                children: [
+                  TabBar(
+                    tabs: [
+                      Tab(text: '보낸 요청'),
+                      Tab(text: '받은 요청'),
+                    ],
+                    indicatorColor: Color(0xff212121),
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(children: [
+                      SentReq(),
+                      ReceivedReq(),
+                    ]),
+                  ),
+                ],
               ),
             ),
-            Expanded(
-              child: TabBarView(children: [
-                SentReq(),
-                ReceivedReq(),
-              ]),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 
 class SentReq extends StatefulWidget {
+  const SentReq({super.key});
+
   @override
   _SentReqState createState() => _SentReqState();
 }
@@ -156,11 +172,12 @@ class _SentReqState extends State<SentReq> {
       future: _sendinfoFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null ||
             snapshot.data!['success'] != true ||
-            snapshot.hasError || snapshot.data!['data']['matchId']==null) {
-          return Center(
+            snapshot.hasError ||
+            snapshot.data!['data']['matchId'] == null) {
+          return const Center(
             child: Text(
               '보낸 요청이 없습니다 :(',
               style: TextStyle(
@@ -176,7 +193,7 @@ class _SentReqState extends State<SentReq> {
               ? data['requestTypeId']
               : int.tryParse(data['requestTypeId'].toString()) ?? 0;
           matchId = data['matchId'];
-          DateTime _endTime = DateTime.fromMillisecondsSinceEpoch(
+          DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
               int.parse(data['expirationTime']));
 
           return Column(
@@ -201,16 +218,17 @@ class _SentReqState extends State<SentReq> {
                 ),
               ),
               ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
-              Expanded(child: SizedBox(height: 10)),
+              const Expanded(child: SizedBox(height: 10)),
               CountdownTimer(
-                endTime: _endTime.millisecondsSinceEpoch,
+                endTime: endTime.millisecondsSinceEpoch,
                 onEnd: () {
                   if (!timerend) {
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          content: Text('제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.'),
+                          content:
+                              const Text('제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -219,7 +237,7 @@ class _SentReqState extends State<SentReq> {
                                   _sendinfoFuture = sendinfo();
                                 });
                               },
-                              child: Text('확인'),
+                              child: const Text('확인'),
                             ),
                           ],
                         );
@@ -229,18 +247,18 @@ class _SentReqState extends State<SentReq> {
                 },
                 widgetBuilder: (_, CurrentRemainingTime? time) {
                   if (time == null) {
-                    return Text('남은 시간: 00:00',
+                    return const Text('남은 시간: 00:00',
                         style: TextStyle(fontSize: 20, color: Colors.black));
                   }
                   int minutes = time.min ?? 0;
                   int seconds = time.sec ?? 0;
                   return Text(
                     '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-                    style: TextStyle(fontSize: 20, color: Colors.black),
+                    style: const TextStyle(fontSize: 20, color: Colors.black),
                   );
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               BottomTextButton(
                 text: "요청 취소하기",
                 handlePressed: () async {
@@ -269,6 +287,8 @@ class _SentReqState extends State<SentReq> {
 }
 
 class ReceivedReq extends StatefulWidget {
+  const ReceivedReq({super.key});
+
   @override
   _ReceivedReqState createState() => _ReceivedReqState();
 }
@@ -325,7 +345,7 @@ class _ReceivedReqState extends State<ReceivedReq> {
     return Container(
       padding: const EdgeInsets.all(20),
       child: revList.isEmpty
-          ? Center(
+          ? const Center(
               child: Text(
                 '받은 요청이 없습니다 :(',
                 style: TextStyle(
@@ -357,9 +377,7 @@ class _ReceivedReqState extends State<ReceivedReq> {
                   company: senderData["company"]?["name"] ?? "Unknown",
                   position: senderData["position"] ?? "Unknown",
                   introduction: senderData["introduction"] ?? "No introduction",
-                  rating: senderData["coffeeBean"] != null
-                      ? senderData["coffeeBean"]
-                      : 0.0,
+                  rating: senderData["coffeeBean"] ?? 0.0,
                   matchId: revList[index]["matchId"],
                   requestTypeId: int.parse(revList[index]["requestTypeId"]),
                   onAccept: handleAccept,
