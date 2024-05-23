@@ -2,6 +2,7 @@ package com.coffee.backend.domain.auth.service;
 
 import com.coffee.backend.domain.auth.dto.AuthDto;
 import com.coffee.backend.domain.auth.dto.KakaoUserInfoDto;
+import com.coffee.backend.domain.user.entity.Position;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +58,9 @@ public class KakaoLoginService {
         // DB에 정보 없으면 회원가입 처리
         if (user.getKakaoId() == null) {
             user.setKakaoId(dto.getId());
+            user.setNickname("user@" + dto.getId());
+            user.setPosition(Position.P00);
+            user.setCoffeeBean(46);
             userRepository.save(user);
         }
 
