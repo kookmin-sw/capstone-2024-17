@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
 
         // 커피챗 진행중 여부 가져오기
-        getMatchingInfo(userId.userId).then((value) {
+        getMatchingInfo(userProfile.userId).then((value) {
           matchingInfo.setIsMatching(value["isMatching"]);
           // 커피챗 진행중이면 상대방 정보도 가져오기
           if (value["isMatching"]) {
