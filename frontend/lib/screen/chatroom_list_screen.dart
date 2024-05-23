@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/chatroom_item.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
 class ChatroomListScreen extends StatefulWidget {
@@ -81,9 +81,16 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
     } else {
       // 실패: 예외처리
       print('채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})');
-      showAlertDialog(
-        context,
-        '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
+            ),
+          );
+        },
       );
     }
   }

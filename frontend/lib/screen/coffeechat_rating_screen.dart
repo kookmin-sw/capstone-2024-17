@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'map_place.dart';
 import 'package:flutter/material.dart';
 
@@ -122,8 +122,17 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                           Map<String, dynamic> delresponse =
                               await matchCancelRequest(widget.matchId);
                           if (delresponse['success'] == true) {
-                            showAlertDialog(context,
-                                "${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.");
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: OneButtonDialog(
+                                    first:
+                                        '${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
+                                  ),
+                                );
+                              },
+                            );
                           }
                           print(delresponse);
                         } catch (e) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/iconed_textfield.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/top_appbar.dart';
@@ -98,13 +98,40 @@ class _SignupScreen3State extends State<SignupScreen3> {
   void signUpPressed() {
     // 회원가입 진행
     if (_nicknameController.text == '') {
-      showAlertDialog(context, '사용할 닉네임을 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '사용할 닉네임을 입력해주세요.',
+            ),
+          );
+        },
+      );
       return;
     } else if (_emailController.text == '') {
-      showAlertDialog(context, '이메일을 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '이메일을 입력해주세요.',
+            ),
+          );
+        },
+      );
       return;
     } else if (_phoneController.text == '') {
-      showAlertDialog(context, '전화번호를 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '전화번호를 입력해주세요.',
+            ),
+          );
+        },
+      );
       return;
     }
     try {
@@ -116,7 +143,16 @@ class _SignupScreen3State extends State<SignupScreen3> {
           _emailController.text,
           _phoneController.text);
     } catch (error) {
-      showAlertDialog(context, '요청 실패: $error');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '요청 실패: $error',
+            ),
+          );
+        },
+      );
     }
   }
 }
@@ -128,10 +164,32 @@ void waitSignup(BuildContext context, String? loginId, String? password,
   if (res['success'] == true) {
     // 요청 성공
     print(res);
-    showAlertDialog(context, res['message']);
-    Navigator.of(context).pushNamed('/signin');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: OneButtonDialog(
+            first: res['message'],
+            onFirstButtonClick: () {
+              Navigator.of(context).pushNamed('/signin');
+            },
+          ),
+        );
+      },
+    );
   } else {
     // 회원가입 실패
-    showAlertDialog(context, '회원가입 실패: ${res['message']}(${res['code']})');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: OneButtonDialog(
+            first: '회원가입 실패: ${res['message']}(${res['code']})',
+          ),
+        );
+      },
+    );
   }
 }
