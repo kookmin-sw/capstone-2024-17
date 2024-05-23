@@ -51,12 +51,12 @@ public class KakaoLoginService {
     @Transactional
     public AuthDto signIn(KakaoUserInfoDto dto) {
         log.trace("signIn()");
-        User user = userRepository.findByKakaoId(dto.getKakaoId())
+        User user = userRepository.findByKakaoId(dto.getId())
                 .orElseGet(User::new);
 
         // DB에 정보 없으면 회원가입 처리
         if (user.getKakaoId() == null) {
-            user.setKakaoId(dto.getKakaoId());
+            user.setKakaoId(dto.getId());
             userRepository.save(user);
         }
 
