@@ -221,6 +221,8 @@ class ReceivedReqDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final autoOfflineService =
+        Provider.of<AutoOfflineService>(context, listen: false);
     final matchingInfo = Provider.of<MatchingInfoModel>(context);
 
     return Dialog(
@@ -263,8 +265,7 @@ class ReceivedReqDialog extends StatelessWidget {
                 );
 
                 // 오프라인으로 전환
-                Provider.of<AutoOfflineService>(context, listen: false)
-                    .autoOffline();
+                autoOfflineService.autoOffline();
 
                 // 커피챗 진행중 여부 true로, 매칭정보 가져오기
                 Map<String, dynamic> userDetail = await getUserDetail();
