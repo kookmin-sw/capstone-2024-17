@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
+import 'package:provider/provider.dart';
 import 'map_place.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +36,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Scaffold(
       backgroundColor: const Color.fromRGBO(250, 131, 88, 1.0), // 배경색 설정
       body: Center(
@@ -98,47 +101,36 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               child: GestureDetector(
                 onTap: selectedIndex >= 0
                     ? () async {
-                        int partnerId = 0; //초기화
-                        int receiverId = 2; //추후 수정 필요
                         int rating = (selectedIndex + 1); //점수
 
-                        try {
-                          //로그인 한 유저의 partnerId 가져오기
-                          Map<String, dynamic> res = await getUserDetail();
+                        Map<String, dynamic> response = await coffeeBeanReview(
+                            widget.userId, widget.partnerId, rating);
 
-                          if (res['success']) {
-                            partnerId = res['data']['userId'];
-                          } else {
-                            print(
-                                '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
-                          }
+                        print(response);
 
-                          Map<String, dynamic> response =
-                              await coffeeBeanReview(
-                                  partnerId, receiverId, rating);
-
-                          print(response);
-
-                          Map<String, dynamic> delresponse =
-                              await matchFinishRequest(
-                                  widget.matchId, widget.userId);
-                          if (delresponse['success'] == true) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: OneButtonDialog(
-                                    first:
-                                        '${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                          print(delresponse);
-                        } catch (e) {
-                          throw Error();
+                        Map<String, dynamic> res =
+                            await getMatchingInfo(widget.userId);
+                        print(res);
+                        if (res['data']['isMatching'] != 'no') {
+                          await matchFinishRequest(
+                              widget.matchId, widget.userId);
                         }
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: OneButtonDialog(
+                                first:
+                                    '${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
+                                onFirstButtonClick: () {
+                                  Navigator.pop(context);
+                                  selectedIndexProvider.selectedIndex = 0;
+                                },
+                              ),
+                            );
+                          },
+                        );
 
                         //이동할 곳 여기 추가하면 됨!!!
 
