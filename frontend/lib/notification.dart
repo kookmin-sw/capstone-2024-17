@@ -87,29 +87,6 @@ class FCM {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              MatchingInfoModel matchingInfo =
-                  Provider.of<MatchingInfoModel>(context);
-
-              // 커피챗 진행중 여부 true로, 매칭정보 가져오기
-              getUserDetail().then((userDetail) async {
-                getMatchingInfo(userDetail["data"]["userId"]).then((value) {
-                  matchingInfo.setIsMatching(value["isMatching"]);
-
-                  // 커피챗 진행중이면 상대방 정보도 가져오기
-                  if (value["isMatching"]) {
-                    matchingInfo.setMatching(
-                      matchId: value["matchId"],
-                      myId: value["myId"],
-                      myNickname: value["myNickname"],
-                      myCompany: value["myCompany"],
-                      partnerId: value["partnerId"],
-                      partnerCompany: value["partnerCompany"],
-                      partnerNickname: value["partnerNickname"],
-                    );
-                  }
-                });
-              });
-
               return ReqAcceptedNotification(nickname: nickname);
             },
           );
