@@ -57,7 +57,7 @@ public class KakaoLoginService {
         // DB에 정보 없으면 회원가입 처리
         if (user.getKakaoId() == null) {
             user.setKakaoId(dto.getId());
-            userRepository.save(user);
+            user = userRepository.save(user);
         }
 
         String token = jwtService.createAccessToken(user.getId());
