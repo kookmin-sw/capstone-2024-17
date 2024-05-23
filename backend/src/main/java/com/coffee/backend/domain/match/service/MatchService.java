@@ -373,6 +373,8 @@ public class MatchService {
         redisTemplate.opsForHash().put("userId:" + senderId, "isMatching", "no");
         redisTemplate.opsForHash().put("userId:" + receiverId, "isMatching", "no");
 
+        redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
+
         MatchStatusDto match = new MatchStatusDto();
         match.setMatchId(dto.getMatchId());
         match.setStatus("finished");
