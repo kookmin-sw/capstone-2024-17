@@ -3,25 +3,27 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/chat_date.dart';
 import 'package:frontend/widgets/chat_item.dart';
-import 'package:frontend/main.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 
 class ChatScreen extends StatefulWidget {
-  final int chatroomId;
+  final String matchId;
   final String nickname;
   final String logoUrl;
+  final int? chatroomId; // Nullable chatroomId
 
   const ChatScreen({
     super.key,
-    required this.chatroomId,
+    required this.matchId,
     required this.nickname,
     required this.logoUrl,
+    this.chatroomId,
   });
 
   @override
@@ -35,44 +37,73 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _sendingMsgController = TextEditingController();
   String token = '';
   final ScrollController _scrollController = ScrollController();
+  int? chatroomId; // State에서 관리하는 chatroomId
+
+  Future<int> getChatroomId() async {
+    try {
+      Map<String, dynamic> response = await matchAcceptRequest(widget.matchId);
+      return response["data"]["chatroomId"];
+    } catch (e) {
+      // 오류 처리
+      print("getChatroomId error: $e");
+      return -1;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    subscribeChatroom(); // stompClient가 activate되고 난 후에 가능
-    waitGetChatList(widget.chatroomId);
-    // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    initializeChat();
   }
 
-  void subscribeChatroom() async {
+  Future<void> initializeChat() async {
+    chatroomId = widget.chatroomId ?? await getChatroomId();
+
+    if (chatroomId == -1) {
+      // handle error appropriately
+      return;
+    }
+
+    setState(() {});
+
+    await subscribeChatroom(chatroomId!);
+    await waitGetChatList(chatroomId!);
+
+    // 스크롤 컨트롤러 초기화
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
+
+  Future<void> subscribeChatroom(int chatroomId) async {
     token = (await storage.read(key: 'authToken')) ?? '';
     stompClient.subscribe(
-        destination: '/sub/chatroom/${widget.chatroomId}',
-        headers: {
-          "Content-Type": "application/json",
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-        callback: (frame) {
-          // print('sub 성공!');
-          // print(frame.body);
-          Map<String, dynamic> jsonData = jsonDecode(frame.body!);
-          setState(() {
-            chats.add(jsonData);
-          });
+      destination: '/sub/chatroom/$chatroomId',
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      callback: (frame) {
+        Map<String, dynamic> jsonData = jsonDecode(frame.body!);
+        setState(() {
+          chats.add(jsonData);
         });
-    return;
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+
+    // selectedIndex 설정을 addPostFrameCallback 내에서 호출
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      selectedIndexProvider.selectedIndex = 2;
+    });
+
     stompClient = Provider.of<StompClient>(context);
 
-    // 새로운 메시지가 추가되면 자동으로 맨 아래로 스크롤
-    // addPostFrameCallback: 렌더링된 후 즉시 실행
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    });
     return Scaffold(
       appBar: ChatroomAppBar(
         logoUrl: widget.logoUrl,
@@ -134,10 +165,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage() async {
-    // 유저 아이디 가져오긱: 토큰이 만료되면 더이상 채팅을 못하게 됨
+    // 유저 아이디 가져오기: 토큰이 만료되면 더이상 채팅을 못하게 됨
     int senderId;
     Map<String, dynamic> res = await getUserDetail();
-    print(res);
     if (res['success']) {
       // 요청 성공
       // 아이디 저장
@@ -165,7 +195,7 @@ class _ChatScreenState extends State<ChatScreen> {
       token = (await storage.read(key: 'authToken')) ?? '';
       final data = jsonEncode({"senderId": senderId, "content": message});
       stompClient.send(
-        destination: '/pub/chatroom/${widget.chatroomId.toString()}',
+        destination: '/pub/chatroom/$chatroomId',
         headers: {
           "Content-Type": "application/json",
           'Accept': 'application/json',
@@ -173,7 +203,6 @@ class _ChatScreenState extends State<ChatScreen> {
         },
         body: data,
       );
-      // print('pub 성공!');
       _sendingMsgController.clear();
       setState(() {});
     }
@@ -228,7 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
           final data =
               jsonEncode({"senderId": senderId, "content": '함께 커피챗 해요!☕️'});
           stompClient.send(
-            destination: '/pub/chatroom/${widget.chatroomId.toString()}',
+            destination: '/pub/chatroom/${chatroomId.toString()}',
             headers: {
               "Content-Type": "application/json",
               'Accept': 'application/json',
