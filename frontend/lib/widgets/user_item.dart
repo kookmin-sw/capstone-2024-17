@@ -247,24 +247,20 @@ class ReceivedReqDialog extends StatelessWidget {
               handleFirstClick: () async {
                 print(matchId);
 
-                selectedIndexProvider.selectedIndex = 2;
-
                 // 수락 버튼을 누를 때 호출할 함수
-                Future<void> handleAccept() async {
-                  Map<String, dynamic> response =
-                      await matchAcceptRequest(matchId);
-                  selectedIndexProvider.selectedIndex = 2;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatScreen(
-                        chatroomId: response["data"]["chatroomId"],
-                        nickname: nickname,
-                        logoUrl: logoUrl,
-                      ),
+                Map<String, dynamic> response =
+                    await matchAcceptRequest(matchId);
+                selectedIndexProvider.selectedIndex = 2;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                      chatroomId: response["data"]["chatroomId"],
+                      nickname: nickname,
+                      logoUrl: logoUrl,
                     ),
-                  );
-                }
+                  ),
+                );
 
                 // 오프라인으로 전환
                 Provider.of<AutoOfflineService>(context, listen: false)
