@@ -39,8 +39,10 @@ public class KakaoLoginService {
                     userInfoURI, HttpMethod.GET, request, String.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
-                log.debug("return: {}", objectMapper.readValue(response.getBody(), KakaoUserInfoDto.class).getKakaoId());
-                return objectMapper.readValue(response.getBody(), KakaoUserInfoDto.class);
+                log.debug("return: {}", response.getBody().getId());
+                KakaoUserInfoDto kakaoInfoDto = new KakaoUserInfoDto();
+                kakaoInfoDto.setKakaoId(response.getBody().getId());
+                return kakaoInfoDto;
             } else {
                 throw new RuntimeException("Failed to retrieve user info from Kakao API");
             }
