@@ -415,14 +415,14 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
 }
 
 // 로그인
-Future<Map<String, dynamic>> login(
-  String loginId,
-  String password,
-) async {
+Future<Map<String, dynamic>> login(String loginId, String password) async {
+  // 디바이스 토큰을 발급
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
   final url = Uri.parse('$baseUrl/auth/signIn');
   final data = jsonEncode({
     'loginId': loginId,
     'password': password,
+    'deviceToken': fcmToken,
   });
   try {
     http.Response res = await http.post(url,
@@ -652,9 +652,12 @@ Future<Map<String, dynamic>> getChatList(int chatroomId) async {
 
 // 카카오톡 로그인
 Future<Map<String, dynamic>> kakaoLogin(String token) async {
+  // 디바이스 토큰을 발급
+  String? fcmToken = await FirebaseMessaging.instance.getToken();
   final url = Uri.parse('$baseUrl/auth/kakaoSignIn');
   final data = jsonEncode({
     'accessToken': token,
+    'deviceToken': fcmToken,
   });
   try {
     http.Response res = await http.post(
