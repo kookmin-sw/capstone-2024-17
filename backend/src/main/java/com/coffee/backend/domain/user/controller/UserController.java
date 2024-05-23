@@ -2,6 +2,7 @@ package com.coffee.backend.domain.user.controller;
 
 import com.coffee.backend.domain.auth.controller.AuthenticationPrincipal;
 import com.coffee.backend.domain.user.dto.IntroductionUpdateRequest;
+import com.coffee.backend.domain.user.dto.NicknameUpdateRequest;
 import com.coffee.backend.domain.user.dto.PositionUpdateRequest;
 import com.coffee.backend.domain.user.dto.UserDto;
 import com.coffee.backend.domain.user.entity.Position;
@@ -27,6 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @PostMapping("/nickname/update")
+    public ResponseEntity<ApiResponse<UserDto>> nickname(@AuthenticationPrincipal User user,
+                                                         @RequestBody NicknameUpdateRequest dto) {
+        DtoLogger.requestBody(dto);
+        
+        return ResponseEntity.ok(ApiResponse.success(userService.updateUserNickname(user, dto.getNickname())));
+    }
 
     @PostMapping("/position/update")
     public ResponseEntity<ApiResponse<UserDto>> position(@AuthenticationPrincipal User user,
