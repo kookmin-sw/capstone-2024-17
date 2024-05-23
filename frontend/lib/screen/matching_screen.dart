@@ -89,7 +89,7 @@ class _MatchingWidgetState extends State<Matching> {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: (widget.myCompany == '')
+                      child: (widget.myCompany == '무소속')
                           ? const ProfileImgMedium(
                               isLocal: true,
                               logoUrl: "assets/coffee_bean.png",
@@ -109,7 +109,7 @@ class _MatchingWidgetState extends State<Matching> {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: (widget.partnerCompany == '')
+                      child: (widget.partnerCompany == '무소속')
                           ? const ProfileImgMedium(
                               isLocal: true,
                               logoUrl: "assets/coffee_bean.png",
