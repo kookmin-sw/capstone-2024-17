@@ -127,7 +127,6 @@ class SentReq extends StatefulWidget {
 class _SentReqState extends State<SentReq> {
   late Future<Map<String, dynamic>> _sendinfoFuture;
   bool timerend = false;
-  String matchId = '';
 
   @override
   void initState() {
@@ -136,10 +135,11 @@ class _SentReqState extends State<SentReq> {
     _sendinfoFuture = sendinfo();
   }
 
-  Future<void> handleRequestCancel() async {
+  Future<void> handleRequestCancel(String matchId) async {
     try {
+      print(matchId);
       Map<String, dynamic> response = await matchCancelRequest(matchId);
-
+      print(response);
       if (response['success'] == true) {
         setState(() {
           _sendinfoFuture = sendinfo();
@@ -268,10 +268,10 @@ class _SentReqState extends State<SentReq> {
                     builder: (context) {
                       return YesOrNoDialog(
                         content: "매칭 요청을 취소하시겠습니까?",
-                        firstButton: "요청 취소",
+                        firstButton: "취소",
                         secondButton: "닫기",
                         handleFirstClick: () async {
-                          handleRequestCancel();
+                          handleRequestCancel(data[0]['matchId']);
                         },
                         handleSecondClick: () {},
                       );
@@ -331,15 +331,6 @@ class _ReceivedReqState extends State<ReceivedReq> {
       print('Error 2: $e');
     }
   }
-
-  // Future<void> handleMatchAccept(
-  //     String matchId,
-  //     String nickname,
-  //     String logoUrl,
-  //     int senderId,
-  //     SelectedIndexModel selectedIndexProvider) async {
-  //
-  // }
 
   Future<void> handleMatchDecline(String matchId) async {
     await matchDeclineRequest(matchId);
