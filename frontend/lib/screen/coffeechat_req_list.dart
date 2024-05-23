@@ -268,7 +268,7 @@ class _SentReqState extends State<SentReq> {
                     builder: (context) {
                       return YesOrNoDialog(
                         content: "매칭 요청을 취소하시겠습니까?",
-                        firstButton: "요청 취소",
+                        firstButton: "취소",
                         secondButton: "닫기",
                         handleFirstClick: () async {
                           handleRequestCancel();
