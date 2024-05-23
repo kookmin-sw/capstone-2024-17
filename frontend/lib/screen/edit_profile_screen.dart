@@ -275,13 +275,15 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       text: '저장하기',
                       handlePressed: () async {
                         // 닉네임 업데이트
+                        Map<String, dynamic> res1 =
+                            await updateNickname(_nicknameController.text);
                         // introduction 업데이트
                         Map<String, dynamic> res2 = await updateIntroduction(
                             _introductionController.text);
-                        if (res2['success'] == true) {
+                        if (res1['success'] && res2['success'] == true) {
                           // provider에 저장
                           userProfile.setNicknameIntroduction(
-                              nickname: profile["nickname"],
+                              nickname: _nicknameController.text,
                               introduction: _introductionController.text);
                           // 유저페이지로 pop
                           Navigator.pop(context);
@@ -294,7 +296,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               return AlertDialog(
                                 content: OneButtonDialog(
                                   first:
-                                      '유저정보 변경에 실패했습니다: ${res2['message']}(${res2['code']})',
+                                      '유저정보 변경에 실패했습니다: ${res1['message']}(${res1['code']})',
                                 ),
                               );
                             },

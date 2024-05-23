@@ -490,6 +490,29 @@ Future<Map<String, dynamic>> deleteUser() async {
   }
 }
 
+// 닉네임 업데이트
+Future<Map<String, dynamic>> updateNickname(String nickname) async {
+  final url = Uri.parse('$baseUrl/user/nickname/update');
+  final token = (await storage.read(key: 'authToken')) ?? '';
+  final data = jsonEncode({
+    'nickname': nickname,
+  });
+  try {
+    http.Response res = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: data);
+    Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
+    return jsonData;
+  } catch (error) {
+    print('error: $error');
+    throw Error();
+  }
+}
+
 // 자기소개 업데이트
 Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
   final url = Uri.parse('$baseUrl/user/introduction/update');
