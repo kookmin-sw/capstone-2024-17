@@ -200,6 +200,7 @@ class _SentReqState extends State<SentReq> {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null ||
             snapshot.hasError ||
+            snapshot.data!['data'] == null ||
             snapshot.data!['data'].isEmpty) {
           return const Center(
             child: Text(
