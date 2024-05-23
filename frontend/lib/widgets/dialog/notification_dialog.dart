@@ -34,8 +34,8 @@ class ReqAcceptedNotification extends StatelessWidget {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return NotificationDialog(
         contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
-        backButton: "확인",
-        navigateButton: "채팅 목록",
+        backButton: "닫기",
+        navigateButton: "채팅 보기",
         handleNavigate: () {
           Navigator.of(context).popUntil(ModalRoute.withName('/'));
           selectedIndexProvider.selectedIndex = 2;
