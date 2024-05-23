@@ -53,11 +53,11 @@ public class UserService {
     }
 
 
-    public void checkDuplicatedEmail(String email) {
+    public void checkDuplicatedEmail(String loginId, String email) {
         log.trace("checkDuplicatedEmail()");
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            if (user.get().getEmail().equals(email)) {
+        Optional<User> _user = userRepository.findByEmail(email);
+        if (_user.isPresent()) {
+            if (_user.get().getLoginId().equals(loginId)) {
                 return; // 자기 자신 email이면 duplication 아님
             }
             log.debug("userService.checkDuplicatedEmail exception occur email: {}", email);
@@ -77,7 +77,7 @@ public class UserService {
         user.setCompany(company);
         userRepository.save(user);
     }
-    
+
     public UserDto updateUserNickname(User user, String nickname) {
         log.trace("updateUserNickname()");
         user.setNickname(nickname);
