@@ -127,8 +127,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<void> _future;
-
   String? userToken;
   late StompClient stompClient;
 
@@ -159,10 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _future = initialize();
-  }
-
-  Future<void> initialize() async {
     stompClient = Provider.of<StompClient>(context, listen: false);
     userProfile = Provider.of<UserProfileModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
@@ -246,56 +240,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     final selectedIndex = selectedIndexProvider.selectedIndex;
-    return FutureBuilder(
-      future: _future,
-      builder: (context, snapshot) {
-        return (userToken == null)
-            ? const LoginScreen()
-            : Scaffold(
-                body: _screenOptions.elementAt(selectedIndex),
-                bottomNavigationBar: BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
-                  iconSize: 26,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.map_outlined,
-                      ),
-                      label: '지도',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.coffee_outlined,
-                      ),
-                      activeIcon: Icon(
-                        Icons.coffee_rounded,
-                      ),
-                      label: '커피챗',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.forum_outlined,
-                      ),
-                      label: '채팅',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.person_outlined,
-                      ),
-                      label: 'MY',
-                    ),
-                  ],
-                  currentIndex: selectedIndex,
-                  onTap: (index) {
-                    selectedIndexProvider.selectedIndex = index;
-                  },
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: const Color(0xffff6c3e),
+    return (userToken == null)
+        ? const LoginScreen()
+        : Scaffold(
+            body: _screenOptions.elementAt(selectedIndex),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              iconSize: 26,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.map_outlined,
+                  ),
+                  label: '지도',
                 ),
-              );
-      },
-    );
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.coffee_outlined,
+                  ),
+                  activeIcon: Icon(
+                    Icons.coffee_rounded,
+                  ),
+                  label: '커피챗',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.forum_outlined,
+                  ),
+                  label: '채팅',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person_outlined,
+                  ),
+                  label: 'MY',
+                ),
+              ],
+              currentIndex: selectedIndex,
+              onTap: (index) {
+                selectedIndexProvider.selectedIndex = index;
+              },
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              unselectedItemColor: Colors.black,
+              selectedItemColor: const Color(0xffff6c3e),
+            ),
+          );
   }
 }
