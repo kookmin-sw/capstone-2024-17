@@ -6,6 +6,7 @@ import com.coffee.backend.domain.user.entity.Position;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -61,6 +62,7 @@ public class KakaoLoginService {
             user.setNickname("user@" + dto.getId());
             user.setPosition(Position.P00);
             user.setCoffeeBean(46);
+            user.setUserUUID(UUID.randomUUID().toString());
         }
         // update deviceToken
         user.setDeviceToken(dto.getDeviceToken());

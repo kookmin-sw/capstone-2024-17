@@ -66,10 +66,15 @@ class ReqFinishedNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return NotificationDialog(
-      contents: '$nickname님이 커피챗을 종료했어요!',
-      backButton: "확인",
-    );
+        contents: '$nickname님이 커피챗을 \n종료했어요!',
+        backButton: "닫기",
+        navigateButton: "종료하기",
+        handleNavigate: () {
+          Navigator.of(context).popUntil(ModalRoute.withName('/'));
+          selectedIndexProvider.selectedIndex = 1;
+        });
   }
 }
 

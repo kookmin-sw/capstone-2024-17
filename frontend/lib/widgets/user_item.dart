@@ -254,7 +254,6 @@ class ReceivedReqDialog extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChatScreen(
-                      // chatroomId: response["data"]["chatroomId"],
                       matchId: matchId,
                       nickname: nickname,
                       logoUrl: logoUrl,
@@ -262,7 +261,6 @@ class ReceivedReqDialog extends StatelessWidget {
                     ),
                   ),
                 );
-
                 // 오프라인으로 전환
                 autoOfflineService.autoOffline();
               },

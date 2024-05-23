@@ -104,8 +104,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                   return;
                 }
 
-                Map<String, dynamic> response =
-                    await matchRequest(senderId, receiverId, _selectedIndex!);
+                matchRequest(senderId, receiverId, _selectedIndex!);
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
                 selectedIndexProvider.selectedIndex = 1;

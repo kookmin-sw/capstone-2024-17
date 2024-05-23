@@ -11,7 +11,7 @@ class KakaoLoginWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        String? user = await KakaoLogin().login();
+        String? user = await KakaoLogin().login(context);
         await storage.write(key: 'userUUID', value: '카톡');
         onPressed(); // await이 끝나면 콜백함수를 돌려준다
       },

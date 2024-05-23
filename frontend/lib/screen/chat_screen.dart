@@ -95,13 +95,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
-
-    // selectedIndex 설정을 addPostFrameCallback 내에서 호출
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      selectedIndexProvider.selectedIndex = 2;
-    });
-
     stompClient = Provider.of<StompClient>(context);
 
     return Scaffold(
