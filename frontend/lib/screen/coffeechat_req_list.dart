@@ -159,11 +159,13 @@ class _SentReqState extends State<SentReq> {
     return FutureBuilder<Map<String, dynamic>>(
       future: _sendinfoFuture,
       builder: (context, snapshot) {
+        print(snapshot.data);
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.data == null ||
             snapshot.data!['success'] != true ||
-            snapshot.hasError || snapshot.data!['data']['matchId']==null) {
+            snapshot.hasError ||
+            snapshot.data!['data']['matchId'] == null) {
           return Center(
             child: Text(
               '보낸 요청이 없습니다 :(',
@@ -316,7 +318,7 @@ class _ReceivedReqState extends State<ReceivedReq> {
   }
 
   Future<void> handleMatchAccept(
-      String matchId, String nickname, String logoUrl, String senderId) async {
+      String matchId, String nickname, String logoUrl, int senderId) async {
     Map<String, dynamic> response = await matchAcceptRequest(matchId);
     Navigator.push(
       context,
@@ -364,8 +366,8 @@ class _ReceivedReqState extends State<ReceivedReq> {
                   handleMatchAccept(
                       revList[index]["matchId"],
                       revList[index]["senderInfo"]["nickname"],
-                      revList[index]["senderInfo"]["company"]["logoUrl"],
-                      revList[index]["senderInfo"]["userId"]);
+                      revList[index]["senderInfo"]["company"]["logoUrl"] ?? '',
+                      revList[index]["senderInfo"]["senderId"] ?? 0);
                 }
 
                 void handleReject() {
