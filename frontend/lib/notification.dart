@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/widgets/dialog/notification_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 // 백그라운드에서 수신된 메시지를 처리하기 위한 콜백 함수
 Future<void> onBackgroundMessage(RemoteMessage message) async {
@@ -69,6 +71,11 @@ class FCM {
           showDialog(
             context: context,
             builder: (BuildContext context) {
+              // 커피챗 진행중 여부 true로
+              final MatchingInfoModel matchingInfo =
+                  Provider.of<MatchingInfoModel>(context);
+              matchingInfo.setIsMatching(true);
+
               return const ReqAcceptedNotification();
             },
           );

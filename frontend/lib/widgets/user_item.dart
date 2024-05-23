@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/chat_screen.dart';
 import 'package:frontend/screen/matching_screen.dart';
@@ -217,6 +218,8 @@ class ReceivedReqDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return Dialog(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 35),
@@ -243,7 +246,6 @@ class ReceivedReqDialog extends StatelessWidget {
               handleFirstClick: () async {
                 print(matchId);
 
-
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute(
@@ -262,6 +264,9 @@ class ReceivedReqDialog extends StatelessWidget {
                 // 오프라인으로 전환
                 Provider.of<AutoOfflineService>(context, listen: false)
                     .autoOffline();
+
+                // 커피챗 진행중 여부 true로
+                matchingInfo.setIsMatching(true);
               },
               handleSecondClick: () async {
                 onReject?.call(); // onReject 함수 호출
