@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/notification.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
@@ -21,6 +22,7 @@ import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/model/my_cafe_model.dart';
 import 'package:frontend/model/all_users_model.dart';
 import 'package:frontend/screen/coffeechat_req_list.dart';
+import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/screen/map_place.dart';
 import 'package:frontend/screen/signup_screen.dart';
 import 'package:frontend/screen/user_screen.dart';
@@ -79,6 +81,7 @@ class MyApp extends StatelessWidget {
               myCafe: myCafe,
             ),
           ),
+          ChangeNotifierProvider(create: (_) => MatchingInfoModel()),
           ChangeNotifierProvider(create: (_) => UserProfileModel()),
           ChangeNotifierProvider(create: (_) => AllUsersModel({})),
           ChangeNotifierProvider(create: (_) => myCafe),
@@ -124,12 +127,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Future<void> _future;
+
   String? userToken;
   late StompClient stompClient;
 
   late UserProfileModel userProfile;
   late List<String> cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
+  late MatchingInfoModel matchingInfo; // 커피챗 진행중 정보
 
   late final List<Widget> _screenOptions;
 
@@ -153,9 +159,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _future = initialize();
+  }
+
+  Future<void> initialize() async {
     stompClient = Provider.of<StompClient>(context, listen: false);
     userProfile = Provider.of<UserProfileModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
+
     // 유저 토큰 가져오기
     storage.read(key: 'authToken').then((token) {
       setState(() {
@@ -181,86 +192,115 @@ class _MyHomePageState extends State<MyHomePage> {
           introduction: userDetail['data']['introduction'],
           rating: userDetail['data']['coffeeBean'],
         );
+
+        // 커피챗 진행중 여부 가져오기
+        getMatchingInfo(userId.userId).then((value) {
+          matchingInfo.setIsMatching(value["isMatching"]);
+          // 커피챗 진행중이면 상대방 정보도 가져오기
+          if (value["isMatching"]) {
+            matchingInfo.setMatching(
+              matchId: value["matchId"],
+              partnerId: value["partnerId"],
+              partnerCompany: value["partnerCompany"],
+              partnerNickname: value["partnerNickname"],
+            );
+          }
+          print("~~~~~성공~~~~isMatching: ${matchingInfo.isMatching}");
+        });
       });
-    });
 
-    // 알림 설정
-    final fcm = FCM(
-      context,
-      Provider.of<AutoOfflineService>(context, listen: false).autoOffline,
-    );
-    fcm.setNotifications();
-    // 알림 로그를 저장할 파일 생성
-    getApplicationDocumentsDirectory().then((dir) {
-      File('${dir.path}/notification.txt');
-    });
+      // 알림 설정
+      final fcm = FCM(
+        context,
+        Provider.of<AutoOfflineService>(context, listen: false).autoOffline,
+      );
+      fcm.setNotifications();
+      // 알림 로그를 저장할 파일 생성
+      getApplicationDocumentsDirectory().then((dir) {
+        File('${dir.path}/notification.txt');
+      });
 
-    // 화면 리스트 초기화
-    _screenOptions = [
-      Google_Map(updateCafesCallback: updateCafeList),
-      const CoffeechatReqList(
-        matchId: '',
-        Question: '',
-        receiverCompany: '',
-        receiverPosition: '',
-        receiverIntroduction: '',
-        receiverRating: 0.0,
-        receiverNickname: '',
-      ),
-      const ChatroomListScreen(),
-      const UserScreen(),
-    ];
+      // 화면 리스트 초기화
+      _screenOptions = [
+        Google_Map(updateCafesCallback: updateCafeList),
+        (matchingInfo.isMatching)
+            ? Matching(
+                matchId: matchingInfo.matchId!,
+                partnerId: matchingInfo.partnerId!,
+                partnerCompany: matchingInfo.partnerCompany!,
+                partnerNickname: matchingInfo.partnerNickname!,
+              )
+            : const CoffeechatReqList(
+                matchId: '',
+                Question: '',
+                receiverCompany: '',
+                receiverPosition: '',
+                receiverIntroduction: '',
+                receiverRating: 0.0,
+                receiverNickname: '',
+              ),
+        const ChatroomListScreen(),
+        const UserScreen(),
+      ];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     final selectedIndex = selectedIndexProvider.selectedIndex;
-    return (userToken == null)
-        ? const LoginScreen()
-        : Scaffold(
-            body: _screenOptions.elementAt(selectedIndex),
-            bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              iconSize: 26,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.map_outlined,
-                  ),
-                  label: '지도',
+    return FutureBuilder(
+      future: _future,
+      builder: (context, snapshot) {
+        return (userToken == null)
+            ? const LoginScreen()
+            : Scaffold(
+                body: _screenOptions.elementAt(selectedIndex),
+                bottomNavigationBar: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  iconSize: 26,
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.map_outlined,
+                      ),
+                      label: '지도',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.coffee_outlined,
+                      ),
+                      activeIcon: Icon(
+                        Icons.coffee_rounded,
+                      ),
+                      label: '커피챗',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.forum_outlined,
+                      ),
+                      label: '채팅',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        Icons.person_outlined,
+                      ),
+                      label: 'MY',
+                    ),
+                  ],
+                  currentIndex: selectedIndex,
+                  onTap: (index) {
+                    selectedIndexProvider.selectedIndex = index;
+                  },
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: const Color(0xffff6c3e),
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.coffee_outlined,
-                  ),
-                  activeIcon: Icon(
-                    Icons.coffee_rounded,
-                  ),
-                  label: '커피챗',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.forum_outlined,
-                  ),
-                  label: '채팅',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person_outlined,
-                  ),
-                  label: 'MY',
-                ),
-              ],
-              currentIndex: selectedIndex,
-              onTap: (index) {
-                selectedIndexProvider.selectedIndex = index;
-              },
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              unselectedItemColor: Colors.black,
-              selectedItemColor: const Color(0xffff6c3e),
-            ),
-          );
+              );
+      },
+    );
   }
 }
