@@ -9,6 +9,7 @@ import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
+import com.coffee.backend.domain.match.dto.ReviewCheckDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.service.MatchService;
@@ -110,6 +111,16 @@ public class MatchController {
         DtoLogger.requestBody(dto);
 
         Review response = matchService.saveReview(dto);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/check/reviewed")
+    public ResponseEntity<ApiResponse<ReviewCheckDto>> checkReviewed(@RequestParam("matchId") String matchId,
+                                                                     @RequestParam("enderId") Long enderId) {
+        DtoLogger.requestParam("matchId", matchId);
+        DtoLogger.requestParam("enderId", enderId);
+
+        ReviewCheckDto response = matchService.checkReviewed(matchId, enderId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
