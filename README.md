@@ -4,13 +4,13 @@
 <h1 align="center">커리어 한잔</h1>
 
 
-주변 현직자와 대면 만남이 가능한 실시간 커피챗 매칭 플랫폼
+<p align="center"> ☕주변 IT현직자와 대면 만남이 가능한 실시간 커피챗 매칭 플랫폼
 
 [👉팀페이지 방문하기](https://kookmin-sw.github.io/capstone-2024-17)
 
 <br>
 
-## 📢 프로젝트 소개
+## 📢 Introduction
 
 커피챗(Coffee-Chat)은 가볍게 커피 한잔하듯 정보를 주고받으며 인맥을 쌓는 비즈니스 문화입니다.
 
@@ -26,14 +26,80 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
 
 <br>
 
-## 🎞 시연 영상
+## 🎞 Video
 
-[![시연영상](http://img.youtube.com/vi/_zXQykNYMlw/0.jpg)](https://youtu.be/_zXQykNYMlw)
+<table align="center">
+    <tr align="center">
+        <td>
+            시연 영상
+        </td>
+    </tr>
+    <tr align="center">
+        <td>
+            <a href="https://youtu.be/_zXQykNYMlw" target="_blank">
+                <img src="http://img.youtube.com/vi/_zXQykNYMlw/0.jpg" alt="시연영상" style="width: 100%; max-width: 560px; height: auto;">
+            </a>
+        </td>
+    </tr>
+</table>
 
 <br>
 
+## 🛠️ Skills
 
-## 👩🏻‍💻 팀원 소개
+#### Frontend
+<img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"> <img src="https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white">
+
+#### Backend
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+
+#### Infra
+<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"/> <img src="https://img.shields.io/badge/sockjs-010101?style=for-the-badge&logoColor=white"/> <img src="https://img.shields.io/badge/stomp-010101?style=for-the-badge&logo=stomp&logoColor=white"/>
+
+#### Cowork
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+
+<br>
+
+## 📑 System Architecture
+<table align="center">
+    <tr align="center">
+        <td>
+            시스템 아키텍처
+        </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/f7296c4b-3fd3-4095-956f-7b3ef46c8dfc" width=900px>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <table align="center">
+    <tr align="center">
+        <td>
+            CI/CD 아키텍처
+        </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/d632a295-e00e-4828-8bc3-711a066fb987" width=650px>
+      </td>
+    </tr>
+</table>
+
+<br>
+<!-- ### 4. 사용법
+
+소스코드제출시 설치법이나 사용법을 작성하세요. -->
+
+<!-- ### 5. 기타
+
+추가적인 내용은 자유롭게 작성하세요. -->
+
+<br>
+
+## 👩🏻‍💻 Abous Us
 
 <table>
     <tr align="center">
@@ -115,31 +181,3 @@ jm3789)</b>
     </tr>
 </table>
 <br>
-
-## 🛠️ 기술 스택
-
-#### Frontend
-<img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"> <img src="https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white">
-
-#### Backend
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-
-#### Infra
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"/> <img src="https://img.shields.io/badge/sockjs-010101?style=for-the-badge&logoColor=white"/> <img src="https://img.shields.io/badge/stomp-010101?style=for-the-badge&logo=stomp&logoColor=white"/>
-
-#### Cowork
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
-
-<br>
-
-## 📑 서비스 아키텍처
-<img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/7a3d9dc9-83f8-4b1b-a0b6-8ea9f8624a75" width=900px>
-
-<br>
-<!-- ### 4. 사용법
-
-소스코드제출시 설치법이나 사용법을 작성하세요. -->
-
-<!-- ### 5. 기타
-
-추가적인 내용은 자유롭게 작성하세요. -->
