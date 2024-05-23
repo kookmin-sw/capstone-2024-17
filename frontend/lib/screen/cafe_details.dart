@@ -79,6 +79,7 @@ class _CafeDetailsState extends State<CafeDetails>
   final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
   String photoUrl = '';
 
+  late AutoOfflineService autoOfflineService;
   late UserProfileModel userProfile;
   late List<UserModel> userList;
   late MyCafeModel myCafe;
@@ -110,7 +111,7 @@ class _CafeDetailsState extends State<CafeDetails>
     _timer?.cancel();
 
     // 오프라인으로 전환
-    Provider.of<AutoOfflineService>(context, listen: false).autoOffline();
+    autoOfflineService.autoOffline();
   }
 
   Future<void> getPlacePhotoUri() async {
@@ -145,6 +146,8 @@ class _CafeDetailsState extends State<CafeDetails>
 
   @override
   Widget build(BuildContext context) {
+    autoOfflineService =
+        Provider.of<AutoOfflineService>(context, listen: false);
     stompClient = Provider.of<StompClient>(context);
     userProfile = Provider.of<UserProfileModel>(context);
     userList = Provider.of<AllUsersModel>(context).getUserList(widget.cafeId);
