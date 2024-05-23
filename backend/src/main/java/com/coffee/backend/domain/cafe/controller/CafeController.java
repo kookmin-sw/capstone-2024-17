@@ -59,6 +59,7 @@ public class CafeController {
         Map<String, List<CafeUserDto>> cafeUsersMap = new HashMap<>(); //반환값
 
         for (String cafeId : cafeList) {
+            log.trace("'{}' 카페 사용자 list", cafeId);
             List<CafeUserDto> userProfileDtoList = cafeService.getUserProfilesFromRedisAndDB(cafeId);
             cafeUsersMap.put(cafeId, userProfileDtoList);
         }

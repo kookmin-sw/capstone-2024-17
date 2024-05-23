@@ -77,7 +77,7 @@ public class CafeService {
     }
 
     public List<CafeUserDto> getUserProfilesFromRedisAndDB(String cafeId) {
-        log.trace("getUserProfilesFromRedisAndDB()");
+//        log.trace("getUserProfilesFromRedisAndDB()");
         // cafeId 를 가진 유저를 redis 에서 싹 조회
         Set<Object> userSet = getUserListFromRedis(cafeId);
 
@@ -89,13 +89,13 @@ public class CafeService {
     }
 
     public Set<Object> getUserListFromRedis(String cafeId) {
-        log.trace("getUserListFromRedis()");
+//        log.trace("getUserListFromRedis()");
         String cafeChoiceKey = "cafe:" + cafeId;
         return redisTemplate.opsForSet().members(cafeChoiceKey);
     }
 
     public CafeUserDto getUserInfoFromDB(Long userId) {
-        log.trace("getUserInfoFromDB()");
+//        log.trace("getUserInfoFromDB()");
         return userService.getCafeUserInfoByUserId(userId); // userId로 User entity 조회
     }
 
