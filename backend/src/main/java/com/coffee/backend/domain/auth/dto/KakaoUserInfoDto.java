@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class KakaoUserInfoDto {
-    private Long kakaoId;
+    private Long id;
 }
