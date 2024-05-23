@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 import 'package:provider/provider.dart';
 
@@ -151,7 +151,16 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
       });
     } else {
       // 요청 실패
-      showAlertDialog(context, '직무 리스트를 불러올 수 없습니다.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '직무 리스트를 불러올 수 없습니다.',
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -160,16 +169,34 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
     Map<String, dynamic> res = await updatePosition(selectedPosition);
     if (res['success']) {
       // 직무 저장 성공
-      showAlertDialog(
-          context,
-          '직무가 저장되었습니다!',
-          () => {
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '직무가 저장되었습니다!',
+              onFirstButtonClick: () {
                 Navigator.of(context)
-                    .popUntil(ModalRoute.withName('/editprofile'))
-              });
+                    .popUntil(ModalRoute.withName('/editprofile'));
+              },
+            ),
+          );
+        },
+      );
     } else {
       // 직무 저장 실패
-      showAlertDialog(context, '직무 저장 실패: ${res['message']}(${res['code']})');
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '직무 저장 실패: ${res['message']}(${res['code']})',
+            ),
+          );
+        },
+      );
     }
   }
 }

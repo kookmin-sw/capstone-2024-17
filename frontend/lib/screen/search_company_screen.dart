@@ -2,8 +2,8 @@ import 'package:frontend/screen/add_company_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter/material.dart';
 // import 'package:frontend/screen/verify_company_screen.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/company_item.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/search_textfield.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
@@ -109,7 +109,16 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
 
   void searchPressed(String keyword) async {
     if (keyword == '') {
-      showAlertDialog(context, '회사 이름을 입력해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '회사 이름을 입력해주세요.',
+            ),
+          );
+        },
+      );
       return;
     }
     waitGetCompanyList(keyword);
@@ -141,14 +150,29 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
       } else {
         // 예외처리
         print('회사정보 검색 실패: ${res["message"]}(${res["statusCode"]})');
-        showAlertDialog(
-          context,
-          '회사정보 검색 실패: ${res["message"]}(${res["statusCode"]})',
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: OneButtonDialog(
+                first: '회사정보 검색 실패: ${res["message"]}(${res["statusCode"]})',
+              ),
+            );
+          },
         );
       }
     } catch (error) {
       print('회사정보 검색 실패: $error');
-      showAlertDialog(context, '회사정보 검색 실패: $error');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '회사정보 검색 실패: $error',
+            ),
+          );
+        },
+      );
     }
 
     setState(() => {});

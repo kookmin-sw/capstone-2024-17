@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/signup_screen2.dart';
-import 'package:frontend/widgets/alert_dialog_widget.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
+import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/top_appbar.dart';
 
 class ExpansionLabeledCheckbox extends StatelessWidget {
@@ -218,7 +218,16 @@ class _SignupScreenState extends State<SignupScreen> {
   void nextPressed() {
     // 체크하지 않으면 넘어갈 수 없음
     if (!checkboxValue1 || !checkboxValue2) {
-      showAlertDialog(context, '약관 동의를 해주세요.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: OneButtonDialog(
+              first: '약관 동의를 해주세요.',
+            ),
+          );
+        },
+      );
       return;
     }
     Navigator.push(
