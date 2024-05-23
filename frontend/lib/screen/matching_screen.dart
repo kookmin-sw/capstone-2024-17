@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/coffeechat_rating_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/profile_img.dart';
 
 class Matching extends StatefulWidget {
   final String matchId;
@@ -113,14 +114,14 @@ class _MatchingWidgetState extends State<Matching> {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/$usercompany-logo.png', // 이미지의 경로
-                          width: 140,
-                          height: 140,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: (usercompany == '')
+                          ? const ProfileImgMedium(
+                              isLocal: true,
+                              logoUrl: "assets/coffee_bean.png",
+                            )
+                          : ProfileImgMedium(
+                              isLocal: true,
+                              logoUrl: "assets/$usercompany-logo.png"),
                     ),
                   ),
                   Positioned(
@@ -133,14 +134,15 @@ class _MatchingWidgetState extends State<Matching> {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/${widget.partnerCompany}-logo.png', // 이미지의 경로
-                          width: 140,
-                          height: 140,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: (widget.partnerCompany == '')
+                          ? const ProfileImgMedium(
+                              isLocal: true,
+                              logoUrl: "assets/coffee_bean.png",
+                            )
+                          : ProfileImgMedium(
+                              isLocal: true,
+                              logoUrl:
+                                  "assets/${widget.partnerCompany}-logo.png"),
                     ),
                   )
                 ],
