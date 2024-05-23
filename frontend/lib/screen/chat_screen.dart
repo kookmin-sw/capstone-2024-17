@@ -95,13 +95,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
-
-    // selectedIndex 설정을 addPostFrameCallback 내에서 호출
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      selectedIndexProvider.selectedIndex = 2;
-    });
-
     stompClient = Provider.of<StompClient>(context);
 
     return Scaffold(
@@ -216,8 +209,9 @@ class _ChatScreenState extends State<ChatScreen> {
     for (var chat in chats) {
       String sender = chat['userInfo']['nickname'];
       String message = chat['content'];
-      String date = chat['datetime'].substring(0, 13);
-      String time = chat['datetime'].substring(14, 19);
+      String datetime = _applyTimeZoneOffset(chat['datetime']);
+      String date = datetime.substring(0, 13);
+      String time = datetime.substring(14, 19);
 
       if (date != lastDate) {
         // If the date changes, add ChatDate widget
@@ -295,5 +289,49 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _sendingMsgController.clear();
     super.dispose();
+  }
+
+  String _applyTimeZoneOffset(String dateString) {
+    // String -> DateTime
+    DateTime parsedDate = _parseDateString(dateString);
+
+    // 현재 디바이스의 시간대 오프셋 가져오기
+    DateTime now = DateTime.now();
+    Duration offset = now.timeZoneOffset;
+
+    // 시간대 오프셋을 적용하여 새로운 DateTime 생성
+    DateTime adjustedDate = parsedDate.add(offset);
+
+    // DateTime -> String
+    String formattedDateString = _formatDateString(adjustedDate);
+
+    return formattedDateString;
+  }
+
+  DateTime _parseDateString(String dateString) {
+    // 예: '2024년 05월 22일/20:10' -> DateTime
+    List<String> dateAndTime = dateString.split('/');
+    List<String> dateParts = dateAndTime[0].split(' ');
+    List<String> timeParts = dateAndTime[1].split(':');
+
+    int year = int.parse(dateParts[0].replaceAll('년', ''));
+    int month = int.parse(dateParts[1].replaceAll('월', ''));
+    int day = int.parse(dateParts[2].replaceAll('일', ''));
+    int hour = int.parse(timeParts[0]);
+    int minute = int.parse(timeParts[1]);
+
+    return DateTime(year, month, day, hour, minute);
+  }
+
+  // DateTime -> String('yyyy년 MM월 dd일/HH:mm' 형식)
+  String _formatDateString(DateTime date) {
+    // 예: DateTime -> '2024년 05월 22일/20:10'
+    String year = date.year.toString();
+    String month = date.month.toString().padLeft(2, '0');
+    String day = date.day.toString().padLeft(2, '0');
+    String hour = date.hour.toString().padLeft(2, '0');
+    String minute = date.minute.toString().padLeft(2, '0');
+
+    return '$year년 $month월 $day일/$hour:$minute';
   }
 }
