@@ -89,11 +89,11 @@ class UserItem extends StatelessWidget {
         child: Row(
           children: [
             (company == '무소속')
-                ? const ProfileImgMedium(
+                ? const ProfileImgSmall(
                     isLocal: true,
                     logoUrl: "assets/coffee_bean.png",
                   )
-                : ProfileImgMedium(
+                : ProfileImgSmall(
                     isLocal: true,
                     logoUrl: "assets/$company-logo.png",
                   ),
@@ -104,10 +104,12 @@ class UserItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    nickname,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text(nickname,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      )),
                   Text(
                     "$company / $position",
                     overflow: TextOverflow.ellipsis,
