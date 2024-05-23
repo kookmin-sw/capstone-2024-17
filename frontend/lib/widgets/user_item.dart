@@ -88,7 +88,7 @@ class UserItem extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Row(
           children: [
-            (company == '')
+            (company == '무소속')
                 ? const ProfileImgMedium(
                     isLocal: true,
                     logoUrl: "assets/coffee_bean.png",

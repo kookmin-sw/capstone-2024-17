@@ -26,7 +26,7 @@ class UserDetails extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            (company == '')
+            (company == '무소속')
                 ? const ProfileImgMedium(
                     isLocal: true,
                     logoUrl: "assets/coffee_bean.png",
