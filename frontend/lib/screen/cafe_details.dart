@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/model/matching_info_model.dart';
+import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/stomp_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
@@ -83,6 +85,7 @@ class _CafeDetailsState extends State<CafeDetails>
   late UserProfileModel userProfile;
   late List<UserModel> userList;
   late MyCafeModel myCafe;
+  late MatchingInfoModel matchingInfo;
 
   void _startTimer() {
     print("타이머 시작");
@@ -152,6 +155,7 @@ class _CafeDetailsState extends State<CafeDetails>
     userProfile = Provider.of<UserProfileModel>(context);
     userList = Provider.of<AllUsersModel>(context).getUserList(widget.cafeId);
     myCafe = Provider.of<MyCafeModel>(context);
+    matchingInfo = Provider.of<MatchingInfoModel>(context);
 
     return Scaffold(
       appBar: TopAppBar(
@@ -254,7 +258,7 @@ class _CafeDetailsState extends State<CafeDetails>
               ),
             ),
           ),
-          (myCafe.cafeId == widget.cafeId)
+          (myCafe.cafeId == widget.cafeId || matchingInfo.isMatching)
               ? Container()
               : BottomTextButton(
                   text: "이 카페를 내 위치로 지정하기",

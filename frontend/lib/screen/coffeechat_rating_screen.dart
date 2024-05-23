@@ -120,7 +120,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                           print(response);
 
                           Map<String, dynamic> delresponse =
-                              await matchCancelRequest(widget.matchId);
+                              await matchFinishRequest(
+                                  widget.matchId, widget.userId);
                           if (delresponse['success'] == true) {
                             showDialog(
                               context: context,
