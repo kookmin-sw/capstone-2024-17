@@ -3,7 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/model/matching_info_model.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/notification_dialog.dart';
+import 'package:frontend/widgets/user_details.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -85,10 +87,28 @@ class FCM {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              // 커피챗 진행중 여부 true로
-              final MatchingInfoModel matchingInfo =
+              MatchingInfoModel matchingInfo =
                   Provider.of<MatchingInfoModel>(context);
-              matchingInfo.setIsMatching(true);
+
+              // 커피챗 진행중 여부 true로, 매칭정보 가져오기
+              getUserDetail().then((userDetail) async {
+                getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+                  matchingInfo.setIsMatching(value["isMatching"]);
+
+                  // 커피챗 진행중이면 상대방 정보도 가져오기
+                  if (value["isMatching"]) {
+                    matchingInfo.setMatching(
+                      matchId: value["matchId"],
+                      myId: value["myId"],
+                      myNickname: value["myNickname"],
+                      myCompany: value["myCompany"],
+                      partnerId: value["partnerId"],
+                      partnerCompany: value["partnerCompany"],
+                      partnerNickname: value["partnerNickname"],
+                    );
+                  }
+                });
+              });
 
               return ReqAcceptedNotification(nickname: nickname);
             },

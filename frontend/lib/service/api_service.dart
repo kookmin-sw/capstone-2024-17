@@ -41,7 +41,7 @@ Future<Map<String, List<UserModel>>> getAllUsers(
   }
 }
 
-// 커피챗 진행중 여부 및 상대방 정보 가져오기
+// 커피챗 매칭 정보 가져오기 (진행중 여부, 내/상대방 정보)
 Future<Map<String, dynamic>> getMatchingInfo(userId) async {
   final url =
       Uri.parse('$baseUrl/match/isMatching?userId=$userId'); // check !!!
@@ -61,10 +61,15 @@ Future<Map<String, dynamic>> getMatchingInfo(userId) async {
     if (response.statusCode == 200) {
       if (responseData['success']) {
         var isMatching = responseData["data"]["isMatching"] == "yes";
+        // 진행중이 아니면 - 진행중 여부만 반환
         if (!isMatching) {
           return {"isMatching": isMatching};
         }
-        var matchPosition = responseData["data"]["matchPosition"];
+        // 진행중이면 - 전체(진행중 여부, 매칭 정보) 반환
+        var matchPosition =
+            responseData["data"]["matchPosition"]; // "sender" or "receiver"
+        var myInfo = responseData["data"]["${matchPosition}Info"];
+        var myId = myInfo["${matchPosition}Id"];
         var partnerInfo = (matchPosition == "sender")
             ? responseData["data"]["receiverInfo"]
             : responseData["data"]["senderInfo"];
@@ -74,6 +79,9 @@ Future<Map<String, dynamic>> getMatchingInfo(userId) async {
         return {
           "isMatching": isMatching,
           "matchId": responseData["data"]["matchId"],
+          "myId": myId,
+          "myNickname": myInfo["nickname"],
+          "myCompany": myInfo["company"]["name"],
           "partnerId": partnerId,
           "partnerCompany": partnerInfo["company"]["name"],
           "partnerNickname": partnerInfo["nickname"],

@@ -127,8 +127,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Future<void> _future;
-
   String? userToken;
   late StompClient stompClient;
 
@@ -159,10 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _future = initialize();
-  }
-
-  Future<void> initialize() async {
     stompClient = Provider.of<StompClient>(context, listen: false);
     userProfile = Provider.of<UserProfileModel>(context, listen: false);
     allUsers = Provider.of<AllUsersModel>(context, listen: false);
@@ -200,6 +194,9 @@ class _MyHomePageState extends State<MyHomePage> {
           if (value["isMatching"]) {
             matchingInfo.setMatching(
               matchId: value["matchId"],
+              myId: value["myId"],
+              myNickname: value["myNickname"],
+              myCompany: value["myCompany"],
               partnerId: value["partnerId"],
               partnerCompany: value["partnerCompany"],
               partnerNickname: value["partnerNickname"],
@@ -223,22 +220,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // 화면 리스트 초기화
       _screenOptions = [
         Google_Map(updateCafesCallback: updateCafeList),
-        (matchingInfo.isMatching)
-            ? Matching(
-                matchId: matchingInfo.matchId!,
-                partnerId: matchingInfo.partnerId!,
-                partnerCompany: matchingInfo.partnerCompany!,
-                partnerNickname: matchingInfo.partnerNickname!,
-              )
-            : const CoffeechatReqList(
-                matchId: '',
-                Question: '',
-                receiverCompany: '',
-                receiverPosition: '',
-                receiverIntroduction: '',
-                receiverRating: 0.0,
-                receiverNickname: '',
-              ),
+        const CoffeechatReqList(
+          matchId: '',
+          Question: '',
+          receiverCompany: '',
+          receiverPosition: '',
+          receiverIntroduction: '',
+          receiverRating: 0.0,
+          receiverNickname: '',
+        ),
         const ChatroomListScreen(),
         const UserScreen(),
       ];
@@ -251,56 +241,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     final selectedIndex = selectedIndexProvider.selectedIndex;
-    return FutureBuilder(
-      future: _future,
-      builder: (context, snapshot) {
-        return (userToken == null)
-            ? const LoginScreen()
-            : Scaffold(
-                body: _screenOptions.elementAt(selectedIndex),
-                bottomNavigationBar: BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
-                  iconSize: 26,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.map_outlined,
-                      ),
-                      label: '지도',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.coffee_outlined,
-                      ),
-                      activeIcon: Icon(
-                        Icons.coffee_rounded,
-                      ),
-                      label: '커피챗',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.forum_outlined,
-                      ),
-                      label: '채팅',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.person_outlined,
-                      ),
-                      label: 'MY',
-                    ),
-                  ],
-                  currentIndex: selectedIndex,
-                  onTap: (index) {
-                    selectedIndexProvider.selectedIndex = index;
-                  },
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: const Color(0xffff6c3e),
+    return (userToken == null)
+        ? const LoginScreen()
+        : Scaffold(
+            body: _screenOptions.elementAt(selectedIndex),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              iconSize: 26,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.map_outlined,
+                  ),
+                  label: '지도',
                 ),
-              );
-      },
-    );
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.coffee_outlined,
+                  ),
+                  activeIcon: Icon(
+                    Icons.coffee_rounded,
+                  ),
+                  label: '커피챗',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.forum_outlined,
+                  ),
+                  label: '채팅',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person_outlined,
+                  ),
+                  label: 'MY',
+                ),
+              ],
+              currentIndex: selectedIndex,
+              onTap: (index) {
+                selectedIndexProvider.selectedIndex = index;
+              },
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              unselectedItemColor: Colors.black,
+              selectedItemColor: const Color(0xffff6c3e),
+            ),
+          );
   }
 }
