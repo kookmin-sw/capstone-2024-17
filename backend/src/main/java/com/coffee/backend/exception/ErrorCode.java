@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "1401", "JWT 토큰이 만료되었습니다."),
     LOGIN_FAILED(HttpStatus.NOT_FOUND, "1404", "로그인 또는 패스워드가 일치하지 않습니다."),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "4404", "해당 사용자를 찾을 수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "1404", "해당 사용자를 찾을 수 없습니다."),
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT, "1409", "로그인 ID가 중복됩니다"),
     DELETE_USER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "1500", "사용자 탈퇴 처리 중 오류가 발생했습니다."),
 
@@ -18,6 +18,7 @@ public enum ErrorCode {
 
     REDIS_ACCESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "3500", "Redis 접근 중 오류가 발생했습니다."),
 
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "4404", "해당 리뷰를 찾을 수 없습니다."),
 
     FCM_ACCESS_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "5500", "FCM 액세스 토큰을 가져오는 중 오류가 발생했습니다."),
     FCM_MESSAGE_FORMAT_ERROR(HttpStatus.BAD_REQUEST, "5400", "FCM 메시지 포맷이 잘못되었습니다."),

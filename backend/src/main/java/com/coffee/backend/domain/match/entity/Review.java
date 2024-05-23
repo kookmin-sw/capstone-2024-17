@@ -19,14 +19,15 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
+    private String matchId;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
-    private User sender;
+    @JoinColumn(name = "reviewer_id")
+    private User reviewer;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    private User receiver;
+    @JoinColumn(name = "reviewee_id")
+    private User reviewee;
 
     private int rating; // 커피콩 (1-5)
     @Column(length = 1024)

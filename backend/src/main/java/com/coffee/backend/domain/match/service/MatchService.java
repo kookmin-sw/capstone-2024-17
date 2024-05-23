@@ -12,6 +12,7 @@ import com.coffee.backend.domain.match.dto.MatchInfoResponseDto;
 import com.coffee.backend.domain.match.dto.MatchReceivedInfoDto;
 import com.coffee.backend.domain.match.dto.MatchRequestDto;
 import com.coffee.backend.domain.match.dto.MatchStatusDto;
+import com.coffee.backend.domain.match.dto.ReviewCheckDto;
 import com.coffee.backend.domain.match.dto.ReviewDto;
 import com.coffee.backend.domain.match.entity.Review;
 import com.coffee.backend.domain.match.repository.ReviewRepository;
@@ -469,29 +470,51 @@ public class MatchService {
             throw new CustomException(ErrorCode.VALUE_ERROR);
         }
 
-        User sender = userRepository.findByUserId(dto.getSenderId()).orElseThrow();
-        User receiver = userRepository.findByUserId(dto.getReceiverId()).orElseThrow();
+        User reviewer = userRepository.findByUserId(dto.getReviewerId()).orElseThrow();
+        User reviewee = userRepository.findByUserId(dto.getRevieweeId()).orElseThrow();
 
-        int numberOfReviews = reviewRepository.countByReceiverUserId(receiver.getUserId());
-        double oldCoffeeBean = receiver.getCoffeeBean();
+        double oldCoffeeBean = reviewee.getCoffeeBean();
 
         double standard = 3.0;
-        double randomRatio = 0.3 + (1.0 - 0.3) * Math.random(); //0.3 ~ 1.0
+        double randomRatio = 0.3 + (1.0 - 0.3) * Math.random(); // 0.3 ~ 1.0
 
         // 기존 평점 + (새로운 평점 - 기준 평점) * 랜덤 반영 비율
         double newCoffeeBean = oldCoffeeBean + (dto.getRating() - standard) * randomRatio;
         double newCoffeeBeanDouble = Double.parseDouble(String.format("%.3f", newCoffeeBean)); // 소수점 3자리까지
 
-        receiver.setCoffeeBean(newCoffeeBeanDouble);
-        userRepository.save(receiver);
+        reviewee.setCoffeeBean(newCoffeeBeanDouble);
+        userRepository.save(reviewee);
 
         Review review = new Review();
-        review.setSender(sender);
-        review.setReceiver(receiver);
+        review.setMatchId(dto.getMatchId());
+        review.setReviewer(reviewer);
+        review.setReviewee(reviewee);
         review.setRating(dto.getRating());
         review.setComment(dto.getComment());
         review.setCreatedAt(new Date());
         reviewRepository.save(review);
         return review;
+    }
+
+    public ReviewCheckDto checkReviewed(String matchId, Long enderId) {
+        List<Review> reviews = reviewRepository.findByMatchId(matchId);
+
+        boolean hasReviewed = false;
+        if (reviews.isEmpty()) {
+            ReviewCheckDto response = new ReviewCheckDto();
+            response.setHasReviewed(hasReviewed);
+            return response;
+        }
+
+        for (Review review : reviews) {
+            User reviewer = review.getReviewer();
+            if (!enderId.equals(reviewer.getUserId())) {
+                hasReviewed = true;
+                break;
+            }
+        }
+        ReviewCheckDto response = new ReviewCheckDto();
+        response.setHasReviewed(hasReviewed);
+        return response;
     }
 }
