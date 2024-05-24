@@ -4,15 +4,13 @@
 <h1 align="center">커리어 한잔</h1>
 
 
-<p align="center"> ☕주변 IT현직자와 대면 만남이 가능한 실시간 커피챗 매칭 플랫폼
+<p align="center"> ☕주변 IT현직자와 대면 만남이 가능한 실시간 커피챗 매칭 플랫폼 
+  <br> <br>
 <a href="https://github.com/kookmin-sw/capstone-2024-17">Git Hub 링크</a>
-<br>
-<b>📢 Introduction</b>
 </p>
 <br>
 
-
-
+## 📢 Introduction
 <table align="center">
     <tr align="center">
         <td>
@@ -26,16 +24,15 @@
     </tr>
 </table>
 
+<br>
+
 커피챗(Coffee-Chat)은 가볍게 커피 한잔하듯 정보를 주고받으며 인맥을 쌓는 비즈니스 문화입니다.
-
 '커리어 한잔'은 커피챗을 원하는 개발자들에게 **대면 만남의 기회**를 제공해 가볍고 캐주얼한 커피챗 문화를 활성화할 목적으로 만들어졌습니다.
-
 다른 플랫폼들과 달리, 현재 나와 가까운 사용자를 확인하고 실시간으로 커피챗 요청을 보내 높은 확률로 커피챗 매칭이 가능합니다.
 
 <br>
 
 Our service created with the purpose of facilitating face-to-face opportunities for developers or aspiring developers who seek Coffee Chat.
-
 We aimed to allows users to see nearby individuals and facilitates real-time matching for Coffee Chat through requests, increasing the likelihood of successful connections.
 
 <br>
@@ -59,7 +56,7 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
 
 <br>
 
-<h3>🛠️ Skills</h3> 
+## 🛠️ Skills
 
 <h4>Frontend</h4> 
 <p><img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"> <img src="https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white"></p>
@@ -103,13 +100,6 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
 </table>
 
 <br>
-<!-- ### 4. 사용법
-
-소스코드제출시 설치법이나 사용법을 작성하세요. -->
-
-<!-- ### 5. 기타
-
-추가적인 내용은 자유롭게 작성하세요. -->
 
 <br>
 
@@ -198,8 +188,8 @@ jm3789)</b>
 
 <h2>💾 자료실</h2>
 
-<a href="https://drive.google.com/file/d/1kZndhMu3V3Ppbeb_cwtwDmWhDAZv-gMi/view?usp=sharing">발표자료</a>
+<a href="https://drive.google.com/file/d/1kZndhMu3V3Ppbeb_cwtwDmWhDAZv-gMi/view?usp=sharing">발표 자료</a>
 <br>
-<a href="(https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true">중간보고서-커리어한잔</a>
+<a href="https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true">중간보고서</a>
 <br>
-<a href="https://docs.google.com/document/d/1p7BD_Owp9GKQcNeNzbaH2gUkTiEjrnna/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true">최종결과수행보고서-커리어한잔</a>
+<a href="https://docs.google.com/document/d/1p7BD_Owp9GKQcNeNzbaH2gUkTiEjrnna/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true">최종결과수행보고서</a>
