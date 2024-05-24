@@ -49,8 +49,8 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
     </tr>
     <tr align="center">
         <td>
-            <a href="https://youtu.be/_zXQykNYMlw" target="_blank">
-                <img src="http://img.youtube.com/vi/_zXQykNYMlw/0.jpg" alt="시연영상" style="width: 100%; max-width: 560px; height: auto;">
+            <a href="https://www.youtube.com/watch?v=LZim3IHcifQ" target="_blank">
+                <img src="http://img.youtube.com/vi/LZim3IHcifQ/0.jpg" alt="시연영상" style="width: 100%; max-width: 560px; height: auto;">
             </a>
         </td>
     </tr>
@@ -195,10 +195,6 @@ jm3789)</b>
 </table>
 <br>
 
-<!-- ### 4. 사용법
-
-소스코드제출시 설치법이나 사용법을 작성하세요. -->
-
 ## 💾 자료실
 
 [발표자료](https://drive.google.com/file/d/1kZndhMu3V3Ppbeb_cwtwDmWhDAZv-gMi/view?usp=sharing)
@@ -206,6 +202,3 @@ jm3789)</b>
 [중간보고서-커리어한잔](https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true)
 
 [최종결과수행보고서-커리어한잔](https://docs.google.com/document/d/1p7BD_Owp9GKQcNeNzbaH2gUkTiEjrnna/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true)
-
-<br>
-<br>
