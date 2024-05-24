@@ -5,12 +5,13 @@
 
 
 <p align="center"> ☕주변 IT현직자와 대면 만남이 가능한 실시간 커피챗 매칭 플랫폼
-
-## [Git Hub 링크](https://github.com/kookmin-sw/capstone-2024-17)
-
+<a href="https://github.com/kookmin-sw/capstone-2024-17">Git Hub 링크</a>
+<br>
+<b>📢 Introduction</b>
+</p>
 <br>
 
-## 📢 Introduction
+
 
 <table align="center">
     <tr align="center">
@@ -58,23 +59,23 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
 
 <br>
 
-## 🛠️ Skills
+<h3>🛠️ Skills</h3> 
 
-#### Frontend
-<img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"> <img src="https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white">
+<h4>Frontend</h4> 
+<p><img src="https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"> <img src="https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white"></p>
 
-#### Backend
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+<h4>Backend</h4>
+<p><img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"></p>
 
-#### Infra
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"/> <img src="https://img.shields.io/badge/sockjs-010101?style=for-the-badge&logoColor=white"/> <img src="https://img.shields.io/badge/stomp-010101?style=for-the-badge&logo=stomp&logoColor=white"/>
+<h4>Infra</h4>
+<p><img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"/> <img src="https://img.shields.io/badge/sockjs-010101?style=for-the-badge&logoColor=white"/> <img src="https://img.shields.io/badge/stomp-010101?style=for-the-badge&logo=stomp&logoColor=white"/></p>
 
-#### Cowork
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+<h4>Cowork</h4>
+<p><img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"></p>
 
 <br>
 
-## 📑 System Architecture
+<h2>📑 System Architecture</h2>
 <table align="center">
     <tr align="center">
         <td>
@@ -112,7 +113,7 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
 
 <br>
 
-## 👩🏻‍💻 Abous Us
+<h2>👩🏻‍💻 Abous Us</h2>
 
 <table>
     <tr align="center">
@@ -195,10 +196,10 @@ jm3789)</b>
 </table>
 <br>
 
-## 💾 자료실
+<h2>💾 자료실</h2>
 
-[발표자료](https://drive.google.com/file/d/1kZndhMu3V3Ppbeb_cwtwDmWhDAZv-gMi/view?usp=sharing)
-
-[중간보고서-커리어한잔](https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true)
-
-[최종결과수행보고서-커리어한잔](https://docs.google.com/document/d/1p7BD_Owp9GKQcNeNzbaH2gUkTiEjrnna/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true)
+<a href="https://drive.google.com/file/d/1kZndhMu3V3Ppbeb_cwtwDmWhDAZv-gMi/view?usp=sharing">발표자료</a>
+<br>
+<a href="(https://docs.google.com/document/d/1qAzR_lx9GxvC1TVv7qw2EdgwBE0pBbpK/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true">중간보고서-커리어한잔</a>
+<br>
+<a href="https://docs.google.com/document/d/1p7BD_Owp9GKQcNeNzbaH2gUkTiEjrnna/edit?usp=sharing&ouid=110864745897118408628&rtpof=true&sd=true">최종결과수행보고서-커리어한잔</a>
