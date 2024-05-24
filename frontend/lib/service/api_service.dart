@@ -350,9 +350,10 @@ Future<Map<String, dynamic>> coffeeBeanReview(
   }
 }
 
-Future<Map<String, dynamic>> checkReviewedRequest(int senderId) async {
+Future<Map<String, dynamic>> checkReviewedRequest(
+    String matchId, int enderId) async {
   final url = Uri.parse(
-      '$baseUrl/match/check/reviewed?matchId=$matchId&enderId=$endreId');
+      '$baseUrl/match/check/reviewed?matchId=$matchId&enderId=$enderId');
 
   String? userToken = await storage.read(key: 'authToken');
 

@@ -113,10 +113,16 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
                         Map<String, dynamic> res =
                             await getMatchingInfo(widget.userId);
-                        print(res);
+
+                        Map<String, dynamic> review =
+                            await checkReviewedRequest(
+                                widget.matchId, widget.userId);
                         if (res['isMatching'] != 'no') {
-                          await matchFinishRequest(
-                              widget.matchId, widget.userId);
+                          if (review['data']['hasReviewed'] == true) {
+                            //상대방이 리뷰를 남긴 경우에만 finish 가능 (중복 종료 요청 방지)
+                            await matchFinishRequest(
+                                widget.matchId, widget.userId);
+                          }
                         }
 
                         showDialog(
