@@ -312,7 +312,7 @@ Future<Map<String, dynamic>> matchFinishRequest(
 
 //커피챗 진행 후 평점 보내기
 Future<Map<String, dynamic>> coffeeBeanReview(
-    int senderId, int receiverId, int rating) async {
+    String matchId, int reviewerId, int revieweeId, int rating) async {
   final url = Uri.parse('$baseUrl/match/review');
   String? userToken = await storage.read(key: 'authToken');
 
@@ -324,10 +324,11 @@ Future<Map<String, dynamic>> coffeeBeanReview(
         "Authorization": "Bearer $userToken",
       },
       body: jsonEncode({
-        'senderId': senderId,
-        'receiverId': receiverId,
-        'rating': rating,
-        'comment': '',
+        "matchId": matchId,
+        "reviewerId": reviewerId,
+        "revieweeId": revieweeId,
+        "rating": rating,
+        "comment": ""
       }),
     );
 
@@ -344,6 +345,7 @@ Future<Map<String, dynamic>> coffeeBeanReview(
       throw Exception('서버 오류: ${response.statusCode}');
     }
   } catch (e) {
+    print(e);
     throw Error();
   }
 }

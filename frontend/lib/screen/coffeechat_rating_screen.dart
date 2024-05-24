@@ -104,7 +104,10 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                         int rating = (selectedIndex + 1); //점수
 
                         Map<String, dynamic> response = await coffeeBeanReview(
-                            widget.userId, widget.partnerId, rating);
+                            widget.matchId,
+                            widget.userId,
+                            widget.partnerId,
+                            rating);
 
                         print(response);
 
