@@ -350,6 +350,31 @@ Future<Map<String, dynamic>> coffeeBeanReview(
   }
 }
 
+Future<Map<String, dynamic>> checkReviewedRequest(int senderId) async {
+  final url = Uri.parse(
+      '$baseUrl/match/check/reviewed?matchId=$matchId&enderId=$endreId');
+
+  String? userToken = await storage.read(key: 'authToken');
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Failed to get reviewed info: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Error();
+  }
+}
+
 // 회원가입
 Future<Map<String, dynamic>> signup(String? loginId, String? password,
     String nickname, String email, String phone) async {
