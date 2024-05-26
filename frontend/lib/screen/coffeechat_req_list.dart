@@ -75,27 +75,6 @@ class CoffeechatReqList extends StatelessWidget {
   Widget build(BuildContext context) {
     final matchingInfo = Provider.of<MatchingInfoModel>(context);
 
-    // 커피챗 매칭정보 가져오기
-    getUserDetail().then((userDetail) {
-      getMatchingInfo(userDetail["data"]["userId"]).then((value) {
-        // 커피챗 진행중 여부 저장
-        matchingInfo.setIsMatching(value["isMatching"]);
-
-        // 커피챗 진행중이면 상대방 정보도 저장
-        if (value["isMatching"]) {
-          matchingInfo.setMatching(
-            matchId: value["matchId"],
-            myId: value["myId"],
-            myNickname: value["myNickname"],
-            myCompany: value["myCompany"],
-            partnerId: value["partnerId"],
-            partnerCompany: value["partnerCompany"],
-            partnerNickname: value["partnerNickname"],
-          );
-        }
-      });
-    });
-
     return (matchingInfo.isMatching == true)
         ? Matching(
             matchId: matchingInfo.matchId!,
@@ -202,7 +181,7 @@ class _SentReqState extends State<SentReq> {
             snapshot.data == null ||
             (snapshot.data!['data'] == null ||
                 snapshot.data!['data'].isEmpty)) {
-          return Center(
+          return const Center(
             child: Text(
               '보낸 요청이 없습니다 :(',
               style: TextStyle(
