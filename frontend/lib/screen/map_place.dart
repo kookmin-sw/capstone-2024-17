@@ -84,7 +84,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     _setCircle(LatLng(position.latitude, position.longitude));
-    _searchcafes(LatLng(position.latitude, position.longitude));
+    // _searchcafes(LatLng(position.latitude, position.longitude));
   }
 
   // 현재 위치로 이동
@@ -101,7 +101,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
     _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     _setCircle(LatLng(position.latitude, position.longitude));
-    _searchcafes(LatLng(position.latitude, position.longitude));
+    // _searchcafes(LatLng(position.latitude, position.longitude));
   }
 
   Set<Marker> _markers = {};
