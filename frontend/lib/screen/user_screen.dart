@@ -4,11 +4,11 @@ import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/edit_profile_screen.dart';
 import 'package:frontend/screen/settings_screen.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/big_thermometer.dart';
+import 'package:frontend/widgets/thermometer/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/profile_img.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:provider/provider.dart';
 
 class UserScreen extends StatefulWidget {
@@ -277,7 +277,7 @@ class _UserScreenState extends State<UserScreen> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
+            return const AlertDialog(
               content: OneButtonDialog(
                 first: '로그인 시간이 만료되어 재로그인이 필요합니다.',
               ),

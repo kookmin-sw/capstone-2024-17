@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/notification_dialog.dart';
-import 'package:frontend/widgets/user_details.dart';
+import 'package:frontend/widgets/user/user_details.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';

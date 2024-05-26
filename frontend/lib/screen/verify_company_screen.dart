@@ -5,7 +5,7 @@ import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/rounded_img.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:provider/provider.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
@@ -257,7 +257,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '이메일 도메인이 일치하지 않습니다.',
             ),
@@ -277,7 +277,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
+            return const AlertDialog(
               content: OneButtonDialog(
                 first: '메일이 발송되었습니다. 인증코드를 입력해주세요.',
               ),
@@ -323,7 +323,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '인증코드를 입력해주세요.',
             ),
@@ -342,7 +342,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
+            return const AlertDialog(
               content: OneButtonDialog(
                 first: '회사 인증이 완료되었습니다.',
               ),

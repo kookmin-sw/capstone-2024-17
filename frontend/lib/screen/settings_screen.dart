@@ -5,7 +5,7 @@ import 'package:stomp_dart_client/stomp.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/service/auto_offline_service.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 
 class OptionItem extends StatelessWidget {
   final String optionName;
@@ -133,7 +133,7 @@ class SettingsScreen extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return AlertDialog(
+                                return const AlertDialog(
                                   content: OneButtonDialog(
                                     first: '탈퇴되었습니다.',
                                   ),

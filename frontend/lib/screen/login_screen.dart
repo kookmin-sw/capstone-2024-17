@@ -3,14 +3,14 @@ import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/notification.dart';
 
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/iconed_textfield.dart';
+import 'package:frontend/widgets/textfield/iconed_textfield.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/button/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
 
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return AlertDialog(
+                              return const AlertDialog(
                                 content: OneButtonDialog(
                                   first: '아이디를 입력해주세요.',
                                 ),
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return AlertDialog(
+                              return const AlertDialog(
                                 content: OneButtonDialog(
                                   first: '비밀번호를 입력해주세요.',
                                 ),

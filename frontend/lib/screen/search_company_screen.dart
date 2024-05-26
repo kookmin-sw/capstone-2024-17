@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 // import 'package:frontend/screen/verify_company_screen.dart';
 import 'package:frontend/widgets/company_item.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/search_textfield.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/textfield/search_textfield.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 
 class SearchCompanyScreen extends StatefulWidget {
   const SearchCompanyScreen({super.key});
@@ -112,7 +112,7 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '회사 이름을 입력해주세요.',
             ),

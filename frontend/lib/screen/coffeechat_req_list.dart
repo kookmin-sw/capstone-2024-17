@@ -12,9 +12,9 @@ import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/color_text_container.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
-import 'package:frontend/widgets/top_appbar.dart';
-import 'package:frontend/widgets/user_details.dart';
-import 'package:frontend/widgets/user_item.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
+import 'package:frontend/widgets/user/user_details.dart';
+import 'package:frontend/widgets/user/user_item.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:provider/provider.dart';
 
@@ -202,7 +202,7 @@ class _SentReqState extends State<SentReq> {
             snapshot.data == null ||
             (snapshot.data!['data'] == null ||
                 snapshot.data!['data'].isEmpty)) {
-          return Center(
+          return const Center(
             child: Text(
               '보낸 요청이 없습니다 :(',
               style: TextStyle(

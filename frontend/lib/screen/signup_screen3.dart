@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/iconed_textfield.dart';
+import 'package:frontend/widgets/textfield/iconed_textfield.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 
 class SignupScreen3 extends StatefulWidget {
   final String? loginId;
@@ -101,7 +101,7 @@ class _SignupScreen3State extends State<SignupScreen3> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '사용할 닉네임을 입력해주세요.',
             ),
@@ -113,7 +113,7 @@ class _SignupScreen3State extends State<SignupScreen3> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '이메일을 입력해주세요.',
             ),
@@ -125,7 +125,7 @@ class _SignupScreen3State extends State<SignupScreen3> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '전화번호를 입력해주세요.',
             ),

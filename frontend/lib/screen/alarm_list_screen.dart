@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/notification.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'dart:convert';
 
 final List<AlarmEvent> events = [];

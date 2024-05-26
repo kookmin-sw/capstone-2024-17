@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/widgets/big_thermometer.dart';
+import 'package:frontend/widgets/thermometer/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/profile_img.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screen/signup_screen2.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 
 class ExpansionLabeledCheckbox extends StatelessWidget {
   const ExpansionLabeledCheckbox({
@@ -221,7 +221,7 @@ class _SignupScreenState extends State<SignupScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
+          return const AlertDialog(
             content: OneButtonDialog(
               first: '약관 동의를 해주세요.',
             ),

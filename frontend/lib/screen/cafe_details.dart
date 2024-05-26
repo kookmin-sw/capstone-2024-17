@@ -11,8 +11,8 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/widgets/cafe_info.dart';
-import 'package:frontend/widgets/top_appbar.dart';
-import 'package:frontend/widgets/user_item.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
+import 'package:frontend/widgets/user/user_item.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';

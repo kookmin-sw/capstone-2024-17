@@ -5,10 +5,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
-import 'package:frontend/widgets/chat_date.dart';
-import 'package:frontend/widgets/chat_item.dart';
+import 'package:frontend/widgets/chatting/chat_date.dart';
+import 'package:frontend/widgets/chatting/chat_item.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 
