@@ -159,25 +159,17 @@ class _SignupScreen2State extends State<SignupScreen2> {
     if (_loginIdController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '아이디를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "아이디를 입력해주세요.",
+        ),
       );
       return;
     } else if (_passwordController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '비밀번호를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "비밀번호를 입력해주세요.",
+        ),
       );
       return;
     }

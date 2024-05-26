@@ -100,37 +100,25 @@ class _SignupScreen3State extends State<SignupScreen3> {
     if (_nicknameController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '사용할 닉네임을 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "사용할 닉네임을 입력해주세요.",
+        ),
       );
       return;
     } else if (_emailController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '이메일을 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "이메일을 입력해주세요.",
+        ),
       );
       return;
     } else if (_phoneController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '전화번호를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "전화번호를 입력해주세요.",
+        ),
       );
       return;
     }
@@ -145,13 +133,9 @@ class _SignupScreen3State extends State<SignupScreen3> {
     } catch (error) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '요청 실패: $error',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "요청 실패: $error",
+        ),
       );
     }
   }
@@ -167,29 +151,21 @@ void waitSignup(BuildContext context, String? loginId, String? password,
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: OneButtonDialog(
-            first: res['message'],
-            onFirstButtonClick: () {
-              Navigator.of(context).pushNamed('/signin');
-            },
-          ),
-        );
-      },
+      builder: (BuildContext context) => OneButtonDialog(
+        content: res['message'],
+        onFirstButtonClick: () {
+          Navigator.of(context).pushNamed('/signin');
+        },
+      ),
     );
   } else {
     // 회원가입 실패
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: OneButtonDialog(
-            first: '회원가입 실패: ${res['message']}(${res['code']})',
-          ),
-        );
-      },
+      builder: (BuildContext context) => OneButtonDialog(
+        content: "회원가입 실패: ${res['message']}(${res['code']})",
+      ),
     );
   }
 }

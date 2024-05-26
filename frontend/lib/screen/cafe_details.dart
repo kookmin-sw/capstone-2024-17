@@ -317,7 +317,7 @@ class _CafeDetailsState extends State<CafeDetails>
                               showDialog(
                                 context: context,
                                 builder: (context) => const OneButtonDialog(
-                                  first: "카페 지정에 실패했습니다. \n잠시후 다시 시도해주세요.",
+                                  content: "카페 지정에 실패했습니다. \n잠시후 다시 시도해주세요.",
                                 ),
                               );
                             }

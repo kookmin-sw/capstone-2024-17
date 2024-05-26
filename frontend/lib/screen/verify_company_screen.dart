@@ -256,13 +256,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     if (!email.endsWith('@${widget.domain}')) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '이메일 도메인이 일치하지 않습니다.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "이메일 도메인이 일치하지 않습니다.",
+        ),
       );
 
       return;
@@ -276,13 +272,8 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              content: OneButtonDialog(
-                first: '메일이 발송되었습니다. 인증코드를 입력해주세요.',
-              ),
-            );
-          },
+          builder: (BuildContext context) =>
+              const OneButtonDialog(content: "메일이 발송되었습니다. 인증코드를 입력해주세요."),
         );
       } else {
         // 요청 실패
@@ -290,13 +281,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: OneButtonDialog(
-                first: '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
-              ),
-            );
-          },
+          builder: (BuildContext context) => OneButtonDialog(
+            content: "이메일 전송 실패: ${res["message"]}(${res["statusCode"]})",
+          ),
         );
       }
       // 에러
@@ -305,13 +292,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '에러: $error',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "에러 $error",
+        ),
       );
     }
     return;
@@ -322,13 +305,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     if (verifyCode == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '인증코드를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "인증코드를 입력해주세요.",
+        ),
       );
       return;
     }
@@ -341,13 +320,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              content: OneButtonDialog(
-                first: '회사 인증이 완료되었습니다.',
-              ),
-            );
-          },
+          builder: (BuildContext context) => const OneButtonDialog(
+            content: "회사 인증이 완료되었습니다.",
+          ),
         );
       } else {
         // 요청 실패
@@ -355,13 +330,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: OneButtonDialog(
-                first: '인증 실패: ${res["message"]}(${res["statusCode"]})',
-              ),
-            );
-          },
+          builder: (BuildContext context) => OneButtonDialog(
+            content: "인증 실패: ${res["message"]}(${res["statusCode"]})",
+          ),
         );
       }
       // 에러
@@ -370,13 +341,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '에러: $error',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "에러 $error",
+        ),
       );
     }
     return;

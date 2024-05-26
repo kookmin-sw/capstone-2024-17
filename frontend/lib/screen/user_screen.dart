@@ -276,26 +276,18 @@ class _UserScreenState extends State<UserScreen> {
       if (res['code'] == "1401") {
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              content: OneButtonDialog(
-                first: '로그인 시간이 만료되어 재로그인이 필요합니다.',
-              ),
-            );
-          },
+          builder: (BuildContext context) => const OneButtonDialog(
+            content: "로그인 시간이 만료되어 재로그인이 필요합니다.",
+          ),
         );
       } else {
         // 요청 실패
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: OneButtonDialog(
-                first: '유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})',
-              ),
-            );
-          },
+          builder: (BuildContext context) => OneButtonDialog(
+            content: "유저 정보 가져오기에 실패했습니다: ${res['message']}(${res['code']})",
+          ),
         );
       }
     }

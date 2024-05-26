@@ -111,13 +111,9 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
     if (keyword == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '회사 이름을 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "회사 이름을 입력해주세요.",
+        ),
       );
       return;
     }
@@ -152,26 +148,18 @@ class _SearchCompanyScreenState extends State<SearchCompanyScreen> {
         print('회사정보 검색 실패: ${res["message"]}(${res["statusCode"]})');
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: OneButtonDialog(
-                first: '회사정보 검색 실패: ${res["message"]}(${res["statusCode"]})',
-              ),
-            );
-          },
+          builder: (BuildContext context) => OneButtonDialog(
+            content: "회사정보 검색 실패: ${res["message"]}(${res["statusCode"]})",
+          ),
         );
       }
     } catch (error) {
       print('회사정보 검색 실패: $error');
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '회사정보 검색 실패: $error',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "회사정보 검색 실패: $error",
+        ),
       );
     }
 

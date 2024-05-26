@@ -153,13 +153,9 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
       // 요청 실패
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '직무 리스트를 불러올 수 없습니다.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "직무 리스트를 불러올 수 없습니다.",
+        ),
       );
     }
   }
@@ -172,30 +168,21 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '직무가 저장되었습니다!',
-              onFirstButtonClick: () {
-                Navigator.of(context)
-                    .popUntil(ModalRoute.withName('/editprofile'));
-              },
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "직무가 저장되었습니다!",
+          onFirstButtonClick: () {
+            Navigator.of(context).popUntil(ModalRoute.withName('/editprofile'));
+          },
+        ),
       );
     } else {
       // 직무 저장 실패
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '직무 저장 실패: ${res['message']}(${res['code']})',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "직무 저장 실패: ${res['message']}(${res['code']})",
+        ),
       );
     }
   }

@@ -170,14 +170,10 @@ class _ChatScreenState extends State<ChatScreen> {
       print('로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first:
-                  '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content:
+              "로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})",
+        ),
       );
       return;
     }
@@ -274,13 +270,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '채팅 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "채팅 불러오기 실패: ${res["message"]}(${res["statusCode"]})",
+        ),
       );
     }
   }

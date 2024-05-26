@@ -90,39 +90,27 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
     if (_companyNameController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '회사명을 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "회사명을 입력해주세요.",
+        ),
       );
 
       return;
     } else if (_bnoController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '사업자 등록번호를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "사업자 등록번호를 입력해주세요.",
+        ),
       );
 
       return;
     } else if (_domainController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '사내메일 도메인을 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "사내메일 도메인을 입력해주세요.",
+        ),
       );
 
       return;
@@ -130,13 +118,9 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
         .hasMatch(_domainController.text)) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '도메인 형식이 올바르지 않습니다.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "도메인 형식이 올바르지 않습니다.",
+        ),
       );
       return;
     }
@@ -147,11 +131,7 @@ class _AddCompanyScreenState extends State<AddCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '요청 실패: $error',
-            ),
-          );
+          return OneButtonDialog(content: "요청 실패: $error");
         },
       );
     }
@@ -167,31 +147,17 @@ void waitAddCompany(
     print(res);
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: OneButtonDialog(
-            first: '회사 추가 요청 성공! 회사가 승인될 때까지 기다려주세요.',
-            onFirstButtonClick: () {
-              Navigator.pop(context); // 버튼 클릭 시 다이얼로그 닫기
-            },
-          ),
-        );
-      },
+      builder: (context) => const OneButtonDialog(
+        content: "회사 추가 요청 성공! 회사가 승인될 때까지 기다려주세요.",
+      ),
     );
   } else {
     // 요청 실패
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: OneButtonDialog(
-            first: '회사 추가요청 실패: ${res['message']}(${res['statusCode']})',
-            onFirstButtonClick: () {
-              Navigator.pop(context); // 버튼 클릭 시 다이얼로그 닫기
-            },
-          ),
-        );
-      },
+      builder: (BuildContext context) => OneButtonDialog(
+        content: "회사 추가요청 실패: ${res['message']}(${res['statusCode']})",
+      ),
     );
   }
 }

@@ -220,13 +220,9 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!checkboxValue1 || !checkboxValue2) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '약관 동의를 해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "약관에 동의해주세요.",
+        ),
       );
       return;
     }

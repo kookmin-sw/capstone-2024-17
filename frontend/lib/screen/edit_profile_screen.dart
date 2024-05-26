@@ -131,28 +131,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
                                                 showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      content: OneButtonDialog(
-                                                        first:
-                                                            '초기화 성공: ${res['message']}(${res['code']})',
-                                                      ),
-                                                    );
-                                                  },
+                                                  builder: (context) =>
+                                                      OneButtonDialog(
+                                                    content:
+                                                        "초기화 성공: ${res['message']}(${res['code']})",
+                                                  ),
                                                 );
                                               } else {
                                                 showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      content: OneButtonDialog(
-                                                        first:
-                                                            '초기화 실패: ${res['message']}(${res['code']})',
-                                                      ),
-                                                    );
-                                                  },
+                                                  builder: (context) =>
+                                                      OneButtonDialog(
+                                                    content:
+                                                        "초기화 실패: ${res['message']}(${res['code']})",
+                                                  ),
                                                 );
                                               }
                                             },
@@ -292,14 +284,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: OneButtonDialog(
-                                  first:
-                                      '유저정보 변경에 실패했습니다: ${res1['message']}(${res1['code']})',
-                                ),
-                              );
-                            },
+                            builder: (context) => OneButtonDialog(
+                              content:
+                                  "유저정보 변경에 실패했습니다: ${res1['message']}(${res1['code']})",
+                            ),
                           );
                         }
                       },

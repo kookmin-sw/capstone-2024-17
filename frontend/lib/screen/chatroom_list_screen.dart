@@ -84,13 +84,9 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})",
+        ),
       );
     }
   }

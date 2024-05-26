@@ -132,13 +132,9 @@ class SettingsScreen extends StatelessWidget {
                             // 요청 성공
                             showDialog(
                               context: context,
-                              builder: (BuildContext context) {
-                                return const AlertDialog(
-                                  content: OneButtonDialog(
-                                    first: '탈퇴되었습니다.',
-                                  ),
-                                );
-                              },
+                              builder: (context) => const OneButtonDialog(
+                                content: "탈퇴되었습니다.",
+                              ),
                             );
 
                             await logout(context).then((_) {
@@ -150,26 +146,18 @@ class SettingsScreen extends StatelessWidget {
 
                             showDialog(
                               context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: OneButtonDialog(
-                                    first:
-                                        '회원탈퇴 실패: ${res['message']}(${res['statusCode']})',
-                                  ),
-                                );
-                              },
+                              builder: (context) => OneButtonDialog(
+                                content:
+                                    "회원탈퇴 실패: ${res['message']}(${res['statusCode']})",
+                              ),
                             );
                           }
                         } catch (error) {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: OneButtonDialog(
-                                  first: '요청 실패: $error',
-                                ),
-                              );
-                            },
+                            builder: (context) => OneButtonDialog(
+                              content: "요청 실패: $error",
+                            ),
                           );
                         }
                       },
