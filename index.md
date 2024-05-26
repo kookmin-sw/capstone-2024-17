@@ -19,7 +19,9 @@
     </tr>
     <tr align="center">
         <td>
+          <a href="https://www.youtube.com/watch?v=D-rP2J3Pz50" target="_blank">
           <img src="https://github.com/kookmin-sw/capstone-2024-17/assets/119438312/439920c4-48db-472e-a753-2136db0632ae" width="700">
+          </a>
         </td>
     </tr>
 </table>
