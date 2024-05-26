@@ -4,8 +4,8 @@ import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/rounded_img.dart';
 import 'package:frontend/widgets/bar/top_appbar.dart';
+import 'package:frontend/widgets/profile_img.dart';
 import 'package:provider/provider.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
@@ -45,7 +45,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
   Widget build(BuildContext context) {
     UserProfileModel userProfile =
         Provider.of<UserProfileModel>(context, listen: true);
-    Image logoImage = Image.network(widget.logoUrl, fit: BoxFit.cover);
     return Scaffold(
       appBar: const TopAppBar(title: '회사 인증'),
       body: SingleChildScrollView(
@@ -77,7 +76,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
                   child: Column(children: <Widget>[
                     // 회사 로고
-                    RoundedImg(image: logoImage, size: 100),
+                    ProfileImgSmall(isLocal: false, logoUrl: widget.logoUrl),
                     const SizedBox(
                       height: 20,
                     ),
