@@ -50,11 +50,11 @@ class OneButtonDialog extends StatelessWidget {
           height: 50,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
               if (onFirstButtonClick != null) {
                 // 콜백 함수가 null이 아닌 경우 실행
                 onFirstButtonClick!();
               }
+              Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
