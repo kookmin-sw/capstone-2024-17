@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 
 class YesOrNoDialog extends StatelessWidget {
   final String content;
