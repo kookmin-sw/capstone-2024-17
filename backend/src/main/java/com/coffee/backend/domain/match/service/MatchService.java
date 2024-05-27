@@ -298,8 +298,6 @@ public class MatchService {
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
 
-        // TODO: 취소 fcm 알림
-
         redisTemplate.opsForHash().put(key, "status", "canceled");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "canceled");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // 락 해제
