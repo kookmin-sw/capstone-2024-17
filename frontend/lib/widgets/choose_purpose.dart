@@ -92,14 +92,9 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                 if (_selectedIndex == null) {
                   showDialog(
                     context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        // title: const Text(""),
-                        content: OneButtonDialog(
-                          first: '커피챗 목적을 선택해주세요.',
-                        ),
-                      );
-                    },
+                    builder: (BuildContext context) => const OneButtonDialog(
+                      content: "커피챗 목적을 선택해주세요.",
+                    ),
                   );
                   return;
                 }

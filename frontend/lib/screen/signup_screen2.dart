@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screen/signup_screen3.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/iconed_textfield.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/textfield/iconed_textfield.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 
 class WarningLabel extends StatelessWidget {
   const WarningLabel({
@@ -159,25 +159,17 @@ class _SignupScreen2State extends State<SignupScreen2> {
     if (_loginIdController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '아이디를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "아이디를 입력해주세요.",
+        ),
       );
       return;
     } else if (_passwordController.text == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '비밀번호를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: "비밀번호를 입력해주세요.",
+        ),
       );
       return;
     }

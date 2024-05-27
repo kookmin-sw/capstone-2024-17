@@ -127,18 +127,14 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: OneButtonDialog(
-                                first:
-                                    '${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
-                                onFirstButtonClick: () {
-                                  Navigator.pop(context);
-                                  selectedIndexProvider.selectedIndex = 0;
-                                },
-                              ),
-                            );
-                          },
+                          builder: (BuildContext context) => OneButtonDialog(
+                            content:
+                                "${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.",
+                            onFirstButtonClick: () {
+                              Navigator.pop(context);
+                              selectedIndexProvider.selectedIndex = 0;
+                            },
+                          ),
                         );
 
                         //이동할 곳 여기 추가하면 됨!!!

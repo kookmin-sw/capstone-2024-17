@@ -3,14 +3,14 @@ import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/notification.dart';
 
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/iconed_textfield.dart';
+import 'package:frontend/widgets/textfield/iconed_textfield.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/button/bottom_text_secondary_button.dart';
 import 'package:frontend/widgets/kakao_login_widget.dart';
 
 import 'package:frontend/service/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -93,24 +93,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (_loginIdController.text == '') {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: OneButtonDialog(
-                                  first: '아이디를 입력해주세요.',
-                                ),
-                              );
-                            },
+                            builder: (BuildContext context) =>
+                                const OneButtonDialog(
+                              content: "아이디를 입력해주세요.",
+                            ),
                           );
                         } else if (_passwordController.text == '') {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: OneButtonDialog(
-                                  first: '비밀번호를 입력해주세요.',
-                                ),
-                              );
-                            },
+                            builder: (BuildContext context) =>
+                                const OneButtonDialog(
+                              content: "비밀번호를 입력해주세요.",
+                            ),
                           );
                         } else {
                           try {
@@ -122,13 +116,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           } catch (error) {
                             showDialog(
                               context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: OneButtonDialog(
-                                    first: '요청 실패: $error',
-                                  ),
-                                );
-                              },
+                              builder: (BuildContext context) =>
+                                  OneButtonDialog(
+                                content: "요청 실패: $error",
+                              ),
                             );
                           }
                           setState(() {}); // 화면 갱신
@@ -202,13 +193,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: res['message'],
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: res['message'],
+        ),
       );
 
       // 메인 페이지로 navigate, 스택에 쌓여있던 페이지들 삭제
@@ -219,13 +206,9 @@ class _LoginScreenState extends State<LoginScreen> {
       // 실패
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '로그인 실패: ${res['message']}(${res['code']})',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: "로그인 실패: ${res['message']}(${res['code']})",
+        ),
       );
     }
   }

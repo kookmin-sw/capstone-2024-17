@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/screen/search_company_screen.dart';
-import 'package:frontend/widgets/big_thermometer.dart';
+import 'package:frontend/widgets/thermometer/big_thermometer.dart';
 import 'package:frontend/widgets/button/bottom_text_button.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/profile_img.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:provider/provider.dart';
 
@@ -131,28 +131,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
                                                 showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      content: OneButtonDialog(
-                                                        first:
-                                                            '초기화 성공: ${res['message']}(${res['code']})',
-                                                      ),
-                                                    );
-                                                  },
+                                                  builder: (context) =>
+                                                      OneButtonDialog(
+                                                    content:
+                                                        "초기화 성공: ${res['message']}(${res['code']})",
+                                                  ),
                                                 );
                                               } else {
                                                 showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      content: OneButtonDialog(
-                                                        first:
-                                                            '초기화 실패: ${res['message']}(${res['code']})',
-                                                      ),
-                                                    );
-                                                  },
+                                                  builder: (context) =>
+                                                      OneButtonDialog(
+                                                    content:
+                                                        "초기화 실패: ${res['message']}(${res['code']})",
+                                                  ),
                                                 );
                                               }
                                             },
@@ -292,14 +284,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                content: OneButtonDialog(
-                                  first:
-                                      '유저정보 변경에 실패했습니다: ${res1['message']}(${res1['code']})',
-                                ),
-                              );
-                            },
+                            builder: (context) => OneButtonDialog(
+                              content:
+                                  "유저정보 변경에 실패했습니다: ${res1['message']}(${res1['code']})",
+                            ),
                           );
                         }
                       },
