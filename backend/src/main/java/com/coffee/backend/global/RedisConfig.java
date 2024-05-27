@@ -8,9 +8,13 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableRedisRepositories
+@EnableTransactionManagement
 public class RedisConfig {
     // application.yml 에서 host, port 값 가져오기
     @Value("${spring.data.redis.host}")
@@ -27,6 +31,7 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate() {
         final RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory());
+        template.setEnableTransactionSupport(true);
 
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
@@ -35,5 +40,10 @@ public class RedisConfig {
         template.setDefaultSerializer(new StringRedisSerializer());
 
         return template;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        return new JpaTransactionManager();
     }
 }

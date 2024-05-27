@@ -53,6 +53,7 @@ public class MatchService {
     private static final String LOCK_KEY_PREFIX = "lock:senderId:";
 
     // 매칭 요청
+    @Transactional
     public MatchDto sendMatchRequest(MatchRequestDto dto) {
         log.trace("sendMatchRequest()");
 
@@ -176,6 +177,7 @@ public class MatchService {
     }
 
     // 매칭 요청 수락
+    @Transactional
     public MatchAcceptResponse acceptMatchRequest(MatchIdDto dto) {
         log.trace("acceptMatchRequest()");
 
@@ -193,9 +195,6 @@ public class MatchService {
 
         ChatroomCreationDto chatroomCreationDto = new ChatroomCreationDto(senderId, receiverId);
         Long chatroomId = chatroomService.createChatroom(chatroomCreationDto);
-
-        redisTemplate.opsForHash().put(key, "status", "accepted");
-        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "accepted");
 
         // 알림
         User fromUser = userRepository.findByUserId(receiverId).orElseThrow();
@@ -215,6 +214,11 @@ public class MatchService {
             redisTemplate.delete(LOCK_KEY_PREFIX + receiverId); // receiver 락 해제
         }
 
+        // key -> receiverId:2-senderId:1
+        redisTemplate.opsForHash().put(key, "status", "accepted");
+        redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "accepted");
+
+        // key -> matchId:abcd-1234-abcd-1234-abcd-1234
         redisTemplate.opsForHash().put("matchId:" + dto.getMatchId(), "status", "accepted");
         redisTemplate.delete(LOCK_KEY_PREFIX + senderId); // sender 락 해제
 
@@ -243,6 +247,7 @@ public class MatchService {
     }
 
     // 매칭 요청 거절
+    @Transactional
     public MatchDto declineMatchRequest(MatchIdDto dto) {
         log.trace("declineMatchRequest()");
 
@@ -277,6 +282,7 @@ public class MatchService {
     }
 
     // 매칭 요청 취소
+    @Transactional
     public MatchDto cancelMatchRequest(MatchIdDto dto) {
         log.trace("cancelMatchRequest()");
 
@@ -291,6 +297,8 @@ public class MatchService {
 
         Long senderId = getLongId(redisTemplate.opsForHash().get(key, "senderId"));
         Long receiverId = getLongId(redisTemplate.opsForHash().get(key, "receiverId"));
+
+        // TODO: 취소 fcm 알림
 
         redisTemplate.opsForHash().put(key, "status", "canceled");
         redisTemplate.opsForHash().put("receiverId:" + receiverId + "-senderId:" + senderId, "status", "canceled");
@@ -353,6 +361,7 @@ public class MatchService {
     }
 
     // 매칭 종료
+    @Transactional
     public MatchStatusDto finishMatch(MatchFinishRequestDto dto) {
         log.trace("finishMatch()");
 
