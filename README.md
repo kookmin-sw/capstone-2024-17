@@ -49,8 +49,8 @@ We aimed to allows users to see nearby individuals and facilitates real-time mat
     </tr>
     <tr align="center">
         <td>
-            <a href="https://youtu.be/_zXQykNYMlw" target="_blank">
-                <img src="http://img.youtube.com/vi/_zXQykNYMlw/0.jpg" alt="시연영상" style="width: 100%; max-width: 560px; height: auto;">
+            <a href="https://www.youtube.com/watch?v=LZim3IHcifQ" target="_blank">
+                <img src="http://img.youtube.com/vi/LZim3IHcifQ/0.jpg" alt="시연영상" style="width: 100%; max-width: 560px; height: auto;">
             </a>
         </td>
     </tr>
