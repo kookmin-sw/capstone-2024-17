@@ -101,7 +101,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     });
     _controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     _setCircle(LatLng(position.latitude, position.longitude));
-    // _searchcafes(LatLng(position.latitude, position.longitude));
+    _searchcafes(LatLng(position.latitude, position.longitude));
   }
 
   Set<Marker> _markers = {};
