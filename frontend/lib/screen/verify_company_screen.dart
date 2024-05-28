@@ -346,13 +346,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              content: '에러: $error',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: '에러: $error',
+        ),
       );
     }
     return;
