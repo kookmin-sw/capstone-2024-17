@@ -4,6 +4,7 @@ import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,72 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
     super.initState();
     selectedIndexProvider =
         Provider.of<SelectedIndexModel>(context, listen: false);
+  }
+
+  // '요청 보내기' 버튼 클릭 핸들러
+  void handleSendRequest() async {
+    final receiverId = widget.userId;
+    int senderId = 0; // 초기화
+
+    try {
+      //로그인 한 유저의 senderId 가져오기
+      Map<String, dynamic> res = await getUserDetail();
+      if (res['success']) {
+        senderId = res['data']['userId'];
+      } else {
+        print(
+            '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
+        return;
+      }
+
+      if (_selectedIndex == null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => const OneButtonDialog(
+            content: "커피챗 목적을 선택해주세요.",
+          ),
+        );
+        return;
+      }
+
+      Map<String, dynamic> reqInfo = await requestInfoRequest(senderId);
+
+      // 기존에 보낸 요청이 있는 경우 - 취소하고 보낼지 확인
+      if (reqInfo['data'].length > 0) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => YesOrNoDialog(
+            content: "이미 보낸 요청이 있어요! \n기존 요청을 취소하고 보낼까요?",
+            firstButton: "네",
+            secondButton: "아니요",
+            handleFirstClick: () {
+              // 기존 요청 취소하기
+              matchCancelRequest(reqInfo['data'][0]['matchId']);
+              // 새로운 요청 보내기
+              matchRequest(senderId, receiverId, _selectedIndex!);
+
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              selectedIndexProvider.selectedIndex = 1;
+            },
+            handleSecondClick: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+        return;
+      }
+      // 기존에 보낸 요청 없는 경우 - 바로 요청 보내기
+      else {
+        matchRequest(senderId, receiverId, _selectedIndex!);
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        selectedIndexProvider.selectedIndex = 1;
+      }
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
   }
 
   @override
@@ -74,40 +141,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
           ),
           ModalButton(
             text: "요청 보내기",
-            handlePressed: () async {
-              final receiverId = widget.userId;
-              int senderId = 0; // 초기화
-
-              try {
-                //로그인 한 유저의 senderId 가져오기
-                Map<String, dynamic> res = await getUserDetail();
-                if (res['success']) {
-                  senderId = res['data']['userId'];
-                } else {
-                  print(
-                      '로그인된 유저 정보를 가져올 수 없습니다: ${res["message"]}(${res["statusCode"]})');
-                  return;
-                }
-
-                if (_selectedIndex == null) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) => const OneButtonDialog(
-                      content: "커피챗 목적을 선택해주세요.",
-                    ),
-                  );
-                  return;
-                }
-
-                matchRequest(senderId, receiverId, _selectedIndex!);
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                selectedIndexProvider.selectedIndex = 1;
-              } catch (e) {
-                print(e);
-                throw Error();
-              }
-            },
+            handlePressed: handleSendRequest,
             buttonColor: _selectedIndex != null
                 ? Colors.black
                 : Colors.grey, // 배경색 조건에 따라 동적으로 설정
