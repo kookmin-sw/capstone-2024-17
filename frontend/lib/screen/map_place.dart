@@ -33,6 +33,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   late MyCafeModel myCafe;
   late StompClient stompClient;
   late AllUsersModel allUsers;
+  List<dynamic> cafeList = [];
 
   @override
   void initState() {
@@ -84,7 +85,8 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     _setCircle(LatLng(position.latitude, position.longitude));
-    _searchcafes(LatLng(position.latitude, position.longitude));
+    // _searchcafes(LatLng(position.latitude, position.longitude));
+    _setMarkers(cafeList, position.latitude, position.longitude);
   }
 
   // 현재 위치로 이동
@@ -131,7 +133,19 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     if (response.statusCode == 200) {
       // debugPrint("Response Body: ${response.body}"); // 주석 해제시 api 요청의 결과(response)를 볼 수 있음.
       final data = json.decode(response.body);
+
+      // updateCafesCallback 호출
+      List<String> cafeIdList = [];
+      data['places'].forEach((cafe) {
+        cafeIdList.add(cafe['id']);
+      });
+      widget.updateCafesCallback(cafeIdList);
+
       _setMarkers(data['places'], position.latitude, position.longitude);
+
+      setState(() {
+        cafeList = data['places'];
+      });
     } else {
       // print("실패");
       throw Exception('Failed to load cafe');
@@ -141,14 +155,11 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   // cafe 마커표시하고 누르면 cafe 이름보여줌
   void _setMarkers(List<dynamic> places, latitude, longitude) async {
     final Set<Marker> localMarkers = {};
-    List<String> cafeList = [];
 
     // print("debug print");
     // print(places);
 
     for (var place in places) {
-      cafeList.add(place['id']);
-
       // 여기서 라벨에 텍스트 명 변경가능
       final markerIcon = await _createMarkerImage(
         allUsers.getUserList(place['id']).length,
@@ -239,8 +250,6 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     setState(() {
       _markers = localMarkers;
     });
-
-    widget.updateCafesCallback(cafeList);
   }
 
   // 반경 원 그리기

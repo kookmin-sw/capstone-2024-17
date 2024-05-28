@@ -288,6 +288,28 @@ class _MyHomePageState extends State<MyHomePage> {
               currentIndex: selectedIndex,
               onTap: (index) {
                 selectedIndexProvider.selectedIndex = index;
+                if (index == 1) {
+                  // 커피챗 매칭정보 가져오기
+                  getUserDetail().then((userDetail) {
+                    getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+                      // 커피챗 진행중 여부 저장
+                      matchingInfo.setIsMatching(value["isMatching"]);
+
+                      // 커피챗 진행중이면 상대방 정보도 저장
+                      if (value["isMatching"]) {
+                        matchingInfo.setMatching(
+                          matchId: value["matchId"],
+                          myId: value["myId"],
+                          myNickname: value["myNickname"],
+                          myCompany: value["myCompany"],
+                          partnerId: value["partnerId"],
+                          partnerCompany: value["partnerCompany"],
+                          partnerNickname: value["partnerNickname"],
+                        );
+                      }
+                    });
+                  });
+                }
               },
               showSelectedLabels: false,
               showUnselectedLabels: false,
