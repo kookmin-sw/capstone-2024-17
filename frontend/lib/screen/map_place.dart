@@ -134,14 +134,14 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       // debugPrint("Response Body: ${response.body}"); // 주석 해제시 api 요청의 결과(response)를 볼 수 있음.
       final data = json.decode(response.body);
 
+      _setMarkers(data['places'], position.latitude, position.longitude);
+
       // updateCafesCallback 호출
       List<String> cafeIdList = [];
       data['places'].forEach((cafe) {
         cafeIdList.add(cafe['id']);
       });
       widget.updateCafesCallback(cafeIdList);
-
-      _setMarkers(data['places'], position.latitude, position.longitude);
 
       setState(() {
         cafeList = data['places'];
