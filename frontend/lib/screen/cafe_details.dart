@@ -162,9 +162,12 @@ class _CafeDetailsState extends State<CafeDetails>
       appBar: TopAppBar(
         titleWidget: Row(
           children: [
-            Text(
-              widget.cafeName,
-              style: const TextStyle(fontSize: 22),
+            Expanded(
+              child: Text(
+                widget.cafeName,
+                style: const TextStyle(
+                    fontSize: 22, overflow: TextOverflow.ellipsis),
+              ),
             ),
             (myCafe.cafeId != widget.cafeId)
                 ? Container()
