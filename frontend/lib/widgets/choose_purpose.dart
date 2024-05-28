@@ -4,6 +4,7 @@ import 'package:frontend/screen/coffeechat_req_list.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
 
@@ -99,10 +100,41 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
                   return;
                 }
 
-                matchRequest(senderId, receiverId, _selectedIndex!);
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                selectedIndexProvider.selectedIndex = 1;
+                Map<String, dynamic> reqInfo =
+                    await requestInfoRequest(senderId);
+
+                // 기존에 보낸 요청이 있는 경우 - 취소하고 보낼지 확인
+                if (reqInfo['data'].length > 0) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => YesOrNoDialog(
+                      content: "이미 보낸 요청이 있어요! \n기존 요청을 취소하고 보낼까요?",
+                      firstButton: "네",
+                      secondButton: "아니요",
+                      handleFirstClick: () {
+                        // 기존 요청 취소하기
+                        matchCancelRequest(reqInfo['data'][0]['matchId']);
+                        // 새로운 요청 보내기
+                        matchRequest(senderId, receiverId, _selectedIndex!);
+
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        selectedIndexProvider.selectedIndex = 1;
+                      },
+                      handleSecondClick: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  );
+                  return;
+                }
+                // 기존에 보낸 요청 없는 경우 - 바로 요청 보내기
+                else {
+                  matchRequest(senderId, receiverId, _selectedIndex!);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  selectedIndexProvider.selectedIndex = 1;
+                }
               } catch (e) {
                 print(e);
                 throw Error();
