@@ -43,8 +43,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserProfileModel userProfile =
-        Provider.of<UserProfileModel>(context, listen: true);
     return Scaffold(
       appBar: const TopAppBar(title: '회사 인증'),
       body: SingleChildScrollView(
@@ -111,10 +109,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                           onPressed: () => {
                             //  서버에 인증 요청
                             sendPressed(_emailIdController.text),
-                            // provider에 저장
-                            userProfile.setCompanyLogoUrl(
-                                company: widget.companyName,
-                                logoUrl: widget.logoUrl)
                           },
                           child:
                               const Text('전송', style: TextStyle(fontSize: 16)),
@@ -256,7 +250,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) => const OneButtonDialog(
-          content: "이메일 도메인이 일치하지 않습니다.",
+          content: '이메일 도메인이 일치하지 않습니다.',
         ),
       );
 
@@ -271,8 +265,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) =>
-              const OneButtonDialog(content: "메일이 발송되었습니다. 인증코드를 입력해주세요."),
+          builder: (BuildContext context) => const OneButtonDialog(
+            content: '메일이 발송되었습니다. 인증코드를 입력해주세요.',
+          ),
         );
       } else {
         // 요청 실패
@@ -281,7 +276,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         showDialog(
           context: context,
           builder: (BuildContext context) => OneButtonDialog(
-            content: "이메일 전송 실패: ${res["message"]}(${res["statusCode"]})",
+            content: '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
           ),
         );
       }
@@ -292,7 +287,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) => OneButtonDialog(
-          content: "에러 $error",
+          content: '에러: $error',
         ),
       );
     }
@@ -305,32 +300,43 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) => const OneButtonDialog(
-          content: "인증코드를 입력해주세요.",
+          content: '인증코드를 입력해주세요.',
         ),
       );
+
       return;
     }
     try {
+      UserProfileModel userProfile =
+          Provider.of<UserProfileModel>(context, listen: false);
       Map<String, dynamic> res =
           await verification(sentEmailAddress, verifyCode);
-      if (res['success']) {
+      // print('!!!!!!!!!!!!!!!!!res: $res');
+      if (res['data']['result']) {
         // 요청 성공
         isVerified = true;
-
+        // provider에 저장
+        userProfile.setCompanyLogoUrl(
+            company: widget.companyName, logoUrl: widget.logoUrl);
         showDialog(
           context: context,
           builder: (BuildContext context) => const OneButtonDialog(
-            content: "회사 인증이 완료되었습니다.",
+            content: '회사 인증이 완료되었습니다.',
           ),
         );
       } else {
         // 요청 실패
-        print('인증 실패: ${res["message"]}(${res["statusCode"]})');
+        // 인증코드를 잘못 입력한 경우: '인증 실패: ${res["message"]}(${res["statusCode"]})'
+        // = '인증실패: Success(200)'
+        String str = '';
+        (res["statusCode"] == "200")
+            ? str = '인증코드가 일치하지 않습니다.'
+            : str = '인증 실패: ${res["message"]}(${res["statusCode"]})';
 
         showDialog(
           context: context,
           builder: (BuildContext context) => OneButtonDialog(
-            content: "인증 실패: ${res["message"]}(${res["statusCode"]})",
+            content: str,
           ),
         );
       }
@@ -341,7 +347,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) => OneButtonDialog(
-          content: "에러 $error",
+          content: '에러: $error',
         ),
       );
     }
