@@ -134,6 +134,7 @@ public class MatchService {
                 MatchInfoResponseDto res = new MatchInfoResponseDto();
                 res.setMatchId(matchId);
                 res.setRequestTypeId((String) matchInfo.get("requestTypeId"));
+                res.setStatus((String) matchInfo.get("status"));
                 res.setReceiverInfo(receiverInfo);
                 res.setExpirationTime(expirationTime);
                 response.add(res);
