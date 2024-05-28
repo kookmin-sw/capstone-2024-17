@@ -21,8 +21,23 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late ScrollController _scrollController;
   final TextEditingController _loginIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+    _loginIdController.dispose();
+    _passwordController.dispose();
+  }
 
   // 카카오 로그인 버튼을 누르면 돌아오는 콜백함수
   void _handleKakaoLoginPressed() {
@@ -32,134 +47,137 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: const TopAppBar(
-          title: "로그인",
-        ),
-        body: Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 40,
-            ),
-            child: Column(children: <Widget>[
-              // 로고
+      resizeToAvoidBottomInset: false,
+      appBar: const TopAppBar(
+        title: "로그인",
+      ),
+      body: Scrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            scrollDirection: Axis.vertical,
+            child: Wrap(children: <Widget>[
               Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 20,
-                ),
-                child: Image.asset(
-                  'assets/logo.png',
-                  width: 100,
-                  height: 100,
-                ),
-              ),
-
-              // 일반 로그인 컨테이너
-              Container(
+                  alignment: Alignment.center,
                   margin: const EdgeInsets.symmetric(
-                    vertical: 20,
+                    horizontal: 40,
                   ),
                   child: Column(children: <Widget>[
-                    // 입력창
+                    // 로고
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 20,
+                      ),
+                      child: Image.asset(
+                        'assets/logo.png',
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+
+                    // 일반 로그인 컨테이너
                     Container(
                         margin: const EdgeInsets.symmetric(
                           vertical: 20,
                         ),
-                        child: Column(
-                          children: <Widget>[
-                            IconedTextfield(
-                              icon: const Icon(Icons.person_outline),
-                              hintText: '아이디',
-                              controller: _loginIdController,
-                              isSecret: false,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            IconedTextfield(
-                              icon: const Icon(Icons.lock_outline),
-                              hintText: '비밀번호',
-                              controller: _passwordController,
-                              isSecret: true,
-                            ),
-                          ],
-                        )),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    BottomTextButton(
-                      text: '로그인',
-                      handlePressed: () async {
-                        if (_loginIdController.text == '') {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                const OneButtonDialog(
-                              content: "아이디를 입력해주세요.",
-                            ),
-                          );
-                        } else if (_passwordController.text == '') {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                const OneButtonDialog(
-                              content: "비밀번호를 입력해주세요.",
-                            ),
-                          );
-                        } else {
-                          try {
-                            waitLogin(
-                              context,
-                              _loginIdController.text,
-                              _passwordController.text,
-                            );
-                          } catch (error) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  OneButtonDialog(
-                                content: "요청 실패: $error",
+                        child: Column(children: <Widget>[
+                          // 입력창
+                          Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 20,
                               ),
-                            );
-                          }
-                          setState(() {}); // 화면 갱신
-                        }
-                      },
-                    ),
-                    BottomTextSecondaryButton(
-                      text: '회원가입',
-                      handlePressed: () {
-                        Navigator.of(context).pushNamed('/signup');
-                      },
+                              child: Column(
+                                children: <Widget>[
+                                  IconedTextfield(
+                                    icon: const Icon(Icons.person_outline),
+                                    hintText: '아이디',
+                                    controller: _loginIdController,
+                                    isSecret: false,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  IconedTextfield(
+                                    icon: const Icon(Icons.lock_outline),
+                                    hintText: '비밀번호',
+                                    controller: _passwordController,
+                                    isSecret: true,
+                                  ),
+                                ],
+                              )),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          BottomTextButton(
+                            text: '로그인',
+                            handlePressed: () async {
+                              if (_loginIdController.text == '') {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      const OneButtonDialog(
+                                    content: "아이디를 입력해주세요.",
+                                  ),
+                                );
+                              } else if (_passwordController.text == '') {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      const OneButtonDialog(
+                                    content: "비밀번호를 입력해주세요.",
+                                  ),
+                                );
+                              } else {
+                                try {
+                                  waitLogin(
+                                    context,
+                                    _loginIdController.text,
+                                    _passwordController.text,
+                                  );
+                                } catch (error) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        OneButtonDialog(
+                                      content: "요청 실패: $error",
+                                    ),
+                                  );
+                                }
+                                setState(() {}); // 화면 갱신
+                              }
+                            },
+                          ),
+                          BottomTextSecondaryButton(
+                            text: '회원가입',
+                            handlePressed: () {
+                              Navigator.of(context).pushNamed('/signup');
+                            },
+                          )
+                        ])),
+                    // 구분선
+                    const Row(children: <Widget>[
+                      Expanded(child: Divider()),
+                      Text("또는"),
+                      Expanded(child: Divider()),
+                    ]),
+
+                    // 소셜 로그인 컨테이너
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 30,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          // 카카오톡 로그인 버튼
+                          KakaoLoginWidget(_handleKakaoLoginPressed),
+                        ],
+                      ),
                     )
                   ])),
-              // 구분선
-              const Row(children: <Widget>[
-                Expanded(child: Divider()),
-                Text("또는"),
-                Expanded(child: Divider()),
-              ]),
-
-              // 소셜 로그인 컨테이너
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 30,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    // 카카오톡 로그인 버튼
-                    KakaoLoginWidget(_handleKakaoLoginPressed),
-                  ],
-                ),
-              )
-            ])));
-  }
-
-  @override
-  void dispose() {
-    _loginIdController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+            ]),
+          )),
+    );
   }
 
   void waitLogin(BuildContext context, String loginId, String password) async {
