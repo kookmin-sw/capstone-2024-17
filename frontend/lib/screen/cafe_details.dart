@@ -322,7 +322,6 @@ class _CafeDetailsState extends State<CafeDetails>
                               );
                             }
                           },
-                          handleSecondClick: _stopTimer,
                         );
                       },
                     );
