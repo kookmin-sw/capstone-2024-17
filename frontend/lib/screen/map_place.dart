@@ -154,6 +154,95 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     }
   }
 
+  // 마커 클릭 핸들러
+  void handleMarkerTap(Map<String, dynamic> place) {
+    // 커피챗 매칭정보 가져오기
+    getUserDetail().then((userDetail) {
+      getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+        // 커피챗 진행중 여부 저장
+        matchingInfo.setIsMatching(value["isMatching"]);
+
+        // 커피챗 진행중이면 상대방 정보도 저장
+        if (value["isMatching"]) {
+          matchingInfo.setMatching(
+            matchId: value["matchId"],
+            myId: value["myId"],
+            myNickname: value["myNickname"],
+            myCompany: value["myCompany"],
+            partnerId: value["partnerId"],
+            partnerCompany: value["partnerCompany"],
+            partnerNickname: value["partnerNickname"],
+          );
+        }
+      });
+    });
+
+    String cafeLatitude = place['location']['latitude'] != null
+        ? place['location']['latitude'].toString()
+        : '정보 없음';
+    String cafeLongitude = place['location']['longitude'] != null
+        ? place['location']['longitude'].toString()
+        : '정보 없음';
+
+    String cafeName =
+        place['displayName'] != null && place['displayName']['text'] != null
+            ? place['displayName']['text']
+            : '정보 없음';
+
+    String cafeId = place['id'] ?? '정보 없음';
+
+    String cafeAddress = place['formattedAddress'] ?? '정보 없음';
+
+    String cafeOpen = place['regularOpeningHours'] != null &&
+            place['regularOpeningHours']['openNow'] != null
+        ? place['regularOpeningHours']['openNow'].toString()
+        : '정보 없음';
+
+    String cafeTelephone = place['internationalPhoneNumber'] ?? '정보 없음';
+
+    String cafeTakeout =
+        place['takeout'] != null ? place['takeout'].toString() : '정보 없음';
+
+    String cafeDelivery =
+        place['delivery'] != null ? place['delivery'].toString() : '정보 없음';
+
+    String cafeDineIn =
+        place['dineIn'] != null ? place['dineIn'].toString() : '정보 없음';
+
+    DateTime now = DateTime.now();
+    int currentWeekday = (now.weekday) - 1;
+
+    String businessHours = place['regularOpeningHours'] != null &&
+            place['regularOpeningHours']['weekdayDescriptions'] != null
+        ? place['regularOpeningHours']['weekdayDescriptions'][currentWeekday]
+            .toString()
+        : '정보 없음';
+
+    List<String> detailsArguments = [
+      cafeAddress,
+      cafeOpen,
+      cafeTelephone,
+      cafeTakeout,
+      cafeDelivery,
+      cafeDineIn,
+      cafeLatitude,
+      cafeLongitude,
+      businessHours,
+      cafeId,
+    ];
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CafeDetails(
+          cafeId: cafeId,
+          cafeName: cafeName,
+          cafeDetailsArguments: detailsArguments,
+        ),
+      ),
+    );
+  }
+
   // cafe 마커표시하고 누르면 cafe 이름보여줌
   void _setMarkers(List<dynamic> places, latitude, longitude) async {
     final Set<Marker> localMarkers = {};
@@ -179,94 +268,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
           infoWindow: InfoWindow(
             title: place['displayName']['text'],
           ),
-          onTap: () {
-            // 커피챗 매칭정보 가져오기
-            getUserDetail().then((userDetail) {
-              getMatchingInfo(userDetail["data"]["userId"]).then((value) {
-                // 커피챗 진행중 여부 저장
-                matchingInfo.setIsMatching(value["isMatching"]);
-
-                // 커피챗 진행중이면 상대방 정보도 저장
-                if (value["isMatching"]) {
-                  matchingInfo.setMatching(
-                    matchId: value["matchId"],
-                    myId: value["myId"],
-                    myNickname: value["myNickname"],
-                    myCompany: value["myCompany"],
-                    partnerId: value["partnerId"],
-                    partnerCompany: value["partnerCompany"],
-                    partnerNickname: value["partnerNickname"],
-                  );
-                }
-              });
-            });
-
-            String cafeLatitude = place['location']['latitude'] != null
-                ? place['location']['latitude'].toString()
-                : '정보 없음';
-            String cafeLongitude = place['location']['longitude'] != null
-                ? place['location']['longitude'].toString()
-                : '정보 없음';
-
-            String cafeName = place['displayName'] != null &&
-                    place['displayName']['text'] != null
-                ? place['displayName']['text']
-                : '정보 없음';
-
-            String cafeId = place['id'] ?? '정보 없음';
-
-            String cafeAddress = place['formattedAddress'] ?? '정보 없음';
-
-            String cafeOpen = place['regularOpeningHours'] != null &&
-                    place['regularOpeningHours']['openNow'] != null
-                ? place['regularOpeningHours']['openNow'].toString()
-                : '정보 없음';
-
-            String cafeTelephone = place['internationalPhoneNumber'] ?? '정보 없음';
-
-            String cafeTakeout = place['takeout'] != null
-                ? place['takeout'].toString()
-                : '정보 없음';
-
-            String cafeDelivery = place['delivery'] != null
-                ? place['delivery'].toString()
-                : '정보 없음';
-
-            String cafeDineIn =
-                place['dineIn'] != null ? place['dineIn'].toString() : '정보 없음';
-
-            DateTime now = DateTime.now();
-            int currentWeekday = (now.weekday) - 1;
-
-            String businessHours = place['regularOpeningHours'] != null &&
-                    place['regularOpeningHours']['weekdayDescriptions'] != null
-                ? place['regularOpeningHours']['weekdayDescriptions']
-                        [currentWeekday]
-                    .toString()
-                : '정보 없음';
-
-            List<String> detailsArguments = [
-              cafeAddress,
-              cafeOpen,
-              cafeTelephone,
-              cafeTakeout,
-              cafeDelivery,
-              cafeDineIn,
-              cafeLatitude,
-              cafeLongitude,
-              businessHours,
-              cafeId,
-            ];
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CafeDetails(
-                      cafeId: cafeId,
-                      cafeName: cafeName,
-                      cafeDetailsArguments: detailsArguments)),
-            );
-          },
+          onTap: () => handleMarkerTap(place),
         ),
       );
     }
