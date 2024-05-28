@@ -104,32 +104,37 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                         int rating = (selectedIndex + 1); //점수
 
                         Map<String, dynamic> response = await coffeeBeanReview(
-                            widget.userId, widget.partnerId, rating);
+                            widget.matchId,
+                            widget.userId,
+                            widget.partnerId,
+                            rating);
 
                         print(response);
 
                         Map<String, dynamic> res =
                             await getMatchingInfo(widget.userId);
-                        print(res);
+
+                        Map<String, dynamic> review =
+                            await checkReviewedRequest(
+                                widget.matchId, widget.userId);
                         if (res['isMatching'] != 'no') {
-                          await matchFinishRequest(
-                              widget.matchId, widget.userId);
+                          if (review['data']['hasReviewed'] == true) {
+                            //상대방이 리뷰를 남긴 경우에만 finish 가능 (중복 종료 요청 방지)
+                            await matchFinishRequest(
+                                widget.matchId, widget.userId);
+                          }
                         }
 
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: OneButtonDialog(
-                                first:
-                                    '${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.',
-                                onFirstButtonClick: () {
-                                  Navigator.pop(context);
-                                  selectedIndexProvider.selectedIndex = 0;
-                                },
-                              ),
-                            );
-                          },
+                          builder: (BuildContext context) => OneButtonDialog(
+                            content:
+                                "${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.",
+                            onFirstButtonClick: () {
+                              Navigator.pop(context);
+                              selectedIndexProvider.selectedIndex = 0;
+                            },
+                          ),
                         );
 
                         //이동할 곳 여기 추가하면 됨!!!

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screen/coffeechat_rating_screen.dart';
 import 'package:frontend/service/api_service.dart';
+import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/profile_img.dart';
 
 class Matching extends StatefulWidget {
@@ -129,15 +130,29 @@ class _MatchingWidgetState extends State<Matching> {
                 width: 350, // 버튼의 너비 설정
                 height: 80, // 버튼의 높이 설정
                 child: ElevatedButton(
-                  onPressed: () {
-                    showCoffeeChatExitDialog(
-                      context,
-                      "커피챗 종료",
-                      "커피챗을 종료하고 나가시겠습니까?",
-                      widget.myId,
-                      widget.partnerId,
-                      widget.partnerNickname,
-                      widget.matchId,
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return YesOrNoDialog(
+                          content: "커피챗을 종료하시겠습니까?",
+                          firstButton: "종료",
+                          secondButton: "닫기",
+                          handleFirstClick: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CoffeeChatRating(
+                                  userId: widget.myId,
+                                  partnerId: widget.partnerId,
+                                  partnerNickname: widget.partnerNickname,
+                                  matchId: widget.matchId,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -157,58 +172,6 @@ class _MatchingWidgetState extends State<Matching> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-void showCoffeeChatExitDialog(
-    BuildContext context,
-    String title,
-    String message,
-    int userId,
-    int partnerId,
-    String partnerNickname,
-    String matchId) async {
-  // 다이얼로그를 표시하고 사용자의 선택을 기다립니다.
-  bool result = await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // AlertDialog 생성
-      return AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: <Widget>[
-          // "예"를 선택하면 Navigator를 통해 true를 반환합니다.
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text('종료'),
-          ),
-          // "아니오"를 선택하면 Navigator를 통해 false를 반환합니다.
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('취소'),
-          ),
-        ],
-      );
-    },
-  );
-
-  // 사용자의 선택에 따라 다른 동작을 실행합니다.
-  if (result) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CoffeeChatRating(
-          userId: userId,
-          partnerId: partnerId,
-          partnerNickname: partnerNickname,
-          matchId: matchId,
         ),
       ),
     );

@@ -4,8 +4,8 @@ import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/screen/position_select_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
-import 'package:frontend/widgets/rounded_img.dart';
-import 'package:frontend/widgets/top_appbar.dart';
+import 'package:frontend/widgets/bar/top_appbar.dart';
+import 'package:frontend/widgets/profile_img.dart';
 import 'package:provider/provider.dart';
 
 class VerifyCompanyScreen extends StatefulWidget {
@@ -43,7 +43,6 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Image logoImage = Image.network(widget.logoUrl, fit: BoxFit.cover);
     return Scaffold(
       appBar: const TopAppBar(title: '회사 인증'),
       body: SingleChildScrollView(
@@ -75,7 +74,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 40),
                   child: Column(children: <Widget>[
                     // 회사 로고
-                    RoundedImg(image: logoImage, size: 100),
+                    ProfileImgSmall(isLocal: false, logoUrl: widget.logoUrl),
                     const SizedBox(
                       height: 20,
                     ),
@@ -250,13 +249,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     if (!email.endsWith('@${widget.domain}')) {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '이메일 도메인이 일치하지 않습니다.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: '이메일 도메인이 일치하지 않습니다.',
+        ),
       );
 
       return;
@@ -270,13 +265,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              content: OneButtonDialog(
-                first: '메일이 발송되었습니다. 인증코드를 입력해주세요.',
-              ),
-            );
-          },
+          builder: (BuildContext context) => const OneButtonDialog(
+            content: '메일이 발송되었습니다. 인증코드를 입력해주세요.',
+          ),
         );
       } else {
         // 요청 실패
@@ -284,13 +275,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: OneButtonDialog(
-                first: '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
-              ),
-            );
-          },
+          builder: (BuildContext context) => OneButtonDialog(
+            content: '이메일 전송 실패: ${res["message"]}(${res["statusCode"]})',
+          ),
         );
       }
       // 에러
@@ -299,13 +286,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: OneButtonDialog(
-              first: '에러: $error',
-            ),
-          );
-        },
+        builder: (BuildContext context) => OneButtonDialog(
+          content: '에러: $error',
+        ),
       );
     }
     return;
@@ -316,14 +299,11 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
     if (verifyCode == '') {
       showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: OneButtonDialog(
-              first: '인증코드를 입력해주세요.',
-            ),
-          );
-        },
+        builder: (BuildContext context) => const OneButtonDialog(
+          content: '인증코드를 입력해주세요.',
+        ),
       );
+
       return;
     }
     try {
@@ -340,13 +320,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
             company: widget.companyName, logoUrl: widget.logoUrl);
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              content: OneButtonDialog(
-                first: '회사 인증이 완료되었습니다.',
-              ),
-            );
-          },
+          builder: (BuildContext context) => const OneButtonDialog(
+            content: '회사 인증이 완료되었습니다.',
+          ),
         );
       } else {
         // 요청 실패
@@ -359,13 +335,9 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
 
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: OneButtonDialog(
-                first: str,
-              ),
-            );
-          },
+          builder: (BuildContext context) => OneButtonDialog(
+            content: str,
+          ),
         );
       }
       // 에러
@@ -377,7 +349,7 @@ class _VerifyCompanyScreenState extends State<VerifyCompanyScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             content: OneButtonDialog(
-              first: '에러: $error',
+              content: '에러: $error',
             ),
           );
         },

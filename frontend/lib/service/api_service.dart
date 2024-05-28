@@ -312,7 +312,7 @@ Future<Map<String, dynamic>> matchFinishRequest(
 
 //커피챗 진행 후 평점 보내기
 Future<Map<String, dynamic>> coffeeBeanReview(
-    int senderId, int receiverId, int rating) async {
+    String matchId, int reviewerId, int revieweeId, int rating) async {
   final url = Uri.parse('$baseUrl/match/review');
   String? userToken = await storage.read(key: 'authToken');
 
@@ -324,10 +324,11 @@ Future<Map<String, dynamic>> coffeeBeanReview(
         "Authorization": "Bearer $userToken",
       },
       body: jsonEncode({
-        'senderId': senderId,
-        'receiverId': receiverId,
-        'rating': rating,
-        'comment': '',
+        "matchId": matchId,
+        "reviewerId": reviewerId,
+        "revieweeId": revieweeId,
+        "rating": rating,
+        "comment": ""
       }),
     );
 
@@ -344,43 +345,31 @@ Future<Map<String, dynamic>> coffeeBeanReview(
       throw Exception('서버 오류: ${response.statusCode}');
     }
   } catch (e) {
+    print(e);
     throw Error();
   }
 }
 
-//커피챗 수락 시 채팅창 생성
-Future<Map<String, dynamic>> chatroomCreateRequest() async {
-  final url = Uri.parse('$baseUrl/chatroom/create');
+Future<Map<String, dynamic>> checkReviewedRequest(
+    String matchId, int enderId) async {
+  final url = Uri.parse(
+      '$baseUrl/match/check/reviewed?matchId=$matchId&enderId=$enderId');
+
   String? userToken = await storage.read(key: 'authToken');
 
   try {
-    final response = await http.post(
+    final response = await http.get(
       url,
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $userToken",
       },
-
-      // 토큰으로 전달하면 body 안 보내도 됨.
-      // body: jsonEncode({
-      //   'senderId': senderId,
-      //   'receiverId': receiverId,
-      //   'rating': rating,
-      //   'comment': '',
-      // }),
     );
 
-    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
-
     if (response.statusCode == 200) {
-      if (responseData['success']) {
-        return responseData;
-      } else {
-        throw Exception(
-            '채팅방 생성에 실패했습니다: ${responseData["message"]}(${responseData["code"]})');
-      }
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('서버 오류: ${response.statusCode}');
+      throw Exception('Failed to get reviewed info: ${response.statusCode}');
     }
   } catch (e) {
     throw Error();

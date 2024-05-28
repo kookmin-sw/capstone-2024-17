@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
-import 'package:frontend/widgets/user_details.dart';
+import 'package:frontend/widgets/user/user_details.dart';
 
 class UserDetailsModal extends StatelessWidget {
   const UserDetailsModal({

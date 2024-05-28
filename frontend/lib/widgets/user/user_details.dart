@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/profile_img.dart';
-import 'package:frontend/widgets/thermometer.dart';
+import 'package:frontend/widgets/thermometer/thermometer.dart';
 
 class UserDetails extends StatelessWidget {
   const UserDetails({

@@ -406,7 +406,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
                                 showDialog(
                                   context: context,
                                   builder: (_) => const OneButtonDialog(
-                                    first:
+                                    content:
                                         "위치 공유를 끄는데 실패했습니다. \n잠시후 다시 시도해주세요.",
                                   ),
                                 );
