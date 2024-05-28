@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
@@ -33,6 +34,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
   late MyCafeModel myCafe;
   late StompClient stompClient;
   late AllUsersModel allUsers;
+  late MatchingInfoModel matchingInfo;
   List<dynamic> cafeList = [];
 
   @override
@@ -178,6 +180,27 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             title: place['displayName']['text'],
           ),
           onTap: () {
+            // 커피챗 매칭정보 가져오기
+            getUserDetail().then((userDetail) {
+              getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+                // 커피챗 진행중 여부 저장
+                matchingInfo.setIsMatching(value["isMatching"]);
+
+                // 커피챗 진행중이면 상대방 정보도 저장
+                if (value["isMatching"]) {
+                  matchingInfo.setMatching(
+                    matchId: value["matchId"],
+                    myId: value["myId"],
+                    myNickname: value["myNickname"],
+                    myCompany: value["myCompany"],
+                    partnerId: value["partnerId"],
+                    partnerCompany: value["partnerCompany"],
+                    partnerNickname: value["partnerNickname"],
+                  );
+                }
+              });
+            });
+
             String cafeLatitude = place['location']['latitude'] != null
                 ? place['location']['latitude'].toString()
                 : '정보 없음';
@@ -319,6 +342,7 @@ class _GoogleMapWidgetState extends State<Google_Map> {
     myCafe = Provider.of<MyCafeModel>(context);
     stompClient = Provider.of<StompClient>(context);
     allUsers = Provider.of<AllUsersModel>(context);
+    matchingInfo = Provider.of<MatchingInfoModel>(context);
 
     return CupertinoPageScaffold(
       child: Stack(
