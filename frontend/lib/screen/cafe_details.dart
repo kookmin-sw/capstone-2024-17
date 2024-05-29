@@ -190,8 +190,9 @@ class _CafeDetailsState extends State<CafeDetails>
                     fit: BoxFit.cover,
                   )
                 : Image.asset(
-                    "assets/cafe.jpeg",
+                    "assets/no_image.png",
                     width: 450,
+                    height: 250,
                     fit: BoxFit.fitWidth,
                   ),
           ),
