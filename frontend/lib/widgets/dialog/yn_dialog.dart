@@ -10,6 +10,7 @@ class YesOrNoDialog extends StatelessWidget {
   final Function()? handleSecondClick;
 
   const YesOrNoDialog({
+    super.key,
     this.content = '',
     this.firstButton,
     this.secondButton,
@@ -25,9 +26,11 @@ class YesOrNoDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
+        constraints: const BoxConstraints(minHeight: 200),
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const SizedBox(
               height: 15,
