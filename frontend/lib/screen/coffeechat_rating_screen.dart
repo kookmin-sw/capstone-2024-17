@@ -27,10 +27,10 @@ class CoffeeChatRating extends StatefulWidget {
 class _CoffeeChatRatingState extends State<CoffeeChatRating> {
   int selectedIndex = -1;
   final List<String> comments = [
-    '별로였어요.',
-    '조금 아쉬워요.',
-    '보통이에요.',
-    '만족스러워요.',
+    '별로였어요 :(',
+    '조금 아쉬워요..',
+    '보통이에요',
+    '좋았어요 :)',
     '완벽해요!',
   ];
 
@@ -38,24 +38,24 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(250, 131, 88, 1.0), // 배경색 설정
+      backgroundColor: const Color(0xFFF09676), // 배경색 설정
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 200.0, bottom: 0),
+              padding: const EdgeInsets.only(top: 150, bottom: 0),
               child: Text(
-                '${widget.partnerNickname}님과의 커피챗\n만족하셨나요?',
+                '${widget.partnerNickname}님과의 커피챗\n얼마나 만족하셨나요?',
                 style: const TextStyle(
-                  fontSize: 30,
+                  fontSize: 25,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 100.0), // 이미지와 텍스트 간격 조절
+              padding: const EdgeInsets.only(top: 100), // 이미지와 텍스트 간격 조절
               child: SizedBox(
                 width: 300, // Stack 너비
                 height: 80, // Stack 높이
@@ -74,10 +74,10 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                         },
                         child: Image.asset(
                           index <= selectedIndex
-                              ? 'assets/bean(1).png' //커피콩 채워짐
-                              : 'assets/bean(0).png', //커피콩 비워짐
-                          width: 70,
-                          height: 70,
+                              ? 'assets/bean_filled.png' //커피콩 채워짐
+                              : 'assets/bean_empty.png', //커피콩 비워짐
+                          width: 60,
+                          height: 60,
                         ),
                       ),
                     );
@@ -86,18 +86,17 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 30),
               child: Text(
                 selectedIndex >= 0 ? comments[selectedIndex] : '',
                 style: const TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 150),
+              padding: const EdgeInsets.only(top: 180),
               child: GestureDetector(
                 onTap: selectedIndex >= 0
                     ? () async {
@@ -149,9 +148,10 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                       }
                     : null, // selectedIndex가 0 이상인 경우에만 클릭 가능하도록 설정
                 child: Text(
-                  selectedIndex >= 0 ? '제출하기 ->' : '커피콩점을 매겨주세요.',
+                  selectedIndex >= 0 ? '제출하기 →' : '커피콩점을 매겨주세요.',
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

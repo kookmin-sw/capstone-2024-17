@@ -160,9 +160,10 @@ class _CafeDetailsState extends State<CafeDetails>
     return Scaffold(
       appBar: TopAppBar(
         titleWidget: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              width: 280,
+              width: 240,
               child: Text(
                 widget.cafeName,
                 style: const TextStyle(
@@ -171,10 +172,13 @@ class _CafeDetailsState extends State<CafeDetails>
             ),
             (myCafe.cafeId != widget.cafeId)
                 ? Container()
-                : const Icon(
-                    Icons.circle,
-                    size: 13,
-                    color: Color(0xFFFF6C3E),
+                : const Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Icon(
+                      Icons.circle,
+                      size: 13,
+                      color: Color(0xFFFF6C3E),
+                    ),
                   ),
           ],
         ),
