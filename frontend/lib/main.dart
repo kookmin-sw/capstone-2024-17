@@ -132,27 +132,34 @@ class _MyHomePageState extends State<MyHomePage> {
   late StompClient stompClient;
 
   late UserProfileModel userProfile;
-  late List<String> cafeList; // 주변 카페 리스트
+  List<String>? cafeList; // 주변 카페 리스트
   late AllUsersModel allUsers;
   late MatchingInfoModel matchingInfo; // 커피챗 진행중 정보
 
   late final List<Widget> _screenOptions;
 
-  void updateCafeList(List<String> cafeList) {
+  void updateCafeList(List<String> newCafeList) {
+    List<String> subList = newCafeList; // sub할 카페 리스트
+
+    if (cafeList != null) {
+      // 반경에 새롭게 들어온 카페만 sub할 리스트에 추가
+      subList = newCafeList.where((cafe) => !cafeList!.contains(cafe)).toList();
+    }
+
     setState(() {
-      this.cafeList = cafeList;
+      cafeList = newCafeList;
     });
 
     // 로그인된 상태이면 - 유저 목록 post, sub 요청
     if (userToken != null) {
       // http post 요청
-      getAllUsers(userToken!, cafeList, userProfile.userId!).then((value) {
+      getAllUsers(userToken!, newCafeList, userProfile.userId!).then((value) {
         allUsers.setAllUsers(value);
 
         // 주변 모든 카페에 sub 요청
         subCafeList(
           stompClient: stompClient,
-          cafeList: cafeList,
+          cafeList: subList,
           allUsers: allUsers,
           userId: userProfile.userId!,
         );
