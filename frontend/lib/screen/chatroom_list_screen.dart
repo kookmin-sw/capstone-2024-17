@@ -26,11 +26,14 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const TopAppBar(
-        title: '채팅방 목록',
+        title: '실시간 쪽지 목록',
       ),
-      body: ListView(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-        children: _buildChatroomItems(),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: ListView(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+          children: _buildChatroomItems(),
+        ),
       ),
     );
   }
