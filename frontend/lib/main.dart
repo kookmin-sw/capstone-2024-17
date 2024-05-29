@@ -146,11 +146,16 @@ class _MyHomePageState extends State<MyHomePage> {
     // 로그인된 상태이면 - 유저 목록 post, sub 요청
     if (userToken != null) {
       // http post 요청
-      getAllUsers(userToken!, cafeList).then((value) {
+      getAllUsers(userToken!, cafeList, userProfile.userId!).then((value) {
         allUsers.setAllUsers(value);
 
         // 주변 모든 카페에 sub 요청
-        subCafeList(stompClient, cafeList, allUsers);
+        subCafeList(
+          stompClient: stompClient,
+          cafeList: cafeList,
+          allUsers: allUsers,
+          userId: userProfile.userId!,
+        );
       });
     }
   }

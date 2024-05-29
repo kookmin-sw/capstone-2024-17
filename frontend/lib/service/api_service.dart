@@ -11,7 +11,7 @@ const storage = FlutterSecureStorage();
 
 // 주변 카페에 있는 모든 유저 목록 받아오기 - http post 요청
 Future<Map<String, List<UserModel>>> getAllUsers(
-    String userToken, List<String> cafeList) async {
+    String userToken, List<String> cafeList, int userId) async {
   try {
     final url = Uri.parse("$baseUrl/cafe/get-users");
     final response = await http.post(
@@ -32,8 +32,10 @@ Future<Map<String, List<UserModel>>> getAllUsers(
     jsonResult.forEach((cafe, userList) {
       List<Map<String, dynamic>> userMapList =
           userList.cast<Map<String, dynamic>>();
-      allUsers[cafe] =
-          userMapList.map((user) => UserModel.fromJson(user)).toList();
+      allUsers[cafe] = userMapList
+          .where((user) => user["userId"] != userId)
+          .map((user) => UserModel.fromJson(user))
+          .toList();
     });
 
     return allUsers;
