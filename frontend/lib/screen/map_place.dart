@@ -6,6 +6,7 @@ import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:frontend/service/stomp_service.dart';
 import 'package:provider/provider.dart';
@@ -231,13 +232,57 @@ class _GoogleMapWidgetState extends State<Google_Map> {
       cafeId,
     ];
 
+    // cafeId를 인자로 받아 photoUrl을 만들고 image를 반환하는 메소드
+    Future<Image> cafeIdToCafeImage(String cafeId) async {
+      final places = GoogleMapsPlaces(apiKey: "${dotenv.env['googleApiKey']}");
+      String photoUrl = '';
+      try {
+        PlacesDetailsResponse place = await places.getDetailsByPlaceId(cafeId);
+        if (place.isOkay && place.result.photos.isNotEmpty) {
+          String photoReference = place.result.photos[0].photoReference;
+          photoUrl =
+              'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
+        } else {
+          throw Exception('No photo found for this place.');
+        }
+      } catch (e) {
+        print('Error: $e');
+      }
+      return photoUrl.isNotEmpty
+          ? Image.network(
+              photoUrl,
+              width: 450,
+              height: 250,
+              fit: BoxFit.cover,
+            )
+          : Image.asset(
+              "assets/no_image.png",
+              width: 450,
+              height: 250,
+              fit: BoxFit.fitWidth,
+            );
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CafeDetails(
-          cafeId: cafeId,
-          cafeName: cafeName,
-          cafeDetailsArguments: detailsArguments,
+        builder: (context) => FutureBuilder<Image>(
+          future: cafeIdToCafeImage(cafeId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              return CafeDetails(
+                cafeId: cafeId,
+                cafeName: cafeName,
+                cafeDetailsArguments: detailsArguments,
+                cafeImage: snapshot.data!,
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
         ),
       ),
     );

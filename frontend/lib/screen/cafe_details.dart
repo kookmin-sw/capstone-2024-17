@@ -61,12 +61,14 @@ class CafeDetails extends StatefulWidget {
   final String cafeId;
   final String cafeName;
   final List<String> cafeDetailsArguments;
+  final Image? cafeImage;
 
   const CafeDetails({
     super.key,
     this.cafeId = "defaultCafeId",
     this.cafeName = "defaultCafeName",
     this.cafeDetailsArguments = const [],
+    this.cafeImage,
   });
 
   @override
@@ -118,27 +120,9 @@ class _CafeDetailsState extends State<CafeDetails>
     autoOfflineService.autoOffline();
   }
 
-  Future<void> getPlacePhotoUri() async {
-    try {
-      PlacesDetailsResponse place =
-          await places.getDetailsByPlaceId(widget.cafeDetailsArguments[9]);
-      if (place.isOkay && place.result.photos.isNotEmpty) {
-        String photoReference = place.result.photos[0].photoReference;
-        photoUrl =
-            'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=${dotenv.env['googleApiKey']}';
-        setState(() {});
-      } else {
-        throw Exception('No photo found for this place.');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    getPlacePhotoUri();
     tabController = TabController(length: 2, vsync: this);
   }
 
@@ -181,21 +165,7 @@ class _CafeDetailsState extends State<CafeDetails>
       ),
       body: Column(
         children: [
-          Center(
-            child: photoUrl.isNotEmpty
-                ? Image.network(
-                    photoUrl,
-                    width: 450,
-                    height: 250,
-                    fit: BoxFit.cover,
-                  )
-                : Image.asset(
-                    "assets/no_image.png",
-                    width: 450,
-                    height: 250,
-                    fit: BoxFit.fitWidth,
-                  ),
-          ),
+          Center(child: widget.cafeImage),
           TabBar(
             controller: tabController,
             indicatorColor: Colors.black,
