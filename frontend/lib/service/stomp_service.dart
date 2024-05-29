@@ -13,51 +13,59 @@ void subCafeList({
   required AllUsersModel allUsers,
   required int userId,
 }) {
-  if (!stompClient.connected) {
-    throw Exception("stompClient is not connected !!");
-  }
+  try {
+    if (!stompClient.connected) {
+      throw Exception("stompClient is not connected !!");
+    }
 
-  for (final cafeId in cafeList) {
-    stompClient.subscribe(
-      destination: '/sub/cafe/$cafeId',
-      callback: (frame) {
-        // sub 응답 처리
-        Map<String, dynamic> result = jsonDecode(frame.body!);
+    for (final cafeId in cafeList) {
+      stompClient.subscribe(
+        destination: '/sub/cafe/$cafeId',
+        callback: (frame) {
+          // sub 응답 처리
+          Map<String, dynamic> result = jsonDecode(frame.body!);
 
-        // 자기 자신에 대한 sub은 무시
-        if (result["userId"] == userId) {
-          return;
-        }
+          // 자기 자신에 대한 sub은 무시
+          if (result["userId"] == userId) {
+            return;
+          }
 
-        // 카페에 사용자 add
-        if (result["type"] == "add") {
-          print("add user in cafe $cafeId");
-          allUsers.addUser(cafeId, UserModel.fromJson(result["cafeUserDto"]));
-        }
-        // 카페에서 사용자 delete
-        else if (result["type"] == "delete") {
-          print("delete user in cafe $cafeId");
-          allUsers.deleteUser(cafeId, result["userId"]);
-        }
-      },
-    );
+          // 카페에 사용자 add
+          if (result["type"] == "add") {
+            print("add user in cafe $cafeId");
+            allUsers.addUser(cafeId, UserModel.fromJson(result["cafeUserDto"]));
+          }
+          // 카페에서 사용자 delete
+          else if (result["type"] == "delete") {
+            print("delete user in cafe $cafeId");
+            allUsers.deleteUser(cafeId, result["userId"]);
+          }
+        },
+      );
+    }
+  } catch (error) {
+    print('STOMP error (subCafeList) : $error');
   }
 }
 
 // cafe 업데이트(추가, 삭제) pub 요청
 void pubCafe(StompClient stompClient, String type, int userId, String cafeId) {
-  if (!stompClient.connected) {
-    throw Exception("stompClient is not connected !!");
-  }
+  try {
+    if (!stompClient.connected) {
+      throw Exception("stompClient is not connected !!");
+    }
 
-  stompClient.send(
-    destination: '/pub/cafe/update',
-    body: jsonEncode({
-      "type": type,
-      "userId": userId,
-      "cafeId": cafeId,
-    }),
-  );
+    stompClient.send(
+      destination: '/pub/cafe/update',
+      body: jsonEncode({
+        "type": type,
+        "userId": userId,
+        "cafeId": cafeId,
+      }),
+    );
+  } catch (error) {
+    print('STOMP error (pubCafe) : $error');
+  }
 }
 
 // cafe 업데이트 - user 추가
