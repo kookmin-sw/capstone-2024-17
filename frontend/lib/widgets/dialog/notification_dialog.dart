@@ -18,6 +18,7 @@ class ArriveRequestNotification extends StatelessWidget {
       handleNavigate: () {
         Navigator.of(context).popUntil(ModalRoute.withName('/'));
         selectedIndexProvider.selectedIndex = 1;
+        selectedIndexProvider.selectedTabIndex = 1;
       },
     );
   }
