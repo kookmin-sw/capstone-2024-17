@@ -41,18 +41,15 @@ class ChatroomItem extends StatelessWidget {
         );
       },
       child: Container(
-        height: 110,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        height: 90,
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.grey),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: Border(bottom: BorderSide(color: Colors.grey[400]!)),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(5),
               child: (logoUrl == '')
                   ? const ProfileImgSmall(
                       isLocal: true,
@@ -63,6 +60,7 @@ class ChatroomItem extends StatelessWidget {
                       logoUrl: logoUrl,
                     ),
             ),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -76,6 +74,7 @@ class ChatroomItem extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 5),
                   Row(
                     // spaceBetween: child widget을 시작과 끝에 배치하고
                     // 그 사이에 나머지 child widget을 배치
