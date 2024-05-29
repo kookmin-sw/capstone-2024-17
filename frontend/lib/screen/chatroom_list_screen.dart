@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/chatting/chatroom_item.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:frontend/widgets/bar/top_appbar.dart';
 
@@ -13,32 +13,61 @@ class ChatroomListScreen extends StatefulWidget {
 }
 
 class _ChatroomListScreenState extends State<ChatroomListScreen> {
-  final storage = const FlutterSecureStorage();
-  List<Map<String, dynamic>> chatrooms = [];
+  final StreamController<List<Map<String, dynamic>>> _chatroomStreamController =
+      StreamController(); // 채팅방 목록이 업데이트될 때마다 stream에서 데이터를 전송함
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    waitGetChatroomlist();
+    waitGetChatroomlist(); // 첫 데이터는 먼저 가져와서 첫번째 타이머 대기 안해도 됨
+    _startPeriodicUpdate(); // 주기적으로 waitGetChatroomlist();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
+    _chatroomStreamController.close();
+  }
+
+  void _startPeriodicUpdate() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      await waitGetChatroomlist(); // 5초마다 호출됨
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TopAppBar(
-        title: '실시간 쪽지 목록',
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: ListView(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          children: _buildChatroomItems(),
+        appBar: const TopAppBar(
+          title: '실시간 쪽지 목록',
         ),
-      ),
-    );
+        body: Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: StreamBuilder<List<Map<String, dynamic>>>(
+            // stream의 데이터가 변경될 때마다 rebuild
+            stream: _chatroomStreamController.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('오류 발생!'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('채팅방이 없습니다.'));
+              } else {
+                return ListView(
+                  padding:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                  children: _buildChatroomItems(snapshot.data!),
+                );
+              }
+            },
+          ),
+        ));
   }
 
-  List<Widget> _buildChatroomItems() {
+  List<Widget> _buildChatroomItems(List<Map<String, dynamic>> chatrooms) {
     // 받아온 각 chatroom의 정보를 ChatroomItem으로 만들어 반환
     return chatrooms.map((chatroom) {
       // print(chatroom);
@@ -78,9 +107,8 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
       // recentMessageTime이 최신인 순서대로 정렬해서 전달
       fetchedChatrooms.sort(
           (a, b) => b['recentMessageTime'].compareTo(a['recentMessageTime']));
-      setState(() {
-        chatrooms = fetchedChatrooms;
-      });
+
+      _chatroomStreamController.add(fetchedChatrooms);
     } else {
       // 실패: 예외처리
       print('채팅방 목록 불러오기 실패: ${res["message"]}(${res["statusCode"]})');
