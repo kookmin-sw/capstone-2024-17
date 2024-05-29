@@ -31,6 +31,13 @@ if (flutterVersionName == null) {
 def googleMapApiKey = localProperties.getProperty('GOOGLE_MAP_KEY')
 def kakaoNativeAppKey = localProperties.getProperty('flutter.kakao.native.appKey')
 
+// Gradle 서명 구성
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace "com.example.frontend"
     compileSdkVersion 34
@@ -63,11 +70,22 @@ android {
 
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+            // signingConfig signingConfigs.release
+
         }
     }
 }
