@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/widgets/profile_img.dart';
 import 'package:frontend/widgets/thermometer/thermometer.dart';
 
@@ -24,8 +25,10 @@ class UserDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(
+              width: 10,
+            ),
             (company == '무소속')
                 ? const ProfileImgMedium(
                     isLocal: true,
@@ -36,7 +39,7 @@ class UserDetails extends StatelessWidget {
                     logoUrl: "assets/$company-logo.png",
                   ),
             const SizedBox(
-              width: 35,
+              width: 30,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +57,7 @@ class UserDetails extends StatelessWidget {
                 ),
                 Text(
                   position,
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),

@@ -95,29 +95,12 @@ class ChatroomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     logoUrl: logoUrl,
                   ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                nickname,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.mode_standby,
-                    color: Colors.lightGreen,
-                    size: 15,
-                  ),
-                  Text(' 온라인', style: TextStyle(fontSize: 14)),
-                ],
-              ),
-            ],
+          Text(
+            nickname,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
