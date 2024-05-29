@@ -7,8 +7,12 @@ import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:stomp_dart_client/stomp.dart';
 
 // cafe list의 각 cafe에 sub 요청
-void subCafeList(
-    StompClient stompClient, List<String> cafeList, AllUsersModel allUsers) {
+void subCafeList({
+  required StompClient stompClient,
+  required List<String> cafeList,
+  required AllUsersModel allUsers,
+  required int userId,
+}) {
   if (!stompClient.connected) {
     throw Exception("stompClient is not connected !!");
   }
@@ -19,6 +23,11 @@ void subCafeList(
       callback: (frame) {
         // sub 응답 처리
         Map<String, dynamic> result = jsonDecode(frame.body!);
+
+        // 자기 자신에 대한 sub은 무시
+        if (result["userId"] == userId) {
+          return;
+        }
 
         // 카페에 사용자 add
         if (result["type"] == "add") {
