@@ -40,8 +40,8 @@ Future<Map<String, List<UserModel>>> getAllUsers(
 
     return allUsers;
   } catch (error) {
-    print("HTTP POST error: $error");
-    throw Error();
+    print("HTTP POST error (getAllUsers) : $error");
+    throw Exception();
   }
 }
 
@@ -97,8 +97,8 @@ Future<Map<String, dynamic>> getMatchingInfo(userId) async {
       throw Exception('서버 오류: ${response.statusCode} ${response.body}');
     }
   } catch (error) {
-    print("HTTP GET error (getIsMatching): $error");
-    throw Error();
+    print("HTTP GET error (getIsMatching) : $error");
+    throw Exception();
   }
 }
 
@@ -135,8 +135,9 @@ Future<Map<String, dynamic>> matchRequest(
     } else {
       throw Exception('서버 오류: ${response.statusCode}');
     }
-  } catch (e) {
-    throw Error();
+  } catch (error) {
+    print("HTTP POST error (matchRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -160,8 +161,9 @@ Future<Map<String, dynamic>> requestInfoRequest(int senderId) async {
     } else {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
-  } catch (e) {
-    throw Error();
+  } catch (error) {
+    print("HTTP GET error (requestInfoRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -193,8 +195,9 @@ Future<List<Map<String, dynamic>>> receivedInfoRequest(int receiverId) async {
       throw Exception(
           'Failed to get receivedInfoRequest: ${response.statusCode}');
     }
-  } catch (e) {
-    throw Exception('Error in receivedInfoRequest: $e');
+  } catch (error) {
+    print("HTTP GET error (receivedInfoRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -222,7 +225,8 @@ Future<Map<String, dynamic>> matchCancelRequest(String matchId) async {
       throw Exception('Failed to get match info: ${response.statusCode}');
     }
   } catch (error) {
-    throw Error();
+    print("HTTP PUT error (matchCancelRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -250,7 +254,8 @@ Future<Map<String, dynamic>> matchAcceptRequest(String matchId) async {
       throw Exception('Failed to get match accept: ${response.statusCode}');
     }
   } catch (error) {
-    throw Error();
+    print("HTTP PUT error (matchAcceptRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -277,9 +282,8 @@ Future<Map<String, dynamic>> matchDeclineRequest(String matchId) async {
       throw Exception('Failed to get match delete: ${response.statusCode}');
     }
   } catch (error) {
-    throw Exception('Error occurred in matchDeclineRequest: $error');
-
-    // throw Error();
+    print("HTTP PUT error (matchDeclineRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -308,9 +312,8 @@ Future<Map<String, dynamic>> matchFinishRequest(
       throw Exception('Failed to get match delete: ${response.statusCode}');
     }
   } catch (error) {
-    throw Exception('Error occurred in matchDeclineRequest: $error');
-
-    // throw Error();
+    print("HTTP PUT error (matchFinishRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -348,9 +351,9 @@ Future<Map<String, dynamic>> coffeeBeanReview(
     } else {
       throw Exception('서버 오류: ${response.statusCode}');
     }
-  } catch (e) {
-    print(e);
-    throw Error();
+  } catch (error) {
+    print("HTTP POST error (coffeeBeanReview) : $error");
+    throw Exception();
   }
 }
 
@@ -375,8 +378,9 @@ Future<Map<String, dynamic>> checkReviewedRequest(
     } else {
       throw Exception('Failed to get reviewed info: ${response.statusCode}');
     }
-  } catch (e) {
-    throw Error();
+  } catch (error) {
+    print("HTTP GET error (checkReviewedRequest) : $error");
+    throw Exception();
   }
 }
 
@@ -402,8 +406,8 @@ Future<Map<String, dynamic>> signup(String? loginId, String? password,
     print(jsonData);
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (signup) : $error');
+    throw Exception();
   }
 }
 
@@ -423,8 +427,8 @@ Future<Map<String, dynamic>> login(String loginId, String password) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (login) : $error');
+    throw Exception();
   }
 }
 
@@ -444,9 +448,8 @@ Future<Map<String, dynamic>> getUserDetail() async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print("here errorrrrrrrr");
-    print('error: $error');
-    throw Error();
+    print('HTTP GET error (getUserDetail) : $error');
+    throw Exception();
   }
 }
 
@@ -473,13 +476,13 @@ Future<Map<String, dynamic>> deleteUser() async {
       Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res2.bodyBytes));
       return jsonData;
     } catch (error) {
-      print('error: $error');
-      throw Error();
+      print('HTTP DELETE error (deleteUser) : $error');
+      throw Exception();
     }
   } else {
     // UUID 가져오기 실패
     print('유저 정보 get 도중 에러 발생');
-    throw Error();
+    throw Exception();
   }
 }
 
@@ -501,8 +504,8 @@ Future<Map<String, dynamic>> updateNickname(String nickname) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (updateNickname) : $error');
+    throw Exception();
   }
 }
 
@@ -524,8 +527,8 @@ Future<Map<String, dynamic>> updateIntroduction(String introduction) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (updateIntroduction) : $error');
+    throw Exception();
   }
 }
 
@@ -545,8 +548,8 @@ Future<Map<String, dynamic>> resetCompany() async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP PUT error (resetCompany) : $error');
+    throw Exception();
   }
 }
 
@@ -567,8 +570,8 @@ Future<Map<String, dynamic>> getChatroomlist() async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP GET error (getChatroomlist) : $error');
+    throw Exception();
   }
 }
 
@@ -588,8 +591,8 @@ Future<Map<String, dynamic>> getPositionlist() async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP GET error (getPositionlist) : $error');
+    throw Exception();
   }
 }
 
@@ -611,8 +614,8 @@ Future<Map<String, dynamic>> updatePosition(String position) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (updatePosition) : $error');
+    throw Exception();
   }
 }
 
@@ -638,8 +641,8 @@ Future<Map<String, dynamic>> getChatList(int chatroomId) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP GET error (getChatList) : $error');
+    throw Exception();
   }
 }
 
@@ -661,8 +664,8 @@ Future<Map<String, dynamic>> kakaoLogin(String token) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (kakaoLogin) : $error');
+    throw Exception();
   }
 }
 
@@ -683,8 +686,8 @@ Future<Map<String, dynamic>> getCompanyList(String companyKeyword) async {
     Map<String, dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP GET error (getCompanyList) : $error');
+    throw Exception();
   }
 }
 
@@ -710,8 +713,8 @@ Future<Map<String, dynamic>> verificationRequest(String email) async {
     print(jsonData);
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (verificationRequest) : $error');
+    throw Exception();
   }
 }
 
@@ -735,8 +738,8 @@ Future<Map<String, dynamic>> verification(String email, String authCode) async {
     print(jsonData);
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (verification) : $error');
+    throw Exception();
   }
 }
 
@@ -762,7 +765,7 @@ Future<Map<String, dynamic>> addCompany(
     print(jsonData);
     return jsonData;
   } catch (error) {
-    print('error: $error');
-    throw Error();
+    print('HTTP POST error (addCompany) : $error');
+    throw Exception();
   }
 }
