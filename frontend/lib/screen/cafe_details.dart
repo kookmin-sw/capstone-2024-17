@@ -272,8 +272,8 @@ class _CafeDetailsState extends State<CafeDetails>
                       builder: (context) {
                         bool setOrChange = myCafe.cafeId == null ? true : false;
                         String content = setOrChange
-                            ? "${widget.cafeName}을(를) 내 위치로 표시하겠습니까?"
-                            : "${widget.cafeName}을(를) 내 위치로 표시하도록 변경하겠습니까?";
+                            ? "${widget.cafeName}을(를) \n내 위치로 표시하시겠습니까?"
+                            : "${widget.cafeName}을(를) 내 위치로 \n표시하도록 변경하시겠습니까?";
 
                         return YesOrNoDialog(
                           content: content,
