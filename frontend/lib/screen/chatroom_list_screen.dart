@@ -20,6 +20,7 @@ class _ChatroomListScreenState extends State<ChatroomListScreen> {
   @override
   void initState() {
     super.initState();
+    waitGetChatroomlist(); // 첫 데이터는 먼저 가져와서 첫번째 타이머 대기 안해도 됨
     _startPeriodicUpdate(); // 주기적으로 waitGetChatroomlist();
   }
 
