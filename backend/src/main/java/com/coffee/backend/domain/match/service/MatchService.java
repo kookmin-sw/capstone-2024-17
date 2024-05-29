@@ -113,7 +113,7 @@ public class MatchService {
 
         Set<String> keys = redisTemplate.keys("receiverId:*-senderId:" + senderId);
         if (keys == null || keys.isEmpty()) {
-            throw new CustomException(ErrorCode.REQUEST_NOT_FOUND);
+            return new ArrayList<>(); // 빈 리스트 반환
         }
 
         List<MatchInfoResponseDto> response = new ArrayList<>();
