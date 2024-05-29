@@ -16,7 +16,10 @@ class AllUsersModel extends ChangeNotifier {
   }
 
   void addUser(String cafeId, UserModel user) {
-    allUsers[cafeId]!.add(user);
+    // 중복 체크 후 추가
+    if (allUsers[cafeId]!.contains(user) == false) {
+      allUsers[cafeId]!.add(user);
+    }
     notifyListeners();
   }
 

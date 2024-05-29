@@ -228,20 +228,15 @@ class _SentReqState extends State<SentReq> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
+                        return OneButtonDialog(
                           content:
-                              const Text('제한 시간이 완료되었습니다.\n다시 매칭 요청을 진행해주세요.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  _sendinfoFuture = sendinfo();
-                                });
-                              },
-                              child: const Text('확인'),
-                            ),
-                          ],
+                              '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
+                          onFirstButtonClick: () {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              _sendinfoFuture = sendinfo();
+                            });
+                          },
                         );
                       },
                     );
