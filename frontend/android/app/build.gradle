@@ -86,6 +86,10 @@ android {
             signingConfig signingConfigs.debug
             // signingConfig signingConfigs.release
 
+            // 소스코드 암호화
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
