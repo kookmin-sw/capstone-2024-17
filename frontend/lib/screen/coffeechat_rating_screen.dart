@@ -27,10 +27,10 @@ class CoffeeChatRating extends StatefulWidget {
 class _CoffeeChatRatingState extends State<CoffeeChatRating> {
   int selectedIndex = -1;
   final List<String> comments = [
-    '별로였어요.',
-    '조금 아쉬워요.',
-    '보통이에요.',
-    '만족스러워요.',
+    '별로였어요 :(',
+    '조금 아쉬워요..',
+    '보통이에요',
+    '좋았어요 :)',
     '완벽해요!',
   ];
 
