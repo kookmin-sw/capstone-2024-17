@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/model/matching_info_model.dart';
@@ -160,7 +161,8 @@ class _CafeDetailsState extends State<CafeDetails>
       appBar: TopAppBar(
         titleWidget: Row(
           children: [
-            Expanded(
+            SizedBox(
+              width: 280,
               child: Text(
                 widget.cafeName,
                 style: const TextStyle(
