@@ -128,7 +128,7 @@ class _MatchingWidgetState extends State<Matching> {
               padding: const EdgeInsets.only(top: 80), // 버튼 주위의 패딩 설정
               child: SizedBox(
                 width: 350, // 버튼의 너비 설정
-                height: 80, // 버튼의 높이 설정
+                height: 70, // 버튼의 높이 설정
                 child: ElevatedButton(
                   onPressed: () async {
                     showDialog(
@@ -157,16 +157,18 @@ class _MatchingWidgetState extends State<Matching> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 20), // 버튼의 내부 패딩 설정
+                        vertical: 10, horizontal: 20), // 버튼의 내부 패딩 설정
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)), // 버튼의 모양 설정
-                    backgroundColor:
-                        const Color.fromRGBO(75, 30, 8, 1.0), // 버튼의 배경색 설정
+                      borderRadius: BorderRadius.circular(15),
+                    ), // 버튼의 모양 설정
+                    backgroundColor: const Color(0xFF371D10), // 버튼의 배경색 설정
                   ),
                   child: const Text(
                     '커피챗 종료',
                     style: TextStyle(
-                        fontSize: 25, color: Colors.white), // 버튼 텍스트의 스타일 설정
+                      fontSize: 20,
+                      color: Colors.white,
+                    ), // 버튼 텍스트의 스타일 설정
                   ),
                 ),
               ),
