@@ -74,7 +74,7 @@ android {
         release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
+            storeFile keystoreProperties['storeFile']
             storePassword keystoreProperties['storePassword']
         }
     }
@@ -88,7 +88,6 @@ android {
 
             // 소스코드 암호화
             minifyEnabled true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
