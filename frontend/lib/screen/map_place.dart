@@ -386,20 +386,26 @@ class _GoogleMapWidgetState extends State<Google_Map> {
             ),
           ),
           Positioned(
-            top: 80,
-            right: 10,
+            top: 50,
+            right: 20,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const AlarmList()));
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange, // 배경 색상 설정
+                minimumSize: const Size(50, 50),
+                backgroundColor: Colors.white, // 배경 색상 설정
+                elevation: 0,
                 shape: const CircleBorder(), // 원 모양의 버튼을 만들기 위해 사용
                 padding: const EdgeInsets.all(10), // 버튼의 패딩 설정
+                side: const BorderSide(
+                  color: Colors.grey,
+                  width: 0.5,
+                ),
               ),
-              child: const Icon(Icons.add_alert,
-                  color: Colors.white70), // 아이콘과 색상 설정
+              child: const Icon(Icons.notifications_outlined,
+                  color: Colors.black), // 아이콘과 색상 설정
             ),
           ),
           (myCafe.cafeId == null)
