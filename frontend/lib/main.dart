@@ -289,6 +289,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: (index) {
                 selectedIndexProvider.selectedIndex = index;
                 if (index == 1) {
+                  selectedIndexProvider.selectedTabIndex = 0; // 보낸 요청 탭으로
                   // 커피챗 매칭정보 가져오기
                   getUserDetail().then((userDetail) {
                     getMatchingInfo(userDetail["data"]["userId"]).then((value) {

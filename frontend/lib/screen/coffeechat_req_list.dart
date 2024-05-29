@@ -74,6 +74,7 @@ class CoffeechatReqList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final matchingInfo = Provider.of<MatchingInfoModel>(context);
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
 
     return (matchingInfo.isMatching == true)
         ? Matching(
@@ -85,9 +86,10 @@ class CoffeechatReqList extends StatelessWidget {
             partnerCompany: matchingInfo.partnerCompany!,
             partnerNickname: matchingInfo.partnerNickname!,
           )
-        : const DefaultTabController(
+        : DefaultTabController(
+            initialIndex: selectedIndexProvider.selectedTabIndex,
             length: 2,
-            child: Scaffold(
+            child: const Scaffold(
               appBar: TopAppBar(
                 title: "커피챗 요청 목록",
               ),
