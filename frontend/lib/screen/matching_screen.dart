@@ -36,16 +36,16 @@ class _MatchingWidgetState extends State<Matching> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(250, 131, 88, 1.0), // 배경색 설정
+      backgroundColor: const Color(0xFFF09676), // 배경색 설정
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: 0.0, bottom: 0),
+              padding: EdgeInsets.only(top: 100),
               child: Text(
-                '커피챗 진행중 • • • ', // 텍스트
-                style: TextStyle(fontSize: 33, fontWeight: FontWeight.bold),
+                '커피챗 진행중 ...', // 텍스트
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(
@@ -54,23 +54,23 @@ class _MatchingWidgetState extends State<Matching> {
                 alignment: Alignment.center,
                 children: [
                   Image.asset(
-                    'assets/magnifier.png',
+                    'assets/coffee_mug.png',
                     width: 400,
                     height: 400,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 58, right: 0), // 패딩 설정
                     child: Container(
-                      width: 310, // 원의 너비
-                      height: 310, // 원의 높이
+                      width: 200, // 원의 너비
+                      height: 200, // 원의 높이
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle, // 원 모양 설정
-                        color: Color.fromRGBO(255, 201, 186, 1.0),
+                        color: Color(0xFFFFDED2),
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 150, // 텍스트 상위 여백 설정
+                    top: 130,
                     child: Text(
                       '${widget.myNickname} X ${widget.partnerNickname}',
                       // 회사 이름이 길어졌을 때 논의 필요
@@ -81,11 +81,11 @@ class _MatchingWidgetState extends State<Matching> {
                     ),
                   ),
                   Positioned(
-                    top: 200,
-                    left: 80,
+                    top: 180,
+                    left: 110,
                     child: Container(
-                      width: 140,
-                      height: 140,
+                      width: 100,
+                      height: 100,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
@@ -101,11 +101,11 @@ class _MatchingWidgetState extends State<Matching> {
                     ),
                   ),
                   Positioned(
-                    top: 200,
-                    right: 80,
+                    top: 180,
+                    right: 110,
                     child: Container(
-                      width: 140,
-                      height: 140,
+                      width: 100,
+                      height: 100,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
@@ -124,52 +124,50 @@ class _MatchingWidgetState extends State<Matching> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 80), // 버튼 주위의 패딩 설정
-              child: SizedBox(
-                width: 350, // 버튼의 너비 설정
-                height: 70, // 버튼의 높이 설정
-                child: ElevatedButton(
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return YesOrNoDialog(
-                          content: "커피챗을 종료하시겠습니까?",
-                          firstButton: "종료",
-                          secondButton: "닫기",
-                          handleFirstClick: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CoffeeChatRating(
-                                  userId: widget.myId,
-                                  partnerId: widget.partnerId,
-                                  partnerNickname: widget.partnerNickname,
-                                  matchId: widget.matchId,
-                                ),
+            const SizedBox(height: 100),
+            SizedBox(
+              width: 350, // 버튼의 너비 설정
+              height: 70, // 버튼의 높이 설정
+              child: ElevatedButton(
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return YesOrNoDialog(
+                        content: "커피챗을 종료하시겠습니까?",
+                        firstButton: "종료",
+                        secondButton: "닫기",
+                        handleFirstClick: () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CoffeeChatRating(
+                                userId: widget.myId,
+                                partnerId: widget.partnerId,
+                                partnerNickname: widget.partnerNickname,
+                                matchId: widget.matchId,
                               ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 20), // 버튼의 내부 패딩 설정
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ), // 버튼의 모양 설정
-                    backgroundColor: const Color(0xFF371D10), // 버튼의 배경색 설정
-                  ),
-                  child: const Text(
-                    '커피챗 종료',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    ), // 버튼 텍스트의 스타일 설정
-                  ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10, horizontal: 20), // 버튼의 내부 패딩 설정
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ), // 버튼의 모양 설정
+                  backgroundColor: const Color(0xFF371D10), // 버튼의 배경색 설정
+                ),
+                child: const Text(
+                  '커피챗 종료',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ), // 버튼 텍스트의 스타일 설정
                 ),
               ),
             ),
