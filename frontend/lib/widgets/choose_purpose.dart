@@ -160,23 +160,24 @@ class PurposeButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const PurposeButton({
-    super.key,
+    Key? key,
     required this.purpose,
     required this.isSelected,
     required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Get the width of the device
     double deviceWidth = MediaQuery.of(context).size.width;
 
-    // Adjust the font size based on the width of the device
-    double fontSize = deviceWidth * 0.05; // Example: 5% of the device width
+    // Calculate the font size based on the width of the device and button width
+    double buttonWidth = 280;
+    double fontSize = deviceWidth * 0.06 * (buttonWidth / deviceWidth);
 
     return Container(
       margin: const EdgeInsets.only(top: 15),
-      width: 280,
+      width: buttonWidth,
       height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
