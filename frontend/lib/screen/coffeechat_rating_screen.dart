@@ -4,8 +4,6 @@ import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:provider/provider.dart';
-import 'map_place.dart';
-import 'package:flutter/material.dart';
 
 class CoffeeChatRating extends StatefulWidget {
   final String partnerNickname;
@@ -113,12 +111,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
                         print(response);
 
-                        Map<String, dynamic> res =
-                            await getMatchingInfo(widget.userId);
-
-                        Map<String, dynamic> review =
-                            await checkReviewedRequest(
-                                widget.matchId, widget.userId);
+                        await checkReviewedRequest(
+                            widget.matchId, widget.userId);
 
                         // 커피챗 진행중인 경우에만 종료 요청
                         if (matchingInfo.isMatching) {
