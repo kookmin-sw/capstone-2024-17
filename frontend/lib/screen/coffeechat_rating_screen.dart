@@ -131,6 +131,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                                 "${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.",
                             onFirstButtonClick: () {
                               Navigator.pop(context);
+                              Navigator.pop(context);
                               selectedIndexProvider.selectedIndex = 0;
                             },
                           ),

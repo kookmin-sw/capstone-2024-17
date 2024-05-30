@@ -124,7 +124,7 @@ class _MatchingWidgetState extends State<Matching> {
                 ],
               ),
             ),
-            const SizedBox(height: 100),
+            // const SizedBox(height: 10),
             SizedBox(
               width: 350, // 버튼의 너비 설정
               height: 70, // 버튼의 높이 설정
