@@ -133,8 +133,31 @@ class _SentReqState extends State<SentReq> {
   @override
   void initState() {
     super.initState();
-    timerend = false;
-    _sendinfoFuture = sendinfo();
+    final selectedIndexProvider =
+        Provider.of<SelectedIndexModel>(context, listen: false);
+    selectedIndexProvider.addListener(_reloadData);
+    _reloadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    selectedIndexProvider.addListener(_reloadData); // 리스너 추가
+  }
+
+  @override
+  void dispose() {
+    final selectedIndexProvider =
+        Provider.of<SelectedIndexModel>(context, listen: false);
+    selectedIndexProvider.removeListener(_reloadData); // 리스너 제거
+    super.dispose();
+  }
+
+  void _reloadData() {
+    setState(() {
+      _sendinfoFuture = sendinfo();
+    });
   }
 
   Future<void> handleRequestCancel(String matchId) async {
@@ -143,9 +166,9 @@ class _SentReqState extends State<SentReq> {
       Map<String, dynamic> response = await matchCancelRequest(matchId);
       print(response);
       if (response['success'] == true) {
-        setState(() {
-          _sendinfoFuture = sendinfo();
-        });
+        // setState(() {
+        //   _sendinfoFuture = sendinfo();
+        // });
       } else {
         print(response);
       }
