@@ -129,6 +129,7 @@ class SentReq extends StatefulWidget {
 class _SentReqState extends State<SentReq> {
   late Future<Map<String, dynamic>> _sendinfoFuture;
   bool timerend = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -137,17 +138,23 @@ class _SentReqState extends State<SentReq> {
         Provider.of<SelectedIndexModel>(context, listen: false);
     selectedIndexProvider.addListener(_reloadData);
     // initState에서 _sendinfoFuture 직접 초기화
-    _sendinfoFuture = sendinfo();
-    Future.delayed(Duration(seconds: 1), () {
-      _reloadData();
-    });
+    _reloadData();
   }
 
-// 데이터를 로드하기 위한 메서드 (setState 제거)
-  void _reloadData() {
-    setState(() {
-      _sendinfoFuture = sendinfo();
-    });
+  // 데이터를 로드하기 위한 메서드
+  void _reloadData() async {
+    try {
+      final data = await sendinfo();
+      setState(() {
+        _sendinfoFuture = Future.value(data);
+        _isLoading = false; // 데이터 로드가 완료되면 isLoading을 false로 변경
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+      setState(() {
+        _isLoading = false; // 데이터 로드가 실패해도 isLoading을 false로 변경
+      });
+    }
   }
 
   @override
@@ -199,119 +206,119 @@ class _SentReqState extends State<SentReq> {
     }
   }
 
-  // late Future<Map<String, dynamic>> _sendinfoFuture;
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _sendinfoFuture,
-      builder: (context, snapshot) {
-        print(snapshot.data);
-        if ((snapshot.connectionState == ConnectionState.waiting) ||
-            snapshot.hasError) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.data == null ||
-            (snapshot.data!['data'] == null ||
-                snapshot.data!['data'].isEmpty)) {
-          return const Center(
-            child: Text(
-              '보낸 요청이 없습니다 :(',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-          );
-        } else {
-          var data = snapshot.data!['data'];
-          int requestTypeId = int.parse(data[0]['requestTypeId']);
-          DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
-              int.parse(data[0]['expirationTime']));
+    return _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : FutureBuilder<Map<String, dynamic>>(
+            future: _sendinfoFuture,
+            builder: (context, snapshot) {
+              print(snapshot.data);
+              if (snapshot.hasError ||
+                  snapshot.data == null ||
+                  (snapshot.data!['data'] == null ||
+                      snapshot.data!['data'].isEmpty)) {
+                return const Center(
+                  child: Text(
+                    '보낸 요청이 없습니다 :(',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                );
+              } else {
+                var data = snapshot.data!['data'];
+                int requestTypeId = int.parse(data[0]['requestTypeId']);
+                DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(data[0]['expirationTime']));
 
-          return Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
-                width: 370,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey, width: 1),
-                ),
-                child: UserDetails(
-                  nickname: data[0]['receiverInfo']['nickname'] ?? 'nickname',
-                  company:
-                      data[0]['receiverInfo']['company']['name'] ?? 'company',
-                  position: data[0]['receiverInfo']['position'] ?? 'position',
-                  introduction:
-                      data[0]['receiverInfo']['introduction'] ?? 'introduction',
-                  rating:
-                      (data[0]['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
-                ),
-              ),
-              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
-              const Expanded(child: SizedBox(height: 10)),
-              CountdownTimer(
-                endTime: endTime.millisecondsSinceEpoch,
-                onEnd: () {
-                  if (!timerend) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return OneButtonDialog(
-                          content:
-                              '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
-                          onFirstButtonClick: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              _sendinfoFuture = sendinfo();
-                            });
+                return Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 25, horizontal: 10),
+                      width: 370,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.grey, width: 1),
+                      ),
+                      child: UserDetails(
+                        nickname:
+                            data[0]['receiverInfo']['nickname'] ?? 'nickname',
+                        company: data[0]['receiverInfo']['company']['name'] ??
+                            'company',
+                        position:
+                            data[0]['receiverInfo']['position'] ?? 'position',
+                        introduction: data[0]['receiverInfo']['introduction'] ??
+                            'introduction',
+                        rating: (data[0]['receiverInfo']['coffeeBean'] ?? 0.0)
+                            .toDouble(),
+                      ),
+                    ),
+                    ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
+                    const Expanded(child: SizedBox(height: 10)),
+                    CountdownTimer(
+                      endTime: endTime.millisecondsSinceEpoch,
+                      onEnd: () {
+                        if (!timerend) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return OneButtonDialog(
+                                content:
+                                    '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
+                                onFirstButtonClick: () {
+                                  Navigator.of(context).pop();
+                                  _reloadData(); // 데이터 다시 로드
+                                },
+                              );
+                            },
+                          );
+                        }
+                      },
+                      widgetBuilder: (_, CurrentRemainingTime? time) {
+                        if (time == null) {
+                          return const Text('남은 시간: 00:00',
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.black));
+                        }
+                        int minutes = time.min ?? 0;
+                        int seconds = time.sec ?? 0;
+                        return Text(
+                          '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.black),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    BottomTextButton(
+                      text: "요청 취소하기",
+                      handlePressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return YesOrNoDialog(
+                              content: "매칭 요청을 취소하시겠습니까?",
+                              firstButton: "취소",
+                              secondButton: "닫기",
+                              handleFirstClick: () async {
+                                handleRequestCancel(data[0]['matchId']);
+                              },
+                              handleSecondClick: () {},
+                            );
                           },
                         );
                       },
-                    );
-                  }
-                },
-                widgetBuilder: (_, CurrentRemainingTime? time) {
-                  if (time == null) {
-                    return const Text('남은 시간: 00:00',
-                        style: TextStyle(fontSize: 20, color: Colors.black));
-                  }
-                  int minutes = time.min ?? 0;
-                  int seconds = time.sec ?? 0;
-                  return Text(
-                    '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-                    style: const TextStyle(fontSize: 20, color: Colors.black),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              BottomTextButton(
-                text: "요청 취소하기",
-                handlePressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return YesOrNoDialog(
-                        content: "매칭 요청을 취소하시겠습니까?",
-                        firstButton: "취소",
-                        secondButton: "닫기",
-                        handleFirstClick: () async {
-                          handleRequestCancel(data[0]['matchId']);
-                        },
-                        handleSecondClick: () {},
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
+                    ),
+                  ],
+                );
+              }
+            },
           );
-        }
-      },
-    );
   }
 }
 
