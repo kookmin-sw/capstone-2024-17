@@ -7,10 +7,10 @@ title: Mobile App Landing Page Template
 email: contact@sandoche.com
 description: Free to use static landing page template to showcase your mobile app
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://mobileapplandingpage.learn.uno" # the base hostname & protocol for your site, e.g. http://example.com
-theme_color: '#efeeff'
+url: "https://kookmin-sw.github.io/capstone-2024-17" # the base hostname & protocol for your site, e.g. http://example.com
+theme_color: "#efeeff"
 twitter_username: sandochee
-github_username:  sandoche
+github_username: sandoche
 author: Sandoche Adittane
 logo: assets/images/large-logo.png
 twitter:
