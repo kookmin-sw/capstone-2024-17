@@ -185,10 +185,10 @@ class _SentReqState extends State<SentReq> {
                 snapshot.data!['data'].isEmpty)) {
           return const Center(
             child: Text(
-              '보낸 요청이 없습니다 :(',
+              '보낸 요청이 없어요!\n새로운 커피챗 상대를 찾아보세요.',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
                 color: Colors.grey,
               ),
             ),
@@ -344,10 +344,9 @@ class _ReceivedReqState extends State<ReceivedReq> {
       child: revList.isEmpty
           ? const Center(
               child: Text(
-                '받은 요청이 없습니다 :(',
+                '받은 요청이 없어요 :(',
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
                   color: Colors.grey,
                 ),
               ),
