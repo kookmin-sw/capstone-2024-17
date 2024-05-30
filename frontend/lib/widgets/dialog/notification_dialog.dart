@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
+import 'package:frontend/screen/coffeechat_rating_screen.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
@@ -63,18 +65,36 @@ class ReqDeniedNotification extends StatelessWidget {
 class ReqFinishedNotification extends StatelessWidget {
   final String nickname;
 
-  const ReqFinishedNotification({super.key, required this.nickname});
+  const ReqFinishedNotification({
+    super.key,
+    required this.nickname,
+  });
 
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return NotificationDialogLong(
       title: "커피챗 종료",
       contents: '$nickname님이 커피챗을 \n종료했어요!',
       button: "확인",
       handlePressedButton: () {
-        Navigator.of(context).popUntil(ModalRoute.withName('/'));
-        selectedIndexProvider.selectedIndex = 1;
+        // 커피챗 진행중 여부 저장 - false
+        matchingInfo.setIsMatching(false);
+
+        // 커피챗 평가 화면으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CoffeeChatRating(
+              userId: matchingInfo.myId!,
+              partnerId: matchingInfo.partnerId!,
+              partnerNickname: matchingInfo.partnerNickname!,
+              matchId: matchingInfo.matchId!,
+            ),
+          ),
+        );
       },
     );
   }

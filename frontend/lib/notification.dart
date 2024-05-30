@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/model/matching_info_model.dart';
+import 'package:frontend/model/user_profile_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/notification_dialog.dart';
 import 'package:frontend/widgets/user/user_details.dart';
@@ -99,7 +100,9 @@ class FCM {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return ReqFinishedNotification(nickname: nickname);
+              return ReqFinishedNotification(
+                nickname: nickname,
+              );
             },
           );
         }
