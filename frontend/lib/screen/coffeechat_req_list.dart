@@ -136,7 +136,17 @@ class _SentReqState extends State<SentReq> {
     final selectedIndexProvider =
         Provider.of<SelectedIndexModel>(context, listen: false);
     selectedIndexProvider.addListener(_reloadData);
-    _reloadData();
+    // 데이터 로드 전에 로딩 상태를 표시하기 위해 setState 사용
+    setState(() {
+      _sendinfoFuture = sendinfo();
+    });
+  }
+
+// 데이터를 로드하기 위한 메서드
+  void _reloadData() {
+    setState(() {
+      _sendinfoFuture = sendinfo();
+    });
   }
 
   @override
@@ -152,12 +162,6 @@ class _SentReqState extends State<SentReq> {
         Provider.of<SelectedIndexModel>(context, listen: false);
     selectedIndexProvider.removeListener(_reloadData); // 리스너 제거
     super.dispose();
-  }
-
-  void _reloadData() {
-    setState(() {
-      _sendinfoFuture = sendinfo();
-    });
   }
 
   Future<void> handleRequestCancel(String matchId) async {
@@ -201,7 +205,7 @@ class _SentReqState extends State<SentReq> {
       builder: (context, snapshot) {
         print(snapshot.data);
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError ||
             snapshot.data == null ||
             (snapshot.data!['data'] == null ||
