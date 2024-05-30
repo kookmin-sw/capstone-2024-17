@@ -92,6 +92,11 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             splashColor: Colors.transparent, // 스플래시 효과 제거
             highlightColor: Colors.transparent, // 하이라이트 효과 제거
+            textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 243, 132, 98),
+              textStyle: const TextStyle(fontWeight: FontWeight.bold),
+            )),
           ),
           initialRoute: '/',
           routes: <String, WidgetBuilder>{
