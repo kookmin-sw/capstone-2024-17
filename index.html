@@ -41,6 +41,7 @@
       .badge-container {
         display: flex;
         justify-content: space-around;
+        flex-wrap: wrap;
 
         img {
           height: 3.5rem;
@@ -50,6 +51,49 @@
 
       .profile-img {
         width: 90px;
+      }
+
+      /*========= table 반응형 ===========*/
+      .screen-mobile {
+        display: none;
+      }
+      table {
+        width: 100%;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      th {
+        background: #f4f4f4;
+      }
+      th {
+        width: 30%;
+        text-align: left;
+      }
+
+      @media only screen and (max-width: 768px) {
+        .screen-mobile {
+          display: block;
+          width: 100%;
+        }
+        .screen-default {
+          display: none;
+        }
+
+        table {
+          margin: 0 -10px;
+        }
+        th,
+        td {
+          width: 100%;
+          display: block;
+          border-top: none;
+        }
+        tr:first-child th {
+          border-top: 1px solid #ddd;
+        }
       }
     </style>
   </head>
@@ -282,7 +326,7 @@
       <div class="my-3 p-3 rounded">
         <h2>👩🏻‍💻 Abous Us</h2>
 
-        <table align="center">
+        <table style="table-layout: fixed" align="center">
           <tr align="center">
             <td style="min-width: 100px">
               <a href="https://github.com/chaeyeonkong">
@@ -296,6 +340,8 @@
               <br />
               ****3025
             </td>
+            <td class="screen-mobile">Frontend</td>
+
             <td style="min-width: 100px">
               <a href="https://github.com/godeka">
                 <img src="https://github.com/godeka.png" class="profile-img" />
@@ -305,6 +351,8 @@
               <br />
               ****3177
             </td>
+            <td class="screen-mobile">Frontend</td>
+
             <td style="min-width: 100px">
               <a href="https://github.com/jm3789">
                 <img src="https://github.com/jm3789.png" class="profile-img" />
@@ -314,6 +362,8 @@
               <br />
               ****3101
             </td>
+            <td class="screen-mobile">Frontend</td>
+
             <td style="min-width: 100px">
               <a href="https://github.com/tmdtmdqorekf">
                 <img
@@ -326,6 +376,8 @@
               <br />
               ****2677
             </td>
+            <td class="screen-mobile">Backend</td>
+
             <td style="min-width: 100px">
               <a href="https://github.com/hyeesw">
                 <img
@@ -338,6 +390,8 @@
               <br />
               ****3360
             </td>
+            <td class="screen-mobile">Backend</td>
+
             <td style="min-width: 100px">
               <a href="https://github.com/haram8009">
                 <img
@@ -350,8 +404,9 @@
               <br />
               ****3066
             </td>
+            <td class="screen-mobile">Backend</td>
           </tr>
-          <tr align="center">
+          <tr align="center" class="screen-default">
             <td>Frontend</td>
             <td>Frontend</td>
             <td>Frontend</td>
@@ -385,7 +440,7 @@
     <footer class="text-muted py-5" style="background-color: black">
       <div class="container text-white">
         <p>
-          Created with love from Brazil by
+          Template created with love from Brazil by
           <a href="https://github.com/alexandresanlim">Alexandre Sanlim</a> fork
           on
           <a
