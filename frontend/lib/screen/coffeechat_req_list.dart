@@ -138,6 +138,9 @@ class _SentReqState extends State<SentReq> {
     selectedIndexProvider.addListener(_reloadData);
     // initState에서 _sendinfoFuture 직접 초기화
     _sendinfoFuture = sendinfo();
+    Future.delayed(Duration(seconds: 1), () {
+      _reloadData();
+    });
   }
 
 // 데이터를 로드하기 위한 메서드 (setState 제거)
