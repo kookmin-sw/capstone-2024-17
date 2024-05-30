@@ -136,13 +136,11 @@ class _SentReqState extends State<SentReq> {
     final selectedIndexProvider =
         Provider.of<SelectedIndexModel>(context, listen: false);
     selectedIndexProvider.addListener(_reloadData);
-    // 데이터 로드 전에 로딩 상태를 표시하기 위해 setState 사용
-    setState(() {
-      _sendinfoFuture = sendinfo();
-    });
+    // initState에서 _sendinfoFuture 직접 초기화
+    _sendinfoFuture = sendinfo();
   }
 
-// 데이터를 로드하기 위한 메서드
+// 데이터를 로드하기 위한 메서드 (setState 제거)
   void _reloadData() {
     setState(() {
       _sendinfoFuture = sendinfo();
@@ -198,16 +196,18 @@ class _SentReqState extends State<SentReq> {
     }
   }
 
+  // late Future<Map<String, dynamic>> _sendinfoFuture;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(
       future: _sendinfoFuture,
       builder: (context, snapshot) {
         print(snapshot.data);
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if ((snapshot.connectionState == ConnectionState.waiting) ||
+            snapshot.hasError) {
           return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError ||
-            snapshot.data == null ||
+        } else if (snapshot.data == null ||
             (snapshot.data!['data'] == null ||
                 snapshot.data!['data'].isEmpty)) {
           return const Center(

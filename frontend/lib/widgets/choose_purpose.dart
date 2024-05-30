@@ -83,6 +83,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               selectedIndexProvider.selectedIndex = 1;
+              selectedIndexProvider.selectedTabIndex = 0; // 보낸 요청 탭으로
             },
             handleSecondClick: () {
               Navigator.of(context).pop();
@@ -97,6 +98,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         selectedIndexProvider.selectedIndex = 1;
+        selectedIndexProvider.selectedTabIndex = 0; // 보낸 요청 탭으로
       }
     } catch (e) {
       print(e);
