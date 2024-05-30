@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
@@ -37,6 +38,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF09676), // 배경색 설정
       body: Center(
@@ -116,12 +119,13 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                         Map<String, dynamic> review =
                             await checkReviewedRequest(
                                 widget.matchId, widget.userId);
-                        if (res['isMatching'] != 'no') {
-                          // if (review['data']['hasReviewed'] == true) {
-                          //상대방이 리뷰를 남긴 경우에만 finish 가능 (중복 종료 요청 방지)
+
+                        // 커피챗 진행중인 경우에만 종료 요청
+                        if (matchingInfo.isMatching) {
                           await matchFinishRequest(
-                              widget.matchId, widget.userId);
-                          // }
+                            widget.matchId,
+                            widget.userId,
+                          );
                         }
 
                         showDialog(
