@@ -204,11 +204,11 @@ class _SentReqState extends State<SentReq> {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 20),
                 padding:
-                    const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 25, horizontal: 35),
                 width: 370,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey, width: 1),
+                  border: Border.all(color: Colors.grey[350]!, width: 1),
                 ),
                 child: UserDetails(
                   nickname: data[0]['receiverInfo']['nickname'] ?? 'nickname',
