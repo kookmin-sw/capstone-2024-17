@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/screen/coffeechat_rating_screen.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
@@ -35,11 +36,33 @@ class ReqAcceptedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return NotificationDialog(
         contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
         backButton: "닫기",
         navigateButton: "채팅 보기",
         handleNavigate: () {
+          // 커피챗 매칭정보 업데이트
+          getUserDetail().then((userDetail) {
+            getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+              // 커피챗 진행중 여부 저장 - true
+              matchingInfo.setIsMatching(value["isMatching"]);
+
+              if (value["isMatching"]) {
+                matchingInfo.setMatching(
+                  matchId: value["matchId"],
+                  myId: value["myId"],
+                  myNickname: value["myNickname"],
+                  myCompany: value["myCompany"],
+                  partnerId: value["partnerId"],
+                  partnerCompany: value["partnerCompany"],
+                  partnerNickname: value["partnerNickname"],
+                );
+              }
+            });
+          });
+
           Navigator.of(context).popUntil(ModalRoute.withName('/'));
           selectedIndexProvider.selectedIndex = 2;
         });

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/chatting/chat_date.dart';
@@ -33,6 +34,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late StompClient stompClient;
   final storage = const FlutterSecureStorage();
+  late MatchingInfoModel matchingInfo;
   List<Map<String, dynamic>> chats = [];
   final TextEditingController _sendingMsgController = TextEditingController();
   String token = '';
@@ -41,7 +43,28 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<int> getChatroomId() async {
     try {
+      // 커피챗 요청 수락
       Map<String, dynamic> response = await matchAcceptRequest(widget.matchId);
+
+      // 커피챗 매칭정보 업데이트
+      getUserDetail().then((userDetail) {
+        getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+          // 커피챗 진행중 여부 저장 - true
+          matchingInfo.setIsMatching(value["isMatching"]);
+
+          if (value["isMatching"]) {
+            matchingInfo.setMatching(
+              matchId: value["matchId"],
+              myId: value["myId"],
+              myNickname: value["myNickname"],
+              myCompany: value["myCompany"],
+              partnerId: value["partnerId"],
+              partnerCompany: value["partnerCompany"],
+              partnerNickname: value["partnerNickname"],
+            );
+          }
+        });
+      });
       return response["data"]["chatroomId"];
     } catch (e) {
       // 오류 처리
@@ -96,6 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     stompClient = Provider.of<StompClient>(context);
+    matchingInfo = Provider.of<MatchingInfoModel>(context);
 
     return Scaffold(
       appBar: ChatroomAppBar(
