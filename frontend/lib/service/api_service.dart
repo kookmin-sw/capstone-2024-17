@@ -307,6 +307,7 @@ Future<Map<String, dynamic>> matchFinishRequest(
       }),
     );
     if (response.statusCode == 200) {
+      print("삭제성공");
       return json.decode(response.body);
     } else {
       throw Exception('Failed to get match delete: ${response.statusCode}');
