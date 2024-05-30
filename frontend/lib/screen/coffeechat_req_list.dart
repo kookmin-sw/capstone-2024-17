@@ -208,117 +208,114 @@ class _SentReqState extends State<SentReq> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : FutureBuilder<Map<String, dynamic>>(
-            future: _sendinfoFuture,
-            builder: (context, snapshot) {
-              print(snapshot.data);
-              if (snapshot.hasError ||
-                  snapshot.data == null ||
-                  (snapshot.data!['data'] == null ||
-                      snapshot.data!['data'].isEmpty)) {
-                return const Center(
-                  child: Text(
-                    '보낸 요청이 없습니다 :(',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
-                  ),
-                );
-              } else {
-                var data = snapshot.data!['data'];
-                int requestTypeId = int.parse(data[0]['requestTypeId']);
-                DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(data[0]['expirationTime']));
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _sendinfoFuture,
+      builder: (context, snapshot) {
+        print(snapshot.data);
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError ||
+            snapshot.data == null ||
+            (snapshot.data!['data'] == null ||
+                snapshot.data!['data'].isEmpty)) {
+          return const Center(
+            child: Text(
+              '보낸 요청이 없어요!\n새로운 커피챗 상대를 찾아보세요.',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        } else {
+          var data = snapshot.data!['data'];
+          int requestTypeId = int.parse(data[0]['requestTypeId']);
+          DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
+              int.parse(data[0]['expirationTime']));
 
-                return Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 20),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 25, horizontal: 10),
-                      width: 370,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey, width: 1),
-                      ),
-                      child: UserDetails(
-                        nickname:
-                            data[0]['receiverInfo']['nickname'] ?? 'nickname',
-                        company: data[0]['receiverInfo']['company']['name'] ??
-                            'company',
-                        position:
-                            data[0]['receiverInfo']['position'] ?? 'position',
-                        introduction: data[0]['receiverInfo']['introduction'] ??
-                            'introduction',
-                        rating: (data[0]['receiverInfo']['coffeeBean'] ?? 0.0)
-                            .toDouble(),
-                      ),
-                    ),
-                    ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
-                    const Expanded(child: SizedBox(height: 10)),
-                    CountdownTimer(
-                      endTime: endTime.millisecondsSinceEpoch,
-                      onEnd: () {
-                        if (!timerend) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return OneButtonDialog(
-                                content:
-                                    '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
-                                onFirstButtonClick: () {
-                                  Navigator.of(context).pop();
-                                  _reloadData(); // 데이터 다시 로드
-                                },
-                              );
-                            },
-                          );
-                        }
-                      },
-                      widgetBuilder: (_, CurrentRemainingTime? time) {
-                        if (time == null) {
-                          return const Text('남은 시간: 00:00',
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.black));
-                        }
-                        int minutes = time.min ?? 0;
-                        int seconds = time.sec ?? 0;
-                        return Text(
-                          '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-                          style: const TextStyle(
-                              fontSize: 20, color: Colors.black),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    BottomTextButton(
-                      text: "요청 취소하기",
-                      handlePressed: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return YesOrNoDialog(
-                              content: "매칭 요청을 취소하시겠습니까?",
-                              firstButton: "취소",
-                              secondButton: "닫기",
-                              handleFirstClick: () async {
-                                handleRequestCancel(data[0]['matchId']);
-                              },
-                              handleSecondClick: () {},
-                            );
+          return Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 25, horizontal: 35),
+                width: 370,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey[350]!, width: 1),
+                ),
+                child: UserDetails(
+                  nickname: data[0]['receiverInfo']['nickname'] ?? 'nickname',
+                  company:
+                      data[0]['receiverInfo']['company']['name'] ?? 'company',
+                  position: data[0]['receiverInfo']['position'] ?? 'position',
+                  introduction:
+                      data[0]['receiverInfo']['introduction'] ?? 'introduction',
+                  rating:
+                      (data[0]['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
+                ),
+              ),
+              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
+              const Expanded(child: SizedBox(height: 10)),
+              CountdownTimer(
+                endTime: endTime.millisecondsSinceEpoch,
+                onEnd: () {
+                  if (!timerend) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return OneButtonDialog(
+                          content:
+                              '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
+                          onFirstButtonClick: () {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              _sendinfoFuture = sendinfo();
+                            });
                           },
                         );
                       },
-                    ),
-                  ],
-                );
-              }
-            },
+                    );
+                  }
+                },
+                widgetBuilder: (_, CurrentRemainingTime? time) {
+                  if (time == null) {
+                    return const Text('남은 시간: 00:00',
+                        style: TextStyle(fontSize: 20, color: Colors.black));
+                  }
+                  int minutes = time.min ?? 0;
+                  int seconds = time.sec ?? 0;
+                  return Text(
+                    '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+                    style: const TextStyle(fontSize: 20, color: Colors.black),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              BottomTextButton(
+                text: "요청 취소하기",
+                handlePressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return YesOrNoDialog(
+                        content: "매칭 요청을 취소하시겠습니까?",
+                        firstButton: "취소",
+                        secondButton: "닫기",
+                        handleFirstClick: () async {
+                          handleRequestCancel(data[0]['matchId']);
+                        },
+                        handleSecondClick: () {},
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           );
+        }
+      },
+    );
   }
 }
 
@@ -381,10 +378,9 @@ class _ReceivedReqState extends State<ReceivedReq> {
       child: revList.isEmpty
           ? const Center(
               child: Text(
-                '받은 요청이 없습니다 :(',
+                '받은 요청이 없어요 :(',
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
                   color: Colors.grey,
                 ),
               ),
