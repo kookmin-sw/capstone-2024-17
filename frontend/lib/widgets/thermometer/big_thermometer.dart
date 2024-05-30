@@ -11,7 +11,7 @@ class BigThermometer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String temperatureLabel = '';
-    if (temperature == 100) {
+    if (temperature >= 100) {
       temperatureLabel = '타오르는 열정처럼';
     } else if (temperature >= 75 && temperature < 100) {
       temperatureLabel = '따스한 마음이 전해지는';
