@@ -100,11 +100,10 @@ class ReqFinishedNotification extends StatelessWidget {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     final matchingInfo = Provider.of<MatchingInfoModel>(context);
 
-    return NotificationDialogLong(
-      title: "커피챗 종료",
+    return NotificationDialog(
       contents: '$nickname님이 커피챗을 \n종료했어요!',
-      button: "확인",
-      handlePressedButton: () {
+      firstButton: "확인",
+      handleFirstClick: () {
         // 커피챗 진행중 여부 저장 - false
         matchingInfo.setIsMatching(false);
 
