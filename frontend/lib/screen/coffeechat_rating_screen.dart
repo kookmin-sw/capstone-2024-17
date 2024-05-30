@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/one_button_dialog.dart';
 import 'package:provider/provider.dart';
-import 'map_place.dart';
-import 'package:flutter/material.dart';
 
 class CoffeeChatRating extends StatefulWidget {
   final String partnerNickname;
@@ -37,6 +36,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF09676), // 배경색 설정
       body: Center(
@@ -110,18 +111,15 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
                         print(response);
 
-                        Map<String, dynamic> res =
-                            await getMatchingInfo(widget.userId);
+                        await checkReviewedRequest(
+                            widget.matchId, widget.userId);
 
-                        Map<String, dynamic> review =
-                            await checkReviewedRequest(
-                                widget.matchId, widget.userId);
-                        if (res['isMatching'] != 'no') {
-                          if (review['data']['hasReviewed'] == true) {
-                            //상대방이 리뷰를 남긴 경우에만 finish 가능 (중복 종료 요청 방지)
-                            await matchFinishRequest(
-                                widget.matchId, widget.userId);
-                          }
+                        // 커피챗 진행중인 경우에만 종료 요청
+                        if (matchingInfo.isMatching) {
+                          await matchFinishRequest(
+                            widget.matchId,
+                            widget.userId,
+                          );
                         }
 
                         showDialog(
@@ -130,6 +128,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                             content:
                                 "${widget.partnerNickname}님에게 ${selectedIndex + 1}점 반영되었습니다.\n커피챗이 종료됩니다.",
                             onFirstButtonClick: () {
+                              Navigator.pop(context);
                               Navigator.pop(context);
                               selectedIndexProvider.selectedIndex = 0;
                             },

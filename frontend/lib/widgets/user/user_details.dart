@@ -25,6 +25,7 @@ class UserDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
               width: 10,
@@ -41,25 +42,40 @@ class UserDetails extends StatelessWidget {
             const SizedBox(
               width: 30,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  nickname,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            Expanded(
+              // Expanded 추가
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: double.infinity, // Column의 최대 너비를 사용
+                    child: Text(
+                      nickname,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                Text(
-                  company,
-                  style: const TextStyle(fontSize: 18),
-                ),
-                Text(
-                  position,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      company,
+                      style: const TextStyle(fontSize: 18),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      position,
+                      style: const TextStyle(fontSize: 16),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -71,7 +87,7 @@ class UserDetails extends StatelessWidget {
         ),
         Container(
           width: 280,
-          height: 100,
+          height: 100, // 높이를 제한하고 있음
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -82,6 +98,8 @@ class UserDetails extends StatelessWidget {
             child: Text(
               introduction,
               style: const TextStyle(fontSize: 18),
+              maxLines: 5, // 최대 라인 수를 설정하여 오버플로우 방지
+              overflow: TextOverflow.ellipsis, // 오버플로우가 발생할 경우 줄임처리
             ),
           ),
         ),

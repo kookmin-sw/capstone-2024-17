@@ -83,6 +83,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               selectedIndexProvider.selectedIndex = 1;
+              selectedIndexProvider.selectedTabIndex = 0; // 보낸 요청 탭으로
             },
             handleSecondClick: () {
               Navigator.of(context).pop();
@@ -97,6 +98,7 @@ class _ChoosePurposeState extends State<ChoosePurpose> {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
         selectedIndexProvider.selectedIndex = 1;
+        selectedIndexProvider.selectedTabIndex = 0; // 보낸 요청 탭으로
       }
     } catch (e) {
       print(e);
@@ -158,17 +160,24 @@ class PurposeButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const PurposeButton({
-    super.key,
+    Key? key,
     required this.purpose,
     required this.isSelected,
     required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Get the width of the device
+    double deviceWidth = MediaQuery.of(context).size.width;
+
+    // Calculate the font size based on the width of the device and button width
+    double buttonWidth = 280;
+    double fontSize = deviceWidth * 0.06 * (buttonWidth / deviceWidth);
+
     return Container(
       margin: const EdgeInsets.only(top: 15),
-      width: 280,
+      width: buttonWidth,
       height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
@@ -189,7 +198,7 @@ class PurposeButton extends StatelessWidget {
         child: Text(
           "# $purpose",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: fontSize,
             color: isSelected ? Colors.white : Colors.black,
           ),
         ),

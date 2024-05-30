@@ -129,12 +129,47 @@ class SentReq extends StatefulWidget {
 class _SentReqState extends State<SentReq> {
   late Future<Map<String, dynamic>> _sendinfoFuture;
   bool timerend = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    timerend = false;
-    _sendinfoFuture = sendinfo();
+    final selectedIndexProvider =
+        Provider.of<SelectedIndexModel>(context, listen: false);
+    selectedIndexProvider.addListener(_reloadData);
+    // initState에서 _sendinfoFuture 직접 초기화
+    _reloadData();
+  }
+
+  // 데이터를 로드하기 위한 메서드
+  void _reloadData() async {
+    try {
+      final data = await sendinfo();
+      setState(() {
+        _sendinfoFuture = Future.value(data);
+        _isLoading = false; // 데이터 로드가 완료되면 isLoading을 false로 변경
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+      setState(() {
+        _isLoading = false; // 데이터 로드가 실패해도 isLoading을 false로 변경
+      });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    selectedIndexProvider.addListener(_reloadData); // 리스너 추가
+  }
+
+  @override
+  void dispose() {
+    final selectedIndexProvider =
+        Provider.of<SelectedIndexModel>(context, listen: false);
+    selectedIndexProvider.removeListener(_reloadData); // 리스너 제거
+    super.dispose();
   }
 
   Future<void> handleRequestCancel(String matchId) async {
@@ -186,7 +221,6 @@ class _SentReqState extends State<SentReq> {
           return const Center(
             child: Text(
               '보낸 요청이 없어요!\n새로운 커피챗 상대를 찾아보세요.',
-              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.grey,

@@ -4,8 +4,6 @@ import com.coffee.backend.domain.cafe.dto.CafeUserDto;
 import com.coffee.backend.domain.user.entity.User;
 import com.coffee.backend.domain.user.repository.UserRepository;
 import com.coffee.backend.domain.user.service.UserService;
-import com.coffee.backend.exception.CustomException;
-import com.coffee.backend.exception.ErrorCode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -101,11 +99,12 @@ public class CafeService {
 
     public void clearSessionAndCafeIdBySessionId(String sessionId) {
         log.trace("clearSessionAndCafeIdBySessionId()");
-        User user = userRepository.findBySessionId(sessionId).orElseThrow(() -> {
+        Optional<User> user = userRepository.findBySessionId(sessionId);
+        if (user.isEmpty()) {
             log.info("sessionId = {} 를 갖는 사용자가 존재하지 않습니다.", sessionId);
-            return new CustomException(ErrorCode.USER_NOT_FOUND);
-        });
-        // redis 에서 cafeId 유저 삭제 및 cafeId, sessionId null 로 초기화
-        deleteCafeChoice(user.getCafeId(), user.getUserId());
+        } else {
+            // redis 에서 cafeId 유저 삭제 및 cafeId, sessionId null 로 초기화
+            deleteCafeChoice(user.get().getCafeId(), user.get().getUserId());
+        }
     }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/model/selected_index_model.dart';
+import 'package:frontend/screen/coffeechat_rating_screen.dart';
+import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/button/bottom_two_buttons.dart';
 import 'package:frontend/widgets/button/modal_button.dart';
 import 'package:provider/provider.dart';
@@ -13,13 +16,14 @@ class ArriveRequestNotification extends StatelessWidget {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     return NotificationDialog(
       contents: "새로운 커피챗 요청이 \n도착했어요!",
-      backButton: "닫기",
-      navigateButton: "보기",
-      handleNavigate: () {
+      firstButton: "보기",
+      secondButton: "닫기",
+      handleFirstClick: () {
         Navigator.of(context).popUntil(ModalRoute.withName('/'));
         selectedIndexProvider.selectedIndex = 1;
         selectedIndexProvider.selectedTabIndex = 1;
       },
+      handleSecondClick: () {},
     );
   }
 }
@@ -33,14 +37,36 @@ class ReqAcceptedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return NotificationDialog(
-        contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
-        backButton: "닫기",
-        navigateButton: "채팅 보기",
-        handleNavigate: () {
-          Navigator.of(context).popUntil(ModalRoute.withName('/'));
-          selectedIndexProvider.selectedIndex = 2;
+      contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
+      firstButton: "채팅 보기",
+      handleFirstClick: () {
+        // 커피챗 매칭정보 업데이트
+        getUserDetail().then((userDetail) {
+          getMatchingInfo(userDetail["data"]["userId"]).then((value) {
+            // 커피챗 진행중 여부 저장 - true
+            matchingInfo.setIsMatching(value["isMatching"]);
+
+            if (value["isMatching"]) {
+              matchingInfo.setMatching(
+                matchId: value["matchId"],
+                myId: value["myId"],
+                myNickname: value["myNickname"],
+                myCompany: value["myCompany"],
+                partnerId: value["partnerId"],
+                partnerCompany: value["partnerCompany"],
+                partnerNickname: value["partnerNickname"],
+              );
+            }
+          });
         });
+
+        Navigator.of(context).popUntil(ModalRoute.withName('/'));
+        selectedIndexProvider.selectedIndex = 2;
+      },
+    );
   }
 }
 
@@ -54,7 +80,8 @@ class ReqDeniedNotification extends StatelessWidget {
   Widget build(BuildContext context) {
     return NotificationDialog(
       contents: '$nickname님이 커피챗 요청을 \n거절했어요.. :(',
-      backButton: "확인",
+      firstButton: "확인",
+      handleFirstClick: () {},
     );
   }
 }
@@ -63,19 +90,37 @@ class ReqDeniedNotification extends StatelessWidget {
 class ReqFinishedNotification extends StatelessWidget {
   final String nickname;
 
-  const ReqFinishedNotification({super.key, required this.nickname});
+  const ReqFinishedNotification({
+    super.key,
+    required this.nickname,
+  });
 
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
+    final matchingInfo = Provider.of<MatchingInfoModel>(context);
+
     return NotificationDialog(
-        contents: '$nickname님이 커피챗을 \n종료했어요!',
-        backButton: "닫기",
-        navigateButton: "종료하기",
-        handleNavigate: () {
-          Navigator.of(context).popUntil(ModalRoute.withName('/'));
-          selectedIndexProvider.selectedIndex = 1;
-        });
+      contents: '$nickname님이 커피챗을 \n종료했어요!',
+      firstButton: "확인",
+      handleFirstClick: () {
+        // 커피챗 진행중 여부 저장 - false
+        matchingInfo.setIsMatching(false);
+
+        // 커피챗 평가 화면으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CoffeeChatRating(
+              userId: matchingInfo.myId!,
+              partnerId: matchingInfo.partnerId!,
+              partnerNickname: matchingInfo.partnerNickname!,
+              matchId: matchingInfo.matchId!,
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -97,16 +142,18 @@ class NotificationDialog extends StatelessWidget {
   // navigateButton: 필수 아님, 뒤로 간 다음 요청 화면으로 이동
   // backButton: 필수, 뒤로가기
   final String contents;
-  final String backButton;
-  final String? navigateButton;
-  final VoidCallback? handleNavigate;
+  final String firstButton;
+  final String? secondButton;
+  final Function handleFirstClick;
+  final Function? handleSecondClick;
 
   const NotificationDialog({
     super.key,
     required this.contents,
-    required this.backButton,
-    this.navigateButton,
-    this.handleNavigate,
+    required this.firstButton,
+    this.secondButton,
+    required this.handleFirstClick,
+    this.handleSecondClick,
   });
 
   @override
@@ -140,24 +187,20 @@ class NotificationDialog extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 20),
                 ),
-                (navigateButton == null)
+                (secondButton == null)
                     ? ModalButton(
-                        text: backButton,
+                        text: firstButton,
                         handlePressed: () {
                           Navigator.of(context).pop();
+                          handleFirstClick();
                         },
                       )
                     : BottomTwoButtons(
-                        first: navigateButton!,
-                        second: backButton,
-                        handleFirstClick: () {
-                          if (handleNavigate != null) {
-                            handleNavigate!();
-                          } else {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        handleSecondClick: () {}),
+                        first: firstButton,
+                        second: secondButton!,
+                        handleFirstClick: handleFirstClick,
+                        handleSecondClick: handleSecondClick!,
+                      ),
               ],
             ),
           ),
@@ -171,12 +214,14 @@ class NotificationDialogLong extends StatelessWidget {
   final String title;
   final String contents;
   final String button;
+  final Function? handlePressedButton;
 
   const NotificationDialogLong({
     super.key,
     required this.title,
     required this.contents,
     required this.button,
+    this.handlePressedButton,
   });
 
   @override
@@ -193,7 +238,7 @@ class NotificationDialogLong extends StatelessWidget {
             top: -50,
             left: 110,
             child: Image.asset(
-              'assets/logo.png',
+              'assets/logo_no_background.png',
               width: 80,
             ),
           ),
@@ -225,6 +270,7 @@ class NotificationDialogLong extends StatelessWidget {
                   text: button,
                   handlePressed: () {
                     Navigator.of(context).pop();
+                    if (handlePressedButton != null) handlePressedButton!();
                   },
                 )
               ],
