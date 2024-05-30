@@ -42,7 +42,6 @@ class ReqAcceptedNotification extends StatelessWidget {
     return NotificationDialog(
       contents: '$nickname님이 커피챗 요청을 \n수락했어요!',
       firstButton: "채팅 보기",
-      secondButton: "닫기",
       handleFirstClick: () {
         // 커피챗 매칭정보 업데이트
         getUserDetail().then((userDetail) {
@@ -67,7 +66,6 @@ class ReqAcceptedNotification extends StatelessWidget {
         Navigator.of(context).popUntil(ModalRoute.withName('/'));
         selectedIndexProvider.selectedIndex = 2;
       },
-      handleSecondClick: () {},
     );
   }
 }
