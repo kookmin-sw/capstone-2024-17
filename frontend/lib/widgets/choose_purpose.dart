@@ -166,6 +166,12 @@ class PurposeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the width of the device
+    double deviceWidth = MediaQuery.of(context).size.width;
+
+    // Adjust the font size based on the width of the device
+    double fontSize = deviceWidth * 0.05; // Example: 5% of the device width
+
     return Container(
       margin: const EdgeInsets.only(top: 15),
       width: 280,
@@ -189,7 +195,7 @@ class PurposeButton extends StatelessWidget {
         child: Text(
           "# $purpose",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: fontSize,
             color: isSelected ? Colors.white : Colors.black,
           ),
         ),
