@@ -166,9 +166,9 @@ class _SentReqState extends State<SentReq> {
       Map<String, dynamic> response = await matchCancelRequest(matchId);
       print(response);
       if (response['success'] == true) {
-        // setState(() {
-        //   _sendinfoFuture = sendinfo();
-        // });
+        setState(() {
+          _sendinfoFuture = sendinfo();
+        });
       } else {
         print(response);
       }
