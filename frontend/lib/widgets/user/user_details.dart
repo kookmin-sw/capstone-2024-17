@@ -27,7 +27,7 @@ class UserDetails extends StatelessWidget {
         Row(
           children: [
             const SizedBox(
-              width: 20,
+              width: 10,
             ),
             (company == '무소속')
                 ? const ProfileImgMedium(

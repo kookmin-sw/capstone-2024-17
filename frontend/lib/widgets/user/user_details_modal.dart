@@ -33,7 +33,7 @@ class UserDetailsModal extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
