@@ -68,14 +68,15 @@ class ReqFinishedNotification extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
-    return NotificationDialog(
-        contents: '$nickname님이 커피챗을 \n종료했어요!',
-        backButton: "닫기",
-        navigateButton: "종료하기",
-        handleNavigate: () {
-          Navigator.of(context).popUntil(ModalRoute.withName('/'));
-          selectedIndexProvider.selectedIndex = 1;
-        });
+    return NotificationDialogLong(
+      title: "커피챗 종료",
+      contents: '$nickname님이 커피챗을 \n종료했어요!',
+      button: "확인",
+      handlePressedButton: () {
+        Navigator.of(context).popUntil(ModalRoute.withName('/'));
+        selectedIndexProvider.selectedIndex = 1;
+      },
+    );
   }
 }
 
@@ -171,12 +172,14 @@ class NotificationDialogLong extends StatelessWidget {
   final String title;
   final String contents;
   final String button;
+  final Function? handlePressedButton;
 
   const NotificationDialogLong({
     super.key,
     required this.title,
     required this.contents,
     required this.button,
+    this.handlePressedButton,
   });
 
   @override
@@ -225,6 +228,7 @@ class NotificationDialogLong extends StatelessWidget {
                   text: button,
                   handlePressed: () {
                     Navigator.of(context).pop();
+                    if (handlePressedButton != null) handlePressedButton!();
                   },
                 )
               ],
