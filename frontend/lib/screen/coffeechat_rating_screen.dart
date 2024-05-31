@@ -35,6 +35,9 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
     final matchingInfo = Provider.of<MatchingInfoModel>(context);
 
@@ -46,7 +49,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 150, bottom: 0),
+                padding: EdgeInsets.only(top: screenHeight * 0.15),
                 child: Text(
                   '${widget.partnerNickname}님과의 커피챗\n얼마나 만족하셨나요?',
                   style: const TextStyle(
@@ -57,7 +60,8 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 100), // 이미지와 텍스트 간격 조절
+                padding:
+                    EdgeInsets.only(top: screenHeight * 0.15), // 이미지와 텍스트 간격 조절
                 child: SizedBox(
                   width: 300, // Stack 너비
                   height: 80, // Stack 높이
@@ -88,7 +92,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 30),
+                padding: EdgeInsets.only(top: screenHeight * 0.03),
                 child: Text(
                   selectedIndex >= 0 ? comments[selectedIndex] : '',
                   style: const TextStyle(
@@ -98,7 +102,7 @@ class _CoffeeChatRatingState extends State<CoffeeChatRating> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 180),
+                padding: EdgeInsets.only(top: screenHeight * 0.2),
                 child: GestureDetector(
                   onTap: selectedIndex >= 0
                       ? () async {
