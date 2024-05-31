@@ -47,14 +47,15 @@ class _MatchingWidgetState extends State<Matching> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: screenHeight * 0.1),
-                child: const Text(
+              const Padding(
+                padding: EdgeInsets.only(top: 100),
+                child: Text(
                   '커피챗 진행중 ...', // 텍스트
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
               ),
-              Center(
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0), // 이미지와 텍스트 간격 조절
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -64,8 +65,8 @@ class _MatchingWidgetState extends State<Matching> {
                       height: 400,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: screenHeight * 0.1, right: 0), // 패딩 설정
+                      padding:
+                          const EdgeInsets.only(top: 58, right: 0), // 패딩 설정
                       child: Container(
                         width: 200, // 원의 너비
                         height: 200, // 원의 높이
@@ -76,51 +77,19 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                     ),
                     Positioned(
-                      width: screenWidth * 0.2,
-                      top: screenHeight * 0.2,
-                      left: screenWidth * 0.15,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: screenWidth * 0.07,
-                            child: Text(
-                              widget.myNickname,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            ' X ',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            width: screenWidth * 0.07,
-                            child: Text(
-                              widget.partnerNickname,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
+                      top: 130,
+                      child: Text(
+                        '${widget.myNickname} X ${widget.partnerNickname}',
+                        // 회사 이름이 길어졌을 때 논의 필요
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                     ),
                     Positioned(
-                      top: screenHeight * 0.27,
-                      left: screenWidth * 0.13,
+                      top: 180,
+                      left: 110,
                       child: Container(
                         width: 100,
                         height: 100,
@@ -139,8 +108,8 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                     ),
                     Positioned(
-                      top: screenHeight * 0.27,
-                      right: screenWidth * 0.13,
+                      top: 180,
+                      right: 110,
                       child: Container(
                         width: 100,
                         height: 100,
