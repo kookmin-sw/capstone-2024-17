@@ -137,8 +137,10 @@ class _SentReqState extends State<SentReq> {
     final selectedIndexProvider =
         Provider.of<SelectedIndexModel>(context, listen: false);
     selectedIndexProvider.addListener(_reloadData);
-    // initState에서 _sendinfoFuture 직접 초기화
-    _reloadData();
+    _sendinfoFuture = sendinfo();
+    Future.delayed(Duration(seconds: 1), () {
+      _reloadData();
+    });
   }
 
   // 데이터를 로드하기 위한 메서드
@@ -225,6 +227,7 @@ class _SentReqState extends State<SentReq> {
                 fontSize: 20,
                 color: Colors.grey,
               ),
+              textAlign: TextAlign.center,
             ),
           );
         } else {
@@ -233,85 +236,87 @@ class _SentReqState extends State<SentReq> {
           DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
               int.parse(data[0]['expirationTime']));
 
-          return Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 25, horizontal: 35),
-                width: 370,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey[350]!, width: 1),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 25, horizontal: 35),
+                  width: 370,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey[350]!, width: 1),
+                  ),
+                  child: UserDetails(
+                    nickname: data[0]['receiverInfo']['nickname'] ?? 'nickname',
+                    company:
+                        data[0]['receiverInfo']['company']['name'] ?? 'company',
+                    position: data[0]['receiverInfo']['position'] ?? 'position',
+                    introduction: data[0]['receiverInfo']['introduction'] ??
+                        'introduction',
+                    rating: (data[0]['receiverInfo']['coffeeBean'] ?? 0.0)
+                        .toDouble(),
+                  ),
                 ),
-                child: UserDetails(
-                  nickname: data[0]['receiverInfo']['nickname'] ?? 'nickname',
-                  company:
-                      data[0]['receiverInfo']['company']['name'] ?? 'company',
-                  position: data[0]['receiverInfo']['position'] ?? 'position',
-                  introduction:
-                      data[0]['receiverInfo']['introduction'] ?? 'introduction',
-                  rating:
-                      (data[0]['receiverInfo']['coffeeBean'] ?? 0.0).toDouble(),
+                ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
+                const SizedBox(height: 10),
+                CountdownTimer(
+                  endTime: endTime.millisecondsSinceEpoch,
+                  onEnd: () {
+                    if (!timerend) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return OneButtonDialog(
+                            content:
+                                '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
+                            onFirstButtonClick: () {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                _sendinfoFuture = sendinfo();
+                              });
+                            },
+                          );
+                        },
+                      );
+                    }
+                  },
+                  widgetBuilder: (_, CurrentRemainingTime? time) {
+                    if (time == null) {
+                      return const Text('남은 시간: 00:00',
+                          style: TextStyle(fontSize: 20, color: Colors.black));
+                    }
+                    int minutes = time.min ?? 0;
+                    int seconds = time.sec ?? 0;
+                    return Text(
+                      '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                    );
+                  },
                 ),
-              ),
-              ColorTextContainer(text: "# ${purpose[requestTypeId]}"),
-              const Expanded(child: SizedBox(height: 10)),
-              CountdownTimer(
-                endTime: endTime.millisecondsSinceEpoch,
-                onEnd: () {
-                  if (!timerend) {
+                const SizedBox(height: 10),
+                BottomTextButton(
+                  text: "요청 취소하기",
+                  handlePressed: () async {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return OneButtonDialog(
-                          content:
-                              '10분이 지나 요청이 자동으로 취소되었어요!\n다시 커피챗 요청을 진행해주세요.',
-                          onFirstButtonClick: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              _sendinfoFuture = sendinfo();
-                            });
+                        return YesOrNoDialog(
+                          content: "매칭 요청을 취소하시겠습니까?",
+                          firstButton: "취소",
+                          secondButton: "닫기",
+                          handleFirstClick: () async {
+                            handleRequestCancel(data[0]['matchId']);
                           },
+                          handleSecondClick: () {},
                         );
                       },
                     );
-                  }
-                },
-                widgetBuilder: (_, CurrentRemainingTime? time) {
-                  if (time == null) {
-                    return const Text('남은 시간: 00:00',
-                        style: TextStyle(fontSize: 20, color: Colors.black));
-                  }
-                  int minutes = time.min ?? 0;
-                  int seconds = time.sec ?? 0;
-                  return Text(
-                    '남은 시간: ${minutes.toString().padLeft(2, '0')}분 ${seconds.toString().padLeft(2, '0')}초',
-                    style: const TextStyle(fontSize: 20, color: Colors.black),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              BottomTextButton(
-                text: "요청 취소하기",
-                handlePressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return YesOrNoDialog(
-                        content: "매칭 요청을 취소하시겠습니까?",
-                        firstButton: "취소",
-                        secondButton: "닫기",
-                        handleFirstClick: () async {
-                          handleRequestCancel(data[0]['matchId']);
-                        },
-                        handleSecondClick: () {},
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           );
         }
       },
@@ -373,45 +378,57 @@ class _ReceivedReqState extends State<ReceivedReq> {
   Widget build(BuildContext context) {
     final selectedIndexProvider = Provider.of<SelectedIndexModel>(context);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: revList.isEmpty
-          ? const Center(
-              child: Text(
-                '받은 요청이 없어요 :(',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: revList.isEmpty
+            ? Container(
+                height: MediaQuery.of(context).size.height *
+                    0.7, // Adjust height as needed
+                child: const Center(
+                  child: Text(
+                    '받은 요청이 없어요 :(',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
+              )
+            : ListView.builder(
+                shrinkWrap:
+                    true, // Add this to ensure the ListView takes only the required space
+                physics:
+                    NeverScrollableScrollPhysics(), // Disable ListView's own scrolling
+                itemCount: revList.length,
+                itemBuilder: (context, index) {
+                  Map<String, dynamic> senderData =
+                      revList[index]['senderInfo'];
+
+                  void handleReject() {
+                    handleMatchDecline(revList[index]["matchId"]);
+                  }
+
+                  return UserItem(
+                    type: "receivedReqUser",
+                    userId: senderData["userId"] ?? 1,
+                    nickname: senderData["nickname"] ?? "Unknown",
+                    company: senderData["company"]?["name"] ?? "Unknown",
+                    position: senderData["position"] ?? "Unknown",
+                    introduction:
+                        senderData["introduction"] ?? "No introduction",
+                    rating: senderData["coffeeBean"] ?? 0.0,
+                    matchId: revList[index]["matchId"],
+                    logoUrl: senderData["company"]["logoUrl"] ?? '',
+                    requestTypeId: int.parse(revList[index]["requestTypeId"]
+                        .replaceAll(RegExp(r'[{}]'), '')),
+                    // onAccept: handleAccept,
+                    onReject: handleReject,
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              //받은 요청
-              itemCount: revList.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> senderData = revList[index]['senderInfo'];
-
-                void handleReject() {
-                  handleMatchDecline(revList[index]["matchId"]);
-                }
-
-                return UserItem(
-                  type: "receivedReqUser",
-                  userId: senderData["userId"] ?? 1,
-                  nickname: senderData["nickname"] ?? "Unknown",
-                  company: senderData["company"]?["name"] ?? "Unknown",
-                  position: senderData["position"] ?? "Unknown",
-                  introduction: senderData["introduction"] ?? "No introduction",
-                  rating: senderData["coffeeBean"] ?? 0.0,
-                  matchId: revList[index]["matchId"],
-                  logoUrl: senderData["company"]["logoUrl"] ?? '',
-                  requestTypeId: int.parse(revList[index]["requestTypeId"]
-                      .replaceAll(RegExp(r'[{}]'), '')),
-                  // onAccept: handleAccept,
-                  onReject: handleReject,
-                );
-              },
-            ),
+      ),
     );
   }
 }
