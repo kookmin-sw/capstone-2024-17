@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/model/matching_info_model.dart';
 import 'package:frontend/screen/matching_screen.dart';
 import 'package:frontend/service/api_service.dart';
@@ -144,8 +143,8 @@ class _CafeDetailsState extends State<CafeDetails>
 
   @override
   void dispose() {
-    _timer?.cancel();
     super.dispose();
+    _timer?.cancel();
   }
 
   @override
@@ -183,157 +182,162 @@ class _CafeDetailsState extends State<CafeDetails>
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Center(
-            child: photoUrl.isNotEmpty
-                ? Image.network(
-                    photoUrl,
-                    width: 450,
-                    height: 250,
-                    fit: BoxFit.cover,
-                  )
-                : Image.asset(
-                    "assets/no_image.png",
-                    width: 450,
-                    height: 250,
-                    fit: BoxFit.fitWidth,
-                  ),
-          ),
-          TabBar(
-            controller: tabController,
-            indicatorColor: Colors.black,
-            labelStyle: const TextStyle(
-              color: Colors.black,
-              fontSize: 20,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(
+              child: photoUrl.isNotEmpty
+                  ? Image.network(
+                      photoUrl,
+                      width: 450,
+                      height: 250,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      "assets/no_image.png",
+                      width: 450,
+                      height: 250,
+                      fit: BoxFit.fitWidth,
+                    ),
             ),
-            indicatorWeight: 4,
-            tabs: const [
-              Tab(text: "카페 상세정보"),
-              Tab(text: "사용자 보기"),
-            ],
-            padding: const EdgeInsets.only(top: 10, bottom: 20),
-            overlayColor: const MaterialStatePropertyAll(Colors.transparent),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: TabBarView(
-                controller: tabController,
-                children: [
-                  CafeInfo(
-                    address: widget.cafeDetailsArguments[0],
-                    cafeOpen: widget.cafeDetailsArguments[1],
-                    cafeTelephone: widget.cafeDetailsArguments[2],
-                    cafeTakeout: widget.cafeDetailsArguments[3],
-                    cafeDelivery: widget.cafeDetailsArguments[4],
-                    cafeDineIn: widget.cafeDetailsArguments[5],
-                    businessHours: widget.cafeDetailsArguments[8],
-                  ),
-                  Stack(
-                    children: [
-                      ListView.builder(
-                        itemCount: userList.length,
-                        itemBuilder: (context, index) {
-                          return UserItem(
-                            type: "cafeUser",
-                            userId: userList[index].userId,
-                            nickname: userList[index].nickname,
-                            company: userList[index].company,
-                            position: userList[index].position,
-                            introduction: userList[index].introduction,
-                            rating: userList[index].rating,
-                            matchId: '', // 안 쓰는 값이기에 초기값 넣어줌
-                            logoUrl: '',
-                            requestTypeId: 0, // 안 쓰는 값이기에 초기값 넣어줌
-                          );
-                        },
-                      ),
-                      (myCafe.cafeId != null)
-                          ? Container()
-                          : ClipRect(
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                child: Container(
-                                  color: Colors.transparent,
+            TabBar(
+              controller: tabController,
+              indicatorColor: Colors.black,
+              labelStyle: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
+              indicatorWeight: 4,
+              tabs: const [
+                Tab(text: "카페 상세정보"),
+                Tab(text: "사용자 보기"),
+              ],
+              padding: const EdgeInsets.only(top: 10, bottom: 20),
+              overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+            ),
+            SizedBox(
+              height: 400, // Adjust height as needed
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    CafeInfo(
+                      address: widget.cafeDetailsArguments[0],
+                      cafeOpen: widget.cafeDetailsArguments[1],
+                      cafeTelephone: widget.cafeDetailsArguments[2],
+                      cafeTakeout: widget.cafeDetailsArguments[3],
+                      cafeDelivery: widget.cafeDetailsArguments[4],
+                      cafeDineIn: widget.cafeDetailsArguments[5],
+                      businessHours: widget.cafeDetailsArguments[8],
+                    ),
+                    Stack(
+                      children: [
+                        ListView.builder(
+                          itemCount: userList.length,
+                          itemBuilder: (context, index) {
+                            return UserItem(
+                              type: "cafeUser",
+                              userId: userList[index].userId,
+                              nickname: userList[index].nickname,
+                              company: userList[index].company,
+                              position: userList[index].position,
+                              introduction: userList[index].introduction,
+                              rating: userList[index].rating,
+                              matchId: '', // 안 쓰는 값이기에 초기값 넣어줌
+                              logoUrl: '',
+                              requestTypeId: 0, // 안 쓰는 값이기에 초기값 넣어줌
+                            );
+                          },
+                        ),
+                        (myCafe.cafeId != null)
+                            ? Container()
+                            : ClipRect(
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                  child: Container(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                               ),
-                            ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          (myCafe.cafeId == widget.cafeId || matchingInfo.isMatching)
-              ? Container()
-              : BottomTextButton(
-                  text: "이 카페를 내 위치로 지정하기",
-                  handlePressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        bool setOrChange = myCafe.cafeId == null ? true : false;
-                        String content = setOrChange
-                            ? "${widget.cafeName}을(를) \n내 위치로 표시하시겠습니까?"
-                            : "${widget.cafeName}을(를) 내 위치로 \n표시하도록 변경하시겠습니까?";
+            (myCafe.cafeId == widget.cafeId || matchingInfo.isMatching)
+                ? Container()
+                : BottomTextButton(
+                    text: "이 카페를 내 위치로 지정하기",
+                    handlePressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          bool setOrChange =
+                              myCafe.cafeId == null ? true : false;
+                          String content = setOrChange
+                              ? "${widget.cafeName}을(를) \n내 위치로 표시하시겠습니까?"
+                              : "${widget.cafeName}을(를) 내 위치로 \n표시하도록 변경하시겠습니까?";
 
-                        return YesOrNoDialog(
-                          content: content,
-                          firstButton: "확인",
-                          secondButton: "취소",
-                          handleFirstClick: () async {
-                            int userId;
-                            Map<String, dynamic> res = await getUserDetail();
-                            if (res['success']) {
-                              userId = res['data']['userId'];
-                              print("!!!!유저 아이디: $userId");
-                            } else {
-                              print(
-                                  "!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
-                              return;
-                            }
+                          return YesOrNoDialog(
+                            content: content,
+                            firstButton: "확인",
+                            secondButton: "취소",
+                            handleFirstClick: () async {
+                              int userId;
+                              Map<String, dynamic> res = await getUserDetail();
+                              if (res['success']) {
+                                userId = res['data']['userId'];
+                                print("!!!!유저 아이디: $userId");
+                              } else {
+                                print(
+                                    "!!!!유저 정보를 가져오는데 실패했습니다. ${res['message']}");
+                                return;
+                              }
 
-                            try {
-                              // 지정 카페 변경인 경우
-                              if (!setOrChange) {
-                                // 기존 카페에서 유저 삭제 pub 요청
-                                deleteUserInCafe(
+                              try {
+                                // 지정 카페 변경인 경우
+                                if (!setOrChange) {
+                                  // 기존 카페에서 유저 삭제 pub 요청
+                                  deleteUserInCafe(
+                                    stompClient,
+                                    userId,
+                                    myCafe.cafeId!,
+                                  );
+                                }
+                                // 카페에 유저 추가 pub 요청
+                                addUserInCafe(
                                   stompClient,
                                   userId,
-                                  myCafe.cafeId!,
+                                  widget.cafeId,
+                                );
+
+                                // 이 카페에서 5분마다 반경 벗어남 체크
+                                _startTimer();
+
+                                myCafe.setMyCafe(
+                                  cafeId: widget.cafeId,
+                                  latitude: widget.cafeDetailsArguments[6],
+                                  longitude: widget.cafeDetailsArguments[7],
+                                );
+                              } catch (e) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const OneButtonDialog(
+                                    content: "카페 지정에 실패했습니다. \n잠시후 다시 시도해주세요.",
+                                  ),
                                 );
                               }
-                              // 카페에 유저 추가 pub 요청
-                              addUserInCafe(
-                                stompClient,
-                                userId,
-                                widget.cafeId,
-                              );
-
-                              // 이 카페에서 5분마다 반경 벗어남 체크
-                              _startTimer();
-
-                              myCafe.setMyCafe(
-                                cafeId: widget.cafeId,
-                                latitude: widget.cafeDetailsArguments[6],
-                                longitude: widget.cafeDetailsArguments[7],
-                              );
-                            } catch (e) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const OneButtonDialog(
-                                  content: "카페 지정에 실패했습니다. \n잠시후 다시 시도해주세요.",
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
-        ],
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ],
+        ),
       ),
     );
   }
