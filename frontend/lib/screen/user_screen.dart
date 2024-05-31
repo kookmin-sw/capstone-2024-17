@@ -29,6 +29,7 @@ class _UserScreenState extends State<UserScreen> {
   int temperature = 0;
   String introduction = '';
   late ScrollController _scrollController;
+  late ScrollController _scrollScreenController;
 
   @override
   void initState() {
@@ -40,12 +41,14 @@ class _UserScreenState extends State<UserScreen> {
       }
     });
     _scrollController = ScrollController();
+    _scrollScreenController = ScrollController();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
+    _scrollController.dispose();
+    _scrollScreenController.dispose();
   }
 
   @override
@@ -72,191 +75,228 @@ class _UserScreenState extends State<UserScreen> {
           ),
         ],
       ),
-      body: Center(
-          child: Column(
-        children: <Widget>[
-          if (isLogined)
-            Expanded(
-                child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // 유저 정보 컨테이너
-                        Container(
-                            child: Column(children: <Widget>[
-                          // 유저 프로필
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              children: <Widget>[
-                                (profile["logoUrl"] == '')
-                                    ? const ProfileImgMedium(
-                                        isLocal: true,
-                                        logoUrl: "assets/coffee_bean.png")
-                                    : ProfileImgMedium(
-                                        isLocal: false,
-                                        logoUrl: profile["logoUrl"]),
-                                const SizedBox(
-                                  width: 30,
-                                ),
-                                Flexible(
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                      Row(children: <Widget>[
+      body: Scrollbar(
+        controller: _scrollScreenController,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          controller: _scrollScreenController,
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                if (isLogined)
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      children: <Widget>[
+                                        (profile["logoUrl"] == '')
+                                            ? const ProfileImgMedium(
+                                                isLocal: true,
+                                                logoUrl:
+                                                    "assets/coffee_bean.png")
+                                            : ProfileImgMedium(
+                                                isLocal: false,
+                                                logoUrl: profile["logoUrl"]),
+                                        const SizedBox(
+                                          width: 30,
+                                        ),
                                         Flexible(
-                                          child: Text(
-                                            profile["nickname"],
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      profile["nickname"],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      profile["company"],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      profile["position"],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ]),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Flexible(
-                                              child: Text(
-                                                profile["company"],
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                          ]),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Flexible(
-                                              child: Text(
-                                                profile["position"],
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ])
-                                    ])),
-                              ],
-                            ),
-                          ),
-
-                          // 유저 커피온도
-                          Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(children: <Widget>[
-                                const Row(
-                                  children: <Widget>[Text('나의 커피온도')],
-                                ),
-                                Row(children: <Widget>[
-                                  Expanded(
-                                    child: BigThermometer(
-                                        temperature: profile["rating"].toInt()),
-                                  )
-                                ]),
-                              ])),
-
-                          // 유저 자기소개
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(children: <Widget>[
-                              const Row(
-                                children: <Widget>[Text('자기소개')],
-                              ),
-                              Row(children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    height: 90,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Scrollbar(
-                                      controller: _scrollController,
-                                      thumbVisibility: true,
-                                      child: SingleChildScrollView(
-                                        controller: _scrollController,
-                                        scrollDirection: Axis.vertical,
-                                        child: Text(
-                                          profile["introduction"],
-                                          // textAlign: TextAlign.left,
-                                        ),
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ]),
-                            ]),
-                          ),
-                        ])),
-
-                        // 프로필 수정 버튼
-                        BottomTextButton(
-                          text: '프로필 정보 수정',
-                          handlePressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const EditProfileScreen(),
-                                  settings: const RouteSettings(
-                                      name: '/editprofile')),
-                            );
-                          },
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Column(
+                                      children: <Widget>[
+                                        const Row(
+                                          children: <Widget>[Text('나의 커피온도')],
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: BigThermometer(
+                                                temperature:
+                                                    profile["rating"].toInt(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Column(
+                                      children: <Widget>[
+                                        const Row(
+                                          children: <Widget>[Text('자기소개')],
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                height: 90,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Scrollbar(
+                                                  controller: _scrollController,
+                                                  thumbVisibility: true,
+                                                  child: SingleChildScrollView(
+                                                    controller:
+                                                        _scrollController,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    child: Text(
+                                                      profile["introduction"],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    )))
-          // 로그인되지 않았을 경우
-          else
-            Flexible(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('로그인이 필요한 서비스입니다.'),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // 로그인 버튼
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/signin');
-                          },
-                          child: const Text('로그인')),
-
-                      // 회원가입 버튼
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/signup');
-                          },
-                          child: const Text('회원가입')),
+                      ),
+                      BottomTextButton(
+                        text: '프로필 정보 수정',
+                        handlePressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EditProfileScreen(),
+                              settings:
+                                  const RouteSettings(name: '/editprofile'),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   )
-                ],
-              ),
+                else
+                  Flexible(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Text('로그인이 필요한 서비스입니다.'),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed('/signin');
+                              },
+                              child: const Text('로그인'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed('/signup');
+                              },
+                              child: const Text('회원가입'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
-        ],
-      )),
+          ),
+        ),
+      ),
     );
   }
 

@@ -18,6 +18,7 @@ class PositionSelectScreen extends StatefulWidget {
 
 class PositionSelectScreenState extends State<PositionSelectScreen> {
   late ScrollController _scrollController;
+  late ScrollController _screenScrollController;
   late String selectedPosition;
   List<String> positions = [];
 
@@ -27,12 +28,14 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
     setPositionList();
 
     _scrollController = ScrollController();
+    _screenScrollController = ScrollController();
     selectedPosition = widget.lastPosition ?? '';
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _screenScrollController.dispose();
     super.dispose();
   }
 
@@ -44,7 +47,9 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
       appBar: const TopAppBar(
         title: "직무 등록",
       ),
-      body: Container(
+      body: SingleChildScrollView(
+        controller: _screenScrollController,
+        child: Container(
           alignment: Alignment.center,
           margin:
               const EdgeInsets.only(top: 20, bottom: 40, left: 40, right: 40),
@@ -88,62 +93,66 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          child: SingleChildScrollView(
                             controller: _scrollController,
-                            thumbVisibility: true,
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              scrollDirection: Axis.vertical,
-                              child: Wrap(
-                                children: _buildPositionItems(),
-                              ),
-                            )),
+                            scrollDirection: Axis.vertical,
+                            child: Wrap(
+                              children: _buildPositionItems(),
+                            ),
+                          ),
+                        ),
                       ),
                     ]),
-                  )
+                  ),
                 ],
               ),
               BottomTextButton(
-                  text: '저장하기',
-                  handlePressed: () {
-                    // 서버에 저장 요청
-                    savePressed();
-                    // provider에 저장
-                    userProfile.setPosition(selectedPosition);
-                  }),
+                text: '저장하기',
+                handlePressed: () {
+                  // 서버에 저장 요청
+                  savePressed();
+                  // provider에 저장
+                  userProfile.setPosition(selectedPosition);
+                },
+              ),
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 
   List<Widget> _buildPositionItems() {
     return positions.map((position) {
       return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          child: ChoiceChip(
-            label: Text(position),
-            labelStyle: const TextStyle(),
-            padding: const EdgeInsets.all(0),
-            selected: selectedPosition == position,
-            selectedColor: const Color(0xffff6c3e),
-            backgroundColor: Colors.grey[300],
-            side: const BorderSide(style: BorderStyle.none),
-            onSelected: (isSelected) {
-              selectedPosition = position;
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        child: ChoiceChip(
+          label: Text(position),
+          labelStyle: const TextStyle(),
+          padding: const EdgeInsets.all(0),
+          selected: selectedPosition == position,
+          selectedColor: const Color(0xffff6c3e),
+          backgroundColor: Colors.grey[300],
+          side: const BorderSide(style: BorderStyle.none),
+          onSelected: (isSelected) {
+            selectedPosition = position;
 
-              setState(() {
-                if (isSelected) {
-                  selectedPosition = position;
-                }
-              });
-            },
-            showCheckmark: false,
-          ));
+            setState(() {
+              if (isSelected) {
+                selectedPosition = position;
+              }
+            });
+          },
+          showCheckmark: false,
+        ),
+      );
     }).toList();
   }
 
   void setPositionList() async {
     Map<String, dynamic> res = await getPositionlist();
-    print(res['data']);
     if (res['success']) {
       // 요청 성공
       setState(() {
@@ -165,7 +174,6 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
     Map<String, dynamic> res = await updatePosition(selectedPosition);
     if (res['success']) {
       // 직무 저장 성공
-
       showDialog(
         context: context,
         builder: (BuildContext context) => OneButtonDialog(
@@ -177,7 +185,6 @@ class PositionSelectScreenState extends State<PositionSelectScreen> {
       );
     } else {
       // 직무 저장 실패
-
       showDialog(
         context: context,
         builder: (BuildContext context) => OneButtonDialog(
