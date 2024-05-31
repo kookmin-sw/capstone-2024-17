@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/screen/coffeechat_rating_screen.dart';
 import 'package:frontend/service/api_service.dart';
 import 'package:frontend/widgets/dialog/yn_dialog.dart';
@@ -74,14 +76,46 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                     ),
                     Positioned(
+                      width: screenWidth * 0.2,
                       top: screenHeight * 0.2,
-                      child: Text(
-                        '${widget.myNickname} X ${widget.partnerNickname}',
-                        // 회사 이름이 길어졌을 때 논의 필요
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                      left: screenWidth * 0.15,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: screenWidth * 0.07,
+                            child: Text(
+                              widget.myNickname,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          const Text(
+                            ' X ',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(
+                            width: screenWidth * 0.07,
+                            child: Text(
+                              widget.partnerNickname,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Positioned(
