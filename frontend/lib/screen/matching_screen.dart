@@ -35,6 +35,9 @@ class _MatchingWidgetState extends State<Matching> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF09676), // 배경색 설정
       body: SingleChildScrollView(
@@ -42,15 +45,14 @@ class _MatchingWidgetState extends State<Matching> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 100),
-                child: Text(
+              Padding(
+                padding: EdgeInsets.only(top: screenHeight * 0.1),
+                child: const Text(
                   '커피챗 진행중 ...', // 텍스트
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0), // 이미지와 텍스트 간격 조절
+              Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -60,8 +62,8 @@ class _MatchingWidgetState extends State<Matching> {
                       height: 400,
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(top: 58, right: 0), // 패딩 설정
+                      padding: EdgeInsets.only(
+                          top: screenHeight * 0.1, right: 0), // 패딩 설정
                       child: Container(
                         width: 200, // 원의 너비
                         height: 200, // 원의 높이
@@ -72,7 +74,7 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                     ),
                     Positioned(
-                      top: 130,
+                      top: screenHeight * 0.2,
                       child: Text(
                         '${widget.myNickname} X ${widget.partnerNickname}',
                         // 회사 이름이 길어졌을 때 논의 필요
@@ -83,8 +85,8 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                     ),
                     Positioned(
-                      top: 180,
-                      left: 110,
+                      top: screenHeight * 0.27,
+                      left: screenWidth * 0.13,
                       child: Container(
                         width: 100,
                         height: 100,
@@ -103,8 +105,8 @@ class _MatchingWidgetState extends State<Matching> {
                       ),
                     ),
                     Positioned(
-                      top: 180,
-                      right: 110,
+                      top: screenHeight * 0.27,
+                      right: screenWidth * 0.13,
                       child: Container(
                         width: 100,
                         height: 100,
